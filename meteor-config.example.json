@@ -1,0 +1,57 @@
+{
+  "enabled": true,
+  "latitude": 63.08,
+  "longitude": 21.57,
+  "observer_elevation_m": 10,
+  "hours": 36,
+  "horizon_deg": 10,
+  "min_peak_deg": 25,
+  "south_azimuth_min": 120,
+  "south_azimuth_max": 240,
+  "min_south_seconds": 60,
+  "max_passes_per_day": 4,
+  "pre_margin": 90,
+  "post_margin": 90,
+  "preflight_seconds": 120,
+  "dispatch_lead_seconds": 12,
+  "max_lateness_seconds": 30,
+  "sample_rate": 256000,
+  "frequency": 137900000,
+  "gain": 49.6,
+  "device": "V4MAIN01",
+  "min_free_gib": 10,
+  "max_tle_age_days": 3,
+  "satdump_command": [
+    "/root/rf-watchkeeper/.satellite-venv/bin/python",
+    "/root/rf-watchkeeper/satdump_evk.py"
+  ],
+  "satdump_prefix": [],
+  "satdump_pipeline": "meteor_m2-x_lrpt",
+  "satdump_extra": [
+    "--dc_block",
+    "--satellite_number",
+    "{satellite_number}"
+  ],
+  "decode_timeout_seconds": 1800,
+  "max_decode_attempts": 3,
+  "decode_retry_seconds": 3600,
+  "cleanup_enabled": false,
+  "raw_retention_days": 14,
+  "retention": {
+    "no_signal_hours": 24,
+    "poor_hours": 48,
+    "useful_hours": 168,
+    "normal_free_gib": 20,
+    "critical_free_gib": 10,
+    "useful_min_lines": 128,
+    "excellent_min_lines": 2000,
+    "automatic_deletion_validated": false
+  },
+  "frequency_evaluation": {
+    "span_hz": 60000,
+    "windows": 24,
+    "max_candidates": 2,
+    "budget_seconds": 300
+  },
+  "_coordinate_notice": "Example approximate Vaasa city-centre coordinates, several kilometres from the installation; supply private observer coordinates locally."
+}

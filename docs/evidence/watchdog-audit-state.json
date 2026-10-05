@@ -1,0 +1,369 @@
+{
+  "at": "2026-10-05T19:34:57.100673+00:00",
+  "method": "read-only; no RF probe, service control or database writes",
+  "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8",
+  "private_config_hashes": {
+    "ais-config.json": "c5b23638b49f74da0406c8dad0d0645267ac044557084864588629f1349ba9c8",
+    "meteor-config.json": "a63e03ed3f1981f670c2a6ea992ce3ea43015b2ad57754450574940588c63762",
+    "dashboard.html": "327383237686efc2530d85b9fc25b2f213d9db2f2f47fa90aa2053fb6bfdf720"
+  },
+  "units": {
+    "code": 0,
+    "output": "active\nactive\nactive\nactive\ninactive",
+    "error": ""
+  },
+  "health_service": {
+    "code": 0,
+    "output": "Result=success\nExecMainStatus=0",
+    "error": ""
+  },
+  "failed_units": {
+    "code": 0,
+    "output": "UNIT          LOAD   ACTIVE SUB    DESCRIPTION\nrmtfs.service loaded failed failed Qualcomm remotefs service\n\nLegend: LOAD   \u2192 Reflects whether the unit definition was properly loaded.\n        ACTIVE \u2192 The high-level unit activation state, i.e. generalization of SUB.\n        SUB    \u2192 The low-level unit activation state, values depend on unit type.\n\n1 loaded units listed.",
+    "error": ""
+  },
+  "recent_events": [
+    {
+      "id": 17,
+      "timestamp": "2026-10-05T18:14:03.425071+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "prepass",
+      "result": "success",
+      "detail": "m23-20261005T182853Z",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 16,
+      "timestamp": "2026-10-05T18:14:03.414775+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "recovery",
+      "result": "success",
+      "detail": "Direct probe; receiver usable",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 15,
+      "timestamp": "2026-10-05T18:14:03.396072+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "probe",
+      "result": "success",
+      "detail": "512000 bytes; valid IQ",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 14,
+      "timestamp": "2026-10-05T18:14:01.362550+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "probe",
+      "result": "started",
+      "detail": "meteor-prepass",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 13,
+      "timestamp": "2026-10-05T18:14:01.022806+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "prepass",
+      "result": "started",
+      "detail": "m23-20261005T182853Z",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 12,
+      "timestamp": "2026-10-05T11:28:08.853621+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "prepass",
+      "result": "success",
+      "detail": "m24-20261005T114312Z",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 11,
+      "timestamp": "2026-10-05T11:28:08.841645+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "recovery",
+      "result": "success",
+      "detail": "Direct probe; receiver usable",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 10,
+      "timestamp": "2026-10-05T11:28:08.817865+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "probe",
+      "result": "success",
+      "detail": "512000 bytes; valid IQ",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 9,
+      "timestamp": "2026-10-05T11:28:06.873825+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "probe",
+      "result": "started",
+      "detail": "meteor-prepass",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 8,
+      "timestamp": "2026-10-05T11:28:06.536498+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "prepass",
+      "result": "started",
+      "detail": "m24-20261005T114312Z",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 4,
+      "timestamp": "2026-10-05T11:24:23.685691+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "recovery",
+      "result": "success",
+      "detail": "Direct probe; receiver usable",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 3,
+      "timestamp": "2026-10-05T11:24:23.677641+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "probe",
+      "result": "success",
+      "detail": "512000 bytes; valid IQ",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 2,
+      "timestamp": "2026-10-05T11:24:21.703051+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "probe",
+      "result": "started",
+      "detail": "direct-probe",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "id": 1,
+      "timestamp": "2026-10-05T11:24:21.541059+00:00",
+      "receiver_serial": "V4MAIN01",
+      "action": "heartbeat_stale",
+      "result": "warning",
+      "detail": "No receiver heartbeat yet",
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    }
+  ],
+  "job_summary": [
+    {
+      "job_type": "METEOR IQ preflight",
+      "capture_ok": 1,
+      "count": 2,
+      "latest": "2026-10-05T18:25:28.903860+00:00"
+    },
+    {
+      "job_type": "METEOR capture",
+      "capture_ok": 1,
+      "count": 2,
+      "latest": "2026-10-05T18:41:07.840442+00:00"
+    },
+    {
+      "job_type": "ais",
+      "capture_ok": null,
+      "count": 4,
+      "latest": "2026-10-05T18:42:12.220407+00:00"
+    },
+    {
+      "job_type": "ais",
+      "capture_ok": 1,
+      "count": 196,
+      "latest": "2026-10-05T19:34:53.674063+00:00"
+    },
+    {
+      "job_type": "direct-probe",
+      "capture_ok": 1,
+      "count": 1,
+      "latest": "2026-10-05T11:24:23.669797+00:00"
+    },
+    {
+      "job_type": "fm-reference",
+      "capture_ok": null,
+      "count": 1,
+      "latest": "2026-10-05T11:24:21.596303+00:00"
+    },
+    {
+      "job_type": "fm-reference",
+      "capture_ok": 1,
+      "count": 132,
+      "latest": "2026-10-05T18:41:43.789278+00:00"
+    },
+    {
+      "job_type": "meteor-prepass",
+      "capture_ok": 1,
+      "count": 2,
+      "latest": "2026-10-05T18:14:03.376781+00:00"
+    },
+    {
+      "job_type": "vaasa-atis",
+      "capture_ok": null,
+      "count": 1,
+      "latest": null
+    },
+    {
+      "job_type": "vaasa-atis",
+      "capture_ok": 1,
+      "count": 18,
+      "latest": "2026-10-05T19:25:59.247324+00:00"
+    },
+    {
+      "job_type": "vaasa-tower",
+      "capture_ok": null,
+      "count": 2,
+      "latest": "2026-10-05T18:14:01.181131+00:00"
+    },
+    {
+      "job_type": "vaasa-tower",
+      "capture_ok": 1,
+      "count": 146,
+      "latest": "2026-10-05T19:33:19.477349+00:00"
+    }
+  ],
+  "state": [
+    {
+      "receiver_serial": "V4MAIN01",
+      "checked_at": "2026-10-05T19:34:40.021240+00:00",
+      "status": "GREEN",
+      "detail": "Recent successful sample acquisition"
+    }
+  ],
+  "reboot_guard": [],
+  "api": {
+    "state": {
+      "http": 200,
+      "rf_health": [
+        {
+          "serial": "V4MAIN01",
+          "status": "GREEN",
+          "detail": "Successful receiver sample acquisition",
+          "last_capture": {
+            "id": 511,
+            "receiver_serial": "V4MAIN01",
+            "job_type": "ais",
+            "start_time": "2026-10-05T19:34:23.444556+00:00",
+            "completion_time": "2026-10-05T19:34:53.674063+00:00",
+            "deadline": 1791228923.4445693,
+            "pid": 199154,
+            "capture_ok": 1,
+            "evidence_value": 994.783,
+            "evidence_kind": "AIS sample DSP milliseconds",
+            "exit_code": 0,
+            "failure_reason": null,
+            "application_status": "{\"messages\": 13, \"unique_mmsi\": 3, \"status\": \"decoded\"}",
+            "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+          },
+          "heartbeat_age_seconds": 3.58703875541687,
+          "recent_failures": 0,
+          "last_recovery": {
+            "id": 16,
+            "timestamp": "2026-10-05T18:14:03.414775+00:00",
+            "receiver_serial": "V4MAIN01",
+            "action": "recovery",
+            "result": "success",
+            "detail": "Direct probe; receiver usable",
+            "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+          },
+          "last_application_result": {
+            "id": 511,
+            "receiver_serial": "V4MAIN01",
+            "job_type": "ais",
+            "start_time": "2026-10-05T19:34:23.444556+00:00",
+            "completion_time": "2026-10-05T19:34:53.674063+00:00",
+            "deadline": 1791228923.4445693,
+            "pid": 199154,
+            "capture_ok": 1,
+            "evidence_value": 994.783,
+            "evidence_kind": "AIS sample DSP milliseconds",
+            "exit_code": 0,
+            "failure_reason": null,
+            "application_status": "{\"messages\": 13, \"unique_mmsi\": 3, \"status\": \"decoded\"}",
+            "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+          },
+          "checked_at": "2026-10-05T19:34:40.021240+00:00"
+        },
+        {
+          "serial": "43300001",
+          "status": "DISABLED",
+          "detail": "Intentionally disconnected"
+        }
+      ]
+    },
+    "tower": {
+      "http": 200
+    },
+    "atis": {
+      "http": 200
+    },
+    "meteor": {
+      "http": 200
+    },
+    "meteor/schedule": {
+      "http": 200
+    }
+  },
+  "future_passes": [
+    {
+      "id": "m24-20261006T012820Z",
+      "status": "planned",
+      "record_start": "2026-10-06T01:26:50.888985+00:00",
+      "record_stop": "2026-10-06T01:40:04.724883+00:00"
+    },
+    {
+      "id": "m23-20261006T081307Z",
+      "status": "planned",
+      "record_start": "2026-10-06T08:11:37.081697+00:00",
+      "record_stop": "2026-10-06T08:25:11.973445+00:00"
+    },
+    {
+      "id": "m24-20261006T130159Z",
+      "status": "planned",
+      "record_start": "2026-10-06T13:00:29.747490+00:00",
+      "record_stop": "2026-10-06T13:13:51.163915+00:00"
+    },
+    {
+      "id": "m23-20261006T180542Z",
+      "status": "planned",
+      "record_start": "2026-10-06T18:04:12.785481+00:00",
+      "record_stop": "2026-10-06T18:17:51.267957+00:00"
+    }
+  ],
+  "recovery_states": [
+    {
+      "state": "reserved",
+      "reboot_count": 0,
+      "requested_at": null,
+      "resumed_at": null,
+      "reason": null,
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "state": "reserved",
+      "reboot_count": 0,
+      "requested_at": null,
+      "resumed_at": null,
+      "reason": null,
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "state": "reserved",
+      "reboot_count": 0,
+      "requested_at": null,
+      "resumed_at": null,
+      "reason": null,
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    },
+    {
+      "state": "reserved",
+      "reboot_count": 0,
+      "requested_at": null,
+      "resumed_at": null,
+      "reason": null,
+      "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8"
+    }
+  ]
+}

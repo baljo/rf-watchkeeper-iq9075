@@ -17,7 +17,7 @@ This exports the existing working EVK application, not an operating-system/model
 
 1. Preserve source/configuration, units/drop-ins, consistent SQLite backups, metadata, images and recordings; choose a window without satellite reservations.
 2. Review code/examples against the target runtime. Application paths expect `/root/rf-watchkeeper`; place the preserved backend at `/root/sdr_demo/scheduler.py` for an equivalent fresh layout.
-3. Supply separately installed/licensed binaries/models, satellite environment and validated decoder manifest. Review receiver/observer settings without committing private access material.
+3. Supply separately installed/licensed binaries/models, satellite environment and validated decoder manifest. On a fresh deployment, copy `ais-config.example.json` to ignored `ais-config.json` and `meteor-config.example.json` to ignored `meteor-config.json`, then set private observer coordinates locally. Preserve existing EVK configuration. Review the public dashboard's example observer/map centres before deployment; see [location privacy](location-privacy.md).
 4. Compare `deploy/systemd/` with target prerequisites before installing units. Snapshots are evidence, not a complete installer; the speaker guard is external.
 5. Validate offline behavior/APIs before enabling ordinary RF. Enable satellite automation only after TLE, disk, manifest and ownership checks. Keep raw deletion disabled until reviewed.
 

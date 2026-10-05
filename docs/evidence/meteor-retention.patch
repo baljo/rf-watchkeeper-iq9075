@@ -1,3 +1,4 @@
+# Privacy-sanitized historical patch: observer coordinates are approximate examples; not a byte-exact private configuration diff.
 --- a/meteor_pipeline.py
 +++ b/meteor_pipeline.py
 @@ -1,4 +1,4 @@
@@ -1200,7 +1201,7 @@
 +function updateAge(){if(!last)return;const age=last.latest_age_seconds===null?null:last.latest_age_seconds+(performance.now()-fetchedAt)/1000;put('age',ageText(age)+(age!==null&&age>180?' · Stale reading':''));el('age').className=age>180?'warn':'';}
  
  
- const observerLat=63.104753,observerLon=21.683053;
+ const observerLat=63.08,observerLon=21.57;
 @@ -249,7 +251,7 @@
   const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE',
               'S','SSW','SW','WSW','W','WNW','NW','NNW'];
@@ -1861,8 +1862,8 @@
 @@ -1,40 +1,56 @@
 -{
 -  "enabled": true,
--  "latitude": 63.104753,
--  "longitude": 21.683053,
+-  "latitude": 63.08,
+-  "longitude": 21.57,
 -  "observer_elevation_m": 10,
 -  "hours": 36,
 -  "horizon_deg": 10,
@@ -1901,8 +1902,8 @@
 -}
 +{
 +  "enabled": true,
-+  "latitude": 63.104753,
-+  "longitude": 21.683053,
++  "latitude": 63.08,
++  "longitude": 21.57,
 +  "observer_elevation_m": 10,
 +  "hours": 36,
 +  "horizon_deg": 10,

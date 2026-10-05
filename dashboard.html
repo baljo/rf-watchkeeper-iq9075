@@ -1,3 +1,4 @@
+<!-- Public export: all observer/map centres use approximate example Vaasa city-centre coordinates. Keep installation coordinates private; this file is not deployed over the live EVK dashboard. -->
 <!-- Display RF, AIS and historical METEOR images with imported/reference provenance; 2026-10-03 21:25:52 EEST, Thomas Vikström. -->
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RF Watchkeeper</title>
@@ -237,7 +238,7 @@ function ageText(seconds){if(seconds===null)return 'No event received';seconds=M
 function updateAge(){if(!last)return;const age=last.latest_age_seconds===null?null:last.latest_age_seconds+(performance.now()-fetchedAt)/1000;put('age',ageText(age)+(age!==null&&age>180?' · Stale reading':''));el('age').className=age>180?'warn':'';}
 
 
-const observerLat=63.104753,observerLon=21.683053;
+const observerLat=63.08,observerLon=21.57;
 
 function bearingFromObserver(lat,lon){
  const rad=x=>x*Math.PI/180,deg=x=>x*180/Math.PI;
@@ -770,8 +771,8 @@ function renderAISMap(data){
  // Current configured observer position.
  // Later we can expose this from the API to avoid duplicating it here.
  const observer={
-   lat:63.104753,
-   lon:21.683053
+   lat:63.08,
+   lon:21.57
  };
 
  function validRegionalPosition(point){
@@ -1053,8 +1054,8 @@ function renderAISLocalMap(data){
  svg.replaceChildren();
 
  const observer={
-   lat:63.104753,
-   lon:21.683053
+   lat:63.08,
+   lon:21.57
  };
 
  const rangeControl=el('ais-local-range');

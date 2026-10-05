@@ -20,3 +20,11 @@ journalctl -u rf-watchkeeper-health.service -n 50 --no-pager
 ```
 
 `rf_health_monitor.py --force-probe --no-reboot` is an active check that may pause ordinary RF; inspect reservations first. This task performed no probe/recovery/restart/reboot. Simulated tests and observed checks do not establish real reboot acceptance or long-term reliability.
+
+## Validation audit — 5 October 2026
+
+Inspection of current source, systemd snapshots, test cases, retained evidence, initial Git import and live read-only state confirmed this recovery already exists. No recovery code was added. [Stage classification and evidence](testing-and-validation.md#watchdog-stage-classification--5-october-2026) distinguishes controlled tests from real hardware recovery. Safe control stages have adequate existing evidence, so this audit repeated no fault injection or recovery test. USB reset and a real reboot remain explicit limitations.
+
+The actual monitor first pauses ordinary scheduling, cleans provably overdue owners and refuses protected owners before its first direct probe; it then retries cleanup/probing, optionally invokes a verified USB hook, reprobes, restarts/stops the scheduler for another protected probe, and finally considers reboot. Service restoration occurs in `finally` or the systemd stop hook. Reboot consumes the shared durable guard before requesting `systemctl reboot`. METEOR uses a separate persisted per-pass reservation and resume timer with one-attempt protection, clock synchronization and remaining-window/other-satellite checks.
+
+At 19:34:57 UTC (22:34:57 EEST), V4MAIN01 was GREEN, 43300001 DISABLED; scheduler, dashboard, Airband worker and health timer were active, health service Result=success/ExecMainStatus=0. State/Tower/ATIS/METEOR/schedule APIs returned HTTP 200. No capture was active; next managed recording starts 6 October at 04:26:50 EEST. [Read-only evidence](evidence/watchdog-audit-state.json). This is a momentary state, not long-run acceptance.

@@ -1,0 +1,44 @@
+{
+  "scope": "All tracked files, all advertised refs (main only), every reachable commit, and authenticated GitHub issues/releases/Actions artifact inventory. Deleted refs, caches and third-party copies excluded.",
+  "private_coordinate_files_before": [
+    "ais-config.json",
+    "dashboard.html",
+    "docs/evidence/documentation-inspection.json",
+    "docs/evidence/meteor-retention.patch",
+    "docs/hardware.md",
+    "meteor-config.json",
+    "test_ais_validation.py"
+  ],
+  "published_history": [
+    {
+      "commit": "c59dc08f9b749ed1825703c8b50734762219eeb8",
+      "files": [
+        "ais-config.json",
+        "dashboard.html",
+        "docs/evidence/documentation-inspection.json",
+        "docs/evidence/meteor-retention.patch",
+        "docs/hardware.md",
+        "meteor-config.json",
+        "test_ais_validation.py"
+      ]
+    }
+  ],
+  "example": {
+    "latitude": 63.08,
+    "longitude": 21.57,
+    "notice": "Approximate Vaasa city-centre example, about 6 km from private installation"
+  },
+  "candidate_review": "Other high-precision regional coordinates are public broadcast AIS met/hydro station positions; numeric durations, timestamps and byte sizes are not locations. No residential address found. Binary Helsinki.tzif reviewed as timezone data, not observer metadata. Static Kvarken GeoJSON is regional coastline geometry; no installation point feature found.",
+  "github_surfaces": {
+    "visibility": "private",
+    "issues": 0,
+    "releases": 0,
+    "tags": 0,
+    "artifacts": 0,
+    "wiki": false,
+    "pages": false,
+    "branches": [
+      "main"
+    ]
+  }
+}

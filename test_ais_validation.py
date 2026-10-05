@@ -1,3 +1,4 @@
+# Observer fixture uses approximate example Vaasa city-centre coordinates.
 # Verify AIS outlier rejection, active target timeouts, and identity retention using isolated SQLite data; 2026-10-03 22:52 EEST, Thomas Vikström.
 import unittest
 import tempfile
@@ -11,7 +12,7 @@ class Validation(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.db = Path(self.temp.name)/'test.db'
         self.now = datetime.now(timezone.utc)
-        store.observer_position = lambda: (63.104753, 21.683053)
+        store.observer_position = lambda: (63.08, 21.57)
 
     def tearDown(self):
         self.temp.cleanup()

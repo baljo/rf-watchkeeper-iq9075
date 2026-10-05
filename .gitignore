@@ -90,3 +90,9 @@ credentials*
 *.log
 ervice*
 ors.service*
+
+# Private observer configuration: initialize from committed examples
+/ais-config.json
+/meteor-config.json
+*observer-private*
+*location-private*

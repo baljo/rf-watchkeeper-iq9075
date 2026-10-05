@@ -28,3 +28,5 @@ journalctl -u rf-watchkeeper-health.service -n 50 --no-pager
 | Disk growth | Raw disposition/gates, positive audio archive | Review evidence; do not shorten grace or delete useful references |
 
 Exact antenna/filter inventory and V4-only USB reset are gaps. Read [retention](data-retention.md) and [watchdog](watchdog-and-recovery.md) before active actions. No RF setting/service change occurred for documentation.
+
+Before proposing another fault test, consult the [watchdog stage classification](testing-and-validation.md#watchdog-stage-classification--5-october-2026). A successful simulated reboot/resume is not a real reboot recovery. Current safe-stage evidence does not justify repeating injection tests; leave risky reboot acceptance explicitly unvalidated. Before sharing logs/configs/patches, apply the [location privacy policy](location-privacy.md), including numeric map centres and historical snapshot contents.

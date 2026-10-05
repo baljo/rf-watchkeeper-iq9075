@@ -68,8 +68,8 @@
       "satellite": "M2-4",
       "saved_at": "2026-10-05T01:46:34.419576+00:00",
       "observer": {
-        "latitude": 63.104753,
-        "longitude": 21.683053,
+        "latitude": 63.08,
+        "longitude": 21.57,
         "observer_elevation_m": 10
       },
       "horizon_deg": 10,
@@ -359,8 +359,8 @@
     "timezone": "Europe/Helsinki",
     "horizon_deg": 10,
     "observer": {
-      "latitude": 63.104753,
-      "longitude": 21.683053,
+      "latitude": 63.08,
+      "longitude": 21.57,
       "observer_elevation_m": 10
     },
     "warnings": []
@@ -411,5 +411,6 @@
       256000,
       "planned"
     ]
-  ]
+  ],
+  "coordinate_privacy_notice": "Observer positions sanitized to approximate example coordinates; original private evidence remains on EVK. Other historical observations are unchanged."
 }
