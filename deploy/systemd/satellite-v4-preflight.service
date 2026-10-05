@@ -1,0 +1,9 @@
+# Run the legacy V4 IQ preflight and shared reboot step through sh; 2026-10-04 22:15 EEST, Thomas Vikström.
+[Unit]
+Description=Satellite V4 preflight and conditional reboot
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /root/rf-watchkeeper/satellite_v4_preflight.sh
+TimeoutStartSec=90

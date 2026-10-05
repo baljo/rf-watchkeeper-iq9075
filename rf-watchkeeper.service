@@ -1,0 +1,20 @@
+# 2026-09-16 22:23 EEST — Thomas Vikström — Run Nexus-TH RF Watchkeeper continuously on the EVK.
+[Unit]
+Description=RF Watchkeeper - Nexus-TH receiver
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/watchkeeper.py --rtl433 /root/rtl433-test/rtl_433 --log /root/rf-watchkeeper/logs/events.jsonl
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+KillMode=control-group
+StandardOutput=journal
+StandardError=journal
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,4243 @@
+{
+  "cleanup_enabled": false,
+  "dry_run": true,
+  "disk_free_gib": 55.67995071411133,
+  "disk_pressure": "normal",
+  "warning": null,
+  "would_delete": [
+    {
+      "id": "legacy-M2-4_20260929_051817_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260929_051817_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-09-30T02:32:04.012940+00:00",
+      "bytes": 420741120
+    },
+    {
+      "id": "legacy-M2-4_20260929_150958_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260929_150958_137900000.cu8",
+      "reason": "Expired failed capture contains zero IQ samples; history retained",
+      "deadline": "2026-09-30T12:26:46.953498+00:00",
+      "bytes": 0
+    },
+    {
+      "id": "legacy-M2-3_20260929_220706_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260929_220706_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-09-30T19:20:34.269463+00:00",
+      "bytes": 410517504
+    },
+    {
+      "id": "legacy-M2-4_20260930_045637_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260930_045637_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T02:10:17.166257+00:00",
+      "bytes": 416808960
+    },
+    {
+      "id": "legacy-M2-3_20260930_115106_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260930_115106_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T09:04:47.457983+00:00",
+      "bytes": 417333248
+    },
+    {
+      "id": "legacy-M2-4_20260930_144950_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260930_144950_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T12:03:35.548907+00:00",
+      "bytes": 1679294464
+    },
+    {
+      "id": "legacy-M2-3_20260930_200427_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260930_200427_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T17:17:08.386465+00:00",
+      "bytes": 1548746752
+    },
+    {
+      "id": "legacy-M2-4_20261001_142820_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261001_142820_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-02T11:41:53.417486+00:00",
+      "bytes": 1654915072
+    },
+    {
+      "id": "legacy-M2-4_20261001_160849_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261001_160849_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-02T13:21:59.303656+00:00",
+      "bytes": 1607729152
+    },
+    {
+      "id": "legacy-M2-3_20261001_212022_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261001_212022_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-02T18:34:05.127560+00:00",
+      "bytes": 1675624448
+    },
+    {
+      "id": "legacy-M2-4_20261002_041325_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261002_041325_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T01:26:19.391077+00:00",
+      "bytes": 1575223296
+    },
+    {
+      "id": "legacy-M2-3_20261002_110436_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261002_110436_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T08:18:05.407691+00:00",
+      "bytes": 1646788608
+    },
+    {
+      "id": "legacy-M2-4_20261002_140657_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261002_140657_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T11:20:10.188006+00:00",
+      "bytes": 402915328
+    },
+    {
+      "id": "legacy-M2-4_20261002_154649_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261002_154649_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T13:00:23.201348+00:00",
+      "bytes": 1657012224
+    },
+    {
+      "id": "legacy-M2-3_20261003_122125_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261003_122125_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-04T09:34:51.298300+00:00",
+      "bytes": 1640759296
+    },
+    {
+      "id": "legacy-M2-3_20261003_203413_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261003_203413_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-04T17:47:30.338879+00:00",
+      "bytes": 1622409216
+    },
+    {
+      "id": "m24-20261004T035154Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261004_065024_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-05T04:03:04.247781+00:00",
+      "bytes": 386138112
+    },
+    {
+      "id": "m23-20261004T085937Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261004_115807_137900000.cu8",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-05T09:11:46.164946+00:00",
+      "bytes": 416284672
+    }
+  ],
+  "deleted": [],
+  "passes": [
+    {
+      "id": "m23-20261003T191542Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261003_221412_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "useful",
+      "disposition": "PROTECTED",
+      "reason": "Useful channel products preserved, including historical/crash outputs",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 1.9362428529513889,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 408682496,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": true,
+      "useful_image_count": 9,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.394146+00:00",
+      "eligible": false
+    },
+    {
+      "id": "m23-20261004T085937Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261004_115807_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-05T09:11:46.164946+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 1.3639031184722221,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 416284672,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:52:23.807929+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070876,
+          "bytes": 416284672,
+          "modified_ns": 1791105105996658138
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261004_115807_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261004_115807_137900000/decode-5",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261004_115807_137900000/decode-6",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -45000,
+            -60000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 9048954,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 18097908,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 27146863,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 36195817,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 45244772,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 54293726,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 63342681,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 72391635,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 81440589,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 90489544,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 99538498,
+              "center_hz": -37500
+            },
+            {
+              "sample_start": 108587453,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 117636407,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 126685362,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 135734316,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 144783270,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 153832225,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 162881179,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 171930134,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 180979088,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 190028043,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 199076997,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 208125952,
+              "center_hz": -52500
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261004_115807_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:53:09.642376+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.394382+00:00",
+      "eligible": true
+    },
+    {
+      "id": "m23-20261004T185213Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261004_185043_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "GRACE",
+      "reason": "Finite capture-completion grace period has not expired",
+      "deadline": "2026-10-05T19:04:23.203366+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 0.9523637253819445,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": false,
+      "raw_valid": false,
+      "raw_unchanged": false,
+      "raw_bytes": 0,
+      "capture_completed": false,
+      "capture_failed": true,
+      "decode_completed_cleanly": false,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": null,
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.429239+00:00",
+      "eligible": false
+    },
+    {
+      "id": "m23-20261005T083621Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261005_083451_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "GRACE",
+      "reason": "Finite capture-completion grace period has not expired",
+      "deadline": "2026-10-06T08:48:33.818054+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 0.38001864913194444,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 420216832,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.429339+00:00",
+      "eligible": false
+    },
+    {
+      "id": "m24-20261004T035154Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261004_065024_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-05T04:03:04.247781+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 1.578277664826389,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 386138112,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:53:09.793251+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074898,
+          "bytes": 386138112,
+          "modified_ns": 1791086584108888424
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261004_065024_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261004_065024_137900000/decode-5",
+            "shift_hz": 50000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261004_065024_137900000/decode-6",
+            "shift_hz": 35000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -50000,
+            -35000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 8393594,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 16787188,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 25180783,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 33574377,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 41967972,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 50361566,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 58755161,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 67148755,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 75542349,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 83935944,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 92329538,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 100723133,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 109116727,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 117510322,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 125903916,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 134297510,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 142691105,
+              "center_hz": -35000
+            },
+            {
+              "sample_start": 151084699,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 159478294,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 167871888,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 176265483,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 184659077,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 193052672,
+              "center_hz": -45000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261004_065024_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:53:54.568994+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.438022+00:00",
+      "eligible": true
+    },
+    {
+      "id": "m24-20261004T120447Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261004_150317_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "pinned",
+      "disposition": "PROTECTED",
+      "reason": "Documented weak/poor reception regression reference (historical-cleanup-20261005/report.md)",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 1.2352231035763888,
+      "pinned": false,
+      "explicitly_protected": true,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": false,
+      "raw_bytes": 420216832,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.472301+00:00",
+      "eligible": false
+    },
+    {
+      "id": "m24-20261005T014957Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261005_014827_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "useful",
+      "disposition": "PROTECTED",
+      "reason": "Useful channel products preserved, including historical/crash outputs",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 0.6623368034259259,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1665400832,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": true,
+      "useful_image_count": 9,
+      "result_classification": "PARTIAL_SUCCESS",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.480959+00:00",
+      "eligible": false
+    },
+    {
+      "id": "m24-20261005T114312Z",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261005_114142_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "GRACE",
+      "reason": "Finite capture-completion grace period has not expired",
+      "deadline": "2026-10-06T11:55:23.890682+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 0.25027303759259256,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 419954688,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T12:59:09.921628+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074936,
+          "bytes": 419954688,
+          "modified_ns": 1791201323814513050
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-2",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-3",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-4",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -45000,
+            -60000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 9128737,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 18257474,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 27386212,
+              "center_hz": -17500
+            },
+            {
+              "sample_start": 36514949,
+              "center_hz": -27500
+            },
+            {
+              "sample_start": 45643686,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 54772424,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 63901161,
+              "center_hz": -27500
+            },
+            {
+              "sample_start": 73029899,
+              "center_hz": -17500
+            },
+            {
+              "sample_start": 82158636,
+              "center_hz": -27500
+            },
+            {
+              "sample_start": 91287373,
+              "center_hz": -37500
+            },
+            {
+              "sample_start": 100416111,
+              "center_hz": -35000
+            },
+            {
+              "sample_start": 109544848,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 118673586,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 127802323,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 136931060,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 146059798,
+              "center_hz": -37500
+            },
+            {
+              "sample_start": 155188535,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 164317273,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 173446010,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 182574747,
+              "center_hz": -37500
+            },
+            {
+              "sample_start": 191703485,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 200832222,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 209960960,
+              "center_hz": -47500
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-2",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T12:59:55.646288+00:00",
+        "limitation": "No verified negative conclusion: sparse survey is not an exhaustive offset search; retain original IQ"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.481130+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-M2-3_20260928_223042_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260928_223042_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "processing_failed",
+      "disposition": "REVIEW",
+      "reason": "Decoder error or interrupted offset search needs review: selected returncode=139; Nominal processing failed; preserve IQ and normal bounded retry behavior",
+      "deadline": "2026-09-30T19:43:46.142047+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 6.925015600810186,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 398721024,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": true,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:50:27.070299+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070829,
+          "bytes": 398721024,
+          "modified_ns": 1790624625755381150
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [],
+        "error": "Nominal processing failed; preserve IQ and normal bounded retry behavior",
+        "finished_at": "2026-10-05T17:50:27.070579+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.489957+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-M2-3_20260929_202718_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260929_202718_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "pinned",
+      "disposition": "PROTECTED",
+      "reason": "Documented native-decoder regression and frequency-offset troubleshooting reference (historical-cleanup-20261005/report.md)",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 6.010637521307871,
+      "pinned": false,
+      "explicitly_protected": true,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 401342464,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": null,
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.490106+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-M2-3_20260929_220706_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260929_220706_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-09-30T19:20:34.269463+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 5.941125239965278,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 410517504,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:48:07.379261+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074818,
+          "bytes": 410517504,
+          "modified_ns": 1790709633939406576
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260929_220706_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260929_220706_137900000/decode-2",
+            "shift_hz": -32500,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260929_220706_137900000/decode-3",
+            "shift_hz": -17500,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            32500,
+            17500
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": 30000
+            },
+            {
+              "sample_start": 8923581,
+              "center_hz": -2500
+            },
+            {
+              "sample_start": 17847162,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 26770743,
+              "center_hz": 10000
+            },
+            {
+              "sample_start": 35694324,
+              "center_hz": 0
+            },
+            {
+              "sample_start": 44617906,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 53541487,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 62465068,
+              "center_hz": -37500
+            },
+            {
+              "sample_start": 71388649,
+              "center_hz": 15000
+            },
+            {
+              "sample_start": 80312230,
+              "center_hz": 47500
+            },
+            {
+              "sample_start": 89235812,
+              "center_hz": 52500
+            },
+            {
+              "sample_start": 98159393,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 107082974,
+              "center_hz": -10000
+            },
+            {
+              "sample_start": 116006555,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 124930137,
+              "center_hz": 45000
+            },
+            {
+              "sample_start": 133853718,
+              "center_hz": 30000
+            },
+            {
+              "sample_start": 142777299,
+              "center_hz": 40000
+            },
+            {
+              "sample_start": 151700880,
+              "center_hz": 45000
+            },
+            {
+              "sample_start": 160624461,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 169548043,
+              "center_hz": 52500
+            },
+            {
+              "sample_start": 178471624,
+              "center_hz": 32500
+            },
+            {
+              "sample_start": 187395205,
+              "center_hz": 40000
+            },
+            {
+              "sample_start": 196318786,
+              "center_hz": 50000
+            },
+            {
+              "sample_start": 205242368,
+              "center_hz": 32500
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260929_220706_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:48:52.540686+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.490196+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-3_20260930_115106_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260930_115106_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T09:04:47.457983+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 5.368750771516204,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 417333248,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:45:28.967683+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074873,
+          "bytes": 417333248,
+          "modified_ns": 1790759087292369510
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_115106_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_115106_137900000/decode-2",
+            "shift_hz": -17500,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_115106_137900000/decode-3",
+            "shift_hz": -32500,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            17500,
+            32500
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 9071749,
+              "center_hz": 5000
+            },
+            {
+              "sample_start": 18143499,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 27215248,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 36286998,
+              "center_hz": 32500
+            },
+            {
+              "sample_start": 45358747,
+              "center_hz": 12500
+            },
+            {
+              "sample_start": 54430497,
+              "center_hz": 30000
+            },
+            {
+              "sample_start": 63502246,
+              "center_hz": 35000
+            },
+            {
+              "sample_start": 72573996,
+              "center_hz": 25000
+            },
+            {
+              "sample_start": 81645746,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 90717495,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 99789245,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 108860994,
+              "center_hz": 5000
+            },
+            {
+              "sample_start": 117932744,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 127004493,
+              "center_hz": 15000
+            },
+            {
+              "sample_start": 136076243,
+              "center_hz": -37500
+            },
+            {
+              "sample_start": 145147993,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 154219742,
+              "center_hz": 37500
+            },
+            {
+              "sample_start": 163291492,
+              "center_hz": 35000
+            },
+            {
+              "sample_start": 172363241,
+              "center_hz": 17500
+            },
+            {
+              "sample_start": 181434991,
+              "center_hz": -35000
+            },
+            {
+              "sample_start": 190506740,
+              "center_hz": 17500
+            },
+            {
+              "sample_start": 199578490,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 208650240,
+              "center_hz": -37500
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_115106_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:46:14.627767+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.524642+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-3_20260930_200427_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20260930_200427_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T17:17:08.386465+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 5.0268422834375,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1548746752,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:42:57.752249+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070875,
+          "bytes": 1548746752,
+          "modified_ns": 1790788628282091490
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_200427_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_200427_137900000/decode-2",
+            "shift_hz": -12500,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_200427_137900000/decode-3",
+            "shift_hz": -27500,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            12500,
+            27500
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": 17500
+            },
+            {
+              "sample_start": 33667695,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 67335390,
+              "center_hz": 30000
+            },
+            {
+              "sample_start": 101003085,
+              "center_hz": 12500
+            },
+            {
+              "sample_start": 134670781,
+              "center_hz": 7500
+            },
+            {
+              "sample_start": 168338476,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 202006171,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 235673867,
+              "center_hz": -5000
+            },
+            {
+              "sample_start": 269341562,
+              "center_hz": 10000
+            },
+            {
+              "sample_start": 303009257,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 336676953,
+              "center_hz": 12500
+            },
+            {
+              "sample_start": 370344648,
+              "center_hz": -2500
+            },
+            {
+              "sample_start": 404012343,
+              "center_hz": -2500
+            },
+            {
+              "sample_start": 437680038,
+              "center_hz": 17500
+            },
+            {
+              "sample_start": 471347734,
+              "center_hz": 15000
+            },
+            {
+              "sample_start": 505015429,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 538683124,
+              "center_hz": 15000
+            },
+            {
+              "sample_start": 572350820,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 606018515,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 639686210,
+              "center_hz": 7500
+            },
+            {
+              "sample_start": 673353906,
+              "center_hz": -5000
+            },
+            {
+              "sample_start": 707021601,
+              "center_hz": 10000
+            },
+            {
+              "sample_start": 740689296,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 774356992,
+              "center_hz": 10000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20260930_200427_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:43:57.964034+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.559754+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-3_20261001_212022_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261001_212022_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-02T18:34:05.127560+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 3.973408178668981,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1675624448,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:29:25.216651+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074880,
+          "bytes": 1675624448,
+          "modified_ns": 1790879645001418018
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261001_212022_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261001_212022_137900000/decode-2",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261001_212022_137900000/decode-3",
+            "shift_hz": 7500,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -60000,
+            -7500
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": 57500
+            },
+            {
+              "sample_start": 36425906,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 72851812,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 109277718,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 145703624,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 182129530,
+              "center_hz": 0
+            },
+            {
+              "sample_start": 218555436,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 254981342,
+              "center_hz": 10000
+            },
+            {
+              "sample_start": 291407248,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 327833154,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 364259060,
+              "center_hz": -5000
+            },
+            {
+              "sample_start": 400684966,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 437110873,
+              "center_hz": 0
+            },
+            {
+              "sample_start": 473536779,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 509962685,
+              "center_hz": 25000
+            },
+            {
+              "sample_start": 546388591,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 582814497,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 619240403,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 655666309,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 692092215,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 728518121,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 764944027,
+              "center_hz": 60000
+            },
+            {
+              "sample_start": 801369933,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 837795840,
+              "center_hz": -60000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261001_212022_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:30:27.915199+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.594197+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-3_20261002_110436_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261002_110436_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T08:18:05.407691+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 3.401183116527778,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1646788608,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:34:05.064607+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074900,
+          "bytes": 1646788608,
+          "modified_ns": 1790929085229557041
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261002_110436_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261002_110436_137900000/decode-2",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261002_110436_137900000/decode-3",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -60000,
+            -45000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 35799040,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 71598080,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 107397120,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 143196160,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 178995200,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 214794240,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 250593280,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 286392320,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 322191360,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 357990400,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 393789440,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 429588480,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 465387520,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 501186560,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 536985600,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 572784640,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 608583680,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 644382720,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 680181760,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 715980800,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 751779840,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 787578880,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 823377920,
+              "center_hz": -60000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261002_110436_137900000/decode-2",
+        "best_shift_hz": 60000,
+        "best_carrier_offset_hz": -60000,
+        "finished_at": "2026-10-05T17:35:07.821808+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.628959+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-3_20261002_223753_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261002_223753_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "useful",
+      "disposition": "PROTECTED",
+      "reason": "Useful channel products preserved, including historical/crash outputs",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 2.920165618321759,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1571291136,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": true,
+      "useful_image_count": 3,
+      "result_classification": "PARTIAL_SUCCESS",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:42:28.478511+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070891,
+          "bytes": 1571291136,
+          "modified_ns": 1790970645277834206
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [],
+        "error": "Nominal processing failed; preserve IQ and normal bounded retry behavior",
+        "finished_at": "2026-10-05T17:42:28.478739+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.663608+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-M2-3_20261003_122125_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261003_122125_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-04T09:34:51.298300+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 2.347874600034722,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1640759296,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:35:38.228646+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074876,
+          "bytes": 1640759296,
+          "modified_ns": 1791020091162439984
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_122125_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_122125_137900000/decode-2",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_122125_137900000/decode-3",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -60000,
+            -45000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 35667968,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 71335936,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 107003904,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 142671872,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 178339840,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 214007808,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 249675776,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 285343744,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 321011712,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 356679680,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 392347648,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 428015616,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 463683584,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 499351552,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 535019520,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 570687488,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 606355456,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 642023424,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 677691392,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 713359360,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 749027328,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 784695296,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 820363264,
+              "center_hz": -60000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_122125_137900000/decode-2",
+        "best_shift_hz": 60000,
+        "best_carrier_offset_hz": -60000,
+        "finished_at": "2026-10-05T17:36:40.497941+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.663743+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-3_20261003_203413_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_20261003_203413_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-04T17:47:30.338879+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 2.005756476284722,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1622409216,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:37:45.722981+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074918,
+          "bytes": 1622409216,
+          "modified_ns": 1791049650236668685
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_203413_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_203413_137900000/decode-2",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_203413_137900000/decode-3",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -60000,
+            -45000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -37500
+            },
+            {
+              "sample_start": 35269053,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 70538106,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 105807159,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 141076212,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 176345266,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 211614319,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 246883372,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 282152425,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 317421478,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 352690532,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 387959585,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 423228638,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 458497691,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 493766745,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 529035798,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 564304851,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 599573904,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 634842957,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 670112011,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 705381064,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 740650117,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 775919170,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 811188224,
+              "center_hz": -60000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-3_20261003_203413_137900000/decode-2",
+        "best_shift_hz": 60000,
+        "best_carrier_offset_hz": -60000,
+        "finished_at": "2026-10-05T17:38:47.421030+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.698430+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-3_manual_20260928_2112_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-3_manual_20260928_2112_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "pinned",
+      "disposition": "PROTECTED",
+      "reason": "Explicit manual decoder reference; incomplete capture metadata",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": null,
+      "pinned": false,
+      "explicitly_protected": true,
+      "raw_exists": true,
+      "raw_valid": false,
+      "raw_unchanged": true,
+      "raw_bytes": 99090432,
+      "capture_completed": false,
+      "capture_failed": true,
+      "decode_completed_cleanly": false,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": null,
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.733622+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-M2-4_20260929_051817_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260929_051817_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-09-30T02:32:04.012940+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 6.641478249699075,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 420741120,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:44:20.815317+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070834,
+          "bytes": 420741120,
+          "modified_ns": 1790649123808412437
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260929_051817_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260929_051817_137900000/decode-2",
+            "shift_hz": -7500,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260929_051817_137900000/decode-3",
+            "shift_hz": 7500,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            7500,
+            -7500
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": 57500
+            },
+            {
+              "sample_start": 9145833,
+              "center_hz": 57500
+            },
+            {
+              "sample_start": 18291667,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 27437501,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 36583334,
+              "center_hz": 7500
+            },
+            {
+              "sample_start": 45729168,
+              "center_hz": 5000
+            },
+            {
+              "sample_start": 54875002,
+              "center_hz": -10000
+            },
+            {
+              "sample_start": 64020836,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 73166669,
+              "center_hz": 7500
+            },
+            {
+              "sample_start": 82312503,
+              "center_hz": 35000
+            },
+            {
+              "sample_start": 91458337,
+              "center_hz": 40000
+            },
+            {
+              "sample_start": 100604171,
+              "center_hz": 42500
+            },
+            {
+              "sample_start": 109750004,
+              "center_hz": -5000
+            },
+            {
+              "sample_start": 118895838,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 128041672,
+              "center_hz": 52500
+            },
+            {
+              "sample_start": 137187506,
+              "center_hz": 42500
+            },
+            {
+              "sample_start": 146333339,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 155479173,
+              "center_hz": 47500
+            },
+            {
+              "sample_start": 164625007,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 173770841,
+              "center_hz": 42500
+            },
+            {
+              "sample_start": 182916674,
+              "center_hz": 0
+            },
+            {
+              "sample_start": 192062508,
+              "center_hz": 7500
+            },
+            {
+              "sample_start": 201208342,
+              "center_hz": 15000
+            },
+            {
+              "sample_start": 210354176,
+              "center_hz": 20000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260929_051817_137900000/decode-3",
+        "best_shift_hz": 7500,
+        "best_carrier_offset_hz": -7500,
+        "finished_at": "2026-10-05T17:45:06.505741+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.733714+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20260929_150958_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260929_150958_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "processing_failed",
+      "disposition": "DELETABLE",
+      "reason": "Expired failed capture contains zero IQ samples; history retained",
+      "deadline": "2026-09-30T12:26:46.953498+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 6.22848165318287,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": false,
+      "raw_unchanged": true,
+      "raw_bytes": 0,
+      "capture_completed": false,
+      "capture_failed": true,
+      "decode_completed_cleanly": false,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": null,
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.768333+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20260930_045637_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260930_045637_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T02:10:17.166257+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 5.656604192094908,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 416808960,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:46:36.953769+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074883,
+          "bytes": 416808960,
+          "modified_ns": 1790734217069546912
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_045637_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_045637_137900000/decode-2",
+            "shift_hz": -20000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_045637_137900000/decode-3",
+            "shift_hz": -35000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            20000,
+            35000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": 42500
+            },
+            {
+              "sample_start": 9060352,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 18120704,
+              "center_hz": 25000
+            },
+            {
+              "sample_start": 27181056,
+              "center_hz": 32500
+            },
+            {
+              "sample_start": 36241408,
+              "center_hz": 17500
+            },
+            {
+              "sample_start": 45301760,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 54362112,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 63422464,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 72482816,
+              "center_hz": 35000
+            },
+            {
+              "sample_start": 81543168,
+              "center_hz": 37500
+            },
+            {
+              "sample_start": 90603520,
+              "center_hz": 0
+            },
+            {
+              "sample_start": 99663872,
+              "center_hz": 12500
+            },
+            {
+              "sample_start": 108724224,
+              "center_hz": -2500
+            },
+            {
+              "sample_start": 117784576,
+              "center_hz": 0
+            },
+            {
+              "sample_start": 126844928,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 135905280,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 144965632,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 154025984,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 163086336,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 172146688,
+              "center_hz": 2500
+            },
+            {
+              "sample_start": 181207040,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 190267392,
+              "center_hz": 47500
+            },
+            {
+              "sample_start": 199327744,
+              "center_hz": 30000
+            },
+            {
+              "sample_start": 208388096,
+              "center_hz": 17500
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_045637_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:47:22.624188+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.768454+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20260930_144950_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20260930_144950_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-01T12:03:35.548907+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 5.244586272789352,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1679294464,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:27:50.548677+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074895,
+          "bytes": 1679294464,
+          "modified_ns": 1790769815416491285
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_144950_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_144950_137900000/decode-2",
+            "shift_hz": -22500,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_144950_137900000/decode-3",
+            "shift_hz": -37500,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            22500,
+            37500
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": 50000
+            },
+            {
+              "sample_start": 36505689,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 73011378,
+              "center_hz": 15000
+            },
+            {
+              "sample_start": 109517067,
+              "center_hz": 35000
+            },
+            {
+              "sample_start": 146022756,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 182528445,
+              "center_hz": 40000
+            },
+            {
+              "sample_start": 219034134,
+              "center_hz": 32500
+            },
+            {
+              "sample_start": 255539823,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 292045512,
+              "center_hz": 25000
+            },
+            {
+              "sample_start": 328551201,
+              "center_hz": 20000
+            },
+            {
+              "sample_start": 365056890,
+              "center_hz": 7500
+            },
+            {
+              "sample_start": 401562579,
+              "center_hz": 25000
+            },
+            {
+              "sample_start": 438068268,
+              "center_hz": 27500
+            },
+            {
+              "sample_start": 474573957,
+              "center_hz": -32500
+            },
+            {
+              "sample_start": 511079646,
+              "center_hz": 32500
+            },
+            {
+              "sample_start": 547585335,
+              "center_hz": 17500
+            },
+            {
+              "sample_start": 584091024,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 620596713,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 657102402,
+              "center_hz": 30000
+            },
+            {
+              "sample_start": 693608091,
+              "center_hz": 12500
+            },
+            {
+              "sample_start": 730113780,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 766619469,
+              "center_hz": 22500
+            },
+            {
+              "sample_start": 803125158,
+              "center_hz": 55000
+            },
+            {
+              "sample_start": 839630848,
+              "center_hz": 40000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20260930_144950_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:28:54.279537+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.802876+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20261001_043500_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261001_043500_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "processing_failed",
+      "disposition": "REVIEW",
+      "reason": "Decoder error or interrupted offset search needs review: selected returncode=139; Nominal processing failed; preserve IQ and normal bounded retry behavior",
+      "deadline": "2026-10-03T01:48:23.380900+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 4.671810842824074,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1634467840,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": true,
+      "useful_image_count": 0,
+      "result_classification": "EMPTY/FAILED",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:37:15.915120+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074887,
+          "bytes": 1634467840,
+          "modified_ns": 1790819303239754462
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [],
+        "error": "Nominal processing failed; preserve IQ and normal bounded retry behavior",
+        "finished_at": "2026-10-05T17:37:15.915420+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.837720+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-M2-4_20261001_142820_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261001_142820_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-02T11:41:53.417486+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 4.259657643449074,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1654915072,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:32:31.972399+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070796,
+          "bytes": 1654915072,
+          "modified_ns": 1790854913291705511
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_142820_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_142820_137900000/decode-2",
+            "shift_hz": 30000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_142820_137900000/decode-3",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -30000,
+            -45000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 35975702,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 71951404,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 107927106,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 143902809,
+              "center_hz": -27500
+            },
+            {
+              "sample_start": 179878511,
+              "center_hz": -17500
+            },
+            {
+              "sample_start": 215854213,
+              "center_hz": -35000
+            },
+            {
+              "sample_start": 251829915,
+              "center_hz": -35000
+            },
+            {
+              "sample_start": 287805618,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 323781320,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 359757022,
+              "center_hz": -10000
+            },
+            {
+              "sample_start": 395732724,
+              "center_hz": -15000
+            },
+            {
+              "sample_start": 431708427,
+              "center_hz": -20000
+            },
+            {
+              "sample_start": 467684129,
+              "center_hz": -32500
+            },
+            {
+              "sample_start": 503659831,
+              "center_hz": -25000
+            },
+            {
+              "sample_start": 539635533,
+              "center_hz": -32500
+            },
+            {
+              "sample_start": 575611236,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 611586938,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 647562640,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 683538342,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 719514045,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 755489747,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 791465449,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 827441152,
+              "center_hz": -47500
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_142820_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:33:34.646499+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.837880+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20261001_160849_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261001_160849_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-02T13:21:59.303656+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 4.190145480208334,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1607729152,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:39:17.849800+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070818,
+          "bytes": 1607729152,
+          "modified_ns": 1790860919170369064
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_160849_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_160849_137900000/decode-2",
+            "shift_hz": 22500,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_160849_137900000/decode-3",
+            "shift_hz": 37500,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -22500,
+            -37500
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -20000
+            },
+            {
+              "sample_start": 34949921,
+              "center_hz": -15000
+            },
+            {
+              "sample_start": 69899842,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 104849764,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 139799685,
+              "center_hz": -15000
+            },
+            {
+              "sample_start": 174749606,
+              "center_hz": -17500
+            },
+            {
+              "sample_start": 209699528,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 244649449,
+              "center_hz": -22500
+            },
+            {
+              "sample_start": 279599371,
+              "center_hz": -35000
+            },
+            {
+              "sample_start": 314549292,
+              "center_hz": -17500
+            },
+            {
+              "sample_start": 349499213,
+              "center_hz": -20000
+            },
+            {
+              "sample_start": 384449135,
+              "center_hz": -15000
+            },
+            {
+              "sample_start": 419399056,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 454348978,
+              "center_hz": -25000
+            },
+            {
+              "sample_start": 489298899,
+              "center_hz": -15000
+            },
+            {
+              "sample_start": 524248820,
+              "center_hz": -17500
+            },
+            {
+              "sample_start": 559198742,
+              "center_hz": -27500
+            },
+            {
+              "sample_start": 594148663,
+              "center_hz": -27500
+            },
+            {
+              "sample_start": 629098585,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 664048506,
+              "center_hz": -30000
+            },
+            {
+              "sample_start": 698998427,
+              "center_hz": -10000
+            },
+            {
+              "sample_start": 733948349,
+              "center_hz": -35000
+            },
+            {
+              "sample_start": 768898270,
+              "center_hz": -5000
+            },
+            {
+              "sample_start": 803848192,
+              "center_hz": -37500
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261001_160849_137900000/decode-1",
+        "best_shift_hz": 0,
+        "best_carrier_offset_hz": 0,
+        "finished_at": "2026-10-05T17:40:20.462491+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.873146+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20261002_041325_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261002_041325_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T01:26:19.391077+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 3.687135609803241,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1575223296,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:40:50.810110+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074877,
+          "bytes": 1575223296,
+          "modified_ns": 1790904379322722510
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_041325_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_041325_137900000/decode-2",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_041325_137900000/decode-3",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -60000,
+            -45000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 34243272,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 68486544,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 102729817,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 136973089,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 171216361,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 205459634,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 239702906,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 273946178,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 308189451,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 342432723,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 376675995,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 410919268,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 445162540,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 479405812,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 513649085,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 547892357,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 582135629,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 616378902,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 650622174,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 684865446,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 719108719,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 753351991,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 787595264,
+              "center_hz": -60000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_041325_137900000/decode-2",
+        "best_shift_hz": 60000,
+        "best_carrier_offset_hz": -60000,
+        "finished_at": "2026-10-05T17:41:51.999146+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.907764+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20261002_140657_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261002_140657_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T11:20:10.188006+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 3.274742529803241,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 402915328,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:49:14.925043+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074896,
+          "bytes": 402915328,
+          "modified_ns": 1790940009939925557
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_140657_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_140657_137900000/decode-2",
+            "shift_hz": 55000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_140657_137900000/decode-3",
+            "shift_hz": 40000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -55000,
+            -40000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 8758316,
+              "center_hz": -5000
+            },
+            {
+              "sample_start": 17516633,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 26274949,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 35033266,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 43791582,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 52549899,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 61308215,
+              "center_hz": -42500
+            },
+            {
+              "sample_start": 70066532,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 78824848,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 87583165,
+              "center_hz": 10000
+            },
+            {
+              "sample_start": 96341481,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 105099798,
+              "center_hz": -57500
+            },
+            {
+              "sample_start": 113858114,
+              "center_hz": -50000
+            },
+            {
+              "sample_start": 122616431,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 131374747,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 140133064,
+              "center_hz": -45000
+            },
+            {
+              "sample_start": 148891380,
+              "center_hz": -52500
+            },
+            {
+              "sample_start": 157649697,
+              "center_hz": 7500
+            },
+            {
+              "sample_start": 166408013,
+              "center_hz": -40000
+            },
+            {
+              "sample_start": 175166330,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 183924646,
+              "center_hz": -55000
+            },
+            {
+              "sample_start": 192682963,
+              "center_hz": -47500
+            },
+            {
+              "sample_start": 201441280,
+              "center_hz": -55000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_140657_137900000/decode-2",
+        "best_shift_hz": 55000,
+        "best_carrier_offset_hz": -55000,
+        "finished_at": "2026-10-05T17:49:59.629545+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.942581+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20261002_154649_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261002_154649_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "no_signal",
+      "disposition": "DELETABLE",
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images",
+      "deadline": "2026-10-03T13:00:23.201348+00:00",
+      "grace_anchor": "capture_completion",
+      "age_days": 3.2051478665625,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1657012224,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": true,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": "SIGNAL/UNUSABLE",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": true,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:30:58.846753+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2070539,
+          "bytes": 1657012224,
+          "modified_ns": 1790946023084316141
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_154649_137900000/decode-1",
+            "shift_hz": 0,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_154649_137900000/decode-2",
+            "shift_hz": 60000,
+            "returncode": 0,
+            "error": null,
+            "classification": "SIGNAL/UNUSABLE"
+          },
+          {
+            "output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_154649_137900000/decode-3",
+            "shift_hz": 45000,
+            "returncode": 0,
+            "error": null,
+            "classification": "EMPTY/FAILED"
+          }
+        ],
+        "survey": {
+          "method": "sampled_broadband_spectrum_v1",
+          "span_hz": 60000,
+          "windows": 24,
+          "fft_samples": 16384,
+          "candidate_carrier_offsets_hz": [
+            -60000,
+            -45000
+          ],
+          "windows_evidence": [
+            {
+              "sample_start": 0,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 36021292,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 72042585,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 108063877,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 144085170,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 180106462,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 216127755,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 252149047,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 288170340,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 324191632,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 360212925,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 396234217,
+              "center_hz": -7500
+            },
+            {
+              "sample_start": 432255510,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 468276802,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 504298095,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 540319387,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 576340680,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 612361972,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 648383265,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 684404557,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 720425850,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 756447142,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 792468435,
+              "center_hz": -60000
+            },
+            {
+              "sample_start": 828489728,
+              "center_hz": -60000
+            }
+          ],
+          "negative_result_verified": false,
+          "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+        },
+        "procedure_completed": true,
+        "decoder_identity": {
+          "/root/rf-watchkeeper/satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+          "/root/rf-watchkeeper/data/meteor-native-runtime.json": "1447954e850e49ab24c09aee3f369c0a579035b8239f142c14ccf8630fedbfc8"
+        },
+        "configuration": {
+          "pipeline": "meteor_m2-x_lrpt",
+          "extra": [
+            "--dc_block",
+            "--satellite_number",
+            "{satellite_number}"
+          ],
+          "frequency_evaluation": {
+            "span_hz": 60000,
+            "windows": 24,
+            "max_candidates": 2,
+            "budget_seconds": 300
+          }
+        },
+        "best_output": "/root/rf-watchkeeper/data/meteor-auto/retention-review/M2-4_20261002_154649_137900000/decode-2",
+        "best_shift_hz": 60000,
+        "best_carrier_offset_hz": -60000,
+        "finished_at": "2026-10-05T17:32:01.600436+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:47.977019+00:00",
+      "eligible": true
+    },
+    {
+      "id": "legacy-M2-4_20261003_053146_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261003_053146_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "useful",
+      "disposition": "PROTECTED",
+      "reason": "Useful channel products preserved, including historical/crash outputs",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 2.6321367812500003,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1679556608,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": true,
+      "useful_image_count": 3,
+      "result_classification": "PARTIAL_SUCCESS",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:27:19.717343+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074911,
+          "bytes": 1679556608,
+          "modified_ns": 1790995531271679931
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [],
+        "error": "Nominal processing failed; preserve IQ and normal bounded retry behavior",
+        "finished_at": "2026-10-05T17:27:19.717633+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:48.011908+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-M2-4_20261003_152459_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261003_152459_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "useful",
+      "disposition": "PROTECTED",
+      "reason": "Useful channel products preserved, including historical/crash outputs",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 2.2201698336458335,
+      "pinned": false,
+      "explicitly_protected": false,
+      "raw_exists": true,
+      "raw_valid": true,
+      "raw_unchanged": true,
+      "raw_bytes": 1681653760,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": true,
+      "useful_image_count": 3,
+      "result_classification": "PARTIAL_SUCCESS",
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {
+        "method": "nominal_then_spectrum_ranked_v1",
+        "completed": false,
+        "started_at": "2026-10-05T17:26:41.837657+00:00",
+        "input_fingerprint": {
+          "device": 2050,
+          "inode": 2074919,
+          "bytes": 1681653760,
+          "modified_ns": 1791031125242996671
+        },
+        "span_hz": 60000,
+        "negative_result_verified": false,
+        "verification": null,
+        "trials": [],
+        "error": "Nominal processing failed; preserve IQ and normal bounded retry behavior",
+        "finished_at": "2026-10-05T17:26:41.837977+00:00",
+        "limitation": "Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately"
+      },
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:48.012046+00:00",
+      "eligible": false
+    },
+    {
+      "id": "legacy-V4-VERIFY_20260930_193204_137900000",
+      "iq": "/root/rf-watchkeeper/recordings/satellite/V4-VERIFY_20260930_193204_137900000.cu8",
+      "schema_version": 2,
+      "retention_class": "pinned",
+      "disposition": "PROTECTED",
+      "reason": "Explicit V4 hardware verification/reference recording",
+      "deadline": null,
+      "grace_anchor": "capture_completion",
+      "age_days": 4.932750325706018,
+      "pinned": false,
+      "explicitly_protected": true,
+      "raw_exists": true,
+      "raw_valid": false,
+      "raw_unchanged": true,
+      "raw_bytes": 59506688,
+      "capture_completed": true,
+      "capture_failed": false,
+      "decode_completed_cleanly": false,
+      "decode_failed": false,
+      "useful_image_count": 0,
+      "result_classification": null,
+      "frequency_evaluation_completed": false,
+      "supported_procedure_completed": false,
+      "frequency_evaluation": {},
+      "raw_deleted": false,
+      "deletion": null,
+      "checked_at": "2026-10-05T17:55:48.012164+00:00",
+      "eligible": false
+    }
+  ],
+  "reclaimable_bytes": 19179241472,
+  "summary": {
+    "PROTECTED": {
+      "count": 9,
+      "bytes": 7986741248
+    },
+    "GRACE": {
+      "count": 2,
+      "bytes": 840171520
+    },
+    "DELETABLE": {
+      "count": 18,
+      "bytes": 19179241472
+    },
+    "REVIEW": {
+      "count": 2,
+      "bytes": 2033188864
+    }
+  }
+}

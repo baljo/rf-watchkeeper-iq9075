@@ -1,0 +1,27 @@
+{
+  "installed_at": "20261005T184114Z",
+  "backup": "/root/rf-watchkeeper/backups/airband-ops-20261005T184114Z",
+  "changed": [
+    "job_manager.py",
+    "atis_pipeline.py",
+    "atis_view.py",
+    "jobs-v4.jsonc",
+    "dashboard.py",
+    "dashboard.html",
+    "Helsinki.tzif"
+  ],
+  "protected_hashes": {
+    "meteor_pipeline.py": "4d1352f3d03465ad0314989a4e5263075588ba7569827d837ca1478ba43284f4",
+    "meteor_retention.py": "beb7c80fe684496a57cd506fd7cddb9ed5898dd982fd2392de1710fe23519f54",
+    "meteor_frequency.py": "ddd587ebb8a16ffad6a72b822014e06dd202b5531db4e05ad0fdd587d9ee3218",
+    "meteor_store.py": "97870ead99ece7564555d33ea9fb5bcdbbb5c8186c28ba9acb716542628aa136",
+    "satellite_capture.py": "4dd87d43fc144249ddeb8acb140dd4e34db8a8b364df71cd7901a6fcbd254699",
+    "satellite_schedule.py": "b56852952934cc710ed5d3ec6ff2b4aa066645f72f9922af08888b2c941c41cc",
+    "satellite_planner.py": "88037ad668563565d5cfe972fff73152d055aaabb06a4e0e4d060cb6ae66e7d1",
+    "satellite_v4_preflight.sh": "f2d13de5a07879fdd05f95778aa37ef2210c681b0ab644c6231502133a20182c",
+    "meteor-config.json": "a63e03ed3f1981f670c2a6ea992ce3ea43015b2ad57754450574940588c63762",
+    "rf-health-config.json": "73432b0680594df4c4249df962f825f8846b71ea160ddf3b450602f4509157a2",
+    "jobs-sensors.jsonc": "910893539a13278be6f9eee3fe843be3d75abf0ad74fb5887c770f062a88d4cf"
+  },
+  "protected_unchanged": true
+}

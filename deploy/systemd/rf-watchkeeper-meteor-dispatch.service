@@ -1,0 +1,11 @@
+# Claim due persisted passes without replacing existing manual timers; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR pass dispatcher
+After=time-sync.target rf-watchkeeper-meteor-recover.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/root/rf-watchkeeper/.satellite-venv/bin/python -u /root/rf-watchkeeper/meteor_pipeline.py dispatch
+TimeoutStartSec=120
+UMask=0077

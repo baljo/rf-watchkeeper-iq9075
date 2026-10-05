@@ -1,0 +1,11 @@
+# Run opt-in METEOR retention daily with persistent boot catch-up; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR retention timer
+
+[Timer]
+OnCalendar=*-*-* 02:00:00 UTC
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

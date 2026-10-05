@@ -1,0 +1,13 @@
+{
+  "receivers": {
+    "V4MAIN01": {"enabled": true, "required": true},
+    "43300001": {"enabled": false, "required": false}
+  },
+  "green_seconds": 900,
+  "red_seconds": 1800,
+  "prepass_seconds": 900,
+  "minimum_reboot_lead_seconds": 420,
+  "reboot_interval_seconds": 3600,
+  "allow_reboot": true,
+  "usb_recovery_command": null
+}

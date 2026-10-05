@@ -1,0 +1,2183 @@
+--- a/meteor_pipeline.py
++++ b/meteor_pipeline.py
+@@ -1,4 +1,4 @@
+-# Dispatch persisted METEOR passes and preserve claims through bounded reboot recovery; 2026-10-04 22:15 EEST, Thomas VikstrÃ¶m.
++# Dispatch persisted METEOR passes and preserve claims through bounded reboot recovery; 2026-10-04 22:15 EEST, Thomas Vikström.
+ import argparse
+ import contextlib
+ from datetime import datetime, timedelta, timezone
+@@ -16,6 +16,8 @@
+ import threading
+ import uuid
+ import meteor_store
++import meteor_retention
++import meteor_frequency
+ import meteor_recovery as recovery
+ from zoneinfo import ZoneInfo
+ 
+@@ -112,6 +114,12 @@
+             raise ValueError(name + ' must be an argv list')
+     if not c['satdump_command']:
+         raise ValueError('Empty SatDump command')
++    meteor_retention.settings(c)
++    f = c.get('frequency_evaluation', {})
++    for name, low, high in (('span_hz', 10000, 60000), ('windows', 8, 64), ('max_candidates', 1, 2), ('budget_seconds', 60, 1800)):
++        value = f.get(name, dict(span_hz=60000, windows=24, max_candidates=2, budget_seconds=300)[name])
++        if type(value) is not int or not low <= value <= high:
++            raise ValueError('Invalid frequency evaluation setting: ' + name)
+     return c
+ 
+ 
+@@ -369,6 +377,8 @@
+     if not c['enabled']:
+         return
+     synchronized()
++    if shutil.disk_usage(ROOT).free < meteor_retention.settings(c)['normal_free_gib'] * 1024**3:
++        cleanup(c, c.get('cleanup_enabled', False) and meteor_retention.settings(c)['automatic_deletion_validated'])
+     with lock('capture'):
+         selected = [p for p in plans()['passes'] if p['status'] == 'claimed']
+         if len(selected) != 1:
+@@ -493,8 +503,11 @@
+     return True
+ 
+ 
+-def decode(c, path, iq_override=None, output_override=None):
++def decode_once(c, path, iq_override=None, output_override=None, frequency_shift=None):
+     r = read(path)
++    if r.get('state') in ('capturing', 'external_decoding', 'reboot_recovery_pending'):
++        raise RuntimeError('Active pass owner; decode deferred')
++    r.pop('selected_decode_output', None)
+     iq = Path(iq_override or r['iq'])
+     attempt = len(r.get('decode_attempts', [])) + 1
+     output = Path(output_override) if output_override else Path(path).parent / ('decode-' + str(attempt))
+@@ -519,6 +532,11 @@
+         if metadata.get('satellite', decode_pass['satellite']) != decode_pass['satellite']:
+             raise ValueError('Recording satellite mismatch')
+         argv = decode_argv(c, decode_pass, iq, output)
++        if frequency_shift is not None:
++            if '--freq_shift' in argv:
++                raise ValueError('Conflicting configured frequency shift')
++            argv += ['--freq_shift', str(int(frequency_shift))]
++        a['frequency_shift_hz'] = frequency_shift or 0
+         a['command'] = argv
+         save(path, r)
+         with (output / 'satdump.log').open('wb') as stream:
+@@ -538,6 +556,101 @@
+         event('decode_finished', id=r['pass']['id'], state=r['state'])
+ 
+ 
++def decode(c, path, iq_override=None, output_override=None):
++    started = time.monotonic()
++    decode_once(c, path, iq_override, output_override)
++    # Explicit imported/override experiments must not certify the managed original.
++    if iq_override or output_override:
++        return
++    try:
++        evaluate_frequency(c, path, started)
++    except (OSError, ValueError, KeyError, TypeError) as exc:
++        r = read(path)
++        r['frequency_evaluation'] = dict(completed=False, error=str(exc), finished_at=now().isoformat(), verification=None)
++        r['retention'] = meteor_retention.classify(r, c)
++        save(path, r)
++        meteor_retention.sync_db(ROOT, r)
++        event('frequency_evaluation_unverified', id=r['pass']['id'], error=str(exc))
++
++
++def evaluate_frequency(c, path, started=None):
++    """Nominal first, then at most two spectrum-ranked shifts. Negative is unverified."""
++    started = started or time.monotonic()
++    r = read(path)
++    if r.get('state') in ('capturing', 'external_decoding', 'reboot_recovery_pending'):
++        raise RuntimeError('Pass is actively owned; cannot search')
++    attempts = r.get('decode_attempts', [])
++    if not attempts:
++        raise ValueError('A normal decode is required before frequency evaluation')
++    iq = Path(r['iq'])
++    if not iq.is_file() or r.get('iq_fingerprint') != fingerprint(iq):
++        raise ValueError('Raw recording changed or missing; cannot certify evaluation')
++    f = dict(dict(span_hz=60000, windows=24, max_candidates=2, budget_seconds=300), **c.get('frequency_evaluation', {}))
++    evaluation = dict(method='nominal_then_spectrum_ranked_v1', completed=False,
++                      started_at=now().isoformat(), input_fingerprint=fingerprint(iq), span_hz=f['span_hz'],
++                      negative_result_verified=False, verification=None, trials=[])
++    # Do not repeat a useful decode that crashed: preserve diagnostics and indefinite retention.
++    trial_outputs = [attempts[-1]['output']]
++    best = attempts[-1]
++    try:
++        if best.get('returncode') != 0 or best.get('error') or best.get('metrics', {}).get('error'):
++            raise ValueError('Nominal processing failed; preserve IQ and normal bounded retry behavior')
++        if not meteor_frequency.useful(best['metrics']):
++            r['state'] = 'frequency_searching'
++            r['frequency_evaluation'] = evaluation
++            save(path, r)
++            rate = r.get('capture', {}).get('sample_rate_sps')
++            if type(rate) is not int:
++                raise ValueError('Recorded sample rate is required for offset survey')
++            evaluation['survey'] = meteor_frequency.survey(iq, rate, f['span_hz'], f['windows'], f['max_candidates'])
++            for carrier in evaluation['survey']['candidate_carrier_offsets_hz']:
++                remaining = f['budget_seconds'] - (time.monotonic() - started)
++                if remaining < 35:
++                    evaluation['error'] = 'Bounded search budget exhausted; retained'
++                    break
++                cc = dict(c, decode_timeout_seconds=min(c['decode_timeout_seconds'], int(remaining)))
++                decode_once(cc, path, frequency_shift=-carrier)
++                r = read(path)
++                trial = r['decode_attempts'][-1]
++                trial_outputs.append(trial['output'])
++                if meteor_frequency.rank(trial) > meteor_frequency.rank(best):
++                    best = trial
++                if meteor_frequency.useful(trial['metrics']):
++                    break
++                r['state'] = 'frequency_searching'
++                save(path, r)
++        r = read(path)
++        if fingerprint(iq) != evaluation['input_fingerprint']:
++            raise ValueError('IQ changed during evaluation')
++        trials = [a for a in r['decode_attempts'] if a['output'] in trial_outputs]
++        evaluation['trials'] = [dict(output=a['output'], shift_hz=a.get('frequency_shift_hz', 0),
++                                    returncode=a.get('returncode'), error=a.get('error'),
++                                    classification=a['metrics']['classification']) for a in trials]
++        clean = all(a.get('returncode') == 0 and a['metrics'].get('evaluation_clean') and not a.get('error') for a in trials)
++        evaluation.update(best_output=best['output'], best_shift_hz=best.get('frequency_shift_hz', 0),
++                          best_carrier_offset_hz=-best.get('frequency_shift_hz', 0),
++                          completed=bool(clean and meteor_frequency.useful(best['metrics'])),
++                          verification='validated_channel_product' if clean and meteor_frequency.useful(best['metrics']) else None)
++        # Keep real chronological attempt history. The selected result is separate.
++        r['selected_decode_output'] = best['output']
++        r['classification'] = best['metrics']['classification']
++        r['state'] = {'SUCCESS':'decoded_products', 'PARTIAL_SUCCESS':'decoded_with_satdump_crash', 'SIGNAL/UNUSABLE':'decoded_no_products', 'EMPTY/FAILED':'decode_failed'}[r['classification']]
++    except Exception as exc:
++        evaluation['error'] = str(exc)
++        r = read(path)
++        r['state'] = 'decode_failed'
++    finally:
++        evaluation['finished_at'] = now().isoformat()
++        if not evaluation['completed']:
++            evaluation['limitation'] = 'No verified negative conclusion: sparse survey is not an exhaustive offset search; retain original IQ'
++        r['frequency_evaluation'] = evaluation
++        r['retention'] = meteor_retention.classify(r, c)
++        save(path, r)
++        meteor_store.persist(r, best, ROOT / 'data/watchkeeper-meteor.db')
++        meteor_retention.sync_db(ROOT, r)
++        event('frequency_evaluation_finished', id=r['pass']['id'], completed=evaluation['completed'], best_shift_hz=evaluation.get('best_shift_hz'))
++
++
+ def process(c):
+     with lock('processing'):
+         if satellite_busy() or active(CAPTURE_SERVICE):
+@@ -557,10 +670,7 @@
+ 
+ 
+ def cleanup(c, apply=False):
+-    # Temporary hard interlock: no configuration change can authorize deletion.
+-    if apply:
+-        raise RuntimeError('Cleanup is disabled pending retention review; all IQ and images are retained')
+-    print(json.dumps(dict(cleanup_enabled=False, deletion_interlock=True)))
++    print(json.dumps(meteor_retention.cleanup(ROOT, c, apply), indent=2))
+ 
+ 
+ def status(c):
+@@ -646,7 +756,7 @@
+     parser = argparse.ArgumentParser(description='Conservative unattended METEOR milestone 1')
+     parser.add_argument('--root', type=Path, default=ROOT)
+     parser.add_argument('--config', type=Path)
+-    parser.add_argument('command', choices=['plan', 'dispatch', 'capture', 'recover', 'process', 'decode', 'cleanup', 'maintenance', 'status', 'worker-list', 'worker-claim', 'worker-result'])
++    parser.add_argument('command', choices=['plan', 'dispatch', 'capture', 'recover', 'process', 'decode', 'frequency-search', 'pin', 'unpin', 'retention-refresh', 'cleanup', 'maintenance', 'status', 'worker-list', 'worker-claim', 'worker-result'])
+     parser.add_argument('--dry-run', action='store_true')
+     parser.add_argument('--apply', action='store_true')
+     parser.add_argument('--record', type=Path)
+@@ -658,17 +768,28 @@
+     STATE = ROOT / 'data/meteor-auto'
+     try:
+         c = config(args.config or ROOT / 'meteor-config.json')
+-        if args.dry_run and args.command not in ('plan', 'worker-list'):
++        if args.dry_run and args.command not in ('plan', 'worker-list', 'cleanup'):
+             raise ValueError('--dry-run is supported only for plan and worker-list; use status or cleanup for inspection')
+         if args.apply and args.command != 'cleanup':
+             raise ValueError('--apply is supported only for cleanup')
++        if args.apply and args.dry_run:
++            raise ValueError('--apply and --dry-run are mutually exclusive')
+         if args.command == 'plan':
+             plan(c, args.dry_run)
+         elif args.command == 'cleanup':
+             cleanup(c, args.apply)
+         elif args.command == 'maintenance':
+-            if c['cleanup_enabled']:
+-                cleanup(c, True)
++            meteor_retention.refresh(ROOT, c)
++            cleanup(c, c['cleanup_enabled'] and meteor_retention.settings(c)['automatic_deletion_validated'])
++        elif args.command in ('pin', 'unpin'):
++            print(json.dumps(meteor_retention.pin(ROOT, c, args.id or '', args.command == 'pin')))
++        elif args.command == 'retention-refresh':
++            meteor_retention.refresh(ROOT, c)
++        elif args.command == 'frequency-search':
++            if not args.record:
++                raise ValueError('--record is required')
++            with lock('processing'):
++                evaluate_frequency(c, args.record)
+         elif args.command == 'worker-list':
+             worker_list(c, args.dry_run)
+         elif args.command == 'worker-claim':
+@@ -680,7 +801,8 @@
+         elif args.command == 'decode':
+             if not args.record:
+                 raise ValueError('--record is required')
+-            decode(c, args.record, args.iq, args.output)
++            with lock('processing'):
++                decode(c, args.record, args.iq, args.output)
+         else:
+             globals()[args.command](c) if args.command != 'recover' else recover()
+         return 0
+--- a/meteor_retention.py
++++ b/meteor_retention.py
+@@ -0,0 +1,283 @@
++"""Authoritative managed-pass retention. Raw IQ only; images are never removed."""
++import contextlib
++from datetime import datetime, timedelta, timezone
++import fcntl
++import json
++import math
++import os
++from pathlib import Path
++import re
++import shutil
++import sqlite3
++
++UTC = timezone.utc
++ACTIVE = {'capturing', 'decoding', 'external_decoding', 'frequency_searching', 'reboot_recovery_pending'}
++CLASSES = {'processing_failed', 'unverified', 'no_signal', 'poor', 'useful', 'excellent', 'pinned'}
++
++def instant(value):
++    t = datetime.fromisoformat(value.replace('Z', '+00:00'))
++    if t.tzinfo is None:
++        raise ValueError('Timezone required')
++    return t.astimezone(UTC)
++
++def settings(c):
++    v = c.get('retention', {})
++    defaults = dict(no_signal_hours=24, poor_hours=48, useful_hours=168,
++                    normal_free_gib=20, critical_free_gib=10, useful_min_lines=128,
++                    excellent_min_lines=2000, automatic_deletion_validated=False)
++    v = dict(defaults, **v)
++    for name in ('no_signal_hours', 'poor_hours', 'useful_hours', 'normal_free_gib', 'critical_free_gib', 'useful_min_lines', 'excellent_min_lines'):
++        if type(v[name]) not in (int, float) or not math.isfinite(v[name]) or v[name] <= 0:
++            raise ValueError('Invalid retention setting: ' + name)
++    if v['no_signal_hours'] < 24 or v['poor_hours'] < 48 or v['useful_hours'] < 168:
++        raise ValueError('Retention grace periods cannot be shortened below conservative minimums')
++    if v['normal_free_gib'] <= v['critical_free_gib'] or type(v['automatic_deletion_validated']) is not bool:
++        raise ValueError('Invalid disk thresholds or deletion validation flag')
++    return v
++
++def fingerprint(path):
++    s = path.stat()
++    return dict(device=s.st_dev, inode=s.st_ino, bytes=s.st_size, modified_ns=s.st_mtime_ns)
++
++def atomic(path, value):
++    path = Path(path)
++    temporary = path.with_name(path.name + '.retention-tmp')
++    with temporary.open('w') as stream:
++        json.dump(value, stream, indent=2)
++        stream.write('\n')
++        stream.flush()
++        os.fsync(stream.fileno())
++    temporary.replace(path)
++    fd = os.open(str(path.parent), os.O_DIRECTORY)
++    try:
++        os.fsync(fd)
++    finally:
++        os.close(fd)
++
++@contextlib.contextmanager
++def locks(root):
++    state = Path(root) / 'data/meteor-auto'
++    state.mkdir(parents=True, exist_ok=True)
++    with contextlib.ExitStack() as stack:
++        # Same global locks used by capture, processing and external-worker claims.
++        for name in ('capture', 'processing', 'retention'):
++            stream = stack.enter_context((state / (name + '.lock')).open('a'))
++            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        yield
++
++def classify(r, c, at=None):
++    at = at or datetime.now(UTC)
++    v = settings(c)
++    iq = Path(r['iq'])
++    raw = iq.is_file() and not iq.is_symlink()
++    m = r.get('capture', {})
++    attempts = r.get('decode_attempts', [])
++    a = next((a for a in attempts if a.get('output') == r.get('selected_decode_output')), attempts[-1] if attempts else {})
++    metrics = a.get('metrics', {})
++    images = metrics.get('images', [])
++    useful = [im for im in images if re.fullmatch(r'MSU-MR-[1-6]', im.get('product', ''))
++              and im.get('width', 0) >= 256 and im.get('height', 0) >= v['useful_min_lines']]
++    lines = max(metrics.get('channel_lines', {}).values(), default=0)
++    size = iq.stat().st_size if raw else 0
++    try:
++        expected = (instant(r['pass']['record_stop']) - instant(r['pass']['record_start'])).total_seconds() * m.get('sample_rate_sps', r['pass'].get('sample_rate', 0)) * 2
++    except (KeyError, TypeError, ValueError):
++        expected = 0
++    valid = raw and size > 0 and size % 2 == 0 and size == r.get('captured_iq_bytes') and expected > 0 and size >= expected * .95
++    unchanged = valid and r.get('iq_fingerprint') == fingerprint(iq)
++    capture_ok = m.get('status') == 'completed' and r.get('capture_returncode', 0) == 0
++    evaluation = r.get('frequency_evaluation', {})
++    verified = (evaluation.get('completed') is True and
++                evaluation.get('input_fingerprint') == r.get('iq_fingerprint') and
++                evaluation.get('best_output') == a.get('output') and not evaluation.get('error') and
++                evaluation.get('verification') in ('validated_channel_product', 'exhaustive_verified_search'))
++    clean = (a.get('returncode') == 0 and not a.get('error') and not metrics.get('error')
++             and metrics.get('evaluation_clean') is True and bool(a.get('finished_at')))
++    retention_class, reason = 'unverified', 'Historical or incomplete frequency evaluation; retained'
++    if r.get('pinned') is True:
++        retention_class, reason = 'pinned', 'Manual Keep protection'
++    elif r.get('state') in ACTIVE:
++        reason = 'Capture/decoder/search/worker currently owns this pass'
++    elif not capture_ok or (a and (a.get('returncode') != 0 or a.get('error') or metrics.get('error') or metrics.get('evaluation_errors'))) or any(t.get('returncode') != 0 or t.get('error') for t in evaluation.get('trials', [])):
++        retention_class, reason = 'processing_failed', 'Processing or capture failed; retained indefinitely'
++    elif unchanged and clean and verified:
++        if useful and lines >= v['excellent_min_lines']:
++            retention_class, reason = 'excellent', 'Substantial verified channel products; retained indefinitely'
++        elif useful and lines >= v['useful_min_lines']:
++            retention_class, reason = 'useful', 'Clean decode with validated channel products'
++        elif lines > 0 or images:
++            retention_class, reason = 'poor', 'Clean evaluated partial reception'
++        elif evaluation.get('verification') == 'exhaustive_verified_search':
++            retention_class, reason = 'no_signal', 'Clean normal decode and verified full offset search; no products'
++    deadline = None
++    if retention_class in ('no_signal', 'poor', 'useful'):
++        # The latest completed evaluation starts the grace period, never file mtime.
++        evaluated = max(instant(a['finished_at']), instant(evaluation['finished_at']))
++        deadline = (evaluated + timedelta(hours=v[retention_class + '_hours'])).isoformat()
++    deleted = r.get('retention', {}).get('deletion')
++    if deleted:
++        retention_class = deleted['classification']
++        reason = deleted['reason']
++        deadline = r['retention'].get('deadline')
++    return dict(schema_version=1, retention_class=retention_class, reason=reason,
++                deadline=deadline, pinned=r.get('pinned') is True, raw_exists=raw,
++                raw_valid=valid, raw_unchanged=unchanged, raw_bytes=size,
++                capture_completed=capture_ok, capture_failed=not capture_ok,
++                decode_completed_cleanly=clean, decode_failed=bool(a) and not clean,
++                useful_image_count=len(useful), result_classification=metrics.get('classification'),
++                frequency_evaluation_completed=verified, frequency_evaluation=evaluation,
++                raw_deleted=bool(deleted), deletion=deleted, checked_at=at.isoformat(),
++                eligible=bool(not deleted and raw and unchanged and capture_ok and clean and verified
++                              and deadline and at >= instant(deadline) and r.get('state') not in ACTIVE
++                              and r.get('owner') == 'meteor-auto-v1' and not r.get('pinned')))
++
++def sync_db(root, r):
++    """Merge retention into existing JSON metadata; preserve history and images."""
++    db = Path(root) / 'data/watchkeeper-meteor.db'
++    if not db.exists():
++        return
++    with sqlite3.connect(str(db), timeout=10) as conn:
++        row = conn.execute('SELECT metadata FROM meteor_passes WHERE pass_id=?', (r['pass']['id'],)).fetchone()
++        if row:
++            metadata = json.loads(row[0])
++            metadata.update(retention=r['retention'], pinned=r.get('pinned', False),
++                            frequency_evaluation=r.get('frequency_evaluation'))
++            metadata['raw_iq_state'] = 'deleted' if r['retention']['raw_deleted'] else 'retained' if r['retention']['raw_exists'] else 'missing'
++            conn.execute('UPDATE meteor_passes SET metadata=? WHERE pass_id=?', (json.dumps(metadata), r['pass']['id']))
++
++def open_elsewhere(iq):
++    """Fail closed on unreadable /proc. Includes container processes on host."""
++    s = iq.stat()
++    for proc in Path('/proc').glob('[0-9]*'):
++        if proc.name == str(os.getpid()):
++            continue
++        try:
++            handles = list((proc / 'fd').iterdir())
++        except FileNotFoundError:
++            continue
++        except OSError:
++            return True
++        for handle in handles:
++            try:
++                f = handle.stat()
++                if (f.st_dev, f.st_ino) == (s.st_dev, s.st_ino):
++                    return True
++            except FileNotFoundError:
++                continue
++            except PermissionError:
++                return True
++    return False
++
++def audit(root, entry):
++    p = Path(root) / 'data/meteor-auto/retention-events.jsonl'
++    with p.open('a') as stream:
++        stream.write(json.dumps(entry) + '\n')
++        stream.flush()
++        os.fsync(stream.fileno())
++
++def cleanup(root, c, apply=False, free_gib=None):
++    root = Path(root)
++    v = settings(c)
++    enabled = c.get('cleanup_enabled') is True and v['automatic_deletion_validated']
++    if apply and not enabled:
++        raise RuntimeError('Deletion remains disabled: cleanup_enabled and validated evaluation are both required')
++    with locks(root):
++        free = shutil.disk_usage(root).free / 1024**3 if free_gib is None else free_gib
++        pressure = 'critical' if free < v['critical_free_gib'] else 'low' if free < v['normal_free_gib'] else 'normal'
++        rows, candidates = [], []
++        for path in sorted((root / 'data/meteor-auto/passes').glob('*/pass.json')):
++            try:
++                r = json.loads(path.read_text())
++                state = classify(r, c)
++                rows.append(dict(id=r['pass']['id'], iq=r['iq'], **state))
++                if state['eligible']:
++                    candidates.append((path, r, state))
++                # Dry-run is strictly read-only, including metadata.
++                if apply:
++                    r['retention'] = state
++                    atomic(path, r)
++                    sync_db(root, r)
++            except (OSError, ValueError, KeyError, TypeError) as exc:
++                rows.append(dict(record=str(path), eligible=False, error=str(exc)))
++        candidates.sort(key=lambda row: (0 if pressure == 'critical' and row[2]['retention_class'] in ('no_signal', 'poor') else 1,
++                                         row[1]['pass'].get('record_start', '')))
++        deleted = []
++        for path, r, state in candidates:
++            if not apply:
++                continue
++            iq = Path(r['iq'])
++            allowed = root / 'recordings/satellite'
++            if iq.is_symlink() or iq.resolve().parent != allowed.resolve() or iq.suffix != '.cu8':
++                continue
++            with iq.open('rb') as stream:
++                try:
++                    fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
++                except BlockingIOError:
++                    continue
++                # Fresh metadata and inode checks under locks immediately before unlink.
++                r = json.loads(path.read_text())
++                state = classify(r, c)
++                if not state['eligible'] or open_elsewhere(iq):
++                    continue
++                f = os.fstat(stream.fileno())
++                if (f.st_dev, f.st_ino, f.st_size, f.st_mtime_ns) != (iq.stat().st_dev, iq.stat().st_ino, iq.stat().st_size, iq.stat().st_mtime_ns):
++                    continue
++                entry = dict(id=r['pass']['id'], raw_filename=str(iq), size=f.st_size,
++                             classification=state['retention_class'], reason='normal grace period expired; disk=' + pressure,
++                             timestamp=datetime.now(UTC).isoformat(), frequency_evaluation_completed=True,
++                             decode_result=state['result_classification'], image_count=state['useful_image_count'])
++                # Persist intent first; if unlink fails it cannot masquerade as deletion.
++                audit(root, dict(event='deletion_intent', **entry))
++                iq.unlink()
++                fd = os.open(str(iq.parent), os.O_DIRECTORY)
++                try:
++                    os.fsync(fd)
++                finally:
++                    os.close(fd)
++                state.update(deletion=entry, raw_deleted=True, raw_exists=False, eligible=False)
++                r['retention'] = state
++                atomic(path, r)
++                sync_db(root, r)
++                audit(root, dict(event='raw_deleted', **entry))
++                deleted.append(entry)
++        return dict(cleanup_enabled=enabled, dry_run=not apply, disk_free_gib=free, disk_pressure=pressure,
++                    warning='Disk critically low; protected recordings retained. New captures require reserve headroom.' if pressure == 'critical' else None,
++                    would_delete=[dict(id=r['pass']['id'], iq=r['iq'], reason=s['reason'], deadline=s['deadline'], bytes=s['raw_bytes']) for _, r, s in candidates],
++                    deleted=deleted, passes=rows)
++
++def refresh(root, c):
++    with locks(root):
++        for p in (Path(root) / 'data/meteor-auto/passes').glob('*/pass.json'):
++            r = json.loads(p.read_text())
++            if r.get('state') in ACTIVE:
++                continue
++            r['retention'] = classify(r, c)
++            atomic(p, r)
++            sync_db(root, r)
++
++def pin(root, c, pid, keep):
++    if not re.fullmatch(r'm2[34]-\d{8}T\d{6}Z', pid):
++        raise ValueError('Managed METEOR pass ID required')
++    with locks(root):
++        p = Path(root) / 'data/meteor-auto/passes' / pid / 'pass.json'
++        r = json.loads(p.read_text())
++        r.update(pinned=keep, pin_changed_at=datetime.now(UTC).isoformat())
++        r['retention'] = classify(r, c)
++        atomic(p, r)
++        sync_db(root, r)
++        audit(root, dict(event='pin' if keep else 'unpin', id=pid, timestamp=r['pin_changed_at']))
++        return r['retention']
++
++def dashboard(root, c, history):
++    by_id = {p['pass_id']: p for p in history}
++    for path in (Path(root) / 'data/meteor-auto/passes').glob('*/pass.json'):
++        r = json.loads(path.read_text())
++        p = r['pass']
++        row = by_id.setdefault(p['id'], dict(pass_id=p['id'], satellite=p['satellite'],
++            record_start=p.get('record_start'), sample_rate=p.get('sample_rate'), frequency=p.get('frequency'),
++            classification=r.get('classification', r.get('state')), images=[], channel_lines={}))
++        row.update(retention=classify(r, c), pinned=r.get('pinned', False), state=r.get('state'))
++    free = shutil.disk_usage(root).free / 1024**3
++    return dict(passes=sorted(by_id.values(), key=lambda p:p.get('record_start') or '', reverse=True),
++                cleanup_enabled=c.get('cleanup_enabled', False) and settings(c)['automatic_deletion_validated'],
++                disk_free_gib=round(free, 2), disk_warning=free < settings(c)['normal_free_gib'])
+--- a/meteor_frequency.py
++++ b/meteor_frequency.py
+@@ -0,0 +1,51 @@
++"""Bounded broad-band IQ survey; a negative spectrum is never deletion evidence."""
++from pathlib import Path
++
++def survey(iq, rate, span_hz=60000, windows=24, max_candidates=2):
++    import numpy as np
++    if not 0 < span_hz <= min(60000, rate / 2 - 54000):
++        raise ValueError('Frequency span would put the 108 kHz LRPT band outside captured IQ')
++    path = Path(iq)
++    count = path.stat().st_size // 2
++    n = 16384
++    if count < n or path.stat().st_size % 2:
++        raise ValueError('IQ too short or invalid for spectrum survey')
++    frequencies = np.fft.fftshift(np.fft.fftfreq(n, 1 / rate))
++    centers = np.arange(-span_hz, span_hz + 1, 2500, dtype=float)
++    evidence = []
++    with path.open('rb') as stream:
++        for start in np.linspace(0, count - n, windows).astype(int):
++            stream.seek(int(start) * 2)
++            raw = np.frombuffer(stream.read(n * 2), dtype=np.uint8).astype(np.float32).reshape(-1, 2)
++            z = (raw[:, 0] - 127.5) + 1j * (raw[:, 1] - 127.5)
++            z -= z.mean()
++            power = abs(np.fft.fftshift(np.fft.fft(z * np.hanning(n)))) ** 2
++            # Suppress narrow interferers; fit power over the expected wide LRPT band.
++            power = np.minimum(power, np.quantile(power, .97))
++            scores = [float(power[abs(frequencies - center) <= 48000].sum()) for center in centers]
++            evidence.append(dict(sample_start=int(start), center_hz=int(centers[int(np.argmax(scores))]), scores=scores))
++    ranked = np.argsort(np.asarray([w['scores'] for w in evidence]).mean(axis=0))[::-1]
++    offsets = []
++    for index in ranked:
++        center = int(centers[index])
++        if abs(center) < 7500 or any(abs(center - v) < 15000 for v in offsets):
++            continue
++        offsets.append(center)
++        if len(offsets) >= max_candidates:
++            break
++    return dict(method='sampled_broadband_spectrum_v1', span_hz=span_hz,
++                windows=windows, fft_samples=n, candidate_carrier_offsets_hz=offsets,
++                windows_evidence=[{k:v for k,v in w.items() if k != 'scores'} for w in evidence],
++                negative_result_verified=False,
++                limitation='Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified.')
++
++def useful(metrics, minimum=128):
++    import re
++    return any(re.fullmatch(r'MSU-MR-[1-6]', im.get('product', '')) and im['width'] >= 256 and im['height'] >= minimum
++               and metrics.get('channel_lines', {}).get(im['product'][-1], 0) >= minimum
++               for im in metrics.get('images', []))
++
++def rank(attempt):
++    m = attempt.get('metrics', {})
++    return (useful(m), attempt.get('returncode') == 0 and not attempt.get('error'),
++            max(m.get('channel_lines', {}).values(), default=0), len(m.get('images', [])), m.get('peak_snr') or 0)
+--- a/meteor_store.py
++++ b/meteor_store.py
+@@ -1,103 +1,103 @@
+-# Retain METEOR evidence and all image attempts while serving the newest version of each pass product; 2026-10-03 22:04:00 EEST, Thomas VikstrÃ¶m.
+-import json
+-from contextlib import contextmanager
+-from datetime import datetime, timezone
+-from pathlib import Path
+-import re
+-import sqlite3
+-import struct
++# Retain METEOR evidence and all image attempts while serving the newest version of each pass product; 2026-10-03 22:04:00 EEST, Thomas Vikström.
++import json
++from contextlib import contextmanager
++from datetime import datetime, timezone
++from pathlib import Path
++import re
++import sqlite3
++import struct
+ import zlib
+ from pass_conditions import recorded
+-
+-ROOT = Path(__file__).resolve().parent
+-DB = ROOT / 'data/watchkeeper-meteor.db'
+-PIPELINE = 'meteor_m2-x_lrpt'
+-
+-def stamp():
+-    return datetime.now(timezone.utc).isoformat()
+-
+-def png_info(path):
+-    """Validate complete PNG chunks, CRCs, inflate size and scanline filters."""
+-    data = Path(path).read_bytes()
+-    if len(data) > 64*1024*1024 or data[:8] != b'\x89PNG\r\n\x1a\n':
+-        raise ValueError('Invalid PNG')
+-    offset, compressed, header, ended = 8, bytearray(), None, False
+-    while offset + 12 <= len(data):
+-        size = struct.unpack('!I', data[offset:offset+4])[0]
+-        kind = data[offset+4:offset+8]
+-        payload = data[offset+8:offset+8+size]
+-        if offset+12+size > len(data):
+-            raise ValueError('Truncated PNG')
+-        crc = struct.unpack('!I', data[offset+8+size:offset+12+size])[0]
+-        if zlib.crc32(kind+payload) & 0xffffffff != crc:
+-            raise ValueError('PNG CRC mismatch')
+-        if header is None and kind != b'IHDR':
+-            raise ValueError('Missing PNG header')
+-        if kind == b'IHDR':
+-            if header is not None or size != 13:
+-                raise ValueError('Invalid PNG header')
+-            header = struct.unpack('!IIBBBBB', payload)
+-        elif kind == b'IDAT':
+-            compressed.extend(payload)
+-        elif kind == b'IEND':
+-            ended = size == 0 and offset+12 == len(data)
+-            break
+-        offset += size+12
+-    if not header or not ended:
+-        raise ValueError('Incomplete PNG')
+-    w,h,depth,color,compression,filters,interlace = header
+-    channels = {0:1,2:3,3:1,4:2,6:4}.get(color)
+-    if not channels or depth not in (8,16) or color == 3 or compression or filters or interlace or not (1 <= w <= 16000 and 1 <= h <= 16000):
+-        raise ValueError('Unsupported or invalid PNG layout')
+-    stride = 1+(w*channels*depth+7)//8
+-    expected = stride*h
+-    if expected > 128*1024*1024:
+-        raise ValueError('PNG too large')
+-    decoder = zlib.decompressobj()
+-    raw = decoder.decompress(bytes(compressed), expected+1)
+-    if len(raw) != expected or not decoder.eof or decoder.unused_data or any(raw[i] > 4 for i in range(0,len(raw),stride)):
+-        raise ValueError('Invalid PNG pixels')
+-    return w,h
+-
+-def inspect_output(output, returncode=0, error=None, known_lines=None):
+-    output = Path(output)
+-    lines = {str(i):0 for i in range(1,7)}
+-    log = ''
+-    for name in ('satdump.log','decode.log'):
+-        p = output/name
+-        if p.is_file():
+-            with p.open('rb') as stream:
+-                stream.seek(max(0,p.stat().st_size-8*1024*1024))
+-                log += stream.read().decode('utf-8','replace')
+-    log = re.sub(r'\x1b\[[0-9;]*m','',log)
+-    # Accept both observed SatDump channel-line log layouts; 2026-10-03 21:56:00 EEST, Thomas VikstrÃ¶m.
+-    for channel,before,after in re.findall(r'Channel\s+([1-6])(?:\s+Lines\s*:\s*(\d+)|\s*:\s*(\d+)\s+lines)',log,re.I):
+-        lines[channel] = max(lines[channel],int(before or after))
+-    source = 'decoder_log'
+-    images=[]
+-    if output.is_dir():
+-        for p in sorted(output.rglob('*.png')):
+-            if p.is_symlink() or output.resolve() not in p.resolve().parents or 'MSU-MR' not in p.name and 'msu_mr' not in p.name:
+-                continue
+-            try:
+-                width,height=png_info(p)
+-            except (OSError,ValueError,zlib.error,struct.error):
+-                continue
+-            channel=re.fullmatch(r'MSU-MR-([1-6])\.png',p.name)
+-            if channel and not lines[channel[1]]:
+-                lines[channel[1]]=height
+-                source='decoder_log_or_native_channel_png_height'
+-            rank = 0 if '124' in p.name and 'corrected' in p.name else 1 if 'corrected' in p.name else 2 if 'rgb' in p.name else 3
+-            images.append(dict(path=str(p.resolve()),product=p.stem,width=width,height=height,rank=rank,created_at=stamp()))
+-    if known_lines:
+-        lines.update({str(k):int(v) for k,v in known_lines.items()})
+-        source='manual_positive_regression'
+-    invalid=bool(re.search(r'(invalid|unknown|not found|does not exist).*pipeline|pipeline.*(invalid|unknown|not found|does not exist)|unrecognized (argument|option)|EVK SatDump:|time limit reached',log,re.I))
+-    snrs=[]
+-    for value in re.findall(r'\bSNR\s*[:=]\s*(-?\d+(?:\.\d+)?)',log,re.I):
+-        snrs.append(float(value))
+-    activity=any(lines.values()) or bool(re.search(r'(?:deframer|viterbi).*\b(?:locked|synced)\b',log,re.I)) or any(v>0 for v in snrs)
+-    # Recognize substantial validated products after SIGSEGV; 2026-10-05 13:55 EEST, Thomas VikstrÃ¶m.
++
++ROOT = Path(__file__).resolve().parent
++DB = ROOT / 'data/watchkeeper-meteor.db'
++PIPELINE = 'meteor_m2-x_lrpt'
++
++def stamp():
++    return datetime.now(timezone.utc).isoformat()
++
++def png_info(path):
++    """Validate complete PNG chunks, CRCs, inflate size and scanline filters."""
++    data = Path(path).read_bytes()
++    if len(data) > 64*1024*1024 or data[:8] != b'\x89PNG\r\n\x1a\n':
++        raise ValueError('Invalid PNG')
++    offset, compressed, header, ended = 8, bytearray(), None, False
++    while offset + 12 <= len(data):
++        size = struct.unpack('!I', data[offset:offset+4])[0]
++        kind = data[offset+4:offset+8]
++        payload = data[offset+8:offset+8+size]
++        if offset+12+size > len(data):
++            raise ValueError('Truncated PNG')
++        crc = struct.unpack('!I', data[offset+8+size:offset+12+size])[0]
++        if zlib.crc32(kind+payload) & 0xffffffff != crc:
++            raise ValueError('PNG CRC mismatch')
++        if header is None and kind != b'IHDR':
++            raise ValueError('Missing PNG header')
++        if kind == b'IHDR':
++            if header is not None or size != 13:
++                raise ValueError('Invalid PNG header')
++            header = struct.unpack('!IIBBBBB', payload)
++        elif kind == b'IDAT':
++            compressed.extend(payload)
++        elif kind == b'IEND':
++            ended = size == 0 and offset+12 == len(data)
++            break
++        offset += size+12
++    if not header or not ended:
++        raise ValueError('Incomplete PNG')
++    w,h,depth,color,compression,filters,interlace = header
++    channels = {0:1,2:3,3:1,4:2,6:4}.get(color)
++    if not channels or depth not in (8,16) or color == 3 or compression or filters or interlace or not (1 <= w <= 16000 and 1 <= h <= 16000):
++        raise ValueError('Unsupported or invalid PNG layout')
++    stride = 1+(w*channels*depth+7)//8
++    expected = stride*h
++    if expected > 128*1024*1024:
++        raise ValueError('PNG too large')
++    decoder = zlib.decompressobj()
++    raw = decoder.decompress(bytes(compressed), expected+1)
++    if len(raw) != expected or not decoder.eof or decoder.unused_data or any(raw[i] > 4 for i in range(0,len(raw),stride)):
++        raise ValueError('Invalid PNG pixels')
++    return w,h
++
++def inspect_output(output, returncode=0, error=None, known_lines=None):
++    output = Path(output)
++    lines = {str(i):0 for i in range(1,7)}
++    log = ''
++    for name in ('satdump.log','decode.log'):
++        p = output/name
++        if p.is_file():
++            with p.open('rb') as stream:
++                stream.seek(max(0,p.stat().st_size-8*1024*1024))
++                log += stream.read().decode('utf-8','replace')
++    log = re.sub(r'\x1b\[[0-9;]*m','',log)
++    # Accept both observed SatDump channel-line log layouts; 2026-10-03 21:56:00 EEST, Thomas Vikström.
++    for channel,before,after in re.findall(r'Channel\s+([1-6])(?:\s+Lines\s*:\s*(\d+)|\s*:\s*(\d+)\s+lines)',log,re.I):
++        lines[channel] = max(lines[channel],int(before or after))
++    source = 'decoder_log'
++    images=[]
++    if output.is_dir():
++        for p in sorted(output.rglob('*.png')):
++            if p.is_symlink() or output.resolve() not in p.resolve().parents or 'MSU-MR' not in p.name and 'msu_mr' not in p.name:
++                continue
++            try:
++                width,height=png_info(p)
++            except (OSError,ValueError,zlib.error,struct.error):
++                continue
++            channel=re.fullmatch(r'MSU-MR-([1-6])\.png',p.name)
++            if channel and not lines[channel[1]]:
++                lines[channel[1]]=height
++                source='decoder_log_or_native_channel_png_height'
++            rank = 0 if '124' in p.name and 'corrected' in p.name else 1 if 'corrected' in p.name else 2 if 'rgb' in p.name else 3
++            images.append(dict(path=str(p.resolve()),product=p.stem,width=width,height=height,rank=rank,created_at=stamp()))
++    if known_lines:
++        lines.update({str(k):int(v) for k,v in known_lines.items()})
++        source='manual_positive_regression'
++    invalid=bool(re.search(r'(invalid|unknown|not found|does not exist).*pipeline|pipeline.*(invalid|unknown|not found|does not exist)|unrecognized (argument|option)|EVK SatDump:|time limit reached',log,re.I))
++    snrs=[]
++    for value in re.findall(r'\bSNR\s*[:=]\s*(-?\d+(?:\.\d+)?)',log,re.I):
++        snrs.append(float(value))
++    activity=any(lines.values()) or bool(re.search(r'(?:deframer|viterbi).*\b(?:locked|synced)\b',log,re.I)) or any(v>0 for v in snrs)
++    # Recognize substantial validated products after SIGSEGV; 2026-10-05 13:55 EEST, Thomas Vikström.
+     crash = 'SIGSEGV' if returncode in (139, -11) else None
+     useful = any(im['width'] >= 256 and im['height'] >= 128 and
+                  lines.get(im['product'].removeprefix('MSU-MR-'), 0) >= 128
+@@ -106,51 +106,57 @@
+                       'EMPTY/FAILED' if error or returncode != 0 or invalid else
+                       'SUCCESS' if any(lines.values()) and images else
+                       'SIGNAL/UNUSABLE' if activity else 'EMPTY/FAILED')
+-    statuses = re.findall(r'(?:viterbi|deframer)[^\r\n]{0,160}',log,re.I)
++    statuses = re.findall(r'(?:viterbi|deframer)[^\r\n]{0,160}',log,re.I)
++    stages_complete = 'Demodulation finished' in log and 'Done! Goodbye' in log
++    explicit_error = bool(re.search(r'\[error\]|\[critical\]|\(E\)|\(C\)|\bfatal\b|Segmentation fault', log, re.I))
++    evaluation_errors = [line[-600:] for line in log.splitlines() if re.search(r'\[error\]|\[critical\]|\(E\)|\(C\)|\bfatal\b|Segmentation fault', line, re.I)][-20:]
+     return dict(classification=classification,channel_lines=lines,line_count_source=source,images=images,
++                evaluation_clean=returncode == 0 and not error and not invalid and not explicit_error and stages_complete,
++                evaluation_errors=evaluation_errors,
+                 peak_snr=max(snrs) if snrs else None,decoder_activity=statuses[-10:],error=error,returncode=returncode,
+                 satdump_crash=crash)
+-
+-@contextmanager
+-def connect(db=DB):
+-    Path(db).parent.mkdir(parents=True,exist_ok=True)
+-    c=sqlite3.connect(str(db),timeout=5)
+-    c.execute('PRAGMA foreign_keys=ON')
+-    c.executescript('''CREATE TABLE IF NOT EXISTS meteor_passes (
+-      pass_id TEXT PRIMARY KEY, satellite TEXT NOT NULL, record_start TEXT,
+-      status TEXT NOT NULL, processed_at TEXT NOT NULL, metadata TEXT NOT NULL);
+-      CREATE TABLE IF NOT EXISTS meteor_images (
+-      id INTEGER PRIMARY KEY, pass_id TEXT NOT NULL REFERENCES meteor_passes(pass_id),
+-      product TEXT NOT NULL, path TEXT NOT NULL, width INTEGER, height INTEGER,
+-      rank INTEGER NOT NULL, created_at TEXT NOT NULL, UNIQUE(pass_id,path));
+-      CREATE INDEX IF NOT EXISTS meteor_pass_time ON meteor_passes(record_start);''')
+-    try:
+-        with c:
+-            yield c
+-    finally:
+-        c.close()
+-
+-def persist(record,attempt,db=DB):
+-    p=record['pass']; m=record.get('capture',{})
+-    result=attempt['metrics']; pid=p['id']
+-    metadata=dict(pass_id=pid,satellite=p['satellite'],pass_start=m.get('pass_start_10deg',p.get('start')),
+-      pass_stop=m.get('pass_stop_10deg',p.get('stop')),record_start=m.get('record_start',p.get('record_start')),
+-      peak_elevation=p.get('peak_deg'),peak_azimuth=p.get('peak_azimuth'),iq_filename=Path(record['iq']).name,
+-      sample_rate=m.get('sample_rate_sps',p.get('sample_rate')),frequency=m.get('frequency_hz',p.get('frequency')),
+-      pipeline=PIPELINE,processing_timestamp=attempt['finished_at'],raw_iq_state='retained' if Path(record['iq']).is_file() else 'missing',
+-      **{k:result[k] for k in ('classification','channel_lines','line_count_source','peak_snr','decoder_activity','error','returncode')})
+-    # Store historical provenance alongside the existing pass metadata; 2026-10-03 21:25:52 EEST, Thomas VikstrÃ¶m.
+-    recording = Path(m.get('recording_path', record['iq']))
+-    metadata.update(source=m.get('source', 'automatic_evk'), receiver=m.get('receiver', 'RTL-SDR'),
+-      capture_host=m.get('capture_host', 'Dragonwing IQ-9075 EVK'), capture_mode=m.get('capture_mode', 'automatic'),
+-      reference=bool(m.get('reference', False)), input_format=m.get('input_format', 'cu8'),
+-      start_time=metadata['record_start'], end_time=m.get('record_stop', p.get('stop')),
+-      center_frequency=metadata['frequency'], recording_path=str(recording), notes=m.get('notes', ''),
++
++@contextmanager
++def connect(db=DB):
++    Path(db).parent.mkdir(parents=True,exist_ok=True)
++    c=sqlite3.connect(str(db),timeout=5)
++    c.execute('PRAGMA foreign_keys=ON')
++    c.executescript('''CREATE TABLE IF NOT EXISTS meteor_passes (
++      pass_id TEXT PRIMARY KEY, satellite TEXT NOT NULL, record_start TEXT,
++      status TEXT NOT NULL, processed_at TEXT NOT NULL, metadata TEXT NOT NULL);
++      CREATE TABLE IF NOT EXISTS meteor_images (
++      id INTEGER PRIMARY KEY, pass_id TEXT NOT NULL REFERENCES meteor_passes(pass_id),
++      product TEXT NOT NULL, path TEXT NOT NULL, width INTEGER, height INTEGER,
++      rank INTEGER NOT NULL, created_at TEXT NOT NULL, UNIQUE(pass_id,path));
++      CREATE INDEX IF NOT EXISTS meteor_pass_time ON meteor_passes(record_start);''')
++    try:
++        with c:
++            yield c
++    finally:
++        c.close()
++
++def persist(record,attempt,db=DB):
++    p=record['pass']; m=record.get('capture',{})
++    result=attempt['metrics']; pid=p['id']
++    metadata=dict(pass_id=pid,satellite=p['satellite'],pass_start=m.get('pass_start_10deg',p.get('start')),
++      pass_stop=m.get('pass_stop_10deg',p.get('stop')),record_start=m.get('record_start',p.get('record_start')),
++      peak_elevation=p.get('peak_deg'),peak_azimuth=p.get('peak_azimuth'),iq_filename=Path(record['iq']).name,
++      sample_rate=m.get('sample_rate_sps',p.get('sample_rate')),frequency=m.get('frequency_hz',p.get('frequency')),
++      pipeline=PIPELINE,processing_timestamp=attempt['finished_at'],raw_iq_state='retained' if Path(record['iq']).is_file() else 'missing',
++      **{k:result[k] for k in ('classification','channel_lines','line_count_source','peak_snr','decoder_activity','error','returncode')})
++    # Store historical provenance alongside the existing pass metadata; 2026-10-03 21:25:52 EEST, Thomas Vikström.
++    recording = Path(m.get('recording_path', record['iq']))
++    metadata.update(source=m.get('source', 'automatic_evk'), receiver=m.get('receiver', 'RTL-SDR'),
++      capture_host=m.get('capture_host', 'Dragonwing IQ-9075 EVK'), capture_mode=m.get('capture_mode', 'automatic'),
++      reference=bool(m.get('reference', False)), input_format=m.get('input_format', 'cu8'),
++      start_time=metadata['record_start'], end_time=m.get('record_stop', p.get('stop')),
++      center_frequency=metadata['frequency'], recording_path=str(recording), notes=m.get('notes', ''),
+       processing_status=result['classification'], output_directory=attempt.get('output'), satdump_crash=result.get('satdump_crash'),
+-      original_sha256=m.get('original_sha256'), wav_properties=m.get('wav_properties'),
+-      baseband_handling=record.get('baseband_handling'), temporary_baseband=record.get('temporary_baseband'),
+-      import_processing=record.get('import_processing'),
+-      temporary_deleted=record.get('temporary_deleted'), raw_iq_state='retained' if recording.is_file() else 'missing')
++      original_sha256=m.get('original_sha256'), wav_properties=m.get('wav_properties'),
++      baseband_handling=record.get('baseband_handling'), temporary_baseband=record.get('temporary_baseband'),
++      import_processing=record.get('import_processing'), retention=record.get('retention'),
++      pinned=record.get('pinned', False), frequency_evaluation=record.get('frequency_evaluation'),
++      temporary_deleted=record.get('temporary_deleted'), raw_iq_state='retained' if recording.is_file() else 'missing')
+     with connect(db) as c:
+         # Keep saved geometry across decoder retries and partial metadata updates.
+         existing = c.execute('SELECT metadata FROM meteor_passes WHERE pass_id=?', (pid,)).fetchone()
+@@ -158,47 +164,47 @@
+         conditions.update(recorded(m, p))
+         metadata['conditions'] = conditions
+         c.execute('INSERT INTO meteor_passes VALUES (?,?,?,?,?,?) ON CONFLICT(pass_id) DO UPDATE SET status=excluded.status,processed_at=excluded.processed_at,metadata=excluded.metadata',
+-          (pid,p['satellite'],metadata['record_start'],result['classification'],attempt['finished_at'],json.dumps(metadata)))
+-        # Keep all previous products across retries; never remove disk images.
+-        for im in result['images']:
+-            c.execute('INSERT OR IGNORE INTO meteor_images(pass_id,product,path,width,height,rank,created_at) VALUES(?,?,?,?,?,?,?)',
+-              (pid,im['product'],im['path'],im['width'],im['height'],im['rank'],im['created_at']))
+-        metadata['image_count'] = c.execute('SELECT COUNT(*) FROM meteor_images WHERE pass_id=?', (pid,)).fetchone()[0]
+-        c.execute('UPDATE meteor_passes SET metadata=? WHERE pass_id=?', (json.dumps(metadata), pid))
+-
+-def history(db=DB):
+-    if not Path(db).is_file():
+-        return []
+-    c=sqlite3.connect(Path(db).resolve().as_uri()+'?mode=ro',uri=True,timeout=5)
+-    c.row_factory=sqlite3.Row
+-    try:
+-        passes=[]
+-        for row in c.execute('SELECT * FROM meteor_passes ORDER BY record_start DESC,pass_id DESC LIMIT 500'):
+-            p=json.loads(row['metadata'])
+-            # Normalize older automatic records without rewriting their evidence; 2026-10-03 21:25:52 EEST, Thomas VikstrÃ¶m.
+-            for key,value in dict(source='automatic_evk',receiver='RTL-SDR',capture_host='Dragonwing IQ-9075 EVK',capture_mode='automatic',reference=False).items():
+-                p.setdefault(key,value)
+-            # Prefer current products while retaining every earlier image row and file; 2026-10-03 22:04:00 EEST, Thomas VikstrÃ¶m.
+-            p['images']=[dict(id=i['id'],product=i['product'],width=i['width'],height=i['height'],url='/api/meteor/image/'+str(i['id'])) for i in c.execute('SELECT * FROM meteor_images WHERE pass_id=? AND id IN (SELECT MAX(id) FROM meteor_images WHERE pass_id=? GROUP BY product) ORDER BY rank,id',(row['pass_id'],row['pass_id']))]
+-            p['retained_image_count']=p.get('image_count',len(p['images']))
+-            p['image_count']=len(p['images'])
+-            passes.append(p)
+-        return passes
+-    finally:
+-        c.close()
+-
+-def image_file(image_id,root=ROOT,db=DB):
+-    if not re.fullmatch(r'[1-9]\d{0,9}',image_id):
+-        raise ValueError('Invalid image ID')
+-    c=sqlite3.connect(Path(db).resolve().as_uri()+'?mode=ro',uri=True,timeout=5)
+-    try:
+-        row=c.execute('SELECT path FROM meteor_images WHERE id=?',(int(image_id),)).fetchone()
+-    finally:
+-        c.close()
+-    if not row:
+-        raise ValueError('Unknown image')
+-    path=Path(row[0]); resolved=path.resolve(strict=True)
+-    if path.is_symlink() or (Path(root)/'data').resolve() not in resolved.parents or resolved.suffix != '.png' or resolved.stat().st_size>64*1024*1024:
+-        raise ValueError('Image outside permitted products')
+-    png_info(resolved)
+-    return resolved
++          (pid,p['satellite'],metadata['record_start'],result['classification'],attempt['finished_at'],json.dumps(metadata)))
++        # Keep all previous products across retries; never remove disk images.
++        for im in result['images']:
++            c.execute('INSERT OR IGNORE INTO meteor_images(pass_id,product,path,width,height,rank,created_at) VALUES(?,?,?,?,?,?,?)',
++              (pid,im['product'],im['path'],im['width'],im['height'],im['rank'],im['created_at']))
++        metadata['image_count'] = c.execute('SELECT COUNT(*) FROM meteor_images WHERE pass_id=?', (pid,)).fetchone()[0]
++        c.execute('UPDATE meteor_passes SET metadata=? WHERE pass_id=?', (json.dumps(metadata), pid))
++
++def history(db=DB):
++    if not Path(db).is_file():
++        return []
++    c=sqlite3.connect(Path(db).resolve().as_uri()+'?mode=ro',uri=True,timeout=5)
++    c.row_factory=sqlite3.Row
++    try:
++        passes=[]
++        for row in c.execute('SELECT * FROM meteor_passes ORDER BY record_start DESC,pass_id DESC LIMIT 500'):
++            p=json.loads(row['metadata'])
++            # Normalize older automatic records without rewriting their evidence; 2026-10-03 21:25:52 EEST, Thomas Vikström.
++            for key,value in dict(source='automatic_evk',receiver='RTL-SDR',capture_host='Dragonwing IQ-9075 EVK',capture_mode='automatic',reference=False).items():
++                p.setdefault(key,value)
++            # Prefer current products while retaining every earlier image row and file; 2026-10-03 22:04:00 EEST, Thomas Vikström.
++            p['images']=[dict(id=i['id'],product=i['product'],width=i['width'],height=i['height'],url='/api/meteor/image/'+str(i['id'])) for i in c.execute('SELECT * FROM meteor_images WHERE pass_id=? AND id IN (SELECT MAX(id) FROM meteor_images WHERE pass_id=? GROUP BY product) ORDER BY rank,id',(row['pass_id'],row['pass_id']))]
++            p['retained_image_count']=p.get('image_count',len(p['images']))
++            p['image_count']=len(p['images'])
++            passes.append(p)
++        return passes
++    finally:
++        c.close()
++
++def image_file(image_id,root=ROOT,db=DB):
++    if not re.fullmatch(r'[1-9]\d{0,9}',image_id):
++        raise ValueError('Invalid image ID')
++    c=sqlite3.connect(Path(db).resolve().as_uri()+'?mode=ro',uri=True,timeout=5)
++    try:
++        row=c.execute('SELECT path FROM meteor_images WHERE id=?',(int(image_id),)).fetchone()
++    finally:
++        c.close()
++    if not row:
++        raise ValueError('Unknown image')
++    path=Path(row[0]); resolved=path.resolve(strict=True)
++    if path.is_symlink() or (Path(root)/'data').resolve() not in resolved.parents or resolved.suffix != '.png' or resolved.stat().st_size>64*1024*1024:
++        raise ValueError('Image outside permitted products')
++    png_info(resolved)
++    return resolved
+--- a/dashboard.py
++++ b/dashboard.py
+@@ -1,4 +1,4 @@
+-# Serve RF, AIS and historical METEOR imagery through explicit controlled image routes; 2026-10-03 EEST, Thomas VikstrÃ¶m.
++# Serve RF, AIS and historical METEOR imagery through explicit controlled image routes; 2026-10-03 EEST, Thomas Vikström.
+ """Standard-library LAN dashboard with one saved-audio job at a time."""
+ import argparse
+ from datetime import datetime, timezone
+@@ -14,6 +14,7 @@
+ import atis_view
+ import ais_store
+ import meteor_store
++import meteor_retention
+ import sqlite3
+ import subprocess
+ import threading
+@@ -176,7 +177,7 @@
+             "mode": "live",
+             "frequency_hz": None,
+             "heartbeat_age_seconds": ais_age,
+-            "detail": "AIS-catcher owns V4MAIN01 Â· dual-channel 161.975 / 162.025 MHz",
++            "detail": "AIS-catcher owns V4MAIN01 · dual-channel 161.975 / 162.025 MHz",
+         })
+     try:
+         nexus_history = rf_store.nexus_history(1000, db_path)
+@@ -272,6 +273,25 @@
+             pass
+ 
+     def do_POST(self):
++        if urlsplit(self.path).path == '/api/meteor/pin':
++            if not self.control_token or not secrets.compare_digest(self.headers.get('X-Watchkeeper-Token', ''), self.control_token):
++                return self.respond({'error': 'Refresh the dashboard before changing Keep protection.'}, status=403)
++            try:
++                if self.headers.get('Content-Type', '').split(';')[0] != 'application/json':
++                    return self.respond({'error': 'Expected JSON'}, status=415)
++                self.connection.settimeout(5)
++                length = int(self.headers.get('Content-Length', '0'))
++                if not 0 < length <= 4096:
++                    raise ValueError('Invalid request length')
++                request = json.loads(self.rfile.read(length))
++                if type(request.get('keep')) is not bool:
++                    raise ValueError('Boolean keep is required')
++                c = json.loads((ROOT / 'meteor-config.json').read_text())
++                return self.respond(meteor_retention.pin(ROOT, c, request.get('id', ''), request['keep']))
++            except BlockingIOError:
++                return self.respond({'error': 'Satellite operation active; retry shortly.'}, status=409)
++            except (OSError, ValueError, KeyError, TypeError, sqlite3.Error) as exc:
++                return self.respond({'error': str(exc)}, status=400)
+         if urlsplit(self.path).path != "/api/audio/run" or not self.workflow:
+             return self.respond({"error": "Unknown route"}, status=404)
+         if not self.control_token or not secrets.compare_digest(self.headers.get("X-Watchkeeper-Token", ""), self.control_token):
+@@ -302,7 +322,10 @@
+                 return self.respond({'error': 'Satellite schedule temporarily unavailable'}, status=503)
+         if route == "/api/meteor":
+             try:
+-                return self.respond({'passes': meteor_store.history(), 'cleanup_enabled': False})
++                c = json.loads((ROOT / 'meteor-config.json').read_text())
++                data = meteor_retention.dashboard(ROOT, c, meteor_store.history())
++                data['control_token'] = self.control_token
++                return self.respond(data)
+             except (OSError, ValueError, sqlite3.Error):
+                 return self.respond({'error':'Satellite history temporarily unavailable'}, status=503)
+         if route.startswith("/api/meteor/image/"):
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -1,4 +1,4 @@
+-<!-- Display RF, AIS and historical METEOR images with imported/reference provenance; 2026-10-03 21:25:52 EEST, Thomas VikstrÃ¶m. -->
++<!-- Display RF, AIS and historical METEOR images with imported/reference provenance; 2026-10-03 21:25:52 EEST, Thomas Vikström. -->
+ <!doctype html>
+ <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RF Watchkeeper</title>
+ <style>
+@@ -26,17 +26,17 @@
+ 
+ .pass-schedule{min-width:1040px}.pass-schedule th{text-align:center;background:#233447;color:#fff}.pass-schedule td{text-align:center}.pass-schedule .peak{font-weight:700}.pass-schedule tr.next-pass{background:#fff8bf}.pass-schedule small{display:block;white-space:normal;max-width:210px}.pass-schedule caption{text-align:left;color:var(--muted);font-size:14px;padding-bottom:12px}.pass-schedule .status{color:var(--accent);font-weight:650}
+ </style></head><body><main>
+-<header><div><div class="eyebrow">Dragonwing IQ-9075 EVK Â· Local RF observatory</div><h1>RF Watchkeeper</h1><div class="muted">Dual-SDR RF monitoring</div></div><div id="connection" class="pill">Connectingâ€¦</div></header>
+-<nav class="tabs" role="tablist" aria-label="Dashboard sections"><button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true" tabindex="0">Overview</button><button type="button" role="tab" id="tab-433" aria-controls="panel-433" aria-selected="false" tabindex="-1">433 MHz</button><button type="button" role="tab" id="tab-airband" aria-controls="panel-airband" aria-selected="false" tabindex="-1">Airband</button><button type="button" role="tab" id="tab-ais" aria-controls="panel-ais" aria-selected="false" tabindex="-1">AIS</button><button type="button" role="tab" id="tab-satellites" aria-controls="panel-satellites" aria-selected="false" tabindex="-1">Satellites</button><button type="button" role="tab" id="tab-system" aria-controls="panel-system" aria-selected="false" tabindex="-1">System / AI</button></nav><div id="notice" role="status"></div><p id="cached-notice" class="warn" role="status" hidden>Connection lost. All displayed readings and evidence are cached until the dashboard reconnects.</p><noscript>This dashboard requires JavaScript to load readings and switch sections.</noscript><section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0"><h2>Live overview</h2><section class="card section" aria-label="RF system health"><h2>RF system health</h2><div id="rf-health">Checking receiver healthâ€¦</div></section><br><div class="grid"><section class="card"><div class="label"><span id="primary-label">Primary receiver Â· V4MAIN01</span></div><div id="state" class="value">Unknown</div><div id="detail" class="meta">Waiting for V4 status</div></section><section class="card"><div class="label">V4 current RF job</div><div id="job" class="value">â€”</div><div id="frequency" class="meta">â€”</div><div id="operating-mode" class="meta">Waiting for scheduler</div></section><section class="card"><div class="label"><span id="sensor-label">433 MHz receiver Â· 43300001</span></div><div id="sensor-state" class="value">Unknown</div><div id="sensor-detail" class="meta">Waiting for FC0012 status</div></section></div>
+-
+-<div class="grid section"><section class="card"><div class="label">Latest 433 MHz detection</div><div id="overview-sensor" class="value">Waiting for statusâ€¦</div><div id="overview-sensor-detail" class="meta"></div></section><section class="card"><div class="label">AIS reception</div><div id="overview-ais" class="value">Waiting for statusâ€¦</div><div id="overview-ais-detail" class="meta"></div></section><section class="card"><div class="label">Saved-audio job Â· replay</div><div id="overview-audio" class="value">Waiting for statusâ€¦</div><div id="overview-audio-detail" class="meta"></div></section></div><div class="grid section"><section class="card"><div class="label">ASR accelerator evidence</div><div id="overview-accelerator" class="value">Waiting for statusâ€¦</div><div id="overview-accelerator-detail" class="meta"></div></section><section class="card"><div class="label">CPU / NPU / DSP utilization</div><div id="overview-utilization" class="value">Not available</div><div id="overview-utilization-detail" class="meta"></div></section><section class="card"><div class="label">Dashboard status</div><div id="overview-system" class="value">Waiting for statusâ€¦</div><div id="overview-system-detail" class="meta"></div></section></div><section class="card section"><div class="split"><h2>Recent events</h2><small>Live updates Â· every 2 seconds</small></div><ul id="feed" class="feed"><li>Waiting for normalized eventsâ€¦</li></ul></section>
+-</section><section id="panel-433" role="tabpanel" aria-labelledby="tab-433" tabindex="0" hidden><h2>433 MHz sensors</h2><section class="section"><div class="split"><h2>Latest Nexus-TH observation</h2><span id="device" class="muted">No sensor yet</span></div><div class="grid"><div class="card"><div class="label">Temperature</div><div id="temperature" class="value hero">â€”</div></div><div class="card"><div class="label">Relative humidity</div><div id="humidity" class="value hero">â€”</div></div><div class="card"><div class="label">Battery / channel</div><div id="battery" class="value">â€”</div><div id="channel" class="meta">Channel â€”</div></div></div><div class="meta"><span id="age">No event received</span> Â· <span id="timestamp">â€”</span></div></section>
+-<section class="card section"><h2>Nexus history</h2><div class="chart-controls"><label>Sensor<select id="chart-sensor" aria-label="Chart sensor"></select></label><label>Period<select id="chart-period"><option value="1">Last hour</option><option value="6">Last 6 hours</option><option value="24" selected>24 h</option><option value="168">7 d</option><option value="720">30 d</option><option value="all">All history</option></select></label></div><div class="plots"><div><div class="chart-title">Temperature Â· Â°C</div><svg id="temperature-chart" class="plot" viewBox="0 0 500 245" role="img" aria-label="Nexus temperature history"></svg></div><div><div class="chart-title">Humidity Â· %</div><svg id="humidity-chart" class="plot" viewBox="0 0 500 245" role="img" aria-label="Nexus humidity history"></svg></div></div><p id="chart-summary" class="meta" role="status">Waiting for sensor historyâ€¦</p><p id="chart-detail" class="meta" aria-live="polite"></p><small>All received readings are retained in SQLite; history is resampled only for display. Times are local. Gaps longer than 3 minutes are not connected. Temperature whiskers show bucket min/max. Hover or tap the line for details.</small></section>
++<header><div><div class="eyebrow">Dragonwing IQ-9075 EVK · Local RF observatory</div><h1>RF Watchkeeper</h1><div class="muted">Dual-SDR RF monitoring</div></div><div id="connection" class="pill">Connecting…</div></header>
++<nav class="tabs" role="tablist" aria-label="Dashboard sections"><button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true" tabindex="0">Overview</button><button type="button" role="tab" id="tab-433" aria-controls="panel-433" aria-selected="false" tabindex="-1">433 MHz</button><button type="button" role="tab" id="tab-airband" aria-controls="panel-airband" aria-selected="false" tabindex="-1">Airband</button><button type="button" role="tab" id="tab-ais" aria-controls="panel-ais" aria-selected="false" tabindex="-1">AIS</button><button type="button" role="tab" id="tab-satellites" aria-controls="panel-satellites" aria-selected="false" tabindex="-1">Satellites</button><button type="button" role="tab" id="tab-system" aria-controls="panel-system" aria-selected="false" tabindex="-1">System / AI</button></nav><div id="notice" role="status"></div><p id="cached-notice" class="warn" role="status" hidden>Connection lost. All displayed readings and evidence are cached until the dashboard reconnects.</p><noscript>This dashboard requires JavaScript to load readings and switch sections.</noscript><section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0"><h2>Live overview</h2><section class="card section" aria-label="RF system health"><h2>RF system health</h2><div id="rf-health">Checking receiver health…</div></section><br><div class="grid"><section class="card"><div class="label"><span id="primary-label">Primary receiver · V4MAIN01</span></div><div id="state" class="value">Unknown</div><div id="detail" class="meta">Waiting for V4 status</div></section><section class="card"><div class="label">V4 current RF job</div><div id="job" class="value">—</div><div id="frequency" class="meta">—</div><div id="operating-mode" class="meta">Waiting for scheduler</div></section><section class="card"><div class="label"><span id="sensor-label">433 MHz receiver · 43300001</span></div><div id="sensor-state" class="value">Unknown</div><div id="sensor-detail" class="meta">Waiting for FC0012 status</div></section></div>
++
++<div class="grid section"><section class="card"><div class="label">Latest 433 MHz detection</div><div id="overview-sensor" class="value">Waiting for status…</div><div id="overview-sensor-detail" class="meta"></div></section><section class="card"><div class="label">AIS reception</div><div id="overview-ais" class="value">Waiting for status…</div><div id="overview-ais-detail" class="meta"></div></section><section class="card"><div class="label">Saved-audio job · replay</div><div id="overview-audio" class="value">Waiting for status…</div><div id="overview-audio-detail" class="meta"></div></section></div><div class="grid section"><section class="card"><div class="label">ASR accelerator evidence</div><div id="overview-accelerator" class="value">Waiting for status…</div><div id="overview-accelerator-detail" class="meta"></div></section><section class="card"><div class="label">CPU / NPU / DSP utilization</div><div id="overview-utilization" class="value">Not available</div><div id="overview-utilization-detail" class="meta"></div></section><section class="card"><div class="label">Dashboard status</div><div id="overview-system" class="value">Waiting for status…</div><div id="overview-system-detail" class="meta"></div></section></div><section class="card section"><div class="split"><h2>Recent events</h2><small>Live updates · every 2 seconds</small></div><ul id="feed" class="feed"><li>Waiting for normalized events…</li></ul></section>
++</section><section id="panel-433" role="tabpanel" aria-labelledby="tab-433" tabindex="0" hidden><h2>433 MHz sensors</h2><section class="section"><div class="split"><h2>Latest Nexus-TH observation</h2><span id="device" class="muted">No sensor yet</span></div><div class="grid"><div class="card"><div class="label">Temperature</div><div id="temperature" class="value hero">—</div></div><div class="card"><div class="label">Relative humidity</div><div id="humidity" class="value hero">—</div></div><div class="card"><div class="label">Battery / channel</div><div id="battery" class="value">—</div><div id="channel" class="meta">Channel —</div></div></div><div class="meta"><span id="age">No event received</span> · <span id="timestamp">—</span></div></section>
++<section class="card section"><h2>Nexus history</h2><div class="chart-controls"><label>Sensor<select id="chart-sensor" aria-label="Chart sensor"></select></label><label>Period<select id="chart-period"><option value="1">Last hour</option><option value="6">Last 6 hours</option><option value="24" selected>24 h</option><option value="168">7 d</option><option value="720">30 d</option><option value="all">All history</option></select></label></div><div class="plots"><div><div class="chart-title">Temperature · °C</div><svg id="temperature-chart" class="plot" viewBox="0 0 500 245" role="img" aria-label="Nexus temperature history"></svg></div><div><div class="chart-title">Humidity · %</div><svg id="humidity-chart" class="plot" viewBox="0 0 500 245" role="img" aria-label="Nexus humidity history"></svg></div></div><p id="chart-summary" class="meta" role="status">Waiting for sensor history…</p><p id="chart-detail" class="meta" aria-live="polite"></p><small>All received readings are retained in SQLite; history is resampled only for display. Times are local. Gaps longer than 3 minutes are not connected. Temperature whiskers show bucket min/max. Hover or tap the line for details.</small></section>
+ 
+ </section><section id="panel-airband" role="tabpanel" aria-labelledby="tab-airband" tabindex="0" hidden><h2>Airband / speech</h2><section class="card section" aria-labelledby="atis-heading">
+-<div class="split"><h2 id="atis-heading">Scheduled Vaasa ATIS Â· 136.450 MHz</h2><span class="pill warn">Recognition needs review</span></div>
++<div class="split"><h2 id="atis-heading">Scheduled Vaasa ATIS · 136.450 MHz</h2><span class="pill warn">Recognition needs review</span></div>
+ <p class="warn">The audio capture is working. Automatic transcription and interpretation are still unreliable, especially numbers. No field below is confirmed.</p>
+-<p id="atis-status" role="status">Loading scheduled ATIS resultsâ€¦</p>
++<p id="atis-status" role="status">Loading scheduled ATIS results…</p>
+ <p id="atis-meta" class="meta"></p>
+ <audio id="atis-player" controls preload="none" hidden></audio>
+ <p id="atis-model" class="meta"></p>
+@@ -45,17 +45,17 @@
+ <details class="section"><summary>Inspect the small-model transcript and errors</summary><p class="muted">Overlapping clips repeat phrases. These are raw model readings, not a verified transcript.</p><div id="atis-transcript" class="speech-text"></div></details>
+ </section>
+ <p class="muted">Scheduled ATIS results are above. The general speech lab below uses the older tiny model and is not an ATIS decoder.</p><section class="card section" aria-labelledby="audio-heading">
+-<div class="split"><h2 id="audio-heading">Recorded speech lab</h2><span class="pill">REPLAY Â· No radio needed</span></div>
++<div class="split"><h2 id="audio-heading">Recorded speech lab</h2><span class="pill">REPLAY · No radio needed</span></div>
+ <p class="muted">Listen to a saved clip, then transcribe and summarize it locally on the EVK. Sensor monitoring continues.</p>
+ <div class="audio-controls">
+-<label>Recording<select id="audio-recording"><option value="">Loading recordingsâ€¦</option></select></label>
+-<label>Speech language<select id="audio-language"><option value="en">English</option><option value="fi">Finnish</option><option value="sv">Swedish</option><option value="fi,en">Finnish + English Â· experimental</option></select></label>
++<label>Recording<select id="audio-recording"><option value="">Loading recordings…</option></select></label>
++<label>Speech language<select id="audio-language"><option value="en">English</option><option value="fi">Finnish</option><option value="sv">Swedish</option><option value="fi,en">Finnish + English · experimental</option></select></label>
+ <button id="audio-run" type="button" disabled>Transcribe &amp; summarize</button>
+ <button id="audio-refresh" type="button">Refresh recordings</button>
+ </div>
+ <p id="audio-selection" class="meta"></p>
+ <audio id="audio-preview" controls preload="none" hidden aria-label="Selected recording"></audio>
+-<p id="audio-progress" role="status" aria-live="polite">Connecting to the speech workflowâ€¦</p>
++<p id="audio-progress" role="status" aria-live="polite">Connecting to the speech workflow…</p>
+ <p id="audio-error" class="warn" role="alert"></p>
+ <div id="audio-result" hidden>
+ <div id="audio-result-title" class="meta"></div>
+@@ -65,10 +65,10 @@
+ <p class="meta">Check important words and numbers against the recording. Raw results are retained; a fluent summary does not verify the transcript.</p>
+ </div>
+ </section>
+-<section class="card section"><div class="split"><h2>Latest transcription</h2><span id="transcription-status" class="muted">No ASR event yet</span></div><p id="transcription-text" class="value">â€”</p><div id="transcription-meta" class="meta">The dashboard reads normalized ASR events from its separate feed.</div></section>
++<section class="card section"><div class="split"><h2>Latest transcription</h2><span id="transcription-status" class="muted">No ASR event yet</span></div><p id="transcription-text" class="value">—</p><div id="transcription-meta" class="meta">The dashboard reads normalized ASR events from its separate feed.</div></section>
+ </section><section id="panel-ais" role="tabpanel" aria-labelledby="tab-ais" tabindex="0" hidden><h2>AIS</h2><section class="card section" aria-labelledby="ais-heading">
+ <div class="split"><h2 id="ais-heading">AIS reception</h2><span id="ais-state" class="pill">Unknown</span></div>
+-<p id="ais-summary" class="muted">Waiting for AIS collector statusâ€¦</p>
++<p id="ais-summary" class="muted">Waiting for AIS collector status…</p>
+ <div class="table-wrap">
+ <table>
+ <thead><tr><th>MMSI / name</th><th>Last msg type</th><th>Last known position</th><th>Distance</th><th>Bearing</th><th>SOG</th><th>COG</th><th>Heading</th><th>Motion</th><th>Signal</th><th>Last heard</th></tr></thead>
+@@ -82,7 +82,7 @@
+ <section class="card section" aria-labelledby="ais-map-heading">
+ <div class="split">
+ <h2 id="ais-map-heading">AIS regional map</h2>
+-<span class="muted" id="ais-map-range">Local SVG Â· offline</span>
++<span class="muted" id="ais-map-range">Local SVG · offline</span>
+ </div>
+ 
+ <p class="muted">
+@@ -110,7 +110,7 @@
+ <select id="ais-local-range" aria-label="Local AIS map range">
+ <option value="10">10 km</option>
+ <option value="25">25 km</option>
+-<option value="auto" selected>Auto (20â€“100 km)</option><option value="50">50 km</option>
++<option value="auto" selected>Auto (20–100 km)</option><option value="50">50 km</option>
+ <option value="100">100 km</option>
+ </select>
+ </label>
+@@ -136,7 +136,7 @@
+ <section class="card section" aria-labelledby="ais-methydro-heading">
+ <div class="split">
+ <h2 id="ais-methydro-heading">AIS Met/Hydro observations</h2>
+-<span class="muted">Type 8 Â· DAC 1 Â· FID 31</span>
++<span class="muted">Type 8 · DAC 1 · FID 31</span>
+ </div>
+ <p class="muted">These coordinates describe environmental measurement sites, not necessarily the transmitter position.</p>
+ <div class="table-wrap">
+@@ -162,27 +162,29 @@
+ </div>
+ </section>
+ </section><section id="panel-satellites" role="tabpanel" aria-labelledby="tab-satellites" tabindex="0" hidden><h2>Scheduled satellite passes</h2><section class="card">
+-<p id="schedule-status" role="status">Loading scheduled passesâ€¦</p>
++<p id="schedule-status" role="status">Loading scheduled passes…</p>
+ <p id="schedule-meta" class="meta"></p>
+ <div class="table-wrap" tabindex="0" role="region" aria-label="Scheduled satellite passes"><table class="pass-schedule">
+-<caption>Times in Europe/Helsinki Â· Az = compass direction / azimuth Â· El = elevation. The next scheduled pass is highlighted.</caption>
+-<thead><tr><th rowspan="2" scope="col">Satellite / status</th><th colspan="2" scope="colgroup">Start â†‘</th><th colspan="3" scope="colgroup">Max altitude</th><th colspan="2" scope="colgroup">End â†“</th><th rowspan="2" scope="col">Recording / receiver</th></tr>
++<caption>Times in Europe/Helsinki · Az = compass direction / azimuth · El = elevation. The next scheduled pass is highlighted.</caption>
++<thead><tr><th rowspan="2" scope="col">Satellite / status</th><th colspan="2" scope="colgroup">Start ↑</th><th colspan="3" scope="colgroup">Max altitude</th><th colspan="2" scope="colgroup">End ↓</th><th rowspan="2" scope="col">Recording / receiver</th></tr>
+ <tr><th scope="col">Date, local time</th><th scope="col">Az</th><th scope="col">Local time</th><th scope="col">Az</th><th scope="col">El</th><th scope="col">Local time</th><th scope="col">Az</th></tr></thead>
+-<tbody id="schedule-rows"><tr><td colspan="9">Loadingâ€¦</td></tr></tbody></table></div>
++<tbody id="schedule-rows"><tr><td colspan="9">Loading…</td></tr></tbody></table></div>
+ <p id="schedule-warning" class="warn" role="status"></p>
+ <p class="meta">Only managed passes and live capture timers are listed. Directions use cached orbital elements; pass times use the scheduled capture boundaries. Recording margins include time before and after the pass.</p>
+ </section><h2 class="section">METEOR satellite imagery</h2><section class="card">
+-<p id="meteor-status" role="status">Loading pass historyâ€¦</p>
++<p id="meteor-status" role="status">Loading pass history…</p>
++<p id="meteor-disk" class="meta" role="status"></p>
++<p id="meteor-retention" class="meta" role="status"></p><button id="meteor-keep" type="button" disabled>Keep raw recording</button>
+ <div class="chart-controls"><label>Pass history<select id="meteor-pass" aria-label="METEOR pass history"></select></label><label>Image product<select id="meteor-product" aria-label="METEOR image product"></select></label></div>
+ <p id="meteor-meta" class="meta"></p><p id="meteor-lines" class="meta"></p>
+-<details id="meteor-conditions-panel" open><summary style="font-weight:650;margin:18px 0">Pass conditions Â· saved with recording</summary>
++<details id="meteor-conditions-panel" open><summary style="font-weight:650;margin:18px 0">Pass conditions · saved with recording</summary>
+ <div class="table-wrap"><table aria-label="Recorded pass conditions"><thead><tr><th scope="col">Event</th><th scope="col">Helsinki local time</th><th scope="col">Azimuth</th><th scope="col">Elevation</th></tr></thead><tbody id="meteor-conditions-rows"></tbody></table></div>
+ <p id="meteor-capture-settings" class="meta"></p><p id="meteor-actual-recording" class="meta"></p><p id="meteor-condition-source" class="meta"></p>
+ </details>
+ 
+ <a id="meteor-image-link" target="_blank" rel="noopener" hidden><img id="meteor-image" alt="Decoded METEOR MSU-MR image" style="display:block;max-width:100%;height:auto;margin:auto" hidden></a>
+-<p class="meta">All IQ recordings and decoded images are retained. Times are shown in your local timezone.</p></section></section><section id="panel-system" role="tabpanel" aria-labelledby="tab-system" tabindex="0" hidden><h2>System / AI</h2><p class="muted">Reported backend and accelerator evidence from the latest stored transcription. This is not a live utilization measurement.</p><section class="card"><h3>Latest ASR backend</h3><p id="system-asr">No ASR event yet.</p><p id="system-evidence" class="meta"></p><p id="system-asr-time" class="meta"></p></section><section class="card section"><h3>System telemetry</h3><p>CPU, NPU and DSP utilization are not exposed by the current dashboard API.</p><p id="system-time" class="meta">Waiting for server timestampâ€¦</p></section><section class="card section"><div class="split"><h2>Latest interpretation</h2><span id="interpretation-status" class="muted">No interpretation yet</span></div><p id="interpretation-text" class="value">â€”</p><div id="interpretation-meta" class="meta">Generated from normalized events; raw source data remains available in the event log.</div></section>
+-</section><footer>Saved-audio controls are active Â· Planned RF controls are not active. Sensor values show the latest logged observation, even if the collector stops.<br>No cloud services or external assets. Times display in this deviceâ€™s local timezone.</footer>
++<p class="meta">All IQ recordings and decoded images are retained. Times are shown in your local timezone.</p></section></section><section id="panel-system" role="tabpanel" aria-labelledby="tab-system" tabindex="0" hidden><h2>System / AI</h2><p class="muted">Reported backend and accelerator evidence from the latest stored transcription. This is not a live utilization measurement.</p><section class="card"><h3>Latest ASR backend</h3><p id="system-asr">No ASR event yet.</p><p id="system-evidence" class="meta"></p><p id="system-asr-time" class="meta"></p></section><section class="card section"><h3>System telemetry</h3><p>CPU, NPU and DSP utilization are not exposed by the current dashboard API.</p><p id="system-time" class="meta">Waiting for server timestamp…</p></section><section class="card section"><div class="split"><h2>Latest interpretation</h2><span id="interpretation-status" class="muted">No interpretation yet</span></div><p id="interpretation-text" class="value">—</p><div id="interpretation-meta" class="meta">Generated from normalized events; raw source data remains available in the event log.</div></section>
++</section><footer>Saved-audio controls are active · Planned RF controls are not active. Sensor values show the latest logged observation, even if the collector stops.<br>No cloud services or external assets. Times display in this device’s local timezone.</footer>
+ </main><script>// Keep panels mounted so charts, selected controls and audio survive navigation.
+ const sections=['overview','433','airband','ais','satellites','system'];
+ function selectSection(key, focus=false){
+@@ -210,29 +212,29 @@
+ selectSection(location.hash.slice(1));
+ function renderOverview(data){
+  const c=data.collector||{},s=data.sensor_receiver||{},t=data.latest_transcription,e=data.latest_nexus;
+- put('primary-label',(c.label||'Primary receiver')+' Â· '+(c.device||'V4MAIN01'));
+- put('sensor-label',(s.label||'433 MHz receiver')+' Â· '+(s.device||'43300001'));
+- put('overview-sensor',e?numeric(e.temperature_c,' Â°C')+' / '+numeric(e.humidity_pct,' %'):'No detection yet');
+- put('overview-sensor-detail',e?(e.device_key||'Nexus-TH')+' Â· '+new Date(e.received_at).toLocaleString()+(data.latest_age_seconds>180?' Â· Stale reading':''):'Waiting for a sensor observation.');
++ put('primary-label',(c.label||'Primary receiver')+' · '+(c.device||'V4MAIN01'));
++ put('sensor-label',(s.label||'433 MHz receiver')+' · '+(s.device||'43300001'));
++ put('overview-sensor',e?numeric(e.temperature_c,' °C')+' / '+numeric(e.humidity_pct,' %'):'No detection yet');
++ put('overview-sensor-detail',e?(e.device_key||'Nexus-TH')+' · '+new Date(e.received_at).toLocaleString()+(data.latest_age_seconds>180?' · Stale reading':''):'Waiting for a sensor observation.');
+  put('overview-ais',data.ais_status?.state||'Unknown');
+- put('overview-ais-detail',(data.ais_targets||[]).length+' active targets Â· last reported collector status'+(data.ais_status?.updated_at?' Â· '+new Date(data.ais_status.updated_at).toLocaleString():''));
++ put('overview-ais-detail',(data.ais_targets||[]).length+' active targets · last reported collector status'+(data.ais_status?.updated_at?' · '+new Date(data.ais_status.updated_at).toLocaleString():''));
+  put('overview-accelerator',t?(t.accelerator_verified===true?'Verified for latest ASR':'Verification pending'):'No ASR evidence yet');
+- put('overview-accelerator-detail',t?(t.accelerator_requested||'Accelerator unspecified')+' Â· '+new Date(t.received_at).toLocaleString():'Run saved audio from Airband to produce ASR evidence.');
++ put('overview-accelerator-detail',t?(t.accelerator_requested||'Accelerator unspecified')+' · '+new Date(t.received_at).toLocaleString():'Run saved audio from Airband to produce ASR evidence.');
+  put('overview-utilization-detail','No utilization telemetry in the current API.');
+  put('overview-system','API responding');
+- put('overview-system-detail','Last response Â· '+new Date(data.server_time).toLocaleString());
+- put('system-time','Server time Â· '+new Date(data.server_time).toLocaleString());
+- put('system-asr',t?(t.model||'Unknown model')+' Â· '+(t.backend||'Unknown backend'):'No ASR event yet.');
++ put('overview-system-detail','Last response · '+new Date(data.server_time).toLocaleString());
++ put('system-time','Server time · '+new Date(data.server_time).toLocaleString());
++ put('system-asr',t?(t.model||'Unknown model')+' · '+(t.backend||'Unknown backend'):'No ASR event yet.');
+  put('system-evidence',t?(t.acceleration_note||'No additional runtime evidence reported.'):'Accelerator verification is not available yet.');
+- put('system-asr-time',t?'Latest stored result Â· '+(t.source||'Source unknown')+' Â· '+new Date(t.received_at).toLocaleString():'');
++ put('system-asr-time',t?'Latest stored result · '+(t.source||'Source unknown')+' · '+new Date(t.received_at).toLocaleString():'');
+ }
+ 
+ 
+ const el=id=>document.getElementById(id), put=(id,value)=>{el(id).textContent=value;};
+ let last=null, fetchedAt=0, online=false;
+-const numeric=(v,suffix)=>typeof v==='number'&&Number.isFinite(v)?v.toFixed(1)+suffix:'â€”';
++const numeric=(v,suffix)=>typeof v==='number'&&Number.isFinite(v)?v.toFixed(1)+suffix:'—';
+ function ageText(seconds){if(seconds===null)return 'No event received';seconds=Math.floor(seconds);return seconds<60?seconds+' seconds ago':seconds<3600?Math.floor(seconds/60)+' minutes ago':Math.floor(seconds/3600)+' hours ago';}
+-function updateAge(){if(!last)return;const age=last.latest_age_seconds===null?null:last.latest_age_seconds+(performance.now()-fetchedAt)/1000;put('age',ageText(age)+(age!==null&&age>180?' Â· Stale reading':''));el('age').className=age>180?'warn':'';}
++function updateAge(){if(!last)return;const age=last.latest_age_seconds===null?null:last.latest_age_seconds+(performance.now()-fetchedAt)/1000;put('age',ageText(age)+(age!==null&&age>180?' · Stale reading':''));el('age').className=age>180?'warn':'';}
+ 
+ 
+ const observerLat=63.104753,observerLon=21.683053;
+@@ -249,7 +251,7 @@
+  const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE',
+              'S','SSW','SW','WSW','W','WNW','NW','NNW'];
+ 
+- return Math.round(b)+'Â° '+dirs[Math.floor((b+11.25)/22.5)%16];
++ return Math.round(b)+'° '+dirs[Math.floor((b+11.25)/22.5)%16];
+ }
+ 
+ 
+@@ -297,17 +299,17 @@
+ 
+    if(stationName)
+      return includeMmsi
+-       ? target.mmsi+' Â· '+stationName+' Â· AIS base station'
+-       : stationName+' Â· AIS base station';
++       ? target.mmsi+' · '+stationName+' · AIS base station'
++       : stationName+' · AIS base station';
+ 
+    if(aisIsBaseStation(target))
+      return includeMmsi
+-       ? target.mmsi+' Â· AIS base station'
+-       : 'MMSI '+target.mmsi+' Â· AIS base station';
++       ? target.mmsi+' · AIS base station'
++       : 'MMSI '+target.mmsi+' · AIS base station';
+ 
+    if(target.vessel_name)
+      return includeMmsi
+-       ? target.mmsi+' Â· '+target.vessel_name
++       ? target.mmsi+' · '+target.vessel_name
+        : target.vessel_name;
+ 
+    return includeMmsi
+@@ -365,7 +367,7 @@
+ 
+    const age=aisAgeText(target.last_seen);
+ 
+-   return age ? state+' Â· '+age : state;
++   return age ? state+' · '+age : state;
+   }
+ 
+   function aisTargetLabel(target){
+@@ -381,9 +383,9 @@
+      !aisIsBaseStation(target) &&
+      typeof target.course_deg==='number'
+    )
+-     parts.push('COG '+Math.round(target.course_deg)+'Â°');
+-
+-   return parts.join(' Â· ');
++     parts.push('COG '+Math.round(target.course_deg)+'°');
++
++   return parts.join(' · ');
+   }
+ 
+ 
+@@ -398,7 +400,7 @@
+  const messages=Number.isFinite(status.messages)?status.messages:0;
+  put(
+    'ais-summary',
+-   messages+' decoded messages this AIS slot Â· '
++   messages+' decoded messages this AIS slot · '
+    +targets.length+' active target'+(targets.length===1?'':'s')
+  );
+ 
+@@ -432,41 +434,41 @@
+    const values=[
+       aisIdentityText(target,true),
+ 
+-      target.message_type??'â€”',
++      target.message_type??'—',
+ 
+      hasPosition
+        ? target.latitude.toFixed(5)+', '+target.longitude.toFixed(5)
+-       : 'â€”',
++       : '—',
+ 
+      typeof target.distance_km==='number'
+        ? target.distance_km.toFixed(1)+' km'
+-       : 'â€”',
++       : '—',
+ 
+      hasPosition
+        ? bearingFromObserver(target.latitude,target.longitude)
+-       : 'â€”',
++       : '—',
+ 
+      typeof target.speed_knots==='number'
+        ? target.speed_knots.toFixed(1)+' kn'
+-       : 'â€”',
++       : '—',
+ 
+      typeof target.course_deg==='number'
+-       ? Math.round(target.course_deg)+'Â°'
+-       : 'â€”',
++       ? Math.round(target.course_deg)+'°'
++       : '—',
+ 
+      typeof target.heading_deg==='number'
+-       ? Math.round(target.heading_deg)+'Â°'
+-       : 'â€”',
++       ? Math.round(target.heading_deg)+'°'
++       : '—',
+ 
+      aisMotionState(target),
+ 
+      typeof target.signalpower==='number'
+        ? target.signalpower.toFixed(1)
+-       : 'â€”',
++       : '—',
+ 
+      target.last_seen
+        ? aisAgeText(target.last_seen)
+-       : 'â€”'
++       : '—'
+    ];
+ 
+    for(const value of values){
+@@ -481,67 +483,67 @@
+ 
+ 
+ function eventBodyText(event){
+- if(event.quality_status==='unreliable_atis_tiny')return 'Unreliable ATIS replay ï¿½ old tiny model; see Airband for scheduled results';
++ if(event.quality_status==='unreliable_atis_tiny')return 'Unreliable ATIS replay � old tiny model; see Airband for scheduled results';
+  if(event.event_type==='scheduler_state')
+-   return (event.job||'Scheduler')+' Â· '+event.state;
++   return (event.job||'Scheduler')+' · '+event.state;
+ 
+  if(event.event_type==='transcription')
+-   return 'ASR Â· '+(event.text||'No text');
++   return 'ASR · '+(event.text||'No text');
+ 
+  if(event.event_type==='interpretation')
+-   return 'Summary Â· '+(event.summary||'No summary');
++   return 'Summary · '+(event.summary||'No summary');
+ 
+  if(event.event_type==='ais_target_discovered')
+-   return 'AIS discovered Â· '+(event.vessel_name||('MMSI '+(event.mmsi??'â€”')));
++   return 'AIS discovered · '+(event.vessel_name||('MMSI '+(event.mmsi??'—')));
+ 
+  if(event.event_type==='ais_identity')
+-   return 'AIS identity Â· '+(event.vessel_name||event.callsign||('MMSI '+(event.mmsi??'â€”')));
++   return 'AIS identity · '+(event.vessel_name||event.callsign||('MMSI '+(event.mmsi??'—')));
+ 
+  if(event.event_type==='ais_position')
+-   return 'AIS position Â· '+(event.vessel_name||('MMSI '+(event.mmsi??'â€”')));
++   return 'AIS position · '+(event.vessel_name||('MMSI '+(event.mmsi??'—')));
+ 
+  return (event.model||event.event_type)
+-        +' Â· '+numeric(event.temperature_c,' Â°C')
++        +' · '+numeric(event.temperature_c,' °C')
+         +' / '+numeric(event.humidity_pct,' %');
+ }
+ 
+ function eventSubText(event){
+- if(event.quality_status==='unreliable_atis_tiny')return 'Not a valid ATIS interpretation ï¿½ raw evidence retained';
++ if(event.quality_status==='unreliable_atis_tiny')return 'Not a valid ATIS interpretation � raw evidence retained';
+  if(event.event_type==='scheduler_state')
+    return (event.source==='simulation'?'SIMULATION':'Live')
+-          +' Â· '
++          +' · '
+           +(typeof event.frequency_hz==='number'
+              ?(event.frequency_hz/1e6).toFixed(3)+' MHz'
+              :'Receiver idle')
+-          +(event.reason?' Â· '+event.reason:'');
++          +(event.reason?' · '+event.reason:'');
+ 
+  if(event.event_type==='transcription')
+    return (event.language||'Unknown language')
+-          +' Â· '+(event.model||'Unknown model');
++          +' · '+(event.model||'Unknown model');
+ 
+  if(event.event_type==='interpretation')
+    return (event.backend||'Unknown backend')
+-          +' Â· '+(event.input_event_type||'event');
++          +' · '+(event.input_event_type||'event');
+ 
+  if(event.event_type && event.event_type.startsWith('ais_'))
+    return (typeof event.distance_km==='number'
+             ?event.distance_km.toFixed(1)+' km'
+-            :'Distance â€”')
+-          +' Â· '
++            :'Distance —')
++          +' · '
+           +(typeof event.bearing_deg==='number'
+-            ?Math.round(event.bearing_deg)+'Â° '+(event.bearing_text||'')
+-            :'Bearing â€”')
+-          +' Â· Type '+(event.message_type??'â€”');
++            ?Math.round(event.bearing_deg)+'° '+(event.bearing_text||'')
++            :'Bearing —')
++          +' · Type '+(event.message_type??'—');
+ 
+  return (event.device_key||'Unknown device')
+-        +' Â· Channel '+(event.channel??'â€”');
++        +' · Channel '+(event.channel??'—');
+ }
+ 
+ 
+ 
+ const metHydroStations=[
+  {name:'Vaasa / Vasa',lat:63.081501,lon:21.571184},
+- {name:'Maalahti StrÃ¶mmingsbÃ¥dan',lat:62.978386,lon:20.740084},
++ {name:'Maalahti Strömmingsbådan',lat:62.978386,lon:20.740084},
+  {name:'Mustasaari Valassaaret',lat:63.435085,lon:21.068567},
+  {name:'Pietarsaari / Jakobstad',lat:63.708569,lon:22.689583},
+  {name:'Pietarsaari Kallan',lat:63.751434,lon:22.522818},
+@@ -599,12 +601,12 @@
+  const parts=[];
+  if(Number.isFinite(item.wind_speed))parts.push((item.wind_speed*0.514444).toFixed(1)+' m/s');
+  if(Number.isFinite(item.wind_gust))parts.push('gust '+(item.wind_gust*0.514444).toFixed(1)+' m/s');
+- if(Number.isFinite(item.wind_dir_deg))parts.push(item.wind_dir_deg+'Â°');
+- return parts.join(', ')||'â€”';
++ if(Number.isFinite(item.wind_dir_deg))parts.push(item.wind_dir_deg+'°');
++ return parts.join(', ')||'—';
+ }
+ 
+ function metHydroWater(value){
+- return Number.isFinite(value)?(value>=0?'+':'')+value.toFixed(2)+' m':'â€”';
++ return Number.isFinite(value)?(value>=0?'+':'')+value.toFixed(2)+' m':'—';
+ }
+ 
+ function metHydroExtras(item){
+@@ -616,7 +618,7 @@
+    parts.push('Visibility '+(item.visibility>=24.1?'>45':km.toFixed(km<10?1:0))+' km');
+  }
+  if(Number.isFinite(item.water_level_m))parts.push('water level '+metHydroWater(item.water_level_m));
+- return parts.join(', ')||'â€”';
++ return parts.join(', ')||'—';
+ }
+ 
+ function renderAISMetHydro(data){
+@@ -642,25 +644,25 @@
+    const position=
+      typeof item.latitude==='number' && typeof item.longitude==='number'
+        ? (stationName
+-           ? stationName+' Â· '+item.latitude.toFixed(5)+', '+item.longitude.toFixed(5)
++           ? stationName+' · '+item.latitude.toFixed(5)+', '+item.longitude.toFixed(5)
+            : item.latitude.toFixed(5)+', '+item.longitude.toFixed(5))
+-       : 'â€”';
++       : '—';
+ 
+    const wind=metHydroWind(item);
+ 
+    const values=[
+      position,
+-     typeof item.distance_km==='number'?item.distance_km.toFixed(1)+' km':'â€”',
++     typeof item.distance_km==='number'?item.distance_km.toFixed(1)+' km':'—',
+      typeof item.bearing_deg==='number'
+-       ? Math.round(item.bearing_deg)+'Â° '+(item.bearing_text||'')
+-       : 'â€”',
++       ? Math.round(item.bearing_deg)+'° '+(item.bearing_text||'')
++       : '—',
+      wind,
+-     typeof item.air_temp_c==='number'?item.air_temp_c.toFixed(1)+' Â°C':'â€”',
+-     typeof item.humidity_pct==='number'?item.humidity_pct+' %':'â€”',
+-     typeof item.pressure_hpa==='number'?item.pressure_hpa+' hPa':'â€”',
++     typeof item.air_temp_c==='number'?item.air_temp_c.toFixed(1)+' °C':'—',
++     typeof item.humidity_pct==='number'?item.humidity_pct+' %':'—',
++     typeof item.pressure_hpa==='number'?item.pressure_hpa+' hPa':'—',
+      metHydroWater(item.water_level_m),
+      metHydroExtras(item),
+-     item.received_at?new Date(item.received_at).toLocaleString():'â€”'
++     item.received_at?new Date(item.received_at).toLocaleString():'—'
+    ];
+ 
+    for(const value of values){
+@@ -975,28 +977,28 @@
+    if(isTarget){
+      title.textContent=
+        'AIS target MMSI '+point.mmsi+
+-       ' Â· '+offset.distance.toFixed(1)+' km'+
++       ' · '+offset.distance.toFixed(1)+' km'+
+        (point.message_type!==undefined
+-          ?' Â· type '+point.message_type
++          ?' · type '+point.message_type
+           :'');
+    }else{
+      const details=[];
+ 
+      if(typeof point.air_temp_c==='number')
+-       details.push(point.air_temp_c.toFixed(1)+' Â°C');
+-
+-     if(metHydroWind(point)!=='â€”')
++       details.push(point.air_temp_c.toFixed(1)+' °C');
++
++     if(metHydroWind(point)!=='—')
+        details.push('wind '+metHydroWind(point));
+ 
+-     if(metHydroExtras(point)!=='â€”')
++     if(metHydroExtras(point)!=='—')
+        details.push(metHydroExtras(point));
+ 
+      const stationName=metHydroStationName(point.latitude,point.longitude);
+ 
+      title.textContent=
+        (stationName||'Met/Hydro site')+
+-       ' Â· '+offset.distance.toFixed(1)+' km'+
+-       (details.length?' Â· '+details.join(' Â· '):'');
++       ' · '+offset.distance.toFixed(1)+' km'+
++       (details.length?' · '+details.join(' · '):'');
+    }
+ 
+    marker.append(title);
+@@ -1012,7 +1014,7 @@
+        ? stationName
+        : (
+            typeof point.air_temp_c==='number'
+-             ? point.air_temp_c.toFixed(1)+'Â°C'
++             ? point.air_temp_c.toFixed(1)+'°C'
+              : typeof point.water_level_m==='number'
+                ? metHydroWater(point.water_level_m)
+                : 'Met'
+@@ -1032,13 +1034,13 @@
+  put(
+    'ais-map-summary',
+    targetCount+' AIS target'+(targetCount===1?'':'s')+
+-   ' Â· '+metCount+' Met/Hydro site'+(metCount===1?'':'s')+
+-   ' Â· map radius '+rangeKm+' km'
++   ' · '+metCount+' Met/Hydro site'+(metCount===1?'':'s')+
++   ' · map radius '+rangeKm+' km'
+  );
+ 
+  put(
+    'ais-map-range',
+-   'Offline SVG Â· '+rangeKm+' km radius'
++   'Offline SVG · '+rangeKm+' km radius'
+  );
+ }
+ 
+@@ -1295,8 +1297,8 @@
+ 
+     title.textContent=
+       aisTargetLabel(target)+
+-      ' Â· '+target._offset.distance.toFixed(1)+' km'+
+-      ' Â· '+aisMotionState(target);
++      ' · '+target._offset.distance.toFixed(1)+' km'+
++      ' · '+aisMotionState(target);
+ 
+     targetMarker.append(title);
+ 
+@@ -1384,7 +1386,7 @@
+    'ais-local-map-summary',
+    targets.length+
+    ' AIS target'+(targets.length===1?'':'s')+
+-   ' within '+radiusKm+' km Â· solid arrow = COG Â· dashed line = heading'
++   ' within '+radiusKm+' km · solid arrow = COG · dashed line = heading'
+  );
+ }
+ 
+@@ -1394,18 +1396,18 @@
+   const row=document.createElement('div'),title=document.createElement('strong');
+   title.textContent=r.serial+'  '+r.status;title.className=r.status==='GREEN'?'ok':r.status==='DISABLED'||r.status==='BUSY'?'muted':'warn';row.append(title);
+   if(r.status!=='DISABLED'){
+-   const lines=[r.detail||'',r.last_capture?'Last capture: '+r.last_capture.job_type+' Â· '+new Date(r.last_capture.completion_time).toLocaleTimeString():'No successful capture yet',
++   const lines=[r.detail||'',r.last_capture?'Last capture: '+r.last_capture.job_type+' · '+new Date(r.last_capture.completion_time).toLocaleTimeString():'No successful capture yet',
+     r.heartbeat_age_seconds!=null?'Last receiver heartbeat: '+Math.floor(r.heartbeat_age_seconds/60)+' min ago':'',
+-    'Recent failures (24 h): '+(r.recent_failures??'â€”'),
+-    r.last_application_result?'Last application result: '+r.last_application_result.job_type+' Â· '+new Date(r.last_application_result.completion_time).toLocaleTimeString()+' Â· '+formatRFApplication(r.last_application_result.application_status):'',
+-    r.last_recovery?'Last recovery: '+r.last_recovery.action+' Â· '+r.last_recovery.result+' Â· '+r.last_recovery.detail+' Â· '+new Date(r.last_recovery.timestamp).toLocaleString():'Last recovery: none'];
++    'Recent failures (24 h): '+(r.recent_failures??'—'),
++    r.last_application_result?'Last application result: '+r.last_application_result.job_type+' · '+new Date(r.last_application_result.completion_time).toLocaleTimeString()+' · '+formatRFApplication(r.last_application_result.application_status):'',
++    r.last_recovery?'Last recovery: '+r.last_recovery.action+' · '+r.last_recovery.result+' · '+r.last_recovery.detail+' · '+new Date(r.last_recovery.timestamp).toLocaleString():'Last recovery: none'];
+    for(const text of lines.filter(Boolean)){const p=document.createElement('div');p.className='muted';p.textContent=text;row.append(p);}
+   }
+   root.append(row);
+  }
+ }
+-function formatRFApplication(raw){try{const value=JSON.parse(raw);return value.messages!=null?value.messages+' AIS messages Â· '+(value.status==='quiet'?'RF quiet':(value.unique_mmsi??0)+' identities'):value.status||'Recorded';}catch{return 'Recorded';}}
+-function render(data){renderRFHealth(data);renderOverview(data);last=data;renderAIS(data);renderAISMetHydro(data);renderAISMap(data);renderAISLocalMap(data);fetchedAt=performance.now();const c=data.collector,s=data.sensor_receiver||{},e=data.latest_nexus,t=data.latest_transcription,i=data.latest_interpretation;put('operating-mode',(c.mode==='simulation'?'SIMULATION Â· No RF reception':'Live RF')+(c.owner==='scheduler'?' Â· Scheduler cycle '+(c.cycle??'â€”'):c.owner==='satellite'?' Â· Satellite capture':' Â· Continuous collector'));put('state',c.state);el('state').className='value '+(c.state==='running'?'ok':'warn');put('detail',c.detail);const active=['running','starting'].includes(c.state);put('job',active?c.job||'â€”':'No active job');put('frequency',active&&typeof c.frequency_hz==='number'?(c.frequency_hz/1e6).toFixed(2)+' MHz':'â€”');const sensorActive=['running','starting'].includes(s.state);put('sensor-state',s.state||'unknown');el('sensor-state').className='value '+(s.state==='running'?'ok':s.state==='disabled'?'muted':'warn');put('sensor-detail',(sensorActive?(s.job||'Nexus-TH sensors'):'No active sensor job')+(typeof s.frequency_hz==='number'?' Â· '+(s.frequency_hz/1e6).toFixed(3)+' MHz':'')+' Â· FC0012');put('notice',data.warning||'');put('device',e?e.device_key:'No sensor yet');put('temperature',e?numeric(e.temperature_c,' Â°C'):'â€”');put('humidity',e?numeric(e.humidity_pct,' %'):'â€”');put('battery',e?(e.battery_ok===true?'Battery OK':e.battery_ok===false?'Battery low':'Unknown'):'â€”');put('channel',e?'Channel '+e.channel:'Channel â€”');put('timestamp',e?new Date(e.received_at).toLocaleString():'â€”');put('transcription-text',t?t.text:'â€”');put('transcription-status',t?(t.language||'Unknown language')+' Â· '+(t.accelerator_verified?'Accelerator verified':'Accelerator evidence pending'):'No ASR event yet');put('transcription-meta',t?(t.model||'Unknown model')+' Â· '+(t.backend||'Unknown backend')+' Â· '+numeric(t.processing_seconds,' s processing')+' Â· '+new Date(t.received_at).toLocaleString():'The dashboard reads normalized ASR events from its separate feed.');put('interpretation-text',i?i.summary:'â€”');put('interpretation-status',i?(i.backend||'Unknown backend'):'No interpretation yet');put('interpretation-meta',i?('Input: '+(i.input_event_type||'event')+' Â· '+new Date(i.received_at).toLocaleString()+(i.backend_error?' Â· fallback used':'')):'Generated from normalized events; raw source data remains available in the event log.');updateAge();el('feed').replaceChildren();for(const event of data.recent_events){const row=document.createElement('li'),body=document.createElement('div'),time=document.createElement('small');body.textContent=eventBodyText(event);const sub=document.createElement('small');sub.textContent=eventSubText(event);body.append(sub);time.textContent=new Date(event.received_at).toLocaleString();row.append(body,time);el('feed').append(row);}if(!data.recent_events.length){const row=document.createElement('li');row.textContent='No normalized events yet.';el('feed').append(row);}}
++function formatRFApplication(raw){try{const value=JSON.parse(raw);return value.messages!=null?value.messages+' AIS messages · '+(value.status==='quiet'?'RF quiet':(value.unique_mmsi??0)+' identities'):value.status||'Recorded';}catch{return 'Recorded';}}
++function render(data){renderRFHealth(data);renderOverview(data);last=data;renderAIS(data);renderAISMetHydro(data);renderAISMap(data);renderAISLocalMap(data);fetchedAt=performance.now();const c=data.collector,s=data.sensor_receiver||{},e=data.latest_nexus,t=data.latest_transcription,i=data.latest_interpretation;put('operating-mode',(c.mode==='simulation'?'SIMULATION · No RF reception':'Live RF')+(c.owner==='scheduler'?' · Scheduler cycle '+(c.cycle??'—'):c.owner==='satellite'?' · Satellite capture':' · Continuous collector'));put('state',c.state);el('state').className='value '+(c.state==='running'?'ok':'warn');put('detail',c.detail);const active=['running','starting'].includes(c.state);put('job',active?c.job||'—':'No active job');put('frequency',active&&typeof c.frequency_hz==='number'?(c.frequency_hz/1e6).toFixed(2)+' MHz':'—');const sensorActive=['running','starting'].includes(s.state);put('sensor-state',s.state||'unknown');el('sensor-state').className='value '+(s.state==='running'?'ok':s.state==='disabled'?'muted':'warn');put('sensor-detail',(sensorActive?(s.job||'Nexus-TH sensors'):'No active sensor job')+(typeof s.frequency_hz==='number'?' · '+(s.frequency_hz/1e6).toFixed(3)+' MHz':'')+' · FC0012');put('notice',data.warning||'');put('device',e?e.device_key:'No sensor yet');put('temperature',e?numeric(e.temperature_c,' °C'):'—');put('humidity',e?numeric(e.humidity_pct,' %'):'—');put('battery',e?(e.battery_ok===true?'Battery OK':e.battery_ok===false?'Battery low':'Unknown'):'—');put('channel',e?'Channel '+e.channel:'Channel —');put('timestamp',e?new Date(e.received_at).toLocaleString():'—');put('transcription-text',t?t.text:'—');put('transcription-status',t?(t.language||'Unknown language')+' · '+(t.accelerator_verified?'Accelerator verified':'Accelerator evidence pending'):'No ASR event yet');put('transcription-meta',t?(t.model||'Unknown model')+' · '+(t.backend||'Unknown backend')+' · '+numeric(t.processing_seconds,' s processing')+' · '+new Date(t.received_at).toLocaleString():'The dashboard reads normalized ASR events from its separate feed.');put('interpretation-text',i?i.summary:'—');put('interpretation-status',i?(i.backend||'Unknown backend'):'No interpretation yet');put('interpretation-meta',i?('Input: '+(i.input_event_type||'event')+' · '+new Date(i.received_at).toLocaleString()+(i.backend_error?' · fallback used':'')):'Generated from normalized events; raw source data remains available in the event log.');updateAge();el('feed').replaceChildren();for(const event of data.recent_events){const row=document.createElement('li'),body=document.createElement('div'),time=document.createElement('small');body.textContent=eventBodyText(event);const sub=document.createElement('small');sub.textContent=eventSubText(event);body.append(sub);time.textContent=new Date(event.received_at).toLocaleString();row.append(body,time);el('feed').append(row);}if(!data.recent_events.length){const row=document.createElement('li');row.textContent='No normalized events yet.';el('feed').append(row);}}
+ function svgNode(tag,attrs,text){const node=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [key,value] of Object.entries(attrs||{}))node.setAttribute(key,value);if(text!==undefined)node.textContent=text;return node;}
+ function drawChart(id,events,field,color,unit){
+  const svg=el(id);svg.replaceChildren();
+@@ -1425,8 +1427,8 @@
+  points.forEach((p,i)=>{
+   const isolated=(!i||points[i-1].segment!==p.segment)&&(i===points.length-1||points[i+1].segment!==p.segment);
+   const circle=svgNode('circle',{cx:x(p.time),cy:y(p.value),r:isolated?1.5:4,fill:color,class:'history-point'+(isolated?' isolated':'')});
+-  const range=p.sample_count>1?' â€“ '+new Date(p.last_at).toLocaleString():'';
+-  const label=new Date(p.first_at).toLocaleString()+range+' Â· '+p.value.toFixed(1)+' '+unit+(p.sample_count>1?' average Â· '+p.sample_count+' readings':'')+(temperature&&p.sample_count>1?' Â· min '+p.temperature_min.toFixed(1)+' / max '+p.temperature_max.toFixed(1)+' Â°C':'');
++  const range=p.sample_count>1?' – '+new Date(p.last_at).toLocaleString():'';
++  const label=new Date(p.first_at).toLocaleString()+range+' · '+p.value.toFixed(1)+' '+unit+(p.sample_count>1?' average · '+p.sample_count+' readings':'')+(temperature&&p.sample_count>1?' · min '+p.temperature_min.toFixed(1)+' / max '+p.temperature_max.toFixed(1)+' °C':'');
+   circle.append(svgNode('title',{},label));circle.addEventListener('mouseenter',()=>put('chart-detail',label));circle.addEventListener('click',()=>put('chart-detail',label));svg.append(circle);
+  });
+ }
+@@ -1434,18 +1436,18 @@
+  const select=el('chart-sensor');select.replaceChildren();
+  for(const sensor of data.sensors){const option=document.createElement('option');option.value=sensor.device_key;option.textContent=sensor.device_key;select.append(option);}
+  if(data.device_key)select.value=data.device_key;
+- drawChart('temperature-chart',data.points,'temperature_c','#a94312','Â°C');drawChart('humidity-chart',data.points,'humidity_pct','#075da8','%');
++ drawChart('temperature-chart',data.points,'temperature_c','#a94312','°C');drawChart('humidity-chart',data.points,'humidity_pct','#075da8','%');
+  const periods={'1':'1 hour','6':'6 hours','24':'24 hours','168':'7 days','720':'30 days','all':'All history'},seconds=data.bucket_seconds;
+  const resolution=seconds?'displayed as '+(seconds%3600===0?seconds/3600+'-hour':seconds/60+'-minute')+' averages':'displayed at full resolution';
+- const dates=data.first_at?' Â· '+new Date(data.first_at).toLocaleString()+' â€“ '+new Date(data.last_at).toLocaleString():'';
+- put('chart-summary',data.stored_count.toLocaleString()+' stored readings for this sensor Â· '+periods[data.period]+' Â· '+data.range_count.toLocaleString()+' readings in range Â· '+data.displayed_count.toLocaleString()+' displayed points Â· '+resolution+dates+(data.gap_limited?' Â· Additional points retained to preserve reception gaps':'')+(!data.range_count?' Â· No readings in this period.':''));
++ const dates=data.first_at?' · '+new Date(data.first_at).toLocaleString()+' – '+new Date(data.last_at).toLocaleString():'';
++ put('chart-summary',data.stored_count.toLocaleString()+' stored readings for this sensor · '+periods[data.period]+' · '+data.range_count.toLocaleString()+' readings in range · '+data.displayed_count.toLocaleString()+' displayed points · '+resolution+dates+(data.gap_limited?' · Additional points retained to preserve reception gaps':'')+(!data.range_count?' · No readings in this period.':''));
+ }
+ let historyController=null,historyTimer=null,historyRevision=0;
+ async function pollHistory(selectionChanged=false){
+  const revision=++historyRevision;clearTimeout(historyTimer);if(historyController)historyController.abort();
+  const controller=new AbortController();historyController=controller;
+  const timer=setTimeout(()=>controller.abort(),15000);
+- if(selectionChanged){el('temperature-chart').replaceChildren();el('humidity-chart').replaceChildren();put('chart-summary','Loading selected historyâ€¦');put('chart-detail','');}
++ if(selectionChanged){el('temperature-chart').replaceChildren();el('humidity-chart').replaceChildren();put('chart-summary','Loading selected history…');put('chart-detail','');}
+  try{
+   const query=new URLSearchParams({period:el('chart-period').value,sensor:el('chart-sensor').value});
+   const response=await fetch('/api/nexus/history?'+query,{cache:'no-store',signal:controller.signal});
+@@ -1455,13 +1457,13 @@
+  finally{clearTimeout(timer);if(revision===historyRevision){historyController=null;historyTimer=setTimeout(pollHistory,30000);}}
+ }
+ el('chart-sensor').addEventListener('change',()=>pollHistory(true));el('chart-period').addEventListener('change',()=>pollHistory(true));
+-async function poll(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);try{const response=await fetch('/api/state',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error(response.status);render(await response.json());online=true;el('cached-notice').hidden=true;put('connection','Dashboard online');el('connection').className='pill ok';}catch(error){online=false;el('cached-notice').hidden=false;put('overview-system','Disconnected');put('connection','Dashboard disconnected');el('connection').className='pill warn';put('state','Connection lost');put('detail','Displayed readings are cached. Retryingâ€¦');put('job','Unknown');put('frequency','â€”');put('sensor-state','Connection lost');put('sensor-detail','Displayed receiver status is cached. Retryingâ€¦');}finally{clearTimeout(timer);setTimeout(poll,2000);}}
++async function poll(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);try{const response=await fetch('/api/state',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error(response.status);render(await response.json());online=true;el('cached-notice').hidden=true;put('connection','Dashboard online');el('connection').className='pill ok';}catch(error){online=false;el('cached-notice').hidden=false;put('overview-system','Disconnected');put('connection','Dashboard disconnected');el('connection').className='pill warn';put('state','Connection lost');put('detail','Displayed readings are cached. Retrying…');put('job','Unknown');put('frequency','—');put('sensor-state','Connection lost');put('sensor-detail','Displayed receiver status is cached. Retrying…');}finally{clearTimeout(timer);setTimeout(poll,2000);}}
+ 
+ let audioToken='', audioCatalog=[], audioBusy=false, audioSending=false, audioConnected=false, audioRevision='', audioPollActive=false;
+ function updateAudioButton(){el('audio-run').disabled=!audioConnected||audioBusy||audioSending||!audioCatalog.some(x=>x.id===el('audio-recording').value&&x.ready);}
+ function selectAudio(){
+  const item=audioCatalog.find(x=>x.id===el('audio-recording').value);
+- put('audio-selection',item?(item.ready?item.audio_seconds+' seconds Â· saved audio Â· mono 16 kHz':item.reason):'No supported speech clips found.');
++ put('audio-selection',item?(item.ready?item.audio_seconds+' seconds · saved audio · mono 16 kHz':item.reason):'No supported speech clips found.');
+  const player=el('audio-preview');player.hidden=!item?.ready;
+  if(item?.ready){const src='/api/audio/file/'+item.id;if(player.getAttribute('src')!==src)player.src=src;}
+  else {player.removeAttribute('src');player.load();}
+@@ -1474,7 +1476,7 @@
+  if(revision!==audioRevision){
+   audioRevision=revision;audioCatalog=data.recordings;
+   const selected=el('audio-recording').value;el('audio-recording').replaceChildren();
+-  for(const item of audioCatalog){const option=document.createElement('option');option.value=item.id;option.textContent=item.name+(item.ready?' ('+item.audio_seconds+' s)':' â€” needs preparation');option.disabled=!item.ready;el('audio-recording').append(option);}
++  for(const item of audioCatalog){const option=document.createElement('option');option.value=item.id;option.textContent=item.name+(item.ready?' ('+item.audio_seconds+' s)':' — needs preparation');option.disabled=!item.ready;el('audio-recording').append(option);}
+   if(audioCatalog.some(x=>x.id===selected&&x.ready))el('audio-recording').value=selected;
+   else el('audio-recording').value=audioCatalog.find(x=>x.ready)?.id||'';
+   selectAudio();
+@@ -1485,13 +1487,13 @@
+  const t=run.transcription,i=run.interpretation;
+  el('audio-result').hidden=!t;
+  if(t){
+-  put('audio-result-title','REPLAY Â· '+run.recording+' Â· '+new Date(run.started_at).toLocaleString());
++  put('audio-result-title','REPLAY · '+run.recording+' · '+new Date(run.started_at).toLocaleString());
+   const src='/api/audio/file/'+run.recording_id;
+   if(el('audio-result-player').getAttribute('src')!==src)el('audio-result-player').src=src;
+   put('audio-transcript',t.text||'No speech text');
+-  put('audio-asr-meta',(t.language||'Unknown language')+' Â· '+numeric(t.audio_seconds,' s recording')+' Â· '+numeric(t.processing_seconds,' s processing')+' Â· '+(t.model||'')+' Â· '+(t.accelerator_verified?'Accelerator verified':'Whole-ASR accelerator verification pending'));
+-  put('audio-summary',i?i.summary:(run.state==='failed'?'Summary unavailable.':'Waiting for Genieâ€¦'));
+-  put('audio-genie-meta',i?(i.backend==='genie-qnn'?'Qualcomm Genie / QNN':'Plain transcript fallback Â· '+(i.backend_error||'Genie unavailable')):'');
++  put('audio-asr-meta',(t.language||'Unknown language')+' · '+numeric(t.audio_seconds,' s recording')+' · '+numeric(t.processing_seconds,' s processing')+' · '+(t.model||'')+' · '+(t.accelerator_verified?'Accelerator verified':'Whole-ASR accelerator verification pending'));
++  put('audio-summary',i?i.summary:(run.state==='failed'?'Summary unavailable.':'Waiting for Genie…'));
++  put('audio-genie-meta',i?(i.backend==='genie-qnn'?'Qualcomm Genie / QNN':'Plain transcript fallback · '+(i.backend_error||'Genie unavailable')):'');
+  }
+  updateAudioButton();
+ }
+@@ -1500,7 +1502,7 @@
+  audioPollActive=true;
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+  try{const response=await fetch('/api/audio',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error('Workflow unavailable ('+response.status+')');renderAudio(await response.json());}
+- catch(error){audioConnected=false;put('overview-audio','Disconnected');put('overview-audio-detail','Speech workflow unavailable. Retryingâ€¦');put('audio-progress','Speech workflow disconnected. Retryingâ€¦');updateAudioButton();}
++ catch(error){audioConnected=false;put('overview-audio','Disconnected');put('overview-audio-detail','Speech workflow unavailable. Retrying…');put('audio-progress','Speech workflow disconnected. Retrying…');updateAudioButton();}
+  finally{audioPollActive=false;clearTimeout(timer);}
+ }
+ el('audio-recording').addEventListener('change',selectAudio);
+@@ -1535,50 +1537,53 @@
+   if(!response.ok)throw Error('ATIS unavailable');
+   const data=await response.json();
+   put('atis-status',data.message||'Waiting for ATIS');
+-  put('atis-meta',data.recording?('Recording '+data.recording+' Â· '+numeric(data.capture?.audio_seconds,' s')+' Â· about twice/hour; satellite slots skipped'):'');
++  put('atis-meta',data.recording?('Recording '+data.recording+' · '+numeric(data.capture?.audio_seconds,' s')+' · about twice/hour; satellite slots skipped'):'');
+   const player=el('atis-player');player.hidden=!data.audio_available;
+   if(data.audio_available){const src='/api/atis/audio?recording='+encodeURIComponent(data.recording);if(player.getAttribute('src')!==src)player.src=src;}
+   const t=data.transcript,i=data.interpretation;
+-  put('atis-model',t?(t.model+' Â· transcription '+t.status+' Â· '+(i?.backend||'Interpretation pending')+' Â· accelerator profiling pending'):'Qualcomm Whisper small Â· processing pending');
++  put('atis-model',t?(t.model+' · transcription '+t.status+' · '+(i?.backend||'Interpretation pending')+' · accelerator profiling pending'):'Qualcomm Whisper small · processing pending');
+   el('atis-fields').replaceChildren();
+   const fields=i?.result?.fields||{};
+   for(const [key,value] of Object.entries(fields)){
+    const row=document.createElement('tr');
+-   for(const text of [key.replaceAll('_',' '),value.evidence||'Not recovered',value.value?'Tentative â€” listen to verify':'Missing']){
++   for(const text of [key.replaceAll('_',' '),value.evidence||'Not recovered',value.value?'Tentative — listen to verify':'Missing']){
+     const cell=document.createElement('td');cell.textContent=text;row.append(cell);
+    }
+    el('atis-fields').append(row);
+   }
+   if(!Object.keys(fields).length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=3;cell.textContent=i?.error||'No usable field interpretation yet.';row.append(cell);el('atis-fields').append(row);}
+   const uncertainties=i?.result?.uncertainties;
+-  put('atis-uncertainties',Array.isArray(uncertainties)?uncertainties.join(' Â· '):uncertainties||'All numbers require listening review.');
++  put('atis-uncertainties',Array.isArray(uncertainties)?uncertainties.join(' · '):uncertainties||'All numbers require listening review.');
+   el('atis-transcript').replaceChildren();
+   for(const segment of t?.segments||[]){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+(segment.text||('Failed: '+segment.error));el('atis-transcript').append(p);}
+- }catch(error){put('atis-status','ATIS disconnected. Any displayed result is cached. Retryingâ€¦');}
++ }catch(error){put('atis-status','ATIS disconnected. Any displayed result is cached. Retrying…');}
+  finally{clearTimeout(timeout);atisBusy=false;}
+ }
+ setInterval(pollATIS,8000);pollATIS();
+ 
+ 
+-// Display pass provenance using text-only DOM fields; 2026-10-03 21:25:52 EEST, Thomas VikstrÃ¶m.
+-let meteorPasses=[],meteorLoaded=false;
++// Display pass provenance using text-only DOM fields; 2026-10-03 21:25:52 EEST, Thomas Vikström.
++let meteorPasses=[],meteorLoaded=false,meteorControlToken=null;
+ function showMeteorProduct(){
+  const pass=meteorPasses.find(p=>p.pass_id===document.getElementById('meteor-pass').value);
+  const image=pass?.images.find(i=>String(i.id)===document.getElementById('meteor-product').value);
+  const img=document.getElementById('meteor-image'),link=document.getElementById('meteor-image-link');
+  img.hidden=link.hidden=!image;
+- if(image){img.src=image.url;img.alt=pass.satellite+' Â· '+image.product;link.href=image.url;}
++ if(image){img.src=image.url;img.alt=pass.satellite+' · '+image.product;link.href=image.url;}
+  else{img.removeAttribute('src');link.removeAttribute('href');}
+ }
+ function showMeteorPass(){
+  const pass=meteorPasses.find(p=>p.pass_id===document.getElementById('meteor-pass').value);
+  const products=document.getElementById('meteor-product');products.replaceChildren();
+  if(!pass){return;}
+- for(const image of pass.images){const option=document.createElement('option');option.value=image.id;option.textContent=image.product+' Â· '+image.width+' Ã— '+image.height;products.append(option);}
+- document.getElementById('meteor-status').textContent=pass.classification+' Â· '+pass.satellite+(pass.source?.startsWith('imported')?' Â· IMPORTED':'')+(pass.reference?' Â· REFERENCE':'');
+- document.getElementById('meteor-meta').textContent='Pass: '+new Date(pass.pass_start||pass.record_start).toLocaleString()+' Â· '+pass.sample_rate+' samples/s Â· '+(pass.frequency/1e6)+' MHz'+(pass.peak_elevation!=null?' Â· Peak elevation '+pass.peak_elevation.toFixed(1)+'Â°':'')+(pass.peak_snr!=null?' Â· Peak SNR '+pass.peak_snr:'')+' Â· IQ '+pass.raw_iq_state;
+- document.getElementById('meteor-meta').textContent+=' Â· '+(pass.source||'automatic_evk')+' Â· '+(pass.receiver||'RTL-SDR')+' Â· '+(pass.capture_host||'EVK')+' Â· '+(pass.capture_mode||'automatic')+(pass.end_time?' Â· End: '+new Date(pass.end_time).toLocaleString():'')+(pass.notes?' Â· '+pass.notes:'');
+- document.getElementById('meteor-lines').textContent='Decoded channel lines: '+Object.entries(pass.channel_lines).map(([ch,count])=>'Ch '+ch+': '+count).join(' Â· ');
++ for(const image of pass.images){const option=document.createElement('option');option.value=image.id;option.textContent=image.product+' · '+image.width+' × '+image.height;products.append(option);}
++ document.getElementById('meteor-status').textContent=pass.classification+' · '+pass.satellite+(pass.source?.startsWith('imported')?' · IMPORTED':'')+(pass.reference?' · REFERENCE':'');
++ const retention=pass.retention,keep=document.getElementById('meteor-keep');
++ keep.disabled=!retention;keep.textContent=pass.pinned?'Unpin recording':'Keep raw recording';
++ document.getElementById('meteor-retention').textContent=retention?((retention.raw_deleted?'Raw deleted':retention.raw_exists?'Raw available':'Raw missing')+' · '+(pass.pinned?'Pinned':retention.retention_class.replaceAll('_',' '))+(retention.deadline?' · Raw expires '+new Date(retention.deadline).toLocaleString():' · Retained indefinitely')+' · '+retention.reason+' · Frequency evaluation '+(retention.frequency_evaluation_completed?'verified':'unverified')):'Reference/imported recording: outside automatic cleanup';
++ document.getElementById('meteor-meta').textContent='Pass: '+new Date(pass.pass_start||pass.record_start).toLocaleString()+' · '+pass.sample_rate+' samples/s · '+(pass.frequency/1e6)+' MHz'+(pass.peak_elevation!=null?' · Peak elevation '+pass.peak_elevation.toFixed(1)+'°':'')+(pass.peak_snr!=null?' · Peak SNR '+pass.peak_snr:'')+' · IQ '+pass.raw_iq_state;
++ document.getElementById('meteor-meta').textContent+=' · '+(pass.source||'automatic_evk')+' · '+(pass.receiver||'RTL-SDR')+' · '+(pass.capture_host||'EVK')+' · '+(pass.capture_mode||'automatic')+(pass.end_time?' · End: '+new Date(pass.end_time).toLocaleString():'')+(pass.notes?' · '+pass.notes:'');
++ document.getElementById('meteor-lines').textContent='Decoded channel lines: '+Object.entries(pass.channel_lines).map(([ch,count])=>'Ch '+ch+': '+count).join(' · ');
+  showMeteorConditions(pass);
+  showMeteorProduct();
+ }
+@@ -1587,8 +1592,9 @@
+   const response=await fetch('/api/meteor',{cache:'no-store'});if(!response.ok)throw Error('History unavailable');
+   const data=await response.json(),selector=document.getElementById('meteor-pass');
+   const old=selector.value,oldProduct=document.getElementById('meteor-product').value;
+-  meteorPasses=data.passes;selector.replaceChildren();
+-  for(const pass of meteorPasses){const option=document.createElement('option');option.value=pass.pass_id;option.textContent=pass.satellite+' Â· '+new Date(pass.record_start).toLocaleString()+' Â· '+pass.classification+(pass.source?.startsWith('imported')?' Â· Imported':'')+(pass.reference?' Â· Reference':'');selector.append(option);}
++  meteorPasses=data.passes;meteorControlToken=data.control_token;selector.replaceChildren();
++  document.getElementById('meteor-disk').textContent=(data.disk_warning?'Disk-space warning · ':'')+data.disk_free_gib+' GiB free · '+(data.cleanup_enabled?'Automatic raw cleanup enabled':'Cleanup dry-run: raw deletion disabled');
++  for(const pass of meteorPasses){const option=document.createElement('option');option.value=pass.pass_id;option.textContent=pass.satellite+' · '+new Date(pass.record_start).toLocaleString()+' · '+pass.classification+(pass.source?.startsWith('imported')?' · Imported':'')+(pass.reference?' · Reference':'');selector.append(option);}
+   const selected=meteorPasses.find(p=>p.pass_id===old)||meteorPasses.find(p=>['SUCCESS','PARTIAL_SUCCESS'].includes(p.classification))||meteorPasses[0];
+   if(selected){selector.value=selected.pass_id;showMeteorPass();if(selected.pass_id===old&&[...document.getElementById('meteor-product').options].some(o=>o.value===oldProduct)){document.getElementById('meteor-product').value=oldProduct;showMeteorProduct();}}
+   else{document.getElementById('meteor-status').textContent='No processed METEOR passes yet.';}
+@@ -1597,19 +1603,24 @@
+ }
+ document.getElementById('meteor-pass').addEventListener('change',showMeteorPass);
+ document.getElementById('meteor-product').addEventListener('change',showMeteorProduct);
++document.getElementById('meteor-keep').addEventListener('click',async()=>{
++ const pass=meteorPasses.find(p=>p.pass_id===document.getElementById('meteor-pass').value);if(!pass)return;
++ try{const response=await fetch('/api/meteor/pin',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':meteorControlToken},body:JSON.stringify({id:pass.pass_id,keep:!pass.pinned})});const data=await response.json();if(!response.ok)throw Error(data.error||'Keep update failed');await loadMeteor();}
++ catch(error){document.getElementById('meteor-retention').textContent=error.message;}
++});
+ loadMeteor();setInterval(loadMeteor,60000);
+ 
+ 
+ let scheduleBusy=false;
+ function passTime(value, date=false){
+- if(!value)return 'â€”';
+- const stamp=new Date(value);if(!Number.isFinite(stamp.getTime()))return 'â€”';
++ if(!value)return '—';
++ const stamp=new Date(value);if(!Number.isFinite(stamp.getTime()))return '—';
+  return new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Helsinki',...(date?{day:'2-digit',month:'short'}:{}),hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(stamp);
+ }
+ function passDirection(value){
+- if(typeof value!=='number'||!Number.isFinite(value))return 'â€”';
++ if(typeof value!=='number'||!Number.isFinite(value))return '—';
+  const angle=((value%360)+360)%360,directions=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+- return directions[Math.floor((angle+11.25)/22.5)%16]+' / '+Math.round(angle)%360+'Â°';
++ return directions[Math.floor((angle+11.25)/22.5)%16]+' / '+Math.round(angle)%360+'°';
+ }
+ function renderSchedule(data){
+  const body=el('schedule-rows');body.replaceChildren();
+@@ -1618,22 +1629,22 @@
+   const row=document.createElement('tr');if(pass===next)row.className='next-pass';
+   const satellite=document.createElement('td'),name=document.createElement('strong'),status=document.createElement('small'),source=document.createElement('small');
+   name.textContent=pass.satellite;status.textContent=pass.schedule_status;status.className=pass.schedule_status==='Scheduled'?'status':'warn';source.textContent=pass.source;satellite.append(name,status,source);row.append(satellite);
+-  const values=[passTime(pass.start,true),passDirection(pass.start_azimuth),passTime(pass.peak),passDirection(pass.peak_azimuth),typeof pass.peak_deg==='number'?pass.peak_deg.toFixed(1)+'Â°':'â€”',passTime(pass.stop,true),passDirection(pass.end_azimuth)];
++  const values=[passTime(pass.start,true),passDirection(pass.start_azimuth),passTime(pass.peak),passDirection(pass.peak_azimuth),typeof pass.peak_deg==='number'?pass.peak_deg.toFixed(1)+'°':'—',passTime(pass.stop,true),passDirection(pass.end_azimuth)];
+   values.forEach((value,index)=>{const cell=document.createElement('td');cell.textContent=value;if(index>=2&&index<=4)cell.className='peak';row.append(cell);});
+   const recording=document.createElement('td');
+-  for(const text of [passTime(pass.record_start,true)+' â€“ '+passTime(pass.record_stop,true),(pass.frequency/1e6).toFixed(3)+' MHz Â· '+(pass.sample_rate/1000)+' kS/s',pass.device,pass.trigger?(pass.unit?'Timer: ':'Dispatcher: ')+passTime(pass.trigger,true):'Timer: active',pass.tle_epoch?'TLE epoch: '+passTime(pass.tle_epoch,true):'Direction prediction unavailable']){const detail=document.createElement('small');detail.textContent=text||'â€”';recording.append(detail);}
++  for(const text of [passTime(pass.record_start,true)+' – '+passTime(pass.record_stop,true),(pass.frequency/1e6).toFixed(3)+' MHz · '+(pass.sample_rate/1000)+' kS/s',pass.device,pass.trigger?(pass.unit?'Timer: ':'Dispatcher: ')+passTime(pass.trigger,true):'Timer: active',pass.tle_epoch?'TLE epoch: '+passTime(pass.tle_epoch,true):'Direction prediction unavailable']){const detail=document.createElement('small');detail.textContent=text||'—';recording.append(detail);}
+   if(pass.unit)recording.title=pass.unit;row.append(recording);body.append(row);
+  }
+  if(!rows.length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=9;cell.textContent='No upcoming scheduled captures.';row.append(cell);body.append(row);}
+- put('schedule-status',rows.length+' upcoming pass'+(rows.length===1?'':'es')+' Â· checked '+passTime(data.checked_at,true));
+- put('schedule-meta','Observer '+data.observer.latitude.toFixed(5)+'Â°, '+data.observer.longitude.toFixed(5)+'Â° Â· managed recording horizon '+data.horizon_deg+'Â° Â· planner updated '+passTime(data.generated_at,true));
+- put('schedule-warning',(data.warnings||[]).join(' Â· '));
++ put('schedule-status',rows.length+' upcoming pass'+(rows.length===1?'':'es')+' · checked '+passTime(data.checked_at,true));
++ put('schedule-meta','Observer '+data.observer.latitude.toFixed(5)+'°, '+data.observer.longitude.toFixed(5)+'° · managed recording horizon '+data.horizon_deg+'° · planner updated '+passTime(data.generated_at,true));
++ put('schedule-warning',(data.warnings||[]).join(' · '));
+ }
+ async function loadSchedule(){
+  if(scheduleBusy)return;scheduleBusy=true;
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),25000);
+  try{const response=await fetch('/api/meteor/schedule',{cache:'no-store',signal:controller.signal});const data=await response.json();if(!response.ok)throw Error(data.error||'Schedule unavailable');renderSchedule(data);}
+- catch(error){put('schedule-status','Schedule unavailable. Any displayed passes are cached; retryingâ€¦');}
++ catch(error){put('schedule-status','Schedule unavailable. Any displayed passes are cached; retrying…');}
+  finally{clearTimeout(timer);scheduleBusy=false;}
+ }
+ loadSchedule();setInterval(loadSchedule,30000);
+@@ -1642,14 +1653,14 @@
+ function showMeteorConditions(pass){
+  const c=pass.conditions||{},body=el('meteor-conditions-rows');body.replaceChildren();
+  const rows=[['Pass start',c.start||pass.pass_start,c.start_azimuth,null],['Maximum altitude',c.peak,c.peak_azimuth??pass.peak_azimuth,c.peak_deg??pass.peak_elevation],['Pass end',c.stop||pass.pass_stop,c.end_azimuth,null],['Recording start (planned)',c.record_start||pass.record_start,null,null],['Recording end (planned)',c.record_stop||pass.end_time,null,null]];
+- for(const [event,time,az,alt] of rows){const row=document.createElement('tr');for(const text of [event,passTime(time,true),passDirection(az),typeof alt==='number'?alt.toFixed(1)+'Â°':'â€”']){const cell=document.createElement('td');cell.textContent=text;row.append(cell);}body.append(row);}
+- const settings=[typeof (c.frequency??pass.frequency)==='number'?((c.frequency??pass.frequency)/1e6).toFixed(3)+' MHz':null,typeof (c.sample_rate??pass.sample_rate)==='number'?((c.sample_rate??pass.sample_rate)/1000)+' kS/s':null,c.gain!=null?'Gain '+c.gain+' dB':null,c.device,c.pre_margin!=null&&c.post_margin!=null?'Margins âˆ’'+c.pre_margin+' s / +'+c.post_margin+' s':null];
+- put('meteor-capture-settings',settings.filter(Boolean).join(' Â· '));
+- const actual=['Actual IQ recording: '+passTime(c.actual_start,true)+' â€“ '+passTime(c.actual_stop,true),c.iq_bytes!=null?(c.iq_bytes/1024/1024).toFixed(1)+' MiB':null,c.status?'Capture: '+c.status.replaceAll('_',' '):null,c.preflight?'IQ preflight '+(c.preflight.success===true?'passed':c.preflight.success===false?'failed':'unknown')+' Â· '+c.preflight.attempt_count+' attempt(s)':null];
+- put('meteor-actual-recording',actual.filter(Boolean).join(' Â· '));
+- const observer=c.observer?' Â· Observer '+c.observer.latitude.toFixed(5)+'Â°, '+c.observer.longitude.toFixed(5)+'Â° / '+c.observer.observer_elevation_m+' m':'';
+- const provenance=(c.geometry_source||'Full orbital details were not saved for this older recording')+(c.horizon_deg!=null?' Â· Horizon '+c.horizon_deg+'Â°':'')+observer+(c.tle_epoch?' Â· TLE epoch '+passTime(c.tle_epoch,true):'')+(c.saved_at?' Â· Saved '+passTime(c.saved_at,true):'');
+- put('meteor-condition-source',provenance+'. Geometry is predicted; SNR and decoder results are shown above.'+(c.warnings?.length?' '+c.warnings.join(' Â· '):''));
++ for(const [event,time,az,alt] of rows){const row=document.createElement('tr');for(const text of [event,passTime(time,true),passDirection(az),typeof alt==='number'?alt.toFixed(1)+'°':'—']){const cell=document.createElement('td');cell.textContent=text;row.append(cell);}body.append(row);}
++ const settings=[typeof (c.frequency??pass.frequency)==='number'?((c.frequency??pass.frequency)/1e6).toFixed(3)+' MHz':null,typeof (c.sample_rate??pass.sample_rate)==='number'?((c.sample_rate??pass.sample_rate)/1000)+' kS/s':null,c.gain!=null?'Gain '+c.gain+' dB':null,c.device,c.pre_margin!=null&&c.post_margin!=null?'Margins −'+c.pre_margin+' s / +'+c.post_margin+' s':null];
++ put('meteor-capture-settings',settings.filter(Boolean).join(' · '));
++ const actual=['Actual IQ recording: '+passTime(c.actual_start,true)+' – '+passTime(c.actual_stop,true),c.iq_bytes!=null?(c.iq_bytes/1024/1024).toFixed(1)+' MiB':null,c.status?'Capture: '+c.status.replaceAll('_',' '):null,c.preflight?'IQ preflight '+(c.preflight.success===true?'passed':c.preflight.success===false?'failed':'unknown')+' · '+c.preflight.attempt_count+' attempt(s)':null];
++ put('meteor-actual-recording',actual.filter(Boolean).join(' · '));
++ const observer=c.observer?' · Observer '+c.observer.latitude.toFixed(5)+'°, '+c.observer.longitude.toFixed(5)+'° / '+c.observer.observer_elevation_m+' m':'';
++ const provenance=(c.geometry_source||'Full orbital details were not saved for this older recording')+(c.horizon_deg!=null?' · Horizon '+c.horizon_deg+'°':'')+observer+(c.tle_epoch?' · TLE epoch '+passTime(c.tle_epoch,true):'')+(c.saved_at?' · Saved '+passTime(c.saved_at,true):'');
++ put('meteor-condition-source',provenance+'. Geometry is predicted; SNR and decoder results are shown above.'+(c.warnings?.length?' '+c.warnings.join(' · '):''));
+ }
+ 
+ </script></body></html>
+--- a/satdump_evk.py
++++ b/satdump_evk.py
+@@ -1,5 +1,6 @@
+-# Run bounded METEOR decoding with an optional import-only profile that avoids historical map reprojection crashes; 2026-10-03 21:54:00 EEST, Thomas VikstrÃ¶m.
++# Run bounded METEOR decoding with an optional import-only profile that avoids historical map reprojection crashes; 2026-10-03 21:54:00 EEST, Thomas Vikström.
+ import json
++import fcntl
+ import os
+ from pathlib import Path
+ import signal
+@@ -18,7 +19,7 @@
+     if arguments[0] != 'meteor_m2-x_lrpt':
+         raise ValueError('Unsupported METEOR pipeline')
+     options = arguments[4:]
+-    # Scope the projection workaround to explicit importer calls; 2026-10-03 21:54:00 EEST, Thomas VikstrÃ¶m.
++    # Scope the projection workaround to explicit importer calls; 2026-10-03 21:54:00 EEST, Thomas Vikström.
+     profile_requested = '--import-no-projection' in options
+     if options.count('--import-no-projection') > 1:
+         raise ValueError('Duplicate import profile flag')
+@@ -58,6 +59,9 @@
+     limit = max(1, c['decode_timeout_seconds'] - 30)
+     name = 'rf-watchkeeper-meteor-decode-' + uuid.uuid4().hex
+     invocation = argv(arguments, name)
++    # Cooperative shared raw lock covers Docker's delayed mount/open as well.
++    raw_guard = Path(arguments[2]).open('rb')
++    fcntl.flock(raw_guard, fcntl.LOCK_SH | fcntl.LOCK_NB)
+     interrupted = [False]
+     for sig in (signal.SIGTERM, signal.SIGINT):
+         signal.signal(sig, lambda *_: interrupted.__setitem__(0, True))
+@@ -81,6 +85,7 @@
+             except subprocess.TimeoutExpired:
+                 child.kill()
+                 child.wait(timeout=5)
++        raw_guard.close()
+ 
+ 
+ if __name__ == '__main__':
+--- a/meteor-config.json
++++ b/meteor-config.json
+@@ -1,40 +1,56 @@
+-{
+-  "enabled": true,
+-  "latitude": 63.104753,
+-  "longitude": 21.683053,
+-  "observer_elevation_m": 10,
+-  "hours": 36,
+-  "horizon_deg": 10,
+-  "min_peak_deg": 25,
+-  "south_azimuth_min": 120,
+-  "south_azimuth_max": 240,
+-  "min_south_seconds": 60,
+-  "max_passes_per_day": 4,
+-  "pre_margin": 90,
+-  "post_margin": 90,
+-  "preflight_seconds": 120,
+-  "dispatch_lead_seconds": 12,
+-  "max_lateness_seconds": 30,
+-  "sample_rate": 256000,
+-  "frequency": 137900000,
+-  "gain": 49.6,
+-  "device": "V4MAIN01",
+-  "min_free_gib": 10,
+-  "max_tle_age_days": 3,
+-  "satdump_command": [
+-    "/root/rf-watchkeeper/.satellite-venv/bin/python",
+-    "/root/rf-watchkeeper/satdump_evk.py"
+-  ],
+-  "satdump_prefix": [],
+-  "satdump_pipeline": "meteor_m2-x_lrpt",
+-  "satdump_extra": [
+-    "--dc_block",
+-    "--satellite_number",
+-    "{satellite_number}"
+-  ],
+-  "decode_timeout_seconds": 1800,
+-  "max_decode_attempts": 3,
+-  "decode_retry_seconds": 3600,
+-  "cleanup_enabled": false,
+-  "raw_retention_days": 14
+-}
++{
++  "enabled": true,
++  "latitude": 63.104753,
++  "longitude": 21.683053,
++  "observer_elevation_m": 10,
++  "hours": 36,
++  "horizon_deg": 10,
++  "min_peak_deg": 25,
++  "south_azimuth_min": 120,
++  "south_azimuth_max": 240,
++  "min_south_seconds": 60,
++  "max_passes_per_day": 4,
++  "pre_margin": 90,
++  "post_margin": 90,
++  "preflight_seconds": 120,
++  "dispatch_lead_seconds": 12,
++  "max_lateness_seconds": 30,
++  "sample_rate": 256000,
++  "frequency": 137900000,
++  "gain": 49.6,
++  "device": "V4MAIN01",
++  "min_free_gib": 10,
++  "max_tle_age_days": 3,
++  "satdump_command": [
++    "/root/rf-watchkeeper/.satellite-venv/bin/python",
++    "/root/rf-watchkeeper/satdump_evk.py"
++  ],
++  "satdump_prefix": [],
++  "satdump_pipeline": "meteor_m2-x_lrpt",
++  "satdump_extra": [
++    "--dc_block",
++    "--satellite_number",
++    "{satellite_number}"
++  ],
++  "decode_timeout_seconds": 1800,
++  "max_decode_attempts": 3,
++  "decode_retry_seconds": 3600,
++  "cleanup_enabled": false,
++  "raw_retention_days": 14,
++  "retention": {
++    "no_signal_hours": 24,
++    "poor_hours": 48,
++    "useful_hours": 168,
++    "normal_free_gib": 20,
++    "critical_free_gib": 10,
++    "useful_min_lines": 128,
++    "excellent_min_lines": 2000,
++    "automatic_deletion_validated": false
++  },
++  "frequency_evaluation": {
++    "span_hz": 60000,
++    "windows": 24,
++    "max_candidates": 2,
++    "budget_seconds": 300
++  }
++}
+--- a/test_meteor_retention.py
++++ b/test_meteor_retention.py
+@@ -0,0 +1,223 @@
++import copy
++from datetime import datetime, timedelta, timezone
++import fcntl
++import json
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++import meteor_retention as retention
++import meteor_frequency as frequency
++
++class RetentionTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.raw = self.root / 'recordings/satellite/test.cu8'
++        self.raw.parent.mkdir(parents=True)
++        self.raw.write_bytes(b'\x7f' * 200)
++        self.at = datetime.now(timezone.utc)
++        end = (self.at - timedelta(days=10)).isoformat()
++        self.c = dict(cleanup_enabled=True, retention=dict(automatic_deletion_validated=True))
++        self.r = dict(owner='meteor-auto-v1', state='decoded_products', iq=str(self.raw),
++            pass_=dict(id='m24-20261001T010000Z', satellite='M2-4', record_start=end,
++                       record_stop=(self.at - timedelta(days=10) + timedelta(seconds=10)).isoformat(), sample_rate=10),
++            capture=dict(status='completed', sample_rate_sps=10), captured_iq_bytes=200,
++            iq_fingerprint=retention.fingerprint(self.raw), decode_attempts=[dict(output='decode-1', returncode=0,
++                finished_at=end, metrics=dict(evaluation_clean=True, classification='SUCCESS',
++                    channel_lines={'1':200}, images=[dict(product='MSU-MR-1',width=256,height=200)]))],
++            frequency_evaluation=dict(completed=True, verification='validated_channel_product',
++                best_output='decode-1', finished_at=end, input_fingerprint=retention.fingerprint(self.raw)))
++        self.r['pass'] = self.r.pop('pass_')
++        self.path = self.root / 'data/meteor-auto/passes' / self.r['pass']['id'] / 'pass.json'
++        self.path.parent.mkdir(parents=True)
++        retention.atomic(self.path, self.r)
++
++    def result(self):
++        return retention.classify(self.r, self.c, self.at)
++
++    def test_clean_useful_grace(self):
++        s = self.result()
++        self.assertEqual(s['retention_class'], 'useful')
++        self.assertTrue(s['eligible'])
++        self.assertEqual(retention.instant(s['deadline']) - retention.instant(self.r['decode_attempts'][0]['finished_at']), timedelta(days=7))
++
++    def test_pin_and_unpin(self):
++        s = retention.pin(self.root, self.c, self.r['pass']['id'], True)
++        self.assertEqual(s['retention_class'], 'pinned')
++        self.assertFalse(retention.cleanup(self.root, self.c)['would_delete'])
++        retention.pin(self.root, self.c, self.r['pass']['id'], False)
++        self.assertEqual(len(retention.cleanup(self.root, self.c)['would_delete']), 1)
++
++    def test_all_active_states_protected(self):
++        for state in retention.ACTIVE:
++            with self.subTest(state=state):
++                self.r['state'] = state
++                self.assertFalse(self.result()['eligible'])
++
++    def test_crash_even_with_images(self):
++        for rc in (139, -11, 124, 1):
++            self.r['decode_attempts'][0]['returncode'] = rc
++            self.assertEqual(self.result()['retention_class'], 'processing_failed')
++            self.assertFalse(self.result()['eligible'])
++
++    def test_wrapper_exception(self):
++        self.r['decode_attempts'][0]['error'] = 'timeout'
++        self.assertFalse(self.result()['eligible'])
++
++    def test_missing_completion_marker(self):
++        self.r['decode_attempts'][0]['metrics']['evaluation_clean'] = False
++        self.assertEqual(self.result()['retention_class'], 'unverified')
++
++    def test_historical_without_search(self):
++        del self.r['frequency_evaluation']
++        self.assertEqual(self.result()['retention_class'], 'unverified')
++
++    def test_incomplete_search(self):
++        self.r['frequency_evaluation']['completed'] = False
++        self.assertFalse(self.result()['eligible'])
++
++    def test_search_error_or_failed_trial(self):
++        self.r['frequency_evaluation']['error'] = 'budget'
++        self.assertFalse(self.result()['eligible'])
++        self.r['frequency_evaluation'].pop('error')
++        self.r['frequency_evaluation']['trials'] = [dict(returncode=139)]
++        self.assertEqual(self.result()['retention_class'], 'processing_failed')
++
++    def test_fingerprint_change(self):
++        self.raw.write_bytes(b'x' * 200)
++        self.assertFalse(self.result()['eligible'])
++
++    def test_incomplete_capture_and_bad_size(self):
++        self.r['capture']['status'] = 'failed'
++        self.assertEqual(self.result()['retention_class'], 'processing_failed')
++        self.r['capture']['status'] = 'completed'
++        self.r['captured_iq_bytes'] = 199
++        self.assertFalse(self.result()['eligible'])
++
++    def test_excellent_indefinite(self):
++        self.r['decode_attempts'][0]['metrics']['channel_lines']['1'] = 2500
++        self.assertEqual(self.result()['retention_class'], 'excellent')
++        self.assertIsNone(self.result()['deadline'])
++
++    def test_zero_images_sparse_never_no_signal(self):
++        self.r['decode_attempts'][0]['metrics'].update(images=[], channel_lines={'1':0})
++        self.r['frequency_evaluation']['completed'] = False
++        self.assertEqual(self.result()['retention_class'], 'unverified')
++
++    def test_full_negative_and_poor_graces(self):
++        self.r['frequency_evaluation']['verification'] = 'exhaustive_verified_search'
++        m = self.r['decode_attempts'][0]['metrics']
++        m.update(images=[], channel_lines={'1':0})
++        self.assertEqual(self.result()['retention_class'], 'no_signal')
++        self.assertEqual(retention.instant(self.result()['deadline']) - retention.instant(self.r['frequency_evaluation']['finished_at']), timedelta(hours=24))
++        m['channel_lines']['1'] = 10
++        self.assertEqual(self.result()['retention_class'], 'poor')
++        self.assertEqual(retention.instant(self.result()['deadline']) - retention.instant(self.r['frequency_evaluation']['finished_at']), timedelta(hours=48))
++
++    def test_grace_begins_at_evaluation(self):
++        self.r['frequency_evaluation']['finished_at'] = self.at.isoformat()
++        self.assertFalse(self.result()['eligible'])
++
++    def test_dry_run_read_only_low_disk(self):
++        before = self.path.read_bytes()
++        s = retention.cleanup(self.root, self.c, free_gib=5)
++        self.assertEqual(s['disk_pressure'], 'critical')
++        self.assertEqual(len(s['would_delete']), 1)
++        self.assertEqual(before, self.path.read_bytes())
++        self.assertTrue(self.raw.exists())
++
++    def test_deletion_interlocks(self):
++        for c in (dict(cleanup_enabled=False), dict(cleanup_enabled=True)):
++            with self.assertRaises(RuntimeError):
++                retention.cleanup(self.root, c, apply=True)
++        self.assertTrue(self.raw.exists())
++
++    def test_open_file_or_shared_lock_blocks_apply(self):
++        with self.raw.open('rb') as stream:
++            fcntl.flock(stream, fcntl.LOCK_SH)
++            self.assertFalse(retention.cleanup(self.root, self.c, apply=True)['deleted'])
++        self.assertTrue(self.raw.exists())
++
++    def test_synthetic_delete_idempotent_preserves_image_and_metadata(self):
++        image = self.path.parent / 'keep.png'
++        image.write_bytes(b'untouched')
++        self.assertEqual(len(retention.cleanup(self.root, self.c, apply=True)['deleted']), 1)
++        self.assertFalse(self.raw.exists())
++        self.assertTrue(self.path.exists())
++        self.assertEqual(image.read_bytes(), b'untouched')
++        self.assertFalse(retention.cleanup(self.root, self.c, apply=True)['deleted'])
++        saved = json.loads(self.path.read_text())['retention']
++        self.assertEqual(saved['retention_class'], 'useful')
++        self.assertIn('grace period expired', saved['reason'])
++        events = (self.root / 'data/meteor-auto/retention-events.jsonl').read_text()
++        self.assertIn('raw_deleted', events)
++        self.assertIn('frequency_evaluation_completed', events)
++
++    def test_global_processing_lock_defers_cleanup(self):
++        p = self.root / 'data/meteor-auto/processing.lock'
++        with p.open('a') as stream:
++            fcntl.flock(stream, fcntl.LOCK_EX)
++            with self.assertRaises(BlockingIOError):
++                retention.cleanup(self.root, self.c, apply=True)
++        self.assertTrue(self.raw.exists())
++
++    def test_symlink_and_external_path_not_deleted(self):
++        other = self.root / 'outside.cu8'
++        other.write_bytes(self.raw.read_bytes())
++        self.r.update(iq=str(other), iq_fingerprint=retention.fingerprint(other))
++        self.r['frequency_evaluation']['input_fingerprint'] = self.r['iq_fingerprint']
++        retention.atomic(self.path, self.r)
++        self.assertFalse(retention.cleanup(self.root, self.c, apply=True)['deleted'])
++        self.assertTrue(other.exists())
++
++    def test_selection_prioritizes_expired_poor_under_pressure(self):
++        poor = copy.deepcopy(self.r)
++        poor['pass']['id'] = 'm23-20261001T020000Z'
++        poor['decode_attempts'][0]['metrics'].update(images=[], channel_lines={'1':10})
++        poor['frequency_evaluation']['verification'] = 'exhaustive_verified_search'
++        p = self.path.parent.parent / poor['pass']['id'] / 'pass.json'
++        p.parent.mkdir()
++        retention.atomic(p, poor)
++        s = retention.cleanup(self.root, self.c, free_gib=5)
++        self.assertEqual(s['would_delete'][0]['id'], poor['pass']['id'])
++
++    def test_span_and_positive_detection(self):
++        with self.assertRaises(ValueError):
++            frequency.survey(self.raw, 100000, 60000)
++        self.assertTrue(frequency.useful(self.r['decode_attempts'][0]['metrics']))
++        self.r['decode_attempts'][0]['metrics']['images'][0]['height'] = 1
++        self.assertFalse(frequency.useful(self.r['decode_attempts'][0]['metrics']))
++
++    def test_frequency_nominal_positive_requires_clean_markers(self):
++        import meteor_pipeline as pipeline
++        c = dict(self.c, frequency_evaluation=dict(span_hz=60000, windows=24, max_candidates=2, budget_seconds=300))
++        with patch.object(pipeline, 'ROOT', self.root), patch.object(pipeline, 'STATE', self.root / 'data/meteor-auto'), patch.object(pipeline.meteor_store, 'persist'), patch.object(retention, 'sync_db'), patch.object(frequency, 'survey') as scan:
++            pipeline.evaluate_frequency(c, self.path)
++            result = json.loads(self.path.read_text())
++            self.assertTrue(result['frequency_evaluation']['completed'])
++            self.assertEqual(result['frequency_evaluation']['best_shift_hz'], 0)
++            scan.assert_not_called()
++
++    def test_survey_shift_selection_and_negative_protection(self):
++        import meteor_pipeline as pipeline
++        self.r['decode_attempts'][0]['metrics'].update(images=[], channel_lines={'1':0})
++        retention.atomic(self.path, self.r)
++        def decoder(c, path, frequency_shift):
++            r = json.loads(path.read_text())
++            a = copy.deepcopy(r['decode_attempts'][0])
++            a.update(output='shift-' + str(frequency_shift), frequency_shift_hz=frequency_shift)
++            r['decode_attempts'].append(a)
++            retention.atomic(path, r)
++        c = dict(self.c, decode_timeout_seconds=1800, frequency_evaluation=dict(span_hz=60000, windows=24, max_candidates=2, budget_seconds=300))
++        with patch.object(pipeline, 'ROOT', self.root), patch.object(pipeline, 'STATE', self.root / 'data/meteor-auto'), patch.object(pipeline.meteor_store, 'persist'), patch.object(retention, 'sync_db'), patch.object(frequency, 'survey', return_value=dict(candidate_carrier_offsets_hz=[45000,-45000])), patch.object(pipeline, 'decode_once', side_effect=decoder) as decode:
++            pipeline.evaluate_frequency(c, self.path)
++            result = json.loads(self.path.read_text())
++            self.assertEqual(decode.call_count, 2)
++            self.assertEqual([t['shift_hz'] for t in result['frequency_evaluation']['trials']], [0,-45000,45000])
++            self.assertFalse(result['frequency_evaluation']['completed'])
++            self.assertFalse(result['retention']['eligible'])
++
++if __name__ == '__main__':
++    unittest.main()

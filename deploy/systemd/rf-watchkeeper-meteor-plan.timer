@@ -1,0 +1,12 @@
+# Refresh upcoming METEOR selections hourly and after boot; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR planning timer
+
+[Timer]
+OnCalendar=hourly
+OnBootSec=2min
+Persistent=true
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

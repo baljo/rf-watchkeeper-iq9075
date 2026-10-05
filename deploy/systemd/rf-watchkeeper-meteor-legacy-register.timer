@@ -1,0 +1,13 @@
+# Scan for newly completed legacy METEOR recordings once per minute; 2026-10-04 10:05 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR legacy capture registration timer
+
+[Timer]
+OnBootSec=45
+OnUnitActiveSec=60
+AccuracySec=5
+Persistent=true
+Unit=rf-watchkeeper-meteor-legacy-register.service
+
+[Install]
+WantedBy=timers.target

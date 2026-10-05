@@ -1,0 +1,61 @@
+{
+  "validated_at": "2026-10-05T11:53:51.482618+00:00",
+  "created": [
+    "README.md",
+    "docs/architecture.md",
+    "docs/atis.md",
+    "docs/evidence/documentation-inspection.json",
+    "docs/evidence/documentation-validation.json",
+    "docs/evidence/meteor-crash-regression.json",
+    "docs/evidence/meteor-crash-tests.txt",
+    "docs/evidence/meteor-satdump-crash.patch",
+    "docs/experiments.md",
+    "docs/hardware.md",
+    "docs/meteor.md",
+    "docs/project-log.md",
+    "docs/reliability.md",
+    "docs/rf-jobs.md",
+    "docs/workflow.md"
+  ],
+  "modified": [
+    "ATIS_POC.md",
+    "AUDIO_WORKFLOW.md",
+    "AUTONOMOUS_EVK.md",
+    "METEOR_AUTOMATION.md",
+    "RF_HEALTH.md"
+  ],
+  "internal_links_checked": 82,
+  "broken_links": [],
+  "original_guide_bodies_preserved": {
+    "AUDIO_WORKFLOW.md": true,
+    "ATIS_POC.md": true,
+    "AUTONOMOUS_EVK.md": true,
+    "METEOR_AUTOMATION.md": true,
+    "RF_HEALTH.md": true
+  },
+  "protected_files_checked": 91,
+  "protected_files_changed": [],
+  "external_links_in_preserved_guides": [
+    {
+      "file": "AUTONOMOUS_EVK.md",
+      "url": "https://github.com/SatDump/SatDump/releases/tag/1.2.2"
+    },
+    {
+      "file": "METEOR_AUTOMATION.md",
+      "url": "https://docs.satdump.org/index.html"
+    }
+  ],
+  "external_network_checks_performed": true,
+  "runtime_writes": "none; documentation-only allowlist",
+  "notes": "Database/plan/log files are live and were read only; no RF tests, service controls, probes, configuration edits or database writes performed.",
+  "external_link_results": [
+    {
+      "url": "https://github.com/SatDump/SatDump/releases/tag/1.2.2",
+      "result": "Page retrieved by web tool"
+    },
+    {
+      "url": "https://docs.satdump.org/index.html",
+      "result": "Web fetch timeout; existing historical link preserved, reachability not confirmed"
+    }
+  ]
+}

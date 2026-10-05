@@ -1,0 +1,290 @@
+Recovered original EVK command output; execution exit code: 0.
+Suite: .satellite-venv/bin/python -m unittest -v test_meteor_history test_meteor_recovery test_satellite_import
+Source: original command execution from 2026-10-05 METEOR crash fix; no tests rerun for documentation task.
+
+Installed four validated files; capture services untouched
+{
+  "applied": true,
+  "attempts": [
+    {
+      "returncode": 139,
+      "classification": "PARTIAL_SUCCESS",
+      "channel_lines": {
+        "1": 888,
+        "2": 896,
+        "3": 0,
+        "4": 888,
+        "5": 0,
+        "6": 0
+      },
+      "peak_snr": 7.069854,
+      "images": 7
+    },
+    {
+      "returncode": 139,
+      "classification": "PARTIAL_SUCCESS",
+      "channel_lines": {
+        "1": 888,
+        "2": 896,
+        "3": 0,
+        "4": 888,
+        "5": 0,
+        "6": 0
+      },
+      "peak_snr": 7.069854,
+      "images": 7
+    },
+    {
+      "returncode": 139,
+      "classification": "PARTIAL_SUCCESS",
+      "channel_lines": {
+        "1": 888,
+        "2": 896,
+        "3": 0,
+        "4": 888,
+        "5": 0,
+        "6": 0
+      },
+      "peak_snr": 7.069854,
+      "images": 7
+    }
+  ],
+  "identical_product_hashes": true,
+  "state": "decoded_with_satdump_crash",
+  "no_retry_verified": true,
+  "other_passes_unchanged": true,
+  "config_and_plan_unchanged": true
+}
+test_argv_both_satellites (test_meteor_history.Tests.test_argv_both_satellites) ... ok
+test_cleanup_interlock (test_meteor_history.Tests.test_cleanup_interlock) ... ok
+test_corrupt_png (test_meteor_history.Tests.test_corrupt_png) ... ok
+test_history_upsert_and_route (test_meteor_history.Tests.test_history_upsert_and_route) ... ok
+test_initializing_is_not_signal (test_meteor_history.Tests.test_initializing_is_not_signal) ... ok
+test_invalid_pipeline_even_zero_exit (test_meteor_history.Tests.test_invalid_pipeline_even_zero_exit) ... ok
+test_partial_decode_retained_and_not_retried (test_meteor_history.Tests.test_partial_decode_retained_and_not_retried) ... ok
+test_production_recording_metadata_overrides_planner (test_meteor_history.Tests.test_production_recording_metadata_overrides_planner) ... ok
+test_runtime_error_and_timeout (test_meteor_history.Tests.test_runtime_error_and_timeout) ... ok
+test_signal_without_image (test_meteor_history.Tests.test_signal_without_image) ... ok
+test_sigsegv_tiny_corrupt_or_low_line_products_fail (test_meteor_history.Tests.test_sigsegv_tiny_corrupt_or_low_line_products_fail) ... ok
+test_sigsegv_useful_products (test_meteor_history.Tests.test_sigsegv_useful_products) ... ok
+test_success_and_channel_height (test_meteor_history.Tests.test_success_and_channel_height) ... ok
+test_wrapper_separate_options (test_meteor_history.Tests.test_wrapper_separate_options) ... ok
+test_zero_exit_and_empty_png_fail (test_meteor_history.Tests.test_zero_exit_and_empty_png_fail) ... ok
+test_boot_recover_does_not_restart_scheduler_for_pending (test_meteor_recovery.RecoveryTests.test_boot_recover_does_not_restart_scheduler_for_pending) ... ok
+test_cleanup_escalates_only_when_v4_owner_remains (test_meteor_recovery.RecoveryTests.test_cleanup_escalates_only_when_v4_owner_remains) ... INFO: remaining V4 owner detected: PID 123 ['AIS-catcher', '-d', 'V4MAIN01']; sending SIGTERM
+INFO: remaining V4 owner detected: PID 123 ['AIS-catcher', '-d', 'V4MAIN01']; sending SIGKILL
+ok
+test_cleanup_targets_only_detected_v4_owners (test_meteor_recovery.RecoveryTests.test_cleanup_targets_only_detected_v4_owners) ... INFO: remaining V4 owner detected: PID 123 ['rtl_fm', '-d', 'V4MAIN01']; sending SIGTERM
+ok
+test_concurrent_reboot_request_is_refused (test_meteor_recovery.RecoveryTests.test_concurrent_reboot_request_is_refused) ... INFO: reboot recovery already attempted or in progress; refusing reboot loop
+ok
+test_conflicting_satellite_is_preserved (test_meteor_recovery.RecoveryTests.test_conflicting_satellite_is_preserved) ... INFO: METEOR capture failed after recovery: another satellite owner is active; refusing conflicting recovery
+ok
+test_current_boot_does_not_duplicate_capture (test_meteor_recovery.RecoveryTests.test_current_boot_does_not_duplicate_capture) ... ok
+test_dispatch_idle_logs_once_per_plan (test_meteor_recovery.RecoveryTests.test_dispatch_idle_logs_once_per_plan) ... ok
+test_enable_failure_never_reboots (test_meteor_recovery.RecoveryTests.test_enable_failure_never_reboots) ... ok
+test_expired_window_fails_without_recorder (test_meteor_recovery.RecoveryTests.test_expired_window_fails_without_recorder) ... INFO: pass window already expired
+INFO: METEOR capture failed after recovery: pass window already expired or insufficient useful recording window
+ok
+test_full_recorder_restores_scheduler_after_definitive_failure (test_meteor_recovery.RecoveryTests.test_full_recorder_restores_scheduler_after_definitive_failure) ... 
+Satellite:          M2-4
+10° pass:           2026-10-05 11:00:14.620043+00:00 -> 2026-10-05 11:09:14.620043+00:00
+Recording window:   2026-10-05 10:58:44.620043+00:00 -> 2026-10-05 11:10:44.620043+00:00
+Margins:            -90s / +90s
+Frequency:          137.900000 MHz
+Sample rate:        256000 S/s
+Gain:               49.6 dB
+Device:             V4MAIN01
+Output:             /tmp/tmp4futud_n/recordings/M2-4_20261005_105844_137900000.cu8
+
+Initial device check: V4MAIN01 visible
+Preflight check: V4MAIN01 visible
+INFO: METEOR reservation active
+INFO: stopping RF scheduler
+ERROR: METEOR capture failed after recovery; bounded IQ preflight exhausted
+Restarting RF Watchkeeper V4 scheduler...
+/root/rf-watchkeeper/.satellite-venv/lib/python3.14/site-packages/skyfield/searchlib.py:224: DeprecationWarning: Setting the dtype on a NumPy array has been deprecated in NumPy 2.5.
+Instead of changing the dtype on an array x, create a new array with x.view(new_dtype)
+  y.dtype = int8
+ok
+test_full_recorder_retains_reservation_after_reboot_request (test_meteor_recovery.RecoveryTests.test_full_recorder_retains_reservation_after_reboot_request) ... 
+Satellite:          M2-4
+10° pass:           2026-10-05 11:00:14.801044+00:00 -> 2026-10-05 11:09:14.801044+00:00
+Recording window:   2026-10-05 10:58:44.801044+00:00 -> 2026-10-05 11:10:44.801044+00:00
+Margins:            -90s / +90s
+Frequency:          137.900000 MHz
+Sample rate:        256000 S/s
+Gain:               49.6 dB
+Device:             V4MAIN01
+Output:             /tmp/tmp06zh5lir/recordings/M2-4_20261005_105844_137900000.cu8
+
+Initial device check: V4MAIN01 visible
+Preflight check: V4MAIN01 visible
+INFO: METEOR reservation active
+INFO: stopping RF scheduler
+INFO: METEOR reservation retained for reboot recovery
+ok
+test_generated_units_live_on_disk_and_validate (test_meteor_recovery.RecoveryTests.test_generated_units_live_on_disk_and_validate) ... ok
+test_install_failure_never_reboots (test_meteor_recovery.RecoveryTests.test_install_failure_never_reboots) ... ok
+test_managed_capture_preserves_claim_after_reboot_request (test_meteor_recovery.RecoveryTests.test_managed_capture_preserves_claim_after_reboot_request) ... ok
+test_managed_claim_survives_dispatch (test_meteor_recovery.RecoveryTests.test_managed_claim_survives_dispatch) ... ok
+test_one_reboot_only (test_meteor_recovery.RecoveryTests.test_one_reboot_only) ... INFO: reboot recovery already attempted; refusing reboot loop
+ok
+test_persistence_precedes_reboot (test_meteor_recovery.RecoveryTests.test_persistence_precedes_reboot) ... ok
+test_real_iq_preflight_rejects_zero_bytes_three_times (test_meteor_recovery.RecoveryTests.test_real_iq_preflight_rejects_zero_bytes_three_times) ... INFO: initiating last-resort reboot recovery; persistent reservation installed
+INFO: IQ preflight attempt 1/3
+INFO: IQ preflight zero bytes
+IQ preflight: {"attempt": 1, "started_at": "2026-10-05T10:59:14.841423+00:00", "returncode": 0, "stdout": "", "stderr": "Reading samples in async mode...", "timed_out": false, "byte_count": 0, "success": false, "command": ["/fake/rtl_sdr", "-d", "V4MAIN01", "-f", "137900000", "-s", "256000", "-g", "49.6", "-n", "256000", "/tmp/satellite-iq-preflight-f9tafz_j/probe.cu8"]}
+INFO: IQ preflight attempt 2/3
+INFO: IQ preflight zero bytes
+IQ preflight: {"attempt": 2, "started_at": "2026-10-05T10:59:14.842108+00:00", "returncode": 0, "stdout": "", "stderr": "Reading samples in async mode...", "timed_out": false, "byte_count": 0, "success": false, "command": ["/fake/rtl_sdr", "-d", "V4MAIN01", "-f", "137900000", "-s", "256000", "-g", "49.6", "-n", "256000", "/tmp/satellite-iq-preflight-xxifaz34/probe.cu8"]}
+INFO: IQ preflight attempt 3/3
+ok
+test_reboot_not_occurred_is_bounded (test_meteor_recovery.RecoveryTests.test_reboot_not_occurred_is_bounded) ... INFO: IQ preflight zero bytes
+IQ preflight: {"attempt": 3, "started_at": "2026-10-05T10:59:14.842429+00:00", "returncode": 0, "stdout": "", "stderr": "Reading samples in async mode...", "timed_out": false, "byte_count": 0, "success": false, "command": ["/fake/rtl_sdr", "-d", "V4MAIN01", "-f", "137900000", "-s", "256000", "-g", "49.6", "-n", "256000", "/tmp/satellite-iq-preflight-002czzf6/probe.cu8"]}
+INFO: METEOR capture failed after recovery: reboot did not occur within bounded recovery interval
+ok
+test_reboot_rejected_releases_reservation (test_meteor_recovery.RecoveryTests.test_reboot_rejected_releases_reservation) ... INFO: initiating last-resort reboot recovery; persistent reservation installed
+ok
+test_resume_success_keeps_original_argv (test_meteor_recovery.RecoveryTests.test_resume_success_keeps_original_argv) ... INFO: post-reboot capture resumed
+INFO: METEOR capture successful
+ok
+test_resume_timeout_is_terminal (test_meteor_recovery.RecoveryTests.test_resume_timeout_is_terminal) ... INFO: post-reboot capture resumed
+INFO: post-reboot capture error: Command '['fake-recorder']' timed out after 1 seconds
+ok
+test_resume_zero_iq_fails (test_meteor_recovery.RecoveryTests.test_resume_zero_iq_fails) ... INFO: METEOR capture failed after recovery
+INFO: post-reboot capture resumed
+INFO: METEOR capture failed after recovery
+ok
+test_second_interruption_never_recaptures (test_meteor_recovery.RecoveryTests.test_second_interruption_never_recaptures) ... INFO: METEOR capture failed after recovery: post-reboot recovery was interrupted; attempts exhausted
+ok
+test_short_window_refuses_reboot (test_meteor_recovery.RecoveryTests.test_short_window_refuses_reboot) ... INFO: pass window already expired or too short for reboot recovery
+ok
+test_terminal_timer_does_not_rerun (test_meteor_recovery.RecoveryTests.test_terminal_timer_does_not_rerun) ... ok
+test_unsynchronized_clock_defers (test_meteor_recovery.RecoveryTests.test_unsynchronized_clock_defers) ... ok
+test_bad_ds64 (test_satellite_import.ImportTests.test_bad_ds64) ... ok
+test_canonical_rf64_direct (test_satellite_import.ImportTests.test_canonical_rf64_direct) ... ok
+test_extra_odd_chunk_extract_exact (test_satellite_import.ImportTests.test_extra_odd_chunk_extract_exact) ... ok
+test_failure_retains_temporary_iq (test_satellite_import.ImportTests.test_failure_retains_temporary_iq) ... {
+  "container": "RF64",
+  "file_size": 8284,
+  "sample_rate": 1024000,
+  "bit_depth": 8,
+  "channel_count": 2,
+  "block_align": 2,
+  "byte_rate": 2048000,
+  "audio_format": 1,
+  "channel_mask": null,
+  "data_offset": 92,
+  "data_size": 8192,
+  "duration_seconds": 0.004,
+  "complex_samples": 4096,
+  "layout": "interleaved I,Q (SDR# convention; not encoded by WAV)",
+  "direct_satdump_compatible": false,
+  "chunks": [
+    {
+      "kind": "ds64",
+      "offset": 12,
+      "size": 28
+    },
+    {
+      "kind": "fmt ",
+      "offset": 48,
+      "size": 16
+    },
+    {
+      "kind": "JUNK",
+      "offset": 72,
+      "size": 3
+    },
+    {
+      "kind": "data",
+      "offset": 84,
+      "size": 8192
+    }
+  ],
+  "ds64": {
+    "riff_size": 8276,
+    "data_size": 8192,
+    "sample_count": 4096
+  }
+}
+ok
+test_fmt_extension_disables_direct (test_satellite_import.ImportTests.test_fmt_extension_disables_direct) ... ok
+test_history_latest_product_preserves_previous (test_satellite_import.ImportTests.test_history_latest_product_preserves_previous) ... ok
+test_invalid_headers (test_satellite_import.ImportTests.test_invalid_headers) ... ok
+test_observed_channel_log_layout (test_satellite_import.ImportTests.test_observed_channel_log_layout) ... ok
+test_profile_is_explicit_and_controlled (test_satellite_import.ImportTests.test_profile_is_explicit_and_controlled) ... ok
+test_riff_direct (test_satellite_import.ImportTests.test_riff_direct) ... ok
+test_success_deletes_only_temporary_iq (test_satellite_import.ImportTests.test_success_deletes_only_temporary_iq) ... {
+  "pass_id": "import-m23-20260920T092100Z-08a3e7152724",
+  "record": "/tmp/tmpyc_yzv3r/data/satellite-imports/import-m23-20260920T092100Z-08a3e7152724/pass.json",
+  "classification": "EMPTY/FAILED",
+  "command": [
+    "shared-path"
+  ],
+  "images": [],
+  "temporary_deleted": null
+}
+{
+  "container": "RF64",
+  "file_size": 8284,
+  "sample_rate": 1024000,
+  "bit_depth": 8,
+  "channel_count": 2,
+  "block_align": 2,
+  "byte_rate": 2048000,
+  "audio_format": 1,
+  "channel_mask": null,
+  "data_offset": 92,
+  "data_size": 8192,
+  "duration_seconds": 0.004,
+  "complex_samples": 4096,
+  "layout": "interleaved I,Q (SDR# convention; not encoded by WAV)",
+  "direct_satdump_compatible": false,
+  "chunks": [
+    {
+      "kind": "ds64",
+      "offset": 12,
+      "size": 28
+    },
+    {
+      "kind": "fmt ",
+      "offset": 48,
+      "size": 16
+    },
+    {
+      "kind": "JUNK",
+      "offset": 72,
+      "size": 3
+    },
+    {
+      "kind": "data",
+      "offset": 84,
+      "size": 8192
+    }
+  ],
+  "ds64": {
+    "riff_size": 8276,
+    "data_size": 8192,
+    "sample_count": 4096
+  }
+}
+ok
+
+----------------------------------------------------------------------
+Ran 53 tests in 0.392s
+
+OK
+{
+  "pass_id": "import-m23-20260920T092100Z-08a3e7152724",
+  "record": "/tmp/tmpz1ok3omo/data/satellite-imports/import-m23-20260920T092100Z-08a3e7152724/pass.json",
+  "classification": "SUCCESS",
+  "command": [
+    "shared-path"
+  ],
+  "images": [
+    "/tmp/tmpz1ok3omo/data/satellite-imports/import-m23-20260920T092100Z-08a3e7152724/decode-1/MSU-MR-1.png"
+  ],
+  "temporary_deleted": "/tmp/tmpz1ok3omo/data/satellite-imports/import-m23-20260920T092100Z-08a3e7152724/iq-mqy8a1dq/payload.cu8"
+}

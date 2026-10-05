@@ -1,0 +1,40 @@
+{
+  "checks": {
+    "exact_approved_list_deleted": true,
+    "deleted_bytes_match": true,
+    "other_raw_unchanged": true,
+    "capture_metadata_preserved": true,
+    "decoded_images_preserved": true,
+    "database_history_preserved": true,
+    "database_image_rows_preserved": true,
+    "pass_attempt_history_preserved": true,
+    "persistent_deletion_gates_still_disabled": true,
+    "plan_unchanged": true,
+    "boot_id_unchanged": true,
+    "rf_services_and_timers_healthy": true
+  },
+  "health": {
+    "rf-watchkeeper-meteor-plan.timer": "active",
+    "rf-watchkeeper-meteor-dispatch.timer": "active",
+    "rf-watchkeeper-meteor-process.timer": "active",
+    "rf-watchkeeper-meteor-cleanup.timer": "active",
+    "rf-watchkeeper-meteor-legacy-register.timer": "active",
+    "rf-watchkeeper-health.timer": "active",
+    "rf-watchkeeper-scheduler.service": "active",
+    "rf-watchkeeper-dashboard.service": "active"
+  },
+  "service_results": {
+    "rf-watchkeeper-meteor-plan.service": "success",
+    "rf-watchkeeper-meteor-dispatch.service": "success",
+    "rf-watchkeeper-meteor-process.service": "success",
+    "rf-watchkeeper-meteor-cleanup.service": "success",
+    "rf-watchkeeper-meteor-legacy-register.service": "success"
+  },
+  "deleted_count": 18,
+  "deleted_raw_bytes": 19179241472,
+  "free_before": 59785031680,
+  "free_after": 78963159040,
+  "measured_free_space_increase": 19178127360,
+  "remaining_raw_count": 13,
+  "remaining_raw_bytes": 10860101632
+}

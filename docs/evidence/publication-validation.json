@@ -1,0 +1,26 @@
+{
+  "verified_at": "2026-10-05T19:16:12.117061+00:00",
+  "public_files": 161,
+  "public_bytes": 1979658,
+  "missing_public_links": [],
+  "intentionally_evk_only_historical_links": [
+    [
+      "docs/project-log.md",
+      "../data/meteor-auto-revisions/20261003T171534Z/activation-status.json"
+    ],
+    [
+      "docs/project-log.md",
+      "../backups/satellite-import-20261003T183401Z/verification.json"
+    ],
+    [
+      "docs/project-log.md",
+      "../data/meteor-auto/passes/m24-20261005T014957Z/pass.json"
+    ]
+  ],
+  "secret_pattern_hits": [],
+  "files_over_2MB": [],
+  "prohibited_artifacts": [],
+  "runtime_source_hash_mismatches": [],
+  "original_engineering_log_prefix_preserved": true,
+  "operational_changes": "None: documentation/source export only; no settings/services/recordings/database changes"
+}

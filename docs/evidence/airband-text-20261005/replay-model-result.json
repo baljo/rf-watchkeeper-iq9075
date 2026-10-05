@@ -1,0 +1,153 @@
+{
+  "recording": "20261005T172215.438320Z",
+  "elapsed_seconds": 15.34753137799271,
+  "processing": {
+    "status": "partial_success",
+    "transcript_status": "experimental",
+    "interpretation_status": "failed",
+    "transcript_hash": "254692055eb3fb7acc12ca5364159cc24eaf9d8245c7b1e3580d86796a75d2f9",
+    "processed_at": "2026-10-05T17:46:18.496280+00:00"
+  },
+  "transcript": {
+    "model": "Qualcomm Whisper small QCS9075 v0.50.2",
+    "accelerator_requested": "HTP/QNN",
+    "accelerator_verified": false,
+    "status": "experimental",
+    "language_requested": "en",
+    "segmentation": {
+      "status": "activity_detected",
+      "method": "energy-candidate-v1",
+      "frame_ms": 20,
+      "pause_ms": 1200,
+      "padding_ms": 200,
+      "noise_floor_rms": 175.455,
+      "threshold_rms": 438.637,
+      "regions": [
+        {
+          "start_seconds": 0.0,
+          "end_seconds": 5.84
+        },
+        {
+          "start_seconds": 8.02,
+          "end_seconds": 36.02
+        },
+        {
+          "start_seconds": 36.02,
+          "end_seconds": 64.02
+        },
+        {
+          "start_seconds": 64.02,
+          "end_seconds": 71.82
+        },
+        {
+          "start_seconds": 74.02,
+          "end_seconds": 89.088
+        }
+      ],
+      "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+    },
+    "segments": [
+      {
+        "start_seconds": 0.0,
+        "text": "BNH 991, it writes on illegal contact information. See you.",
+        "status": "experimental",
+        "raw": {
+          "text": "[270ms - 5680ms] BNH 991, it writes on illegal contact information. See you.",
+          "language": "English",
+          "init_ms": 522,
+          "processing_ms": 538
+        },
+        "language": "English",
+        "language_requested": "en",
+        "normalization": {
+          "text": "BNH 991, it writes on illegal contact information. See you.",
+          "changes": [],
+          "status": "spelling_only",
+          "numeric_values_verified": false
+        }
+      },
+      {
+        "start_seconds": 8.02,
+        "text": "This is VARSA, arrival and departure information to you at time 1720, expect ILS to lose approach. runway 16, the use, runway 16, condition report up, runway 16, runway 16, runway condition code 666.",
+        "status": "experimental",
+        "raw": {
+          "text": "[350ms - 25540ms] This is VARSA, arrival and departure information to you at time 1720, expect ILS to lose approach. runway 16, the use, runway 16, condition report up, runway 16, runway 16, runway condition code 666.[27250ms - 27920ms]",
+          "language": "English",
+          "init_ms": 474,
+          "processing_ms": 1853
+        },
+        "language": "English",
+        "language_requested": "en",
+        "normalization": {
+          "text": "This is VARSA, arrival and departure information to you at time 1720, expect ILS to lose approach. runway 16, the use, runway 16, condition report up, runway 16, runway 16, runway condition code 666.",
+          "changes": [],
+          "status": "spelling_only",
+          "numeric_values_verified": false
+        }
+      },
+      {
+        "start_seconds": 36.02,
+        "text": "Right, transition level 70, automatic report, wind touchdown zone 170 degrees, 11 knots, 1,000 feet overcast 3,500 feet. Temperature 1,420.",
+        "status": "experimental",
+        "raw": {
+          "text": "[560ms - 27550ms] Right, transition level 70, automatic report, wind touchdown zone 170 degrees, 11 knots, 1,000 feet overcast 3,500 feet. Temperature 1,420.",
+          "language": "English",
+          "init_ms": 481,
+          "processing_ms": 1364
+        },
+        "language": "English",
+        "language_requested": "en",
+        "normalization": {
+          "text": "Right, transition level 70, automatic report, wind touchdown zone 170 degrees, 11 knots, 1,000 feet overcast 3,500 feet. Temperature 1,420.",
+          "changes": [],
+          "status": "spelling_only",
+          "numeric_values_verified": false
+        }
+      },
+      {
+        "start_seconds": 64.02,
+        "text": "3.11 QNH, minor, minor, one. Advised on initial contact to have information. Clear.",
+        "status": "experimental",
+        "raw": {
+          "text": "[310ms - 7640ms] 3.11 QNH, minor, minor, one. Advised on initial contact to have information. Clear.",
+          "language": "English",
+          "init_ms": 486,
+          "processing_ms": 665
+        },
+        "language": "English",
+        "language_requested": "en",
+        "normalization": {
+          "text": "3.11 QNH, minor, minor, one. Advised on initial contact to have information. Clear.",
+          "changes": [],
+          "status": "spelling_only",
+          "numeric_values_verified": false
+        }
+      },
+      {
+        "start_seconds": 74.02,
+        "text": "This was a arrival and departure information to use as time 1720. Expect ILS to use the code runway 16.",
+        "status": "experimental",
+        "raw": {
+          "text": "[360ms - 15070ms] This was a arrival and departure information to use as time 1720. Expect ILS to use the code runway 16.",
+          "language": "English",
+          "init_ms": 465,
+          "processing_ms": 753
+        },
+        "language": "English",
+        "language_requested": "en",
+        "normalization": {
+          "text": "This was a arrival and departure information to use as time 1720. Expect ILS to use the code runway 16.",
+          "changes": [],
+          "status": "spelling_only",
+          "numeric_values_verified": false
+        }
+      }
+    ],
+    "note": "Energy-gated clips may include RF noise; numeric fields require review."
+  },
+  "interpretation": {
+    "status": "failed",
+    "error": "Model exited with code 1",
+    "human_review_required": true
+  }
+}

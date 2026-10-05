@@ -1,0 +1,120 @@
+..........{"at": "2026-10-05T17:55:44.047985+00:00", "event": "frequency_evaluation_finished", "id": "m24-20261001T010000Z", "completed": false, "best_shift_hz": 0}
+...................................<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7ea4c70>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7ea5300>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7bde3e0>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+............/usr/lib/python3.14/unittest/mock.py:2259: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7c87a60>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib/python3.14/unittest/mock.py:2259: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7c87790>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.INFO: remaining V4 owner detected: PID 123 ['AIS-catcher', '-d', 'V4MAIN01']; sending SIGTERM
+INFO: remaining V4 owner detected: PID 123 ['AIS-catcher', '-d', 'V4MAIN01']; sending SIGKILL
+.INFO: remaining V4 owner detected: PID 123 ['rtl_fm', '-d', 'V4MAIN01']; sending SIGTERM
+.INFO: reboot recovery already attempted or in progress; refusing reboot loop
+.INFO: METEOR capture failed after recovery: another satellite owner is active; refusing conflicting recovery
+...reboot: requested METEOR persisted recovery
+.INFO: pass window already expired
+INFO: METEOR capture failed after recovery: pass window already expired or insufficient useful recording window
+./root/rf-watchkeeper/.satellite-venv/lib/python3.14/site-packages/skyfield/searchlib.py:224: DeprecationWarning: Setting the dtype on a NumPy array has been deprecated in NumPy 2.5.
+Instead of changing the dtype on an array x, create a new array with x.view(new_dtype)
+  y.dtype = int8
+
+Satellite:          M2-4
+10° pass:           2026-10-05 17:56:44.229062+00:00 -> 2026-10-05 18:05:44.229062+00:00
+Recording window:   2026-10-05 17:55:14.229062+00:00 -> 2026-10-05 18:07:14.229062+00:00
+Margins:            -90s / +90s
+Frequency:          137.900000 MHz
+Sample rate:        256000 S/s
+Gain:               49.6 dB
+Device:             V4MAIN01
+Output:             /tmp/tmpmovxfcwh/recordings/M2-4_20261005_175514_137900000.cu8
+
+Initial device check: V4MAIN01 visible
+Preflight check: V4MAIN01 visible
+INFO: METEOR reservation active
+INFO: stopping RF scheduler
+ERROR: METEOR capture failed after recovery; bounded IQ preflight exhausted
+Receiver capture failed: job_id=1 reason=METEOR preflight/capture failed
+Restarting RF Watchkeeper V4 scheduler...
+.
+Satellite:          M2-4
+10° pass:           2026-10-05 17:56:44.415221+00:00 -> 2026-10-05 18:05:44.415221+00:00
+Recording window:   2026-10-05 17:55:14.415221+00:00 -> 2026-10-05 18:07:14.415221+00:00
+Margins:            -90s / +90s
+Frequency:          137.900000 MHz
+Sample rate:        256000 S/s
+Gain:               49.6 dB
+Device:             V4MAIN01
+Output:             /tmp/tmpb3_w_a35/recordings/M2-4_20261005_175514_137900000.cu8
+
+Initial device check: V4MAIN01 visible
+Preflight check: V4MAIN01 visible
+INFO: METEOR reservation active
+INFO: stopping RF scheduler
+Receiver capture failed: job_id=1 reason=METEOR preflight/capture failed
+INFO: METEOR reservation retained for reboot recovery
+.....{
+  "cleanup_enabled": false,
+  "dry_run": true,
+  "disk_free_gib": 16.520893096923828,
+  "disk_pressure": "low",
+  "warning": null,
+  "would_delete": [],
+  "deleted": [],
+  "passes": [],
+  "reclaimable_bytes": 0,
+  "summary": {
+    "PROTECTED": {
+      "count": 0,
+      "bytes": 0
+    },
+    "GRACE": {
+      "count": 0,
+      "bytes": 0
+    },
+    "DELETABLE": {
+      "count": 0,
+      "bytes": 0
+    },
+    "REVIEW": {
+      "count": 0,
+      "bytes": 0
+    }
+  }
+}
+INFO: reboot recovery already attempted; refusing reboot loop
+.reboot: requested METEOR persisted recovery
+INFO: initiating last-resort reboot recovery; persistent reservation installed
+.INFO: IQ preflight attempt 1/3
+Receiver capture failed: job_id=1 reason=METEOR IQ preflight failed or timed out
+INFO: IQ preflight zero bytes
+IQ preflight: {"attempt": 1, "started_at": "2026-10-05T17:55:44.463648+00:00", "returncode": 0, "stdout": "", "stderr": "Reading samples in async mode...", "timed_out": false, "byte_count": 0, "success": false, "command": ["/fake/rtl_sdr", "-d", "V4MAIN01", "-f", "137900000", "-s", "256000", "-g", "49.6", "-n", "256000", "/tmp/satellite-iq-preflight-x3jazo5i/probe.cu8"]}
+INFO: IQ preflight attempt 2/3
+Receiver capture failed: job_id=2 reason=METEOR IQ preflight failed or timed out
+INFO: IQ preflight zero bytes
+IQ preflight: {"attempt": 2, "started_at": "2026-10-05T17:55:44.466112+00:00", "returncode": 0, "stdout": "", "stderr": "Reading samples in async mode...", "timed_out": false, "byte_count": 0, "success": false, "command": ["/fake/rtl_sdr", "-d", "V4MAIN01", "-f", "137900000", "-s", "256000", "-g", "49.6", "-n", "256000", "/tmp/satellite-iq-preflight-7cpyz708/probe.cu8"]}
+INFO: IQ preflight attempt 3/3
+Receiver capture failed: job_id=3 reason=METEOR IQ preflight failed or timed out
+INFO: IQ preflight zero bytes
+IQ preflight: {"attempt": 3, "started_at": "2026-10-05T17:55:44.467433+00:00", "returncode": 0, "stdout": "", "stderr": "Reading samples in async mode...", "timed_out": false, "byte_count": 0, "success": false, "command": ["/fake/rtl_sdr", "-d", "V4MAIN01", "-f", "137900000", "-s", "256000", "-g", "49.6", "-n", "256000", "/tmp/satellite-iq-preflight-03x8apth/probe.cu8"]}
+.INFO: METEOR capture failed after recovery: reboot did not occur within bounded recovery interval
+.reboot: requested METEOR persisted recovery
+INFO: initiating last-resort reboot recovery; persistent reservation installed
+.INFO: post-reboot capture resumed
+INFO: METEOR capture successful
+.INFO: post-reboot capture resumed
+INFO: post-reboot capture error: Command '['fake-recorder']' timed out after 1 seconds
+INFO: METEOR capture failed after recovery
+.INFO: post-reboot capture resumed
+INFO: METEOR capture failed after recovery
+.INFO: METEOR capture failed after recovery: post-reboot recovery was interrupted; attempts exhausted
+.INFO: pass window already expired or too short for reboot recovery
+...
+----------------------------------------------------------------------
+Ran 84 tests in 0.462s
+
+OK

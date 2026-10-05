@@ -1,0 +1,20 @@
+# Run RF Watchkeeper primary jobs on the RTL-SDR Blog V4; 2026-09-24 15:25 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper primary V4 scheduler
+Conflicts=rf-watchkeeper.service
+After=rf-watchkeeper.service
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/job_manager.py --config /root/rf-watchkeeper/jobs-v4.jsonc --output /root/rf-watchkeeper/logs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+KillMode=control-group
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

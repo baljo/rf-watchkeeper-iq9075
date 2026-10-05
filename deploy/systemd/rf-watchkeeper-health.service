@@ -1,0 +1,14 @@
+[Unit]
+Description=RF Watchkeeper sample health and bounded automatic recovery
+After=local-fs.target time-sync.target rf-watchkeeper-scheduler.service rf-watchkeeper-meteor-recover.service
+Wants=time-sync.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/rf_health_monitor.py
+ExecStopPost=/usr/bin/python3 /root/rf-watchkeeper/rf_health_monitor.py --restore-only
+TimeoutStartSec=240
+TimeoutStopSec=15
+KillMode=control-group
+UMask=0077

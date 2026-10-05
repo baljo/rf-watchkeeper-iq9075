@@ -1,0 +1,136 @@
+{
+  "checked_at": "2026-10-05T17:47:34.711854+00:00",
+  "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8",
+  "protected_hashes": {
+    "jobs-v4.jsonc": "5c83009f4c87a18bcd5805598b80f84fa3f3cbfdc3a54292976f1f2234be55fe",
+    "job_manager.py": "4eaced986e6d0fd8b73911fce2524f9ecedb4f71c4e6891c809bc22400bba02a",
+    "satellite_capture.py": "4dd87d43fc144249ddeb8acb140dd4e34db8a8b364df71cd7901a6fcbd254699",
+    "satellite_planner.py": "88037ad668563565d5cfe972fff73152d055aaabb06a4e0e4d060cb6ae66e7d1",
+    "satellite_schedule.py": "b56852952934cc710ed5d3ec6ff2b4aa066645f72f9922af08888b2c941c41cc",
+    "satellite_v4_preflight.sh": "f2d13de5a07879fdd05f95778aa37ef2210c681b0ab644c6231502133a20182c",
+    "data/meteor-auto/plan.json": "78073581eb6b64554e350fd5aed9074c6de0ac38c48c95e9ec965c9c9944bb87"
+  },
+  "services": {
+    "rf-watchkeeper-scheduler.service": "ActiveState=active\nMainPID=97128\nResult=success",
+    "rf-watchkeeper-atis-process.service": "ActiveState=active\nMainPID=184682\nResult=success",
+    "rf-watchkeeper-dashboard.service": "ActiveState=active\nMainPID=184685\nResult=success"
+  },
+  "protected_unchanged": true,
+  "boot_unchanged": true,
+  "scheduler_unchanged": true,
+  "/api/atis": {
+    "status": 200,
+    "bytes": 3375,
+    "body": {
+      "status": "partial_success",
+      "recording": "20261005T172215.438320Z",
+      "capture": {
+        "frequency_hz": 136450000,
+        "receiver_command": [
+          "rtl_fm",
+          "-d",
+          "V4MAIN01",
+          "-p",
+          "0",
+          "-g",
+          "49.6",
+          "-f",
+          "136450000",
+          "-M",
+          "am",
+          "-s",
+          "8000"
+        ],
+        "audio_seconds": 89.088,
+        "wall_seconds": 90.26454408300924,
+        "status": "ready",
+        "reason": null,
+        "source": "live",
+        "priority": "satellite first"
+      },
+      "transcript": {
+        "model": "Qualcomm Whisper small QCS9075 v0.50.2",
+        "accelerator_requested": "HTP/QNN",
+        "accelerator_verified": false,
+        "status": "experimental",
+        "segments": [
+          {
+            "start_seconds": 0.0,
+            "text": "BNH 991, at right on initial contact you have information. See you.  This is LASA arrival and departure information to you at time 1720, expect ILS to lose approach. runway 16 is used. runway 16 condition report of 1.",
+            "status": "experimental",
+            "raw": {
+              "text": "[270ms - 5680ms] BNH 991, at right on initial contact you have information. See you.[8990ms - 27990ms] This is LASA arrival and departure information to you at time 1720, expect ILS to lose approach. runway 16 is used. runway 16 condition report of 1.",
+              "language": "English",
+              "init_ms": 466,
+              "processing_ms": 1897
+            }
+          },
+          {
+            "start_seconds": 20.0,
+            "text": "All are dry, transition level 70, automatic report, wind touchdown zone 170 degrees, 11 knots.",
+            "status": "experimental",
+            "raw": {
+              "text": "[170ms - 13560ms][15270ms - 27550ms] All are dry, transition level 70, automatic report, wind touchdown zone 170 degrees, 11 knots.",
+              "language": "English",
+              "init_ms": 476,
+              "processing_ms": 1254
+            }
+          },
+          {
+            "start_seconds": 40.0,
+            "text": "Automatic Report, Wind Touchdown Zone 170\u00b0, 1100, Facilitate 10mm or more, Cloud Scattered 1500 feet, Overcast 3500 feet, Temperature 140.11,",
+            "status": "experimental",
+            "raw": {
+              "text": "[10ms - 27990ms] Automatic Report, Wind Touchdown Zone 170\u00b0, 1100, Facilitate 10mm or more, Cloud Scattered 1500 feet, Overcast 3500 feet, Temperature 140.11,",
+              "language": "English",
+              "init_ms": 453,
+              "processing_ms": 1296
+            }
+          },
+          {
+            "start_seconds": 60.0,
+            "text": "temperature 142.11 C, minor, minor, one. Advise on initial contact to have information. Clear.  This, this, was a arrival and departure information to USF time 1720, expect ILS to lose control.",
+            "status": "experimental",
+            "raw": {
+              "text": "[60ms - 11660ms] temperature 142.11 C, minor, minor, one. Advise on initial contact to have information. Clear.[15030ms - 27990ms] This, this, was a arrival and departure information to USF time 1720, expect ILS to lose control.",
+              "language": "English",
+              "init_ms": 470,
+              "processing_ms": 1636
+            }
+          },
+          {
+            "start_seconds": 80.0,
+            "text": "at time 1720 expect ILF to lose control runway 16,",
+            "status": "experimental",
+            "raw": {
+              "text": "[150ms - 9090ms] at time 1720 expect ILF to lose control runway 16,",
+              "language": "English",
+              "init_ms": 438,
+              "processing_ms": 558
+            }
+          }
+        ],
+        "note": "Overlapping clips may repeat phrases; numeric fields require review."
+      },
+      "interpretation": {
+        "status": "failed",
+        "error": "Model exited with code 1",
+        "human_review_required": true
+      },
+      "processing": {
+        "status": "completed",
+        "transcript_status": "experimental",
+        "interpretation_status": "failed",
+        "transcript_hash": "3823ffe2ea5baee0fff3e3dd74320e31e40a89868a7bb821f5a756ee69ec81e1",
+        "processed_at": "2026-10-05T17:24:05.334193+00:00"
+      },
+      "audio_available": true,
+      "message": "Transcript available; some recognition or interpretation failed. Listen to verify."
+    }
+  },
+  "/api/atis/audio": {
+    "status": 200,
+    "bytes": 1425452
+  },
+  "satellite_guard": null
+}

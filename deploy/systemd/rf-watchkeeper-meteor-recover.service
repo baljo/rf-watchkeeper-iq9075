@@ -1,0 +1,15 @@
+# Repair interrupted pipeline captures after reboot without replaying missed passes; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR interrupted capture recovery
+After=local-fs.target rf-watchkeeper-scheduler.service
+Before=rf-watchkeeper-meteor-plan.service rf-watchkeeper-meteor-dispatch.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/root/rf-watchkeeper/.satellite-venv/bin/python -u /root/rf-watchkeeper/meteor_pipeline.py recover
+TimeoutStartSec=120
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

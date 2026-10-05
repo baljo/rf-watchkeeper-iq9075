@@ -1,0 +1,11 @@
+# Check persisted METEOR reservations every thirty seconds; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR dispatch timer
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=30s
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,105 @@
+{
+  "verified_at": "2026-10-05T19:12:06.185761+00:00",
+  "method": "Read-only source/configuration, systemd, SQLite mode=ro, and HTTP GET; no RF control or cleanup",
+  "os_release": "ID=qcom-distro\nNAME=\"Qualcomm Linux Reference Distro\"\nVERSION=\"2.0\"\nVERSION_ID=2.0\nPRETTY_NAME=\"Qualcomm Linux Reference Distro 2.0\"\nCPE_NAME=\"cpe:/o:openembedded:qcom-distro:2.0\"\nBUILD_ID=\"local-20260625153136\"\n",
+  "kernel": "Linux iq-9075-evk 6.18.30-01953-g5086fd78561b-dirty #1 SMP PREEMPT Mon Jun 22 14:20:22 UTC 2026 aarch64 GNU/Linux",
+  "raw_satellite_count": 14,
+  "raw_satellite_bytes": 11281367040,
+  "aurora_records": [
+    [
+      230040000,
+      "AURORA BOTNIA",
+      4257
+    ]
+  ],
+  "base_stations": [
+    [
+      2300077,
+      4,
+      1
+    ],
+    [
+      2300122,
+      4,
+      1
+    ]
+  ],
+  "sensor_models": [
+    [
+      "Nexus-TH",
+      15245
+    ]
+  ],
+  "api_http_status": {
+    "state": 200,
+    "tower": 200,
+    "atis": 200,
+    "audio": 200,
+    "meteor": 200,
+    "meteor/schedule": 200
+  },
+  "units": {
+    "rf-watchkeeper-dashboard.service": "active",
+    "rf-watchkeeper-scheduler.service": "active",
+    "rf-watchkeeper-atis-process.service": "active",
+    "rf-watchkeeper-health.timer": "active",
+    "meteor-auto-capture.service": "inactive"
+  },
+  "source_sha256": {
+    "ais_collector.py": "39f465336ce58ee396f00eb0f0894de3ba97f938f9b19b6b8dfb7d1bda98f9e1",
+    "watchkeeper.py": "6af60da128bcf2a49685396d57452c60c9f90b08bef53fd0804c07d4178cf738",
+    "probe_genie.py": "ef4c95cefb991eeed9e5457aa6f906f09878d99c2ce69867e7c7de8d622c775f",
+    "rf_health.py": "196e2d6a7f9f60fd9d36fde92ed4208c0a100b203387a0135768080c7926f6b0",
+    "interpret.py": "1faca2b7c487a452b932952a6d3c83c9ea976cf8990f4d6e68f1219b4a70aea6",
+    "test_meteor_retention.py": "14f15c72da067745b4c24e5697d480bd264a05748b2862a78730e2cb3d8102bf",
+    "satellite_capture.py": "4dd87d43fc144249ddeb8acb140dd4e34db8a8b364df71cd7901a6fcbd254699",
+    "finalize_historical_review_20261005.py": "43fa5a295c21da8c6b9794098033b89f9f55ff13c2b7c03e84048a91b296698e",
+    "probe_audioreach_api.py": "67fd3c00fac6b82a2f6062504b44317a7832c36f238cd1ee2836809b7cace6f6",
+    "meteor_frequency.py": "ddd587ebb8a16ffad6a72b822014e06dd202b5531db4e05ad0fdd587d9ee3218",
+    "rf_sample_relay.py": "d95e6822fa676a2024702f6ae9004d31c1e9bf461e1e6a62d22098f1bd89fde1",
+    "test_satellite_import.py": "cc2b0cf51c7f491677cf1d7b9a25f4c7f12ed5adbd1ffb2669143d64d7f3e921",
+    "meteor_recovery.py": "9d9358a1de9ac9e4786bc22221e6ef2924c86a76d87ff303cc586bf4d27d188a",
+    "atis_view.py": "fe99e4e75a903eea71e659db68db922f197817e0ce53d886022a65f2eb5785ed",
+    "rf_health_monitor.py": "d2108eb884fa09d2aa2f5c9365a3e769dee10df07c4075ce7723d15cc70ec186",
+    "recorded.py": "4033f7fa0a07bc7ff0af9c9b36372f0144fb2a757649c08c3a2e7267b043907c",
+    "satellite_planner.py": "88037ad668563565d5cfe972fff73152d055aaabb06a4e0e4d060cb6ae66e7d1",
+    "profile_encoder.py": "9f261a2a0b3e3fafcd9da88140a3a80a3fcdeb4efffef20a95a415db70695516",
+    "job_manager.py": "adf88720dba334a1b4dabc5f78afc460d05c0350578fc9356149f92b44f4a30c",
+    "aviation_benchmark.py": "2de7c3781940b76b90e631b82a10c8d30c80985afd8ee86c338090c464a6e382",
+    "rf_store.py": "cf8c57f9ada9f18b62f1d7cfeb107f3d52556eefff417c9a11a743624a7c066b",
+    "import_satellite_pass.py": "46f2427767985d8aca81c76de6893ce002c1dd34843f5d2379eea11395c4ecfe",
+    "probe_audio_dsp.py": "485c2bffd288a84ca2f41b808b9e282bfed38e99cc808567b52d88e6c236190b",
+    "show_events.py": "2aee4e54f9e6267e30c3210d4b87c8cf0409b3919fb46466787234476bc95496",
+    "airband_text.py": "0375583a64e588da0635f180f0858b7bf06d9ad4d43eeaf3f6e228c39c27da4e",
+    "meteor_store.py": "97870ead99ece7564555d33ea9fb5bcdbbb5c8186c28ba9acb716542628aa136",
+    "ais_store.py": "9e208236b6892287c58198990911cbcf78c7b9911c614ef7ab079c8de0f5ad31",
+    "satellite_pass.py": "2c614291ef7120d3dc70bb7b3b71d9283b03fb81c385c39e0ee355bf444a09a0",
+    "test_ais_validation.py": "8cd881e1ae4b7540c569dce3da21584d17f96e253eee770f660de7d6e1bab4d2",
+    "historical_review_20261005.py": "83a4e37aaf968359729c9051103875d0930ed71d1657d8f65e035503599b9cd5",
+    "interpret_stream.py": "03dc84aaaae7e8ddfa39b8b961caabb47e43c84f05a56983db87c6e2184bd682",
+    "satellite_schedule.py": "b56852952934cc710ed5d3ec6ff2b4aa066645f72f9922af08888b2c941c41cc",
+    "satdump_evk.py": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+    "meteor_pipeline.py": "4d1352f3d03465ad0314989a4e5263075588ba7569827d837ca1478ba43284f4",
+    "meteor_retention.py": "beb7c80fe684496a57cd506fd7cddb9ed5898dd982fd2392de1710fe23519f54",
+    "collect_verification.py": "de841bd4e9e3a80e57d53f33a76097ff3f9630755cd762df1bde4a01f24c7d89",
+    "asr_evidence.py": "04a2b3d0eb410cc8563498cace18ad2bbd9f3b132872b3a4154d1b9ab0356503",
+    "prepare_asr.py": "680c33f5f5033fd2c9a29952c072867e94642e02ceb4e28d79ac205833d78785",
+    "register_legacy_meteor.py": "7687c7291736db86ec95b81ce06f10f4ec78cb712e36e49f2adf3f8d02182274",
+    "audio_workflow.py": "203c5bf8ab744e07c6dd29de051f9e70a7e6f5e889aeb88d092fd048cf0b31e4",
+    "ais_display.py": "cc87d8cdab9d1d1fccad05fd98afffe44ce265ea493e893b42fb6954984ffd3f",
+    "test_meteor_history.py": "4f7f9557efbde10ad569c38556223335aa2f112ee2710189276f0bf05a108154",
+    "test_meteor_recovery.py": "5b274986b71084f4627c050fb8477f0f3b23a2752391504a4394e6e593aa94f5",
+    "atis_pipeline.py": "1e7abf2ebd06768c4e01b93e787a811122595ff792967c3e89c2661e3405a022",
+    "asr_offline.py": "23b62779ddc86c47b343e677c2f93387fe6b7a9da14876a84bdb4507d9369fab",
+    "dashboard.py": "27cd6ad4c4b9d6a27d35129a35b8d8f54dae820aa723762b37f42354e52a4eea",
+    "pass_conditions.py": "7650a1614c9c686e0e73d17e80671898f83ce1324c8b2b67e46a277c3fb830ac",
+    "test_rf_health.py": "4b5ce329a7a31ac3d64d851cd93e66a461bfed5053e6872822d96a9a5c076640",
+    "audio_tap.py": "f240273cee0d992a79981a5f878dbdb0239961d3c17576b2bfc1e2c19d7ffea8",
+    "jobs-v4.jsonc": "1597bb3de4f05b86aa7524818388acc81b7d272281f298dbb6e6bbc10d140905",
+    "jobs-sensors.jsonc": "910893539a13278be6f9eee3fe843be3d75abf0ad74fb5887c770f062a88d4cf",
+    "meteor-config.json": "a63e03ed3f1981f670c2a6ea992ce3ea43015b2ad57754450574940588c63762",
+    "rf-health-config.json": "73432b0680594df4c4249df962f825f8846b71ea160ddf3b450602f4509157a2",
+    "dashboard.html": "327383237686efc2530d85b9fc25b2f213d9db2f2f47fa90aa2053fb6bfdf720",
+    "Helsinki.tzif": "71ca4af5998f09990c5e875d350fc3c8e34f280bae6fe14f36d4692face7a563"
+  }
+}

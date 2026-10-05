@@ -1,0 +1,15 @@
+// Configure RF Watchkeeper jobs and disabled future receiver placeholders. 2026-09-16 22:52 EEST — Thomas Vikström.
+{
+  "device": "0",
+  "ppm": 0,
+  "audio_device": "default",
+  "handoff_seconds": 1,
+  "jobs": [
+    {"id": "nexus", "name": "Nexus-TH sensors", "frequency_hz": 433920000, "mode": "nexus", "dwell_seconds": 70, "enabled": true, "priority": 30, "gain_db": null},
+    {"id": "fm-reference", "name": "FM reference", "frequency_hz": 94800000, "mode": "fm", "dwell_seconds": 35, "enabled": true, "priority": 20, "gain_db": 19.2},
+    {"id": "vaasa-tower", "name": "Vaasa Tower AM", "frequency_hz": 120950000, "mode": "am", "dwell_seconds": 20, "enabled": true, "priority": 10, "gain_db": 19.2, "sample_rate": 24000},
+    {"id": "ais-a", "name": "AIS channel A (planned)", "frequency_hz": 161975000, "mode": "ais", "dwell_seconds": 60, "enabled": false, "priority": 0},
+    {"id": "ais-b", "name": "AIS channel B (planned)", "frequency_hz": 162025000, "mode": "ais", "dwell_seconds": 60, "enabled": false, "priority": 0},
+    {"id": "weather-satellite", "name": "137 MHz weather satellites (planned)", "frequency_hz": 137100000, "mode": "satellite", "dwell_seconds": 600, "enabled": false, "priority": 0}
+  ]
+}

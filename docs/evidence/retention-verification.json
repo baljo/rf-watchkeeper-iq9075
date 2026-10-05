@@ -1,0 +1,112 @@
+{
+  "verified_at": "2026-10-05T12:37:23.449768+00:00",
+  "deployment": {
+    "backup": "/root/rf-watchkeeper/backups/retention-20261005T123352Z",
+    "files": [
+      "meteor_pipeline.py",
+      "meteor_retention.py",
+      "meteor_frequency.py",
+      "meteor_store.py",
+      "dashboard.py",
+      "dashboard.html",
+      "satdump_evk.py",
+      "meteor-config.json",
+      "test_meteor_retention.py"
+    ],
+    "timer_dropin": "/etc/systemd/system/rf-watchkeeper-meteor-cleanup.timer.d/retention.conf",
+    "raw_unchanged": true,
+    "pass_records_unchanged": true,
+    "db_metadata_and_images_unchanged": true,
+    "plan_unchanged": true
+  },
+  "tests_passed": 67,
+  "dry_run_would_delete": [],
+  "classifications": {
+    "m23-20261003T191542Z": "processing_failed",
+    "m23-20261004T085937Z": "unverified",
+    "m23-20261004T185213Z": "processing_failed",
+    "m23-20261005T083621Z": "unverified",
+    "m24-20261004T035154Z": "unverified",
+    "m24-20261004T120447Z": "unverified",
+    "m24-20261005T014957Z": "processing_failed",
+    "m24-20261005T114312Z": "unverified"
+  },
+  "pin_api_test": "403 without token; pin protects under 5 GiB simulation; original keep state restored",
+  "retention": {
+    "no_signal_hours": 24,
+    "poor_hours": 48,
+    "useful_hours": 168,
+    "normal_free_gib": 20,
+    "critical_free_gib": 10,
+    "useful_min_lines": 128,
+    "excellent_min_lines": 2000,
+    "automatic_deletion_validated": false
+  },
+  "frequency_evaluation_settings": {
+    "span_hz": 60000,
+    "windows": 24,
+    "max_candidates": 2,
+    "budget_seconds": 300
+  },
+  "frequency_validation_originals_unchanged": true,
+  "frequency_trials": [
+    {
+      "output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-1",
+      "shift_hz": 0,
+      "returncode": 0,
+      "error": null,
+      "classification": "EMPTY/FAILED"
+    },
+    {
+      "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-2",
+      "shift_hz": 45000,
+      "returncode": 0,
+      "error": null,
+      "classification": "EMPTY/FAILED"
+    },
+    {
+      "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-3",
+      "shift_hz": 60000,
+      "returncode": 0,
+      "error": null,
+      "classification": "EMPTY/FAILED"
+    }
+  ],
+  "frequency_completed": false,
+  "future_passes_unchanged": true,
+  "future_sample_rates": [
+    256000,
+    256000,
+    256000,
+    256000,
+    256000
+  ],
+  "db_counts": {
+    "passes": 10,
+    "images": 79
+  },
+  "historical_metadata_preserved": true,
+  "raw_files_unchanged": true,
+  "regression_image_routes": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "free_gib": 56.917938232421875,
+  "automatic_deletion_enabled": false,
+  "services": {
+    "rf-watchkeeper-dashboard.service": "active",
+    "rf-watchkeeper-meteor-cleanup.timer": "active",
+    "rf-watchkeeper-meteor-plan.timer": "active",
+    "rf-watchkeeper-meteor-dispatch.timer": "active",
+    "rf-watchkeeper-meteor-process.timer": "active",
+    "rf-watchkeeper-scheduler.service": "active",
+    "rf-watchkeeper-health.timer": "active",
+    "rf-watchkeeper.service": "inactive"
+  },
+  "timer": "NextElapseUSecRealtime=Tue 2026-10-06 02:00:00 UTC\nLastTriggerUSec=Mon 2026-10-05 12:34:15 UTC\n"
+}

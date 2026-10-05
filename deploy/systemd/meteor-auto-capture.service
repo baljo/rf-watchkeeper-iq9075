@@ -1,0 +1,15 @@
+# Wrap one claimed METEOR pass with bounded capture and scheduler recovery; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper automatic METEOR capture
+After=network-online.target time-sync.target rf-watchkeeper-scheduler.service
+
+[Service]
+Type=simple
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/root/rf-watchkeeper/.satellite-venv/bin/python -u /root/rf-watchkeeper/meteor_pipeline.py capture
+ExecStopPost=/root/rf-watchkeeper/.satellite-venv/bin/python -u /root/rf-watchkeeper/meteor_pipeline.py recover
+TimeoutStopSec=20
+RuntimeMaxSec=40min
+KillMode=control-group
+Restart=no
+UMask=0077

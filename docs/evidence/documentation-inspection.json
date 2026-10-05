@@ -1,0 +1,415 @@
+{
+  "observed_at": "2026-10-05T11:45:28.849890+00:00",
+  "/api/meteor": {
+    "pass_id": "m24-20261005T014957Z",
+    "satellite": "M2-4",
+    "pass_start": "2026-10-05T01:49:57.513173+00:00",
+    "pass_stop": "2026-10-05T02:00:32.485669+00:00",
+    "record_start": "2026-10-05T01:48:27.513173+00:00",
+    "peak_elevation": 57.761371703688205,
+    "peak_azimuth": 102.9976980843782,
+    "iq_filename": "M2-4_20261005_014827_137900000.cu8",
+    "sample_rate": 1024000,
+    "frequency": 137900000,
+    "pipeline": "meteor_m2-x_lrpt",
+    "processing_timestamp": "2026-10-05T04:06:40.740145+00:00",
+    "raw_iq_state": "retained",
+    "classification": "PARTIAL_SUCCESS",
+    "channel_lines": {
+      "1": 888,
+      "2": 896,
+      "3": 0,
+      "4": 888,
+      "5": 0,
+      "6": 0
+    },
+    "line_count_source": "decoder_log",
+    "peak_snr": 7.069854,
+    "decoder_activity": [
+      "viterbi_ber_thresold : 0.3",
+      "viterbi_outsync_after : 20",
+      "Viterbi : NOSYNC BER : 0.416260, Deframer : NOSYNC",
+      "Viterbi : NOSYNC BER : 0.406494, Deframer : NOSYNC"
+    ],
+    "error": null,
+    "returncode": 139,
+    "source": "automatic_evk",
+    "receiver": "RTL-SDR",
+    "capture_host": "Dragonwing IQ-9075 EVK",
+    "capture_mode": "automatic",
+    "reference": false,
+    "input_format": "cu8",
+    "start_time": "2026-10-05T01:48:27.513173+00:00",
+    "end_time": "2026-10-05T02:02:02.485669+00:00",
+    "center_frequency": 137900000,
+    "recording_path": "/root/rf-watchkeeper/recordings/satellite/M2-4_20261005_014827_137900000.cu8",
+    "notes": "",
+    "processing_status": "PARTIAL_SUCCESS",
+    "output_directory": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T014957Z/decode-3",
+    "satdump_crash": "SIGSEGV",
+    "original_sha256": null,
+    "wav_properties": null,
+    "baseband_handling": null,
+    "temporary_baseband": null,
+    "import_processing": null,
+    "temporary_deleted": null,
+    "conditions": {
+      "start": "2026-10-05T01:49:57.513173+00:00",
+      "stop": "2026-10-05T02:00:32.485669+00:00",
+      "record_start": "2026-10-05T01:48:27.513173+00:00",
+      "record_stop": "2026-10-05T02:02:02.485669+00:00",
+      "gain": 49.6,
+      "device": "V4MAIN01",
+      "frequency": 137900000,
+      "sample_rate": 1024000,
+      "pre_margin": 90,
+      "post_margin": 90,
+      "status": "completed",
+      "satellite": "M2-4",
+      "saved_at": "2026-10-05T01:46:34.419576+00:00",
+      "observer": {
+        "latitude": 63.104753,
+        "longitude": 21.683053,
+        "observer_elevation_m": 10
+      },
+      "horizon_deg": 10,
+      "timezone": "Europe/Helsinki",
+      "start_azimuth": 23.408794138420607,
+      "end_azimuth": 182.39936052041324,
+      "peak": "2026-10-05T01:55:16.446547+00:00",
+      "peak_deg": 57.76137032916356,
+      "peak_azimuth": 102.90913926752408,
+      "geometry_source": "Prediction saved before capture",
+      "tle_epoch": "2026-10-04T15:14:38.510010+00:00",
+      "tle": {
+        "name": "METEOR-M2 4",
+        "norad": 59051,
+        "line1": "1 59051U 24039A   26277.63516794  .00000009  00000+0  23657-4 0  9998",
+        "line2": "2 59051  98.7164 235.6242 0006407 205.7797 154.3063 14.22439018134829",
+        "fetched_utc": "2026-10-05T01:00:31.303204+00:00"
+      },
+      "warnings": [],
+      "actual_start": "2026-10-05T01:48:27.514136+00:00",
+      "actual_stop": "2026-10-05T02:02:01.581143+00:00",
+      "iq_bytes": 1665400832,
+      "rtl_sdr_returncode": 0,
+      "preflight": {
+        "success": true,
+        "attempt_count": 1,
+        "byte_count": 512000
+      }
+    },
+    "image_count": 7,
+    "images": [
+      {
+        "id": 79,
+        "product": "msu_mr_rgb_MSU-MR_124_False_Color_corrected",
+        "width": 2800,
+        "height": 848,
+        "url": "/api/meteor/image/79"
+      },
+      {
+        "id": 77,
+        "product": "msu_mr_rgb_AVHRR_221_False_Color_corrected",
+        "width": 2800,
+        "height": 864,
+        "url": "/api/meteor/image/77"
+      },
+      {
+        "id": 76,
+        "product": "msu_mr_rgb_AVHRR_221_False_Color",
+        "width": 1568,
+        "height": 864,
+        "url": "/api/meteor/image/76"
+      },
+      {
+        "id": 78,
+        "product": "msu_mr_rgb_MSU-MR_124_False_Color",
+        "width": 1568,
+        "height": 848,
+        "url": "/api/meteor/image/78"
+      },
+      {
+        "id": 73,
+        "product": "MSU-MR-1",
+        "width": 1568,
+        "height": 888,
+        "url": "/api/meteor/image/73"
+      },
+      {
+        "id": 74,
+        "product": "MSU-MR-2",
+        "width": 1568,
+        "height": 896,
+        "url": "/api/meteor/image/74"
+      },
+      {
+        "id": 75,
+        "product": "MSU-MR-4",
+        "width": 1568,
+        "height": 888,
+        "url": "/api/meteor/image/75"
+      }
+    ],
+    "retained_image_count": 21
+  },
+  "image_routes": [
+    {
+      "id": 79,
+      "status": 200
+    },
+    {
+      "id": 77,
+      "status": 200
+    },
+    {
+      "id": 76,
+      "status": 200
+    },
+    {
+      "id": 78,
+      "status": 200
+    },
+    {
+      "id": 73,
+      "status": 200
+    },
+    {
+      "id": 74,
+      "status": 200
+    },
+    {
+      "id": 75,
+      "status": 200
+    }
+  ],
+  "/api/meteor/schedule": {
+    "passes": [
+      {
+        "id": "m24-20261005T114312Z",
+        "satellite": "M2-4",
+        "start": "2026-10-05T11:43:12.821852+00:00",
+        "stop": "2026-10-05T11:53:54.410124+00:00",
+        "peak": "2026-10-05T11:48:32.951035+00:00",
+        "peak_deg": 69.02976393236297,
+        "peak_azimuth": 63.51783781387777,
+        "south_seconds": 260,
+        "tle_epoch": "2026-10-04T23:41:06.057007+00:00",
+        "tle_source": "CelesTrak",
+        "record_start": "2026-10-05T11:41:42.821852+00:00",
+        "record_stop": "2026-10-05T11:55:24.410124+00:00",
+        "trigger": "2026-10-05T11:39:30.821852+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "claimed",
+        "source": "Managed planner",
+        "schedule_status": "Claimed",
+        "start_azimuth": 145.1958225102088,
+        "end_azimuth": 341.926640697727,
+        "geometry_source": "Cached TLE"
+      },
+      {
+        "id": "m23-20261005T182853Z",
+        "satellite": "M2-3",
+        "start": "2026-10-05T18:28:53.785380+00:00",
+        "stop": "2026-10-05T18:39:38.021797+00:00",
+        "peak": "2026-10-05T18:34:14.990638+00:00",
+        "peak_deg": 88.0539702815317,
+        "peak_azimuth": 248.89034276837643,
+        "south_seconds": 330,
+        "tle_epoch": "2026-10-04T23:43:16.121826+00:00",
+        "tle_source": "CelesTrak",
+        "record_start": "2026-10-05T18:27:23.785380+00:00",
+        "record_stop": "2026-10-05T18:41:08.021797+00:00",
+        "trigger": "2026-10-05T18:25:11.785380+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned",
+        "source": "Managed planner",
+        "schedule_status": "Scheduled",
+        "start_azimuth": 159.04564087998912,
+        "end_azimuth": 340.1673636721358,
+        "geometry_source": "Cached TLE"
+      },
+      {
+        "id": "m24-20261006T012820Z",
+        "satellite": "M2-4",
+        "start": "2026-10-06T01:28:20.865851+00:00",
+        "stop": "2026-10-06T01:38:34.716112+00:00",
+        "peak": "2026-10-06T01:33:29.148347+00:00",
+        "peak_deg": 43.72876612710642,
+        "peak_azimuth": 98.08610026154544,
+        "south_seconds": 260,
+        "tle_epoch": "2026-10-04T23:41:06.057007+00:00",
+        "tle_source": "CelesTrak",
+        "record_start": "2026-10-06T01:26:50.865851+00:00",
+        "record_stop": "2026-10-06T01:40:04.716112+00:00",
+        "trigger": "2026-10-06T01:24:38.865851+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned",
+        "source": "Managed planner",
+        "schedule_status": "Scheduled",
+        "start_azimuth": 25.91776114536484,
+        "end_azimuth": 170.2547267722121,
+        "geometry_source": "Cached TLE"
+      },
+      {
+        "id": "m23-20261006T081307Z",
+        "satellite": "M2-3",
+        "start": "2026-10-06T08:13:07.100003+00:00",
+        "stop": "2026-10-06T08:23:41.966364+00:00",
+        "peak": "2026-10-06T08:18:25.896906+00:00",
+        "peak_deg": 61.763345031036806,
+        "peak_azimuth": 103.96110865327292,
+        "south_seconds": 300,
+        "tle_epoch": "2026-10-04T23:43:16.121826+00:00",
+        "tle_source": "CelesTrak",
+        "record_start": "2026-10-06T08:11:37.100003+00:00",
+        "record_stop": "2026-10-06T08:25:11.966364+00:00",
+        "trigger": "2026-10-06T08:09:25.100003+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned",
+        "source": "Managed planner",
+        "schedule_status": "Scheduled",
+        "start_azimuth": 22.63495434555014,
+        "end_azimuth": 185.05897500813165,
+        "geometry_source": "Cached TLE"
+      },
+      {
+        "id": "m24-20261006T130159Z",
+        "satellite": "M2-4",
+        "start": "2026-10-06T13:01:59.738599+00:00",
+        "stop": "2026-10-06T13:12:21.180974+00:00",
+        "peak": "2026-10-06T13:07:09.513543+00:00",
+        "peak_deg": 46.30991635397782,
+        "peak_azimuth": 260.80865801170137,
+        "south_seconds": 280,
+        "tle_epoch": "2026-10-04T23:41:06.057007+00:00",
+        "tle_source": "CelesTrak",
+        "record_start": "2026-10-06T13:00:29.738599+00:00",
+        "record_stop": "2026-10-06T13:13:51.180974+00:00",
+        "trigger": "2026-10-06T12:58:17.738599+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned",
+        "source": "Managed planner",
+        "schedule_status": "Scheduled",
+        "start_azimuth": 187.21124622845085,
+        "end_azimuth": 334.63187040188063,
+        "geometry_source": "Cached TLE"
+      },
+      {
+        "id": "m23-20261006T180542Z",
+        "satellite": "M2-3",
+        "start": "2026-10-06T18:05:42.803747+00:00",
+        "stop": "2026-10-06T18:16:21.260634+00:00",
+        "peak": "2026-10-06T18:11:01.252110+00:00",
+        "peak_deg": 71.12748060048501,
+        "peak_azimuth": 64.42845508462878,
+        "south_seconds": 270,
+        "tle_epoch": "2026-10-04T23:43:16.121826+00:00",
+        "tle_source": "CelesTrak",
+        "record_start": "2026-10-06T18:04:12.803747+00:00",
+        "record_stop": "2026-10-06T18:17:51.260634+00:00",
+        "trigger": "2026-10-06T18:02:00.803747+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned",
+        "source": "Managed planner",
+        "schedule_status": "Scheduled",
+        "start_azimuth": 146.88395435156178,
+        "end_azimuth": 342.03727931006233,
+        "geometry_source": "Cached TLE"
+      }
+    ],
+    "generated_at": "2026-10-05T11:00:13.022327+00:00",
+    "checked_at": "2026-10-05T11:45:29.039474+00:00",
+    "timezone": "Europe/Helsinki",
+    "horizon_deg": 10,
+    "observer": {
+      "latitude": 63.104753,
+      "longitude": 21.683053,
+      "observer_elevation_m": 10
+    },
+    "warnings": []
+  },
+  "data/watchkeeper.db": {
+    "nexus_measurements": 15245,
+    "sqlite_sequence": 3,
+    "audio_recordings": 20,
+    "ais_targets": 42,
+    "ais_met_hydro": 18762,
+    "rf_health_jobs": 28,
+    "rf_health_events": 12,
+    "rf_health_state": 1,
+    "rf_health_reboot_guard": 0
+  },
+  "data/watchkeeper-meteor.db": {
+    "meteor_passes": 9,
+    "meteor_images": 79
+  },
+  "future_rates": [
+    [
+      "m24-20261005T114312Z",
+      256000,
+      "claimed"
+    ],
+    [
+      "m23-20261005T182853Z",
+      256000,
+      "planned"
+    ],
+    [
+      "m24-20261006T012820Z",
+      256000,
+      "planned"
+    ],
+    [
+      "m23-20261006T081307Z",
+      256000,
+      "planned"
+    ],
+    [
+      "m24-20261006T130159Z",
+      256000,
+      "planned"
+    ],
+    [
+      "m23-20261006T180542Z",
+      256000,
+      "planned"
+    ]
+  ]
+}

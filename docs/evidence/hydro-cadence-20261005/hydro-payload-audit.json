@@ -1,0 +1,57 @@
+{
+  "checked_packets": 19356,
+  "decoded_field_mismatches": 0,
+  "payload_field_histograms": {
+    "gust_dir": {
+      "360": 19356
+    },
+    "dewpoint": {
+      "501": 19356
+    },
+    "pressure_trend": {
+      "3": 19356
+    },
+    "waterlevel_trend": {
+      "3": 19356
+    },
+    "current_speed": {
+      "255": 19356
+    },
+    "current_dir": {
+      "360": 19356
+    },
+    "current2_speed": {
+      "255": 19356
+    },
+    "current3_speed": {
+      "255": 19356
+    },
+    "waveheight": {
+      "255": 19356
+    },
+    "waveperiod": {
+      "63": 19356
+    },
+    "wavedir": {
+      "360": 19356
+    },
+    "swellheight": {
+      "255": 19356
+    },
+    "seastate": {
+      "13": 19356
+    },
+    "watertemp": {
+      "501": 19356
+    },
+    "precipitation": {
+      "7": 19356
+    },
+    "salinity": {
+      "510": 19356
+    },
+    "ice": {
+      "3": 19356
+    }
+  }
+}

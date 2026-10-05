@@ -1,0 +1,135 @@
+diff --git a/meteor_store.py b/meteor_store.py
+--- a/meteor_store.py
++++ b/meteor_store.py
+@@ -97,10 +97,19 @@
+     for value in re.findall(r'\bSNR\s*[:=]\s*(-?\d+(?:\.\d+)?)',log,re.I):
+         snrs.append(float(value))
+     activity=any(lines.values()) or bool(re.search(r'(?:deframer|viterbi).*\b(?:locked|synced)\b',log,re.I)) or any(v>0 for v in snrs)
+-    classification = 'EMPTY/FAILED' if error or returncode != 0 or invalid else 'SUCCESS' if any(lines.values()) and images else 'SIGNAL/UNUSABLE' if activity else 'EMPTY/FAILED'
++    # Recognize substantial validated products after SIGSEGV; 2026-10-05 13:55 EEST, Thomas Vikström.
++    crash = 'SIGSEGV' if returncode in (139, -11) else None
++    useful = any(im['width'] >= 256 and im['height'] >= 128 and
++                 lines.get(im['product'].removeprefix('MSU-MR-'), 0) >= 128
++                 for im in images if re.fullmatch(r'MSU-MR-[1-6]', im['product']))
++    classification = ('PARTIAL_SUCCESS' if crash and useful and not error and not invalid else
++                      'EMPTY/FAILED' if error or returncode != 0 or invalid else
++                      'SUCCESS' if any(lines.values()) and images else
++                      'SIGNAL/UNUSABLE' if activity else 'EMPTY/FAILED')
+     statuses = re.findall(r'(?:viterbi|deframer)[^\r\n]{0,160}',log,re.I)
+     return dict(classification=classification,channel_lines=lines,line_count_source=source,images=images,
+-                peak_snr=max(snrs) if snrs else None,decoder_activity=statuses[-10:],error=error,returncode=returncode)
++                peak_snr=max(snrs) if snrs else None,decoder_activity=statuses[-10:],error=error,returncode=returncode,
++                satdump_crash=crash)
+ 
+ @contextmanager
+ def connect(db=DB):
+@@ -137,7 +146,7 @@
+       reference=bool(m.get('reference', False)), input_format=m.get('input_format', 'cu8'),
+       start_time=metadata['record_start'], end_time=m.get('record_stop', p.get('stop')),
+       center_frequency=metadata['frequency'], recording_path=str(recording), notes=m.get('notes', ''),
+-      processing_status=result['classification'], output_directory=attempt.get('output'),
++      processing_status=result['classification'], output_directory=attempt.get('output'), satdump_crash=result.get('satdump_crash'),
+       original_sha256=m.get('original_sha256'), wav_properties=m.get('wav_properties'),
+       baseband_handling=record.get('baseband_handling'), temporary_baseband=record.get('temporary_baseband'),
+       import_processing=record.get('import_processing'),
+diff --git a/meteor_pipeline.py b/meteor_pipeline.py
+--- a/meteor_pipeline.py
++++ b/meteor_pipeline.py
+@@ -532,7 +532,7 @@
+         a['metrics'] = meteor_store.inspect_output(output, a.get('returncode'), a.get('error'))
+         a['products'] = [im['path'] for im in a['metrics']['images']]
+         r['classification'] = a['metrics']['classification']
+-        r['state'] = {'SUCCESS':'decoded_products', 'SIGNAL/UNUSABLE':'decoded_no_products', 'EMPTY/FAILED':'decode_failed'}[r['classification']]
++        r['state'] = {'SUCCESS':'decoded_products', 'PARTIAL_SUCCESS':'decoded_with_satdump_crash', 'SIGNAL/UNUSABLE':'decoded_no_products', 'EMPTY/FAILED':'decode_failed'}[r['classification']]
+         save(path, r)
+         meteor_store.persist(r, a, ROOT / 'data/watchkeeper-meteor.db')
+         event('decode_finished', id=r['pass']['id'], state=r['state'])
+@@ -617,7 +617,7 @@
+         token = r.get('worker_lease', {}).get('token')
+         if r['state'] != 'external_decoding' or not token or result['worker_lease']['token'] != token or now() > dt(r['worker_lease']['expires_at']):
+             raise RuntimeError('Worker lease mismatch or expired')
+-        if result['state'] not in ('decoded_products', 'decoded_no_products', 'decode_failed'):
++        if result['state'] not in ('decoded_products', 'decoded_with_satdump_crash', 'decoded_no_products', 'decode_failed'):
+             raise RuntimeError('Invalid decoder result')
+         if result['captured_iq_bytes'] != r['captured_iq_bytes'] or result['pass'] != r['pass']:
+             raise RuntimeError('Capture identity changed')
+@@ -633,7 +633,7 @@
+         last['metrics'] = meteor_store.inspect_output(output, last.get('returncode'), last.get('error'))
+         last['products'] = [im['path'] for im in last['metrics']['images']]
+         classification = last['metrics']['classification']
+-        state = {'SUCCESS':'decoded_products', 'SIGNAL/UNUSABLE':'decoded_no_products', 'EMPTY/FAILED':'decode_failed'}[classification]
++        state = {'SUCCESS':'decoded_products', 'PARTIAL_SUCCESS':'decoded_with_satdump_crash', 'SIGNAL/UNUSABLE':'decoded_no_products', 'EMPTY/FAILED':'decode_failed'}[classification]
+         r.update(state=state, classification=classification, decode_attempts=result['decode_attempts'], worker_finished_at=now().isoformat())
+         meteor_store.persist(r, last, ROOT / 'data/watchkeeper-meteor.db')
+         save(path, r)
+diff --git a/test_meteor_history.py b/test_meteor_history.py
+--- a/test_meteor_history.py
++++ b/test_meteor_history.py
+@@ -45,6 +45,55 @@
+     def test_corrupt_png(self):
+         p=self.out/'MSU-MR-1.png';png(p);p.write_bytes(p.read_bytes()[:-12])
+         self.assertEqual(store.inspect_output(self.out)['classification'],'EMPTY/FAILED')
++    # Cover useful SIGSEGV output and retry suppression; 2026-10-05 13:55 EEST, Thomas Vikström.
++    def test_sigsegv_useful_products(self):
++        png(self.out/'MSU-MR-1.png',1568,888)
++        (self.out/'satdump.log').write_text('Channel 1: 888 lines\nChannel 2: 896 lines\nChannel 4: 888 lines\nSNR: 7.069854')
++        for rc in (139,-11):
++            result=store.inspect_output(self.out,rc)
++            self.assertEqual(result['classification'],'PARTIAL_SUCCESS')
++            self.assertEqual(result['returncode'],rc)
++            self.assertEqual(result['satdump_crash'],'SIGSEGV')
++        self.assertEqual(store.inspect_output(self.out,1)['classification'],'EMPTY/FAILED')
++        self.assertEqual(store.inspect_output(self.out,139,'timeout')['classification'],'EMPTY/FAILED')
++        (self.out/'satdump.log').write_text('Pipeline does not exist')
++        self.assertEqual(store.inspect_output(self.out,139)['classification'],'EMPTY/FAILED')
++    def test_sigsegv_tiny_corrupt_or_low_line_products_fail(self):
++        p=self.out/'MSU-MR-1.png';png(p)
++        (self.out/'satdump.log').write_text('Channel 1: 888 lines')
++        self.assertEqual(store.inspect_output(self.out,139)['classification'],'EMPTY/FAILED')
++        png(p,1568,888)
++        (self.out/'satdump.log').write_text('Channel 1: 10 lines')
++        self.assertEqual(store.inspect_output(self.out,139)['classification'],'EMPTY/FAILED')
++        p.write_bytes(p.read_bytes()[:-12])
++        self.assertEqual(store.inspect_output(self.out,139)['classification'],'EMPTY/FAILED')
++    def test_partial_decode_retained_and_not_retried(self):
++        iq=self.root/'a.cu8';iq.write_bytes(b'00')
++        record=self.root/'data/meteor-auto/passes/m24-20261005T014957Z/pass.json'
++        record.parent.mkdir(parents=True)
++        record.write_text(json.dumps(dict(owner='meteor-auto-v1',state='pending_decode',iq=str(iq),capture=dict(sample_rate_sps=1024000),captured_iq_bytes=2,
++            **{'pass':dict(id='m24-20261005T014957Z',satellite='M2-4',sample_rate=1024000,record_start='2026-10-05T01:48:27+00:00')})))
++        c=dict(satdump_command=['decoder'],satdump_prefix=[],satdump_extra=[],decode_timeout_seconds=30,max_decode_attempts=10,decode_retry_seconds=60)
++        def run(args,**kwargs):
++            png(Path(args[4])/'MSU-MR-1.png',1568,888)
++            return type('Result',(),{'returncode':139})()
++        with patch.object(pipeline,'ROOT',self.root),patch.object(pipeline,'STATE',self.root/'data/meteor-auto'),patch.object(pipeline,'decoder_ready',return_value=True),patch.object(pipeline.subprocess,'run',side_effect=run),patch.object(pipeline,'event'):
++            pipeline.decode(c,record)
++            r=json.loads(record.read_text())
++            self.assertEqual(r['state'],'decoded_with_satdump_crash')
++            self.assertEqual(r['decode_attempts'][0]['returncode'],139)
++            with patch.object(pipeline,'records',return_value=[record]),patch.object(pipeline,'satellite_busy',return_value=None),patch.object(pipeline,'active',return_value=False),patch.object(pipeline,'decode') as decode,patch('builtins.print') as printed:
++                pipeline.process(c)
++                pipeline.worker_list(c,dry=True)
++                decode.assert_not_called()
++                printed.assert_called_with('[]')
++            with self.assertRaises(RuntimeError):pipeline.worker_claim('m24-20261005T014957Z')
++        db=self.root/'data/watchkeeper-meteor.db'
++        history=store.history(db)[0]
++        self.assertEqual(history['classification'],'PARTIAL_SUCCESS')
++        self.assertEqual(history['satdump_crash'],'SIGSEGV')
++        self.assertEqual(len(history['images']),1)
++        self.assertTrue(store.image_file(str(history['images'][0]['id']),self.root,db).is_file())
+     def test_argv_both_satellites(self):
+         for sat in ('M2-3','M2-4'):
+             c=dict(satdump_command=['python','satdump_evk.py'],satdump_prefix=[],satdump_pipeline='wrong',satdump_extra=['--dc_block','--satellite_number','{satellite_number}'])
+diff --git a/dashboard.html b/dashboard.html
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -1572,7 +1572,7 @@
+   const old=selector.value,oldProduct=document.getElementById('meteor-product').value;
+   meteorPasses=data.passes;selector.replaceChildren();
+   for(const pass of meteorPasses){const option=document.createElement('option');option.value=pass.pass_id;option.textContent=pass.satellite+' · '+new Date(pass.record_start).toLocaleString()+' · '+pass.classification+(pass.source?.startsWith('imported')?' · Imported':'')+(pass.reference?' · Reference':'');selector.append(option);}
+-  const selected=meteorPasses.find(p=>p.pass_id===old)||meteorPasses.find(p=>p.classification==='SUCCESS')||meteorPasses[0];
++  const selected=meteorPasses.find(p=>p.pass_id===old)||meteorPasses.find(p=>['SUCCESS','PARTIAL_SUCCESS'].includes(p.classification))||meteorPasses[0];
+   if(selected){selector.value=selected.pass_id;showMeteorPass();if(selected.pass_id===old&&[...document.getElementById('meteor-product').options].some(o=>o.value===oldProduct)){document.getElementById('meteor-product').value=oldProduct;showMeteorProduct();}}
+   else{document.getElementById('meteor-status').textContent='No processed METEOR passes yet.';}
+   meteorLoaded=true;

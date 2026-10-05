@@ -1,0 +1,335 @@
+{
+  "at": "2026-10-05T17:55:46.678466+00:00",
+  "checks": {
+    "zero_raw_files_deleted": true,
+    "raw_fingerprints_unchanged": true,
+    "capture_sidecars_unchanged": true,
+    "capture_configuration_scheduler_sources_unchanged": true,
+    "original_db_history_preserved": true,
+    "original_db_image_rows_preserved": true,
+    "deletion_gates_disabled": true,
+    "large_files_all_1024ksps": true,
+    "systemd_unit_files_unchanged": true,
+    "boot_id_unchanged_during_deployment": true,
+    "operational_timers_and_services_healthy": true,
+    "future_planner_rates_unchanged": true,
+    "dashboard_api_ok": true
+  },
+  "groups": {
+    "PROTECTED": {
+      "count": 9,
+      "bytes": 7986741248,
+      "GB": 7.986741248,
+      "GiB": 7.438232421875
+    },
+    "GRACE": {
+      "count": 2,
+      "bytes": 840171520,
+      "GB": 0.84017152,
+      "GiB": 0.782470703125
+    },
+    "DELETABLE": {
+      "count": 18,
+      "bytes": 19179241472,
+      "GB": 19.179241472,
+      "GiB": 17.862060546875
+    },
+    "REVIEW": {
+      "count": 2,
+      "bytes": 2033188864,
+      "GB": 2.033188864,
+      "GiB": 1.8935546875
+    },
+    "all_satellite_raw": {
+      "count": 31,
+      "bytes": 30039343104,
+      "GB": 30.039343104,
+      "GiB": 27.976318359375
+    },
+    "METEOR": {
+      "count": 30,
+      "bytes": 29979836416,
+      "GB": 29.979836416,
+      "GiB": 27.9208984375
+    },
+    "above_1_GiB": {
+      "count": 15,
+      "bytes": 24540872704,
+      "GB": 24.540872704,
+      "GiB": 22.85546875
+    },
+    "sample_rate_256000": {
+      "count": 14,
+      "bytes": 5339873280,
+      "GB": 5.33987328,
+      "GiB": 4.97314453125
+    },
+    "sample_rate_1024000": {
+      "count": 16,
+      "bytes": 24600379392,
+      "GB": 24.600379392,
+      "GiB": 22.910888671875
+    },
+    "sample_rate_unknown": {
+      "count": 1,
+      "bytes": 99090432,
+      "GB": 0.099090432,
+      "GiB": 0.09228515625
+    },
+    "explicit_reference": {
+      "count": 4,
+      "bytes": 980156416,
+      "GB": 0.980156416,
+      "GiB": 0.912841796875
+    },
+    "protected_or_reference": {
+      "count": 9,
+      "bytes": 7986741248,
+      "GB": 7.986741248,
+      "GiB": 7.438232421875
+    },
+    "no_image": {
+      "count": 24,
+      "bytes": 20999569408,
+      "GB": 20.999569408,
+      "GiB": 19.557373046875
+    },
+    "failed_or_no_image": {
+      "count": 31,
+      "bytes": 30039343104,
+      "GB": 30.039343104,
+      "GiB": 27.976318359375
+    }
+  },
+  "health": {
+    "rf-watchkeeper-meteor-plan.timer": "active",
+    "rf-watchkeeper-meteor-dispatch.timer": "active",
+    "rf-watchkeeper-meteor-process.timer": "active",
+    "rf-watchkeeper-meteor-cleanup.timer": "active",
+    "rf-watchkeeper-meteor-legacy-register.timer": "active",
+    "rf-watchkeeper-health.timer": "active",
+    "rf-watchkeeper-scheduler.service": "active",
+    "rf-watchkeeper-dashboard.service": "active"
+  },
+  "service_results": {
+    "rf-watchkeeper-meteor-plan.service": "success",
+    "rf-watchkeeper-meteor-dispatch.service": "success",
+    "rf-watchkeeper-meteor-process.service": "success",
+    "rf-watchkeeper-meteor-cleanup.service": "success",
+    "rf-watchkeeper-meteor-legacy-register.service": "success"
+  },
+  "plan": {
+    "generated_at": "2026-10-05T17:00:37.112004+00:00",
+    "enabled": true,
+    "passes": [
+      {
+        "id": "m23-20261005T182853Z",
+        "satellite": "M2-3",
+        "start": "2026-10-05T18:28:53.785541+00:00",
+        "stop": "2026-10-05T18:39:38.016607+00:00",
+        "peak": "2026-10-05T18:34:14.959739+00:00",
+        "peak_deg": 88.05414252533106,
+        "peak_azimuth": 248.45371246599393,
+        "south_seconds": 330,
+        "tle_epoch": "2026-10-05T06:27:58.658691+00:00",
+        "tle_source": "CACHE",
+        "record_start": "2026-10-05T18:27:23.785541+00:00",
+        "record_stop": "2026-10-05T18:41:08.016607+00:00",
+        "trigger": "2026-10-05T18:25:11.785541+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned"
+      },
+      {
+        "id": "m24-20261006T012820Z",
+        "satellite": "M2-4",
+        "start": "2026-10-06T01:28:20.864241+00:00",
+        "stop": "2026-10-06T01:38:34.714503+00:00",
+        "peak": "2026-10-06T01:33:29.146737+00:00",
+        "peak_deg": 43.72824193086071,
+        "peak_azimuth": 98.0837751661791,
+        "south_seconds": 260,
+        "tle_epoch": "2026-10-05T06:26:16.095856+00:00",
+        "tle_source": "CACHE",
+        "record_start": "2026-10-06T01:26:50.864241+00:00",
+        "record_stop": "2026-10-06T01:40:04.714503+00:00",
+        "trigger": "2026-10-06T01:24:38.864241+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned"
+      },
+      {
+        "id": "m23-20261006T081307Z",
+        "satellite": "M2-3",
+        "start": "2026-10-06T08:13:07.094893+00:00",
+        "stop": "2026-10-06T08:23:41.960893+00:00",
+        "peak": "2026-10-06T08:18:25.866007+00:00",
+        "peak_deg": 61.7628915207634,
+        "peak_azimuth": 103.93493120053489,
+        "south_seconds": 300,
+        "tle_epoch": "2026-10-05T06:27:58.658691+00:00",
+        "tle_source": "CACHE",
+        "record_start": "2026-10-06T08:11:37.094893+00:00",
+        "record_stop": "2026-10-06T08:25:11.960893+00:00",
+        "trigger": "2026-10-06T08:09:25.094893+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned"
+      },
+      {
+        "id": "m24-20261006T130159Z",
+        "satellite": "M2-4",
+        "start": "2026-10-06T13:01:59.737070+00:00",
+        "stop": "2026-10-06T13:12:21.179445+00:00",
+        "peak": "2026-10-06T13:07:09.512014+00:00",
+        "peak_deg": 46.310116482052656,
+        "peak_azimuth": 260.80546814952663,
+        "south_seconds": 280,
+        "tle_epoch": "2026-10-05T06:26:16.095856+00:00",
+        "tle_source": "CACHE",
+        "record_start": "2026-10-06T13:00:29.737070+00:00",
+        "record_stop": "2026-10-06T13:13:51.179445+00:00",
+        "trigger": "2026-10-06T12:58:17.737070+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned"
+      },
+      {
+        "id": "m23-20261006T180542Z",
+        "satellite": "M2-3",
+        "start": "2026-10-06T18:05:42.798276+00:00",
+        "stop": "2026-10-06T18:16:21.255444+00:00",
+        "peak": "2026-10-06T18:11:01.221332+00:00",
+        "peak_deg": 71.12720886631024,
+        "peak_azimuth": 64.46505914841624,
+        "south_seconds": 270,
+        "tle_epoch": "2026-10-05T06:27:58.658691+00:00",
+        "tle_source": "CACHE",
+        "record_start": "2026-10-06T18:04:12.798276+00:00",
+        "record_stop": "2026-10-06T18:17:51.255444+00:00",
+        "trigger": "2026-10-06T18:02:00.798276+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned"
+      },
+      {
+        "id": "m24-20261007T010647Z",
+        "satellite": "M2-4",
+        "start": "2026-10-07T01:06:47.299823+00:00",
+        "stop": "2026-10-07T01:16:27.090684+00:00",
+        "peak": "2026-10-07T01:11:38.519004+00:00",
+        "peak_deg": 33.30880212058998,
+        "peak_azimuth": 93.29914662663784,
+        "south_seconds": 210,
+        "tle_epoch": "2026-10-05T06:26:16.095856+00:00",
+        "tle_source": "CACHE",
+        "record_start": "2026-10-07T01:05:17.299823+00:00",
+        "record_stop": "2026-10-07T01:17:57.090684+00:00",
+        "trigger": "2026-10-07T01:03:05.299823+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned"
+      },
+      {
+        "id": "m24-20261007T024646Z",
+        "satellite": "M2-4",
+        "start": "2026-10-07T02:46:46.377041+00:00",
+        "stop": "2026-10-07T02:57:27.499936+00:00",
+        "peak": "2026-10-07T02:52:08.211143+00:00",
+        "peak_deg": 72.44110276900153,
+        "peak_azimuth": 295.70649556712425,
+        "south_seconds": 270,
+        "tle_epoch": "2026-10-05T06:26:16.095856+00:00",
+        "tle_source": "CACHE",
+        "record_start": "2026-10-07T02:45:16.377041+00:00",
+        "record_stop": "2026-10-07T02:58:57.499936+00:00",
+        "trigger": "2026-10-07T02:43:04.377041+00:00",
+        "frequency": 137900000,
+        "sample_rate": 256000,
+        "gain": 49.6,
+        "device": "V4MAIN01",
+        "pre_margin": 90,
+        "post_margin": 90,
+        "preflight_seconds": 120,
+        "status": "planned"
+      }
+    ],
+    "rejected": [
+      {
+        "id": "m23-20261006T194634Z",
+        "reason": "daily limit"
+      },
+      {
+        "id": "m24-20261006T030828Z",
+        "reason": "daily limit"
+      },
+      {
+        "id": "m24-20261006T112145Z",
+        "reason": "daily limit"
+      },
+      {
+        "id": "m23-20261005T201031Z",
+        "reason": "daily limit"
+      },
+      {
+        "id": "m23-20261006T095316Z",
+        "reason": "insufficient south-window visibility"
+      },
+      {
+        "id": "m24-20261007T042709Z",
+        "reason": "insufficient south-window visibility"
+      },
+      {
+        "id": "m23-20261006T162724Z",
+        "reason": "insufficient south-window visibility"
+      }
+    ],
+    "manual_reservations": [],
+    "dry_run": false
+  },
+  "deleted_count": 0,
+  "reclaimed_bytes_actual": 0,
+  "reclaimable_bytes_dry_run": 19179241472,
+  "baseline_failed_units": "  UNIT          LOAD   ACTIVE SUB    DESCRIPTION\n\u25cf rmtfs.service loaded failed failed Qualcomm remotefs service\n\nLegend: LOAD   \u2192 Reflects whether the unit definition was properly loaded.\n        ACTIVE \u2192 The high-level unit activation state, i.e. generalization of SUB.\n        SUB    \u2192 The low-level unit activation state, values depend on unit type.\n\n1 loaded units listed.\n",
+  "final_failed_units": "  UNIT          LOAD   ACTIVE SUB    DESCRIPTION\n\u25cf rmtfs.service loaded failed failed Qualcomm remotefs service\n\nLegend: LOAD   \u2192 Reflects whether the unit definition was properly loaded.\n        ACTIVE \u2192 The high-level unit activation state, i.e. generalization of SUB.\n        SUB    \u2192 The low-level unit activation state, values depend on unit type.\n\n1 loaded units listed.\n",
+  "evaluation_checks": {
+    "raw": true,
+    "sidecars": true,
+    "guarded_sources": true,
+    "history": true,
+    "history_sequence_types_normalized": true,
+    "periodic_retention_checked_at_changes": 0
+  },
+  "tests": "..........{\"at\": \"2026-10-05T17:55:44.047985+00:00\", \"event\": \"frequency_evaluation_finished\", \"id\": \"m24-20261001T010000Z\", \"completed\": false, \"best_shift_hz\": 0}\n...................................<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7ea4c70>\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7ea5300>\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7bde3e0>\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n............/usr/lib/python3.14/unittest/mock.py:2259: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7c87a60>\n  def __init__(self, name, parent):\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n/usr/lib/python3.14/unittest/mock.py:2259: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffa7c87790>\n  def __init__(self, name, parent):\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n.INFO: remaining V4 owner detected: PID 123 ['AIS-catcher', '-d', 'V4MAIN01']; sending SIGTERM\nINFO: remaining V4 owner detected: PID 123 ['AIS-catcher', '-d', 'V4MAIN01']; sending SIGKILL\n.INFO: remaining V4 owner detected: PID 123 ['rtl_fm', '-d', 'V4MAIN01']; sending SIGTERM\n.INFO: reboot recovery already attempted or in progress; refusing reboot loop\n.INFO: METEOR capture failed after recovery: another satellite owner is active; refusing conflicting recovery\n...reboot: requested METEOR persisted recovery\n.INFO: pass window already expired\nINFO: METEOR capture failed after recovery: pass window already expired or insufficient useful recording window\n./root/rf-watchkeeper/.satellite-venv/lib/python3.14/site-packages/skyfield/searchlib.py:224: DeprecationWarning: Setting the dtype on a NumPy array has been deprecated in NumPy 2.5.\nInstead of changing the dtype on an array x, create a new array with x.view(new_dtype)\n  y.dtype = int8\n\nSatellite:          M2-4\n10\u00b0 pass:           2026-10-05 17:56:44.229062+00:00 -> 2026-10-05 18:05:44.229062+00:00\nRecording window:   2026-10-05 17:55:14.229062+00:00 -> 2026-10-05 18:07:14.229062+00:00\nMargins:            -90s / +90s\nFrequency:          137.900000 MHz\nSample rate:        256000 S/s\nGain:               49.6 dB\nDevice:             V4MAIN01\nOutput:             /tmp/tmpmovxfcwh/recordings/M2-4_20261005_175514_137900000.cu8\n\nInitial device check: V4MAIN01 visible\nPreflight check: V4MAIN01 visible\nINFO: METEOR reservation active\nINFO: stopping RF scheduler\nERROR: METEOR capture failed after recovery; bounded IQ preflight exhausted\nReceiver capture failed: job_id=1 reason=METEOR preflight/capture failed\nRestarting RF Watchkeeper V4 scheduler...\n.\nSatellite:          M2-4\n10\u00b0 pass:           2026-10-05 17:56:44.415221+00:00 -> 2026-10-05 18:05:44.415221+00:00\nRecording window:   2026-10-05 17:55:14.415221+00:00 -> 2026-10-05 18:07:14.415221+00:00\nMargins:            -90s / +90s\nFrequency:          137.900000 MHz\nSample rate:        256000 S/s\nGain:               49.6 dB\nDevice:             V4MAIN01\nOutput:             /tmp/tmpb3_w_a35/recordings/M2-4_20261005_175514_137900000.cu8\n\nInitial device check: V4MAIN01 visible\nPreflight check: V4MAIN01 visible\nINFO: METEOR reservation active\nINFO: stopping RF scheduler\nReceiver capture failed: job_id=1 reason=METEOR preflight/capture failed\nINFO: METEOR reservation retained for reboot recovery\n.....{\n  \"cleanup_enabled\": false,\n  \"dry_run\": true,\n  \"disk_free_gib\": 16.520893096923828,\n  \"disk_pressure\": \"low\",\n  \"warning\": null,\n  \"would_delete\": [],\n  \"deleted\": [],\n  \"passes\": [],\n  \"reclaimable_bytes\": 0,\n  \"summary\": {\n    \"PROTECTED\": {\n      \"count\": 0,\n      \"bytes\": 0\n    },\n    \"GRACE\": {\n      \"count\": 0,\n      \"bytes\": 0\n    },\n    \"DELETABLE\": {\n      \"count\": 0,\n      \"bytes\": 0\n    },\n    \"REVIEW\": {\n      \"count\": 0,\n      \"bytes\": 0\n    }\n  }\n}\nINFO: reboot recovery already attempted; refusing reboot loop\n.reboot: requested METEOR persisted recovery\nINFO: initiating last-resort reboot recovery; persistent reservation installed\n.INFO: IQ preflight attempt 1/3\nReceiver capture failed: job_id=1 reason=METEOR IQ preflight failed or timed out\nINFO: IQ preflight zero bytes\nIQ preflight: {\"attempt\": 1, \"started_at\": \"2026-10-05T17:55:44.463648+00:00\", \"returncode\": 0, \"stdout\": \"\", \"stderr\": \"Reading samples in async mode...\", \"timed_out\": false, \"byte_count\": 0, \"success\": false, \"command\": [\"/fake/rtl_sdr\", \"-d\", \"V4MAIN01\", \"-f\", \"137900000\", \"-s\", \"256000\", \"-g\", \"49.6\", \"-n\", \"256000\", \"/tmp/satellite-iq-preflight-x3jazo5i/probe.cu8\"]}\nINFO: IQ preflight attempt 2/3\nReceiver capture failed: job_id=2 reason=METEOR IQ preflight failed or timed out\nINFO: IQ preflight zero bytes\nIQ preflight: {\"attempt\": 2, \"started_at\": \"2026-10-05T17:55:44.466112+00:00\", \"returncode\": 0, \"stdout\": \"\", \"stderr\": \"Reading samples in async mode...\", \"timed_out\": false, \"byte_count\": 0, \"success\": false, \"command\": [\"/fake/rtl_sdr\", \"-d\", \"V4MAIN01\", \"-f\", \"137900000\", \"-s\", \"256000\", \"-g\", \"49.6\", \"-n\", \"256000\", \"/tmp/satellite-iq-preflight-7cpyz708/probe.cu8\"]}\nINFO: IQ preflight attempt 3/3\nReceiver capture failed: job_id=3 reason=METEOR IQ preflight failed or timed out\nINFO: IQ preflight zero bytes\nIQ preflight: {\"attempt\": 3, \"started_at\": \"2026-10-05T17:55:44.467433+00:00\", \"returncode\": 0, \"stdout\": \"\", \"stderr\": \"Reading samples in async mode...\", \"timed_out\": false, \"byte_count\": 0, \"success\": false, \"command\": [\"/fake/rtl_sdr\", \"-d\", \"V4MAIN01\", \"-f\", \"137900000\", \"-s\", \"256000\", \"-g\", \"49.6\", \"-n\", \"256000\", \"/tmp/satellite-iq-preflight-03x8apth/probe.cu8\"]}\n.INFO: METEOR capture failed after recovery: reboot did not occur within bounded recovery interval\n.reboot: requested METEOR persisted recovery\nINFO: initiating last-resort reboot recovery; persistent reservation installed\n.INFO: post-reboot capture resumed\nINFO: METEOR capture successful\n.INFO: post-reboot capture resumed\nINFO: post-reboot capture error: Command '['fake-recorder']' timed out after 1 seconds\nINFO: METEOR capture failed after recovery\n.INFO: post-reboot capture resumed\nINFO: METEOR capture failed after recovery\n.INFO: METEOR capture failed after recovery: post-reboot recovery was interrupted; attempts exhausted\n.INFO: pass window already expired or too short for reboot recovery\n...\n----------------------------------------------------------------------\nRan 84 tests in 0.462s\n\nOK\n",
+  "dashboard_api_error": null
+}

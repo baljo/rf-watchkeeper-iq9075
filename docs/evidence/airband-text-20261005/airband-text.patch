@@ -1,0 +1,245 @@
+--- a/airband_text.py
++++ b/airband_text.py
+@@ -0,0 +1,73 @@
++"""Conservative PCM activity segmentation and auditable aviation spelling.
++
++Energy is a speech candidate gate, not a classifier of speech versus RF noise.
++Continuous/noisy audio is retained for ASR; numbers are never inferred.
++"""
++import math
++import re
++
++
++def activity_regions(samples, rate):
++    frame = rate // 50  # 20 ms
++    energies = []
++    for start in range(0, len(samples), frame):
++        values = samples[start:start + frame]
++        mean = sum(values) / len(values)
++        energies.append(math.sqrt(sum((v - mean) ** 2 for v in values) / len(values)))
++    if not energies:
++        return [], {'status': 'no_activity', 'method': 'energy-candidate-v1'}
++    floor = sorted(energies)[int((len(energies) - 1) * .2)]
++    threshold = max(40.0, floor * 2.5)
++    active = [e >= threshold for e in energies]
++    uncertain = max(energies) >= 40 and not any(active)
++    if uncertain:
++        active = [e >= 40 for e in energies]
++    groups = []
++    start = last = None
++    count = 0
++    for i, yes in enumerate(active + [False] * 61):
++        if yes:
++            if start is None:
++                start, count = i, 0
++            last = i
++            count += 1
++        elif start is not None and i - last > 60:
++            if count >= 12:  # reject isolated clicks shorter than 240 ms
++                groups.append((max(0, (start - 10) * frame),
++                               min(len(samples), (last + 11) * frame)))
++            start = last = None
++    merged = []
++    for start, end in groups:
++        if merged and start <= merged[-1][1]:
++            merged[-1] = (merged[-1][0], max(end, merged[-1][1]))
++        else:
++            merged.append((start, end))
++    # Bounded, non-overlapping chunks; pad short inputs at the decoder boundary.
++    regions = [(s, min(s + 28 * rate, end)) for start, end in merged
++               for s in range(start, end, 28 * rate)]
++    return regions, {'status': 'continuous_or_noise' if uncertain else
++                     ('activity_detected' if regions else 'no_activity'),
++                     'method': 'energy-candidate-v1', 'frame_ms': 20,
++                     'pause_ms': 1200, 'padding_ms': 200,
++                     'noise_floor_rms': round(floor, 3),
++                     'threshold_rms': round(threshold, 3),
++                     'regions': [{'start_seconds': s / rate, 'end_seconds': e / rate}
++                                 for s, e in regions],
++                     'note': 'Energy candidates may include RF noise; absence is not an RF health failure.'}
++
++
++def normalize(text):
++    """Spelling only. Preserve uncertain numbers, callsigns and station names."""
++    changes = []
++    value = text
++    for pattern, replacement in [(r'\bQ\s+N\s+H\b', 'QNH'),
++                                  (r'\bI\s+L\s+S\b', 'ILS'),
++                                  (r'\bA\s+T\s+I\s+S\b', 'ATIS'),
++                                  (r'\bniner\b', 'nine'),
++                                  (r'\bfife\b', 'five')]:
++        def replace(match):
++            changes.append({'source': match.group(), 'replacement': replacement})
++            return replacement
++        value = re.sub(pattern, replace, value, flags=re.I)
++    return {'text': value, 'changes': changes, 'status': 'spelling_only',
++            'numeric_values_verified': False}
+--- a/atis_pipeline.py
++++ b/atis_pipeline.py
+@@ -16,6 +16,7 @@
+ import time
+ import wave
+ import rf_health
++import airband_text
+ 
+ ROOT = Path(__file__).resolve().parent
+ OUT = ROOT / 'recordings' / 'atis'
+@@ -35,6 +36,9 @@
+ def satellite_reason(seconds=0, margin=300):
+     """Fail closed; include active preflights and upcoming satellite timer triggers."""
+     try:
++        reason = managed_satellite_reason(seconds, margin)
++        if reason:
++            return reason
+         rows = command(['systemctl', 'list-units', '--all', '--type=service', '--state=active,activating', '--plain', '--no-legend'])
+         for row in rows.splitlines():
+             name = row.split()[0]
+@@ -52,8 +56,24 @@
+             due = datetime.strptime(value, '%a %Y-%m-%d %H:%M:%S %Z').replace(tzinfo=timezone.utc).timestamp()
+             if due <= now + seconds + margin:
+                 return 'Satellite timer due: ' + name
+-    except (OSError, ValueError, subprocess.SubprocessError) as error:
++    except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
+         return 'Satellite schedule cannot be verified: ' + str(error)
++    return None
++
++def managed_satellite_reason(seconds, margin):
++    # Reuse read-only ownership checks; never invoke shared recovery/scheduling.
++    reason = rf_health.satellite_guard()
++    if reason:
++        return 'Satellite ownership: ' + reason
++    plan = json.loads((rf_health.ROOT / 'data/meteor-auto/plan.json').read_text())
++    now = time.time()
++    for entry in plan['passes']:
++        if entry['status'] not in ('planned', 'claimed', 'capturing'):
++            continue
++        start = rf_health.timestamp(entry['record_start'])
++        end = rf_health.timestamp(entry['record_stop'])
++        if end > now and start <= now + seconds + margin:
++            return 'Satellite managed reservation: ' + entry['id']
+     return None
+ 
+ def due(job, output, now=None):
+@@ -135,6 +155,8 @@
+ 
+ def prepare(folder):
+     with wave.open(str(folder / 'raw.wav')) as wav:
++        if wav.getnchannels() != 1 or wav.getsampwidth() != 2:
++            raise ValueError('Expected mono signed 16-bit PCM audio')
+         rate = wav.getframerate()
+         samples = array.array('h', wav.readframes(wav.getnframes()))
+     if rate != 8000 or not samples:
+@@ -142,19 +164,20 @@
+     offset = sum(samples) / len(samples)
+     peak = max(abs(x-offset) for x in samples)
+     gain = min(50, 29000 / peak) if peak else 1
++    regions, segmentation = airband_text.activity_regions(samples, rate)
++    save(folder / 'segmentation.json', segmentation)
+     clean = array.array('h', (int(max(-32768, min(32767, round((x-offset)*gain)))) for x in samples))
+     with wave.open(str(folder / 'listen.wav'), 'wb') as wav:
+         wav.setnchannels(1); wav.setsampwidth(2); wav.setframerate(rate); wav.writeframes(clean.tobytes())
+     clips = []
+-    # Overlap avoids putting every ATIS phrase at a fixed 30-second decoder boundary.
+-    for start in range(0, len(clean), 20*rate):
+-        a = clean[start:start+28*rate]
+-        if len(a) < 3*rate:
+-            break
++    for start, end in regions:
++        a = clean[start:end]
+         b = array.array('h')
+         for i,x in enumerate(a):
+             b.extend((x, (x+a[min(i+1,len(a)-1)])//2))
+-        path = folder / ('clip-%03d.wav' % (start//rate))
++        if len(b) < 3*16000:
++            b.extend([0] * (3*16000-len(b)))
++        path = folder / ('clip-%06d.wav' % round(start*1000/rate))
+         with wave.open(str(path), 'wb') as wav:
+             wav.setnchannels(1); wav.setsampwidth(2); wav.setframerate(16000); wav.writeframes(b.tobytes())
+         clips.append((start/rate, path))
+@@ -185,21 +208,27 @@
+     for start, path in clips:
+         result = path.with_suffix('.json')
+         try:
++            # A deferred/retried clip must not reuse an earlier model result.
++            if result.exists():
++                result.unlink()
+             guarded_run([str(ROOT/'asr_native/voice-ai-ref'), '-m', str(SMALL), '-f', str(path),
+                          '-o', str(result), '-l', 'en', '-t', 'transcribe'], path.with_suffix('.log'), stop, env=env)
+             raw = json.loads(result.read_text())
+             text = re.sub(r'\[\d+ms\s*-\s*\d+ms\]', ' ', raw.get('text','')).strip()
+             if not text or 'SPECTROGRAM FAIL' in text:
+                 raise ValueError('Empty or invalid ASR output')
+-            results.append({'start_seconds':start, 'text':text, 'status':'experimental', 'raw':raw})
++            results.append({'start_seconds':start, 'text':text, 'status':'experimental', 'raw':raw,
++                            'language':raw.get('language'), 'language_requested':'en',
++                            'normalization':airband_text.normalize(text)})
+         except InterruptedError:
+             raise
+         except (OSError, ValueError, RuntimeError, TimeoutError) as error:
+             results.append({'start_seconds':start, 'status':'failed', 'error':str(error)})
+     valid = [r for r in results if r.get('text')]
+     transcript = {'model':'Qualcomm Whisper small QCS9075 v0.50.2', 'accelerator_requested':'HTP/QNN',
+-                  'accelerator_verified':False, 'status':'experimental' if valid else 'failed',
+-                  'segments':results, 'note':'Overlapping clips may repeat phrases; numeric fields require review.'}
++                  'accelerator_verified':False, 'status':'experimental' if valid else ('no_activity' if not clips else 'failed'),
++                  'language_requested':'en', 'segmentation':json.loads((folder/'segmentation.json').read_text()),
++                  'segments':results, 'note':'Energy-gated clips may include RF noise; numeric fields require review.'}
+     save(folder/'transcript.json', transcript)
+     interpretation = {'status':'not_run', 'reason':'No valid transcript'}
+     if valid:
+@@ -232,7 +261,9 @@
+             interpretation={'status':'failed','error':str(error),'human_review_required':True}
+     save(folder/'interpretation.json', interpretation)
+     digest=hashlib.sha256(json.dumps([r['text'] for r in valid],sort_keys=True).encode()).hexdigest()
+-    save(folder/'processed.json', {'status':'completed','transcript_status':transcript['status'],
++    outcome = 'no_activity' if not clips else ('failed' if not valid else
++              ('partial_success' if len(valid) < len(results) or interpretation['status']=='failed' else 'completed'))
++    save(folder/'processed.json', {'status':outcome,'transcript_status':transcript['status'],
+          'interpretation_status':interpretation['status'],'transcript_hash':digest,
+          'processed_at':datetime.now(timezone.utc).isoformat()})
+ 
+--- a/atis_view.py
++++ b/atis_view.py
+@@ -14,14 +14,38 @@
+ def read(path):
+     try:return json.loads(path.read_text(encoding='utf-8'))
+     except FileNotFoundError:return None
++    except (ValueError, OSError) as error:
++        return {'status':'failed','error':'Cannot read '+path.name+': '+str(error)}
+ 
+ def snapshot(root):
+     p=folder(root)
+     if p is None:return {'status':'waiting','message':'Waiting for the first scheduled ATIS capture.'}
+-    return {'status':'needs_review','recording':p.name,'capture':read(p/'capture.json'),
+-            'transcript':read(p/'transcript.json'),'interpretation':read(p/'interpretation.json'),
+-            'processing':read(p/'processed.json'),'audio_available':(p/'listen.wav').is_file(),
+-            'message':'Recording is available. Automatic ATIS recognition remains unreliable; listen to verify all fields.'}
++    capture, transcript = read(p/'capture.json'), read(p/'transcript.json')
++    interpretation, processing = read(p/'interpretation.json'), read(p/'processed.json')
++    state = (processing or {}).get('status')
++    status, message = 'needs_review', 'Recording is available. Automatic ATIS recognition remains unreliable; listen to verify all fields.'
++    if (capture or {}).get('status') == 'interrupted':
++        status, message = 'interrupted', 'Capture interrupted: '+str(capture.get('reason') or 'incomplete audio')
++    elif any((item or {}).get('status') == 'failed' and (item or {}).get('error', '').startswith('Cannot read')
++             for item in (capture, transcript, interpretation, processing)):
++        status, message = 'failed', 'ATIS output could not be read; retained audio is available for review.'
++    elif not processing:
++        status, message = 'pending', 'Recorded audio is awaiting processing; satellite work can defer ASR.'
++    elif state == 'failed':
++        status, message = 'failed', 'ATIS transcription failed. '+str(processing.get('error') or 'See segment diagnostics; listen to retained audio.')
++    elif state == 'no_activity':
++        status, message = 'no_activity', 'No sustained audio activity detected; ASR skipped. This is not a receiver failure.'
++    elif state == 'partial_success' or (interpretation or {}).get('status') == 'failed':
++        status, message = 'partial_success', 'Transcript available; some recognition or interpretation failed. Listen to verify.'
++    if transcript:
++        for segment in transcript.get('segments', []):
++            if segment.get('normalization'):
++                segment['raw_text'] = segment.get('text')
++                segment['text'] = segment['normalization']['text']
++    return {'status':status,'recording':p.name,'capture':capture,
++            'transcript':transcript,'interpretation':interpretation,
++            'processing':processing,'audio_available':(p/'listen.wav').is_file(),
++            'message':message}
+ 
+ def audio(root):
+     p=folder(root)

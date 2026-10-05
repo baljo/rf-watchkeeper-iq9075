@@ -1,0 +1,92 @@
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.satellite-venv/
+.venv/
+venv/
+
+# RF recordings and generated audio
+recordings/
+*.cu8
+*.cs8
+*.wav
+
+# Runtime databases and event/log data
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+*.jsonl
+
+# Runtime/experiment output
+logs/
+sensor-logs/
+test-logs-sensors/
+test-logs-v4/
+asr-runs/
+audio-runs/
+aviation-runs/
+replay-runs/
+audio-dsp-probes/
+genie-probes/
+htp-profile-runs/
+model-trials/
+
+# Local/native installed model/runtime files
+asr_native/
+voiceai-probe/lib/
+
+# Historical working backups
+update-backups/
+*.bak
+*.bak-*
+*.bak.*
+*.before-*
+*.before-*
+*~
+*.tmp
+
+# Miscellaneous accidental command/output files
+pid,ppid,args*
+
+# Documentation publication hygiene
+backups/
+*-stage*/
+*-runs/
+imports/
+historical-cleanup-*/
+retention-approved-cleanup-*/
+retention-classifier-*/
+*.tar
+*.tar.gz
+*.zip
+*.jsonl.gz
+*.iq
+*.cfile
+*.cf32
+*.s16
+*.pcm
+*.mp3
+*.flac
+*.ogg
+*.db-*
+*.sqlite-*
+*.sqlite3-*
+*.onnx
+*.bin
+*.so
+*.so.*
+*.tflite
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+credentials*
+*token*.txt
+.ssh/
+*.log
+ervice*
+ors.service*

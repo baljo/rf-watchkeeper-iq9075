@@ -1,0 +1,1688 @@
+<!-- Display RF, AIS and historical METEOR images with imported/reference provenance; 2026-10-03 21:25:52 EEST, Thomas Vikström. -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RF Watchkeeper</title>
+<style>
+:root{color-scheme:light;--bg:#f3f6fa;--panel:#ffffff;--line:#b8c5d3;--muted:#46566a;--accent:#00664d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#142235;font:16px system-ui,sans-serif}main{max-width:1150px;margin:auto;padding:30px 22px}header{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:28px}h1{margin:6px 0;font-size:30px;letter-spacing:-1px}h2{font-size:19px;margin:0 0 18px}.eyebrow{color:var(--accent);font-size:14px;letter-spacing:2px;text-transform:uppercase}.muted,small{color:var(--muted)}.pill{padding:9px 14px;border:1px solid var(--line);border-radius:30px;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:20px}.label{color:var(--muted);font-size:14px;margin-bottom:10px}.value{font-size:25px;font-weight:650;overflow-wrap:anywhere}.hero{font-size:42px}.meta{margin-top:10px;font-size:14px;color:var(--muted)}.section{margin-top:24px}.split{display:flex;justify-content:space-between;gap:15px;align-items:center}.ok{color:var(--accent)}.warn{color:#854500}.feed{padding:0;list-style:none;margin:0}.feed li{padding:14px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}.feed small{display:block;margin-top:5px}#notice{margin:16px 0;color:#854500}footer{margin-top:26px;color:var(--muted);font-size:14px;line-height:1.7}.future{display:flex;flex-wrap:wrap;gap:8px}.future span{border:1px dashed var(--line);padding:8px 12px;border-radius:8px;color:var(--muted);font-size:14px}@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}header{align-items:flex-start;flex-direction:column}.hero{font-size:34px}}@media(max-width:430px){main{padding:22px 14px}.grid{gap:9px}.card{padding:15px}.value{font-size:21px}.hero{font-size:31px}.feed li{flex-direction:column;gap:3px}}
+
+.chart-controls{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:20px}.chart-controls label{font-size:14px;color:var(--muted)}select{font:inherit;background:white;color:#142235;border:1px solid var(--line);border-radius:7px;padding:8px;margin-left:6px}.plots{display:grid;grid-template-columns:1fr 1fr;gap:20px}.plot{width:100%;height:auto;display:block}.chart-title{font-weight:650;margin-bottom:8px}@media(max-width:720px){.plots{grid-template-columns:1fr}}
+button{font:inherit;border:1px solid var(--accent);border-radius:8px;padding:10px 16px;background:var(--accent);color:white;cursor:pointer}button:disabled{opacity:.55;cursor:default}.audio-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:end}.audio-controls label{display:flex;flex-direction:column;gap:8px;max-width:100%}.audio-controls select{margin:0;max-width:100%}audio{display:block;width:100%;max-width:550px;margin:12px 0}.speech-text{font-size:19px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}.audio-results{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px}@media(max-width:720px){.audio-results{grid-template-columns:1fr}}[hidden]{display:none!important}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 12px;border-top:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-size:13px;font-weight:650}
+.history-point{fill-opacity:0;pointer-events:all}.history-point:hover{fill-opacity:1}.history-point.isolated{fill-opacity:.7}
+
+#ais-map,
+#ais-local-map{
+  display:block;
+  width:min(100%,480px);
+  height:auto;
+  aspect-ratio:1 / 1;
+  margin:0 auto;
+}
+
+
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}.tabs button{background:var(--panel);color:var(--accent);border-color:var(--line)}.tabs button[aria-selected="true"]{background:var(--accent);color:white;border-color:var(--accent)}:focus-visible{outline:3px solid #075da8;outline-offset:3px}[role="tabpanel"]{margin-top:20px}a{color:var(--accent)}
+
+.pass-schedule{min-width:1040px}.pass-schedule th{text-align:center;background:#233447;color:#fff}.pass-schedule td{text-align:center}.pass-schedule .peak{font-weight:700}.pass-schedule tr.next-pass{background:#fff8bf}.pass-schedule small{display:block;white-space:normal;max-width:210px}.pass-schedule caption{text-align:left;color:var(--muted);font-size:14px;padding-bottom:12px}.pass-schedule .status{color:var(--accent);font-weight:650}
+</style></head><body><main>
+<header><div><div class="eyebrow">Dragonwing IQ-9075 EVK · Local RF observatory</div><h1>RF Watchkeeper</h1><div class="muted">Dual-SDR RF monitoring</div></div><div id="connection" class="pill">Connecting…</div></header>
+<nav class="tabs" role="tablist" aria-label="Dashboard sections"><button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true" tabindex="0">Overview</button><button type="button" role="tab" id="tab-433" aria-controls="panel-433" aria-selected="false" tabindex="-1">433 MHz</button><button type="button" role="tab" id="tab-airband" aria-controls="panel-airband" aria-selected="false" tabindex="-1">Airband</button><button type="button" role="tab" id="tab-ais" aria-controls="panel-ais" aria-selected="false" tabindex="-1">AIS</button><button type="button" role="tab" id="tab-satellites" aria-controls="panel-satellites" aria-selected="false" tabindex="-1">Satellites</button><button type="button" role="tab" id="tab-system" aria-controls="panel-system" aria-selected="false" tabindex="-1">System / AI</button></nav><div id="notice" role="status"></div><p id="cached-notice" class="warn" role="status" hidden>Connection lost. All displayed readings and evidence are cached until the dashboard reconnects.</p><noscript>This dashboard requires JavaScript to load readings and switch sections.</noscript><section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0"><h2>Live overview</h2><section class="card section" aria-label="RF system health"><h2>RF system health</h2><div id="rf-health">Checking receiver health…</div></section><br><div class="grid"><section class="card"><div class="label"><span id="primary-label">Primary receiver · V4MAIN01</span></div><div id="state" class="value">Unknown</div><div id="detail" class="meta">Waiting for V4 status</div></section><section class="card"><div class="label">V4 current RF job</div><div id="job" class="value">—</div><div id="frequency" class="meta">—</div><div id="operating-mode" class="meta">Waiting for scheduler</div></section><section class="card"><div class="label"><span id="sensor-label">433 MHz receiver · 43300001</span></div><div id="sensor-state" class="value">Unknown</div><div id="sensor-detail" class="meta">Waiting for FC0012 status</div></section></div>
+
+<div class="grid section"><section class="card"><div class="label">Latest 433 MHz detection</div><div id="overview-sensor" class="value">Waiting for status…</div><div id="overview-sensor-detail" class="meta"></div></section><section class="card"><div class="label">AIS reception</div><div id="overview-ais" class="value">Waiting for status…</div><div id="overview-ais-detail" class="meta"></div></section><section class="card"><div class="label">Saved-audio job · replay</div><div id="overview-audio" class="value">Waiting for status…</div><div id="overview-audio-detail" class="meta"></div></section></div><div class="grid section"><section class="card"><div class="label">ASR accelerator evidence</div><div id="overview-accelerator" class="value">Waiting for status…</div><div id="overview-accelerator-detail" class="meta"></div></section><section class="card"><div class="label">CPU / NPU / DSP utilization</div><div id="overview-utilization" class="value">Not available</div><div id="overview-utilization-detail" class="meta"></div></section><section class="card"><div class="label">Dashboard status</div><div id="overview-system" class="value">Waiting for status…</div><div id="overview-system-detail" class="meta"></div></section></div><section class="card section"><div class="split"><h2>Recent events</h2><small>Live updates · every 2 seconds</small></div><ul id="feed" class="feed"><li>Waiting for normalized events…</li></ul></section>
+</section><section id="panel-433" role="tabpanel" aria-labelledby="tab-433" tabindex="0" hidden><h2>433 MHz sensors</h2><section class="section"><div class="split"><h2>Latest Nexus-TH observation</h2><span id="device" class="muted">No sensor yet</span></div><div class="grid"><div class="card"><div class="label">Temperature</div><div id="temperature" class="value hero">—</div></div><div class="card"><div class="label">Relative humidity</div><div id="humidity" class="value hero">—</div></div><div class="card"><div class="label">Battery / channel</div><div id="battery" class="value">—</div><div id="channel" class="meta">Channel —</div></div></div><div class="meta"><span id="age">No event received</span> · <span id="timestamp">—</span></div></section>
+<section class="card section"><h2>Nexus history</h2><div class="chart-controls"><label>Sensor<select id="chart-sensor" aria-label="Chart sensor"></select></label><label>Period<select id="chart-period"><option value="1">Last hour</option><option value="6">Last 6 hours</option><option value="24" selected>24 h</option><option value="168">7 d</option><option value="720">30 d</option><option value="all">All history</option></select></label></div><div class="plots"><div><div class="chart-title">Temperature · °C</div><svg id="temperature-chart" class="plot" viewBox="0 0 500 245" role="img" aria-label="Nexus temperature history"></svg></div><div><div class="chart-title">Humidity · %</div><svg id="humidity-chart" class="plot" viewBox="0 0 500 245" role="img" aria-label="Nexus humidity history"></svg></div></div><p id="chart-summary" class="meta" role="status">Waiting for sensor history…</p><p id="chart-detail" class="meta" aria-live="polite"></p><small>All received readings are retained in SQLite; history is resampled only for display. Times are local. Gaps longer than 3 minutes are not connected. Temperature whiskers show bucket min/max. Hover or tap the line for details.</small></section>
+
+</section><section id="panel-airband" role="tabpanel" aria-labelledby="tab-airband" tabindex="0" hidden><h2>Airband / speech</h2><section class="card section" aria-labelledby="atis-heading">
+<div class="split"><h2 id="atis-heading">Scheduled Vaasa ATIS · 136.450 MHz</h2><span class="pill warn">Recognition needs review</span></div>
+<p class="warn">The audio capture is working. Automatic transcription and interpretation are still unreliable, especially numbers. No field below is confirmed.</p>
+<p id="atis-status" role="status">Loading scheduled ATIS results…</p>
+<p id="atis-meta" class="meta"></p>
+<audio id="atis-player" controls preload="none" hidden></audio>
+<p id="atis-model" class="meta"></p>
+<div class="table-wrap"><table><thead><tr><th>ATIS field</th><th>Tentative source quote</th><th>Status</th></tr></thead><tbody id="atis-fields"></tbody></table></div>
+<p id="atis-uncertainties" class="warn"></p>
+<details class="section"><summary>Inspect the small-model transcript and errors</summary><p class="muted">Overlapping clips repeat phrases. These are raw model readings, not a verified transcript.</p><div id="atis-transcript" class="speech-text"></div></details>
+</section>
+<p class="muted">Scheduled ATIS results are above. The general speech lab below uses the older tiny model and is not an ATIS decoder.</p><section class="card section" aria-labelledby="audio-heading">
+<div class="split"><h2 id="audio-heading">Recorded speech lab</h2><span class="pill">REPLAY · No radio needed</span></div>
+<p class="muted">Listen to a saved clip, then transcribe and summarize it locally on the EVK. Sensor monitoring continues.</p>
+<div class="audio-controls">
+<label>Recording<select id="audio-recording"><option value="">Loading recordings…</option></select></label>
+<label>Speech language<select id="audio-language"><option value="en">English</option><option value="fi">Finnish</option><option value="sv">Swedish</option><option value="fi,en">Finnish + English · experimental</option></select></label>
+<button id="audio-run" type="button" disabled>Transcribe &amp; summarize</button>
+<button id="audio-refresh" type="button">Refresh recordings</button>
+</div>
+<p id="audio-selection" class="meta"></p>
+<audio id="audio-preview" controls preload="none" hidden aria-label="Selected recording"></audio>
+<p id="audio-progress" role="status" aria-live="polite">Connecting to the speech workflow…</p>
+<p id="audio-error" class="warn" role="alert"></p>
+<div id="audio-result" hidden>
+<div id="audio-result-title" class="meta"></div>
+<audio id="audio-result-player" controls preload="none" aria-label="Processed recording"></audio>
+<div class="audio-results"><div><h3>Transcript</h3><p id="audio-transcript" class="speech-text"></p><div id="audio-asr-meta" class="meta"></div></div>
+<div><h3>Summary</h3><p id="audio-summary" class="speech-text"></p><div id="audio-genie-meta" class="meta"></div></div></div>
+<p class="meta">Check important words and numbers against the recording. Raw results are retained; a fluent summary does not verify the transcript.</p>
+</div>
+</section>
+<section class="card section"><div class="split"><h2>Latest transcription</h2><span id="transcription-status" class="muted">No ASR event yet</span></div><p id="transcription-text" class="value">—</p><div id="transcription-meta" class="meta">The dashboard reads normalized ASR events from its separate feed.</div></section>
+</section><section id="panel-ais" role="tabpanel" aria-labelledby="tab-ais" tabindex="0" hidden><h2>AIS</h2><section class="card section" aria-labelledby="ais-heading">
+<div class="split"><h2 id="ais-heading">AIS reception</h2><span id="ais-state" class="pill">Unknown</span></div>
+<p id="ais-summary" class="muted">Waiting for AIS collector status…</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>MMSI / name</th><th>Last msg type</th><th>Last known position</th><th>Distance</th><th>Bearing</th><th>SOG</th><th>COG</th><th>Heading</th><th>Motion</th><th>Signal</th><th>Last heard</th></tr></thead>
+<tbody id="ais-body"><tr><td colspan="6">No active AIS targets.</td></tr></tbody>
+</table>
+</div>
+<p id="ais-observer" class="meta">Observer position not configured; distance will be shown after latitude/longitude are set.</p>
+</section>
+
+
+<section class="card section" aria-labelledby="ais-map-heading">
+<div class="split">
+<h2 id="ais-map-heading">AIS regional map</h2>
+<span class="muted" id="ais-map-range">Local SVG · offline</span>
+</div>
+
+<p class="muted">
+Observer-centered RF plot. AIS targets and Met/Hydro measurement sites are shown separately.
+No external map service or internet connection is used.
+</p>
+
+<div style="max-width:620px;margin:0 auto;">
+<svg id="ais-map"
+     viewBox="0 0 800 800"
+     role="img"
+     aria-labelledby="ais-map-heading"
+     style="width:100%;height:auto;display:block;">
+</svg>
+</div>
+
+<p class="muted" id="ais-map-summary">Waiting for AIS position data.</p>
+</section>
+
+
+<section class="card section" aria-labelledby="ais-local-map-heading">
+<div class="split">
+<h2 id="ais-local-map-heading">Local AIS traffic</h2>
+<label class="muted">Range
+<select id="ais-local-range" aria-label="Local AIS map range">
+<option value="10">10 km</option>
+<option value="25">25 km</option>
+<option value="auto" selected>Auto (20–100 km)</option><option value="50">50 km</option>
+<option value="100">100 km</option>
+</select>
+</label>
+</div>
+
+<p class="muted">
+Local vessel view using AIS-reported position and motion data.
+Course and heading are shown only when present in the received AIS messages.
+</p>
+
+<div style="max-width:620px;margin:0 auto;">
+<svg id="ais-local-map"
+     viewBox="0 0 800 800"
+     role="img"
+     aria-labelledby="ais-local-map-heading"
+     style="width:100%;height:auto;display:block;">
+</svg>
+</div>
+
+<p class="muted" id="ais-local-map-summary">Waiting for local AIS targets.</p>
+</section>
+
+<section class="card section" aria-labelledby="ais-methydro-heading">
+<div class="split">
+<h2 id="ais-methydro-heading">AIS Met/Hydro observations</h2>
+<span class="muted">Type 8 · DAC 1 · FID 31</span>
+</div>
+<p class="muted">These coordinates describe environmental measurement sites, not necessarily the transmitter position.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Site position</th>
+<th>Distance</th>
+<th>Bearing</th>
+<th>Wind</th>
+<th>Air temp</th>
+<th>Humidity</th>
+<th>Pressure</th>
+<th>Water level</th>
+<th>Extras</th>
+<th>Received</th>
+</tr>
+</thead>
+<tbody id="ais-methydro-body">
+<tr><td colspan="10">No AIS Met/Hydro observations stored yet.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+</section><section id="panel-satellites" role="tabpanel" aria-labelledby="tab-satellites" tabindex="0" hidden><h2>Scheduled satellite passes</h2><section class="card">
+<p id="schedule-status" role="status">Loading scheduled passes…</p>
+<p id="schedule-meta" class="meta"></p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scheduled satellite passes"><table class="pass-schedule">
+<caption>Times in Europe/Helsinki · Az = compass direction / azimuth · El = elevation. The next scheduled pass is highlighted.</caption>
+<thead><tr><th rowspan="2" scope="col">Satellite / status</th><th colspan="2" scope="colgroup">Start ↑</th><th colspan="3" scope="colgroup">Max altitude</th><th colspan="2" scope="colgroup">End ↓</th><th rowspan="2" scope="col">Recording / receiver</th></tr>
+<tr><th scope="col">Date, local time</th><th scope="col">Az</th><th scope="col">Local time</th><th scope="col">Az</th><th scope="col">El</th><th scope="col">Local time</th><th scope="col">Az</th></tr></thead>
+<tbody id="schedule-rows"><tr><td colspan="9">Loading…</td></tr></tbody></table></div>
+<p id="schedule-warning" class="warn" role="status"></p>
+<p class="meta">Only managed passes and live capture timers are listed. Directions use cached orbital elements; pass times use the scheduled capture boundaries. Recording margins include time before and after the pass.</p>
+</section><h2 class="section">METEOR satellite imagery</h2><section class="card">
+<p id="meteor-status" role="status">Loading pass history…</p>
+<p id="meteor-disk" class="meta" role="status"></p>
+<p id="meteor-retention" class="meta" role="status"></p><button id="meteor-keep" type="button" disabled>Keep raw recording</button>
+<div class="chart-controls"><label>Pass history<select id="meteor-pass" aria-label="METEOR pass history"></select></label><label>Image product<select id="meteor-product" aria-label="METEOR image product"></select></label></div>
+<p id="meteor-meta" class="meta"></p><p id="meteor-lines" class="meta"></p>
+<details id="meteor-conditions-panel" open><summary style="font-weight:650;margin:18px 0">Pass conditions · saved with recording</summary>
+<div class="table-wrap"><table aria-label="Recorded pass conditions"><thead><tr><th scope="col">Event</th><th scope="col">Helsinki local time</th><th scope="col">Azimuth</th><th scope="col">Elevation</th></tr></thead><tbody id="meteor-conditions-rows"></tbody></table></div>
+<p id="meteor-capture-settings" class="meta"></p><p id="meteor-actual-recording" class="meta"></p><p id="meteor-condition-source" class="meta"></p>
+</details>
+
+<a id="meteor-image-link" target="_blank" rel="noopener" hidden><img id="meteor-image" alt="Decoded METEOR MSU-MR image" style="display:block;max-width:100%;height:auto;margin:auto" hidden></a>
+<p class="meta">All IQ recordings and decoded images are retained. Times are shown in your local timezone.</p></section></section><section id="panel-system" role="tabpanel" aria-labelledby="tab-system" tabindex="0" hidden><h2>System / AI</h2><p class="muted">Reported backend and accelerator evidence from the latest stored transcription. This is not a live utilization measurement.</p><section class="card"><h3>Latest ASR backend</h3><p id="system-asr">No ASR event yet.</p><p id="system-evidence" class="meta"></p><p id="system-asr-time" class="meta"></p></section><section class="card section"><h3>System telemetry</h3><p>CPU, NPU and DSP utilization are not exposed by the current dashboard API.</p><p id="system-time" class="meta">Waiting for server timestamp…</p></section><section class="card section"><div class="split"><h2>Latest interpretation</h2><span id="interpretation-status" class="muted">No interpretation yet</span></div><p id="interpretation-text" class="value">—</p><div id="interpretation-meta" class="meta">Generated from normalized events; raw source data remains available in the event log.</div></section>
+</section><footer>Saved-audio controls are active · Planned RF controls are not active. Sensor values show the latest logged observation, even if the collector stops.<br>No cloud services or external assets. Times display in this device’s local timezone.</footer>
+</main><script>// Keep panels mounted so charts, selected controls and audio survive navigation.
+const sections=['overview','433','airband','ais','satellites','system'];
+function selectSection(key, focus=false){
+ if(!sections.includes(key))key='overview';
+ for(const section of sections){
+  const selected=section===key,tab=document.getElementById('tab-'+section);
+  tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;
+  document.getElementById('panel-'+section).hidden=!selected;
+ }
+ if(focus)document.getElementById('tab-'+key).focus();
+}
+for(const [index,key] of sections.entries()){
+ const tab=document.getElementById('tab-'+key);
+ tab.addEventListener('click',()=>{location.hash=key;selectSection(key);});
+ tab.addEventListener('keydown',event=>{
+  let next;
+  if(event.key==='ArrowRight')next=(index+1)%sections.length;
+  if(event.key==='ArrowLeft')next=(index+sections.length-1)%sections.length;
+  if(event.key==='Home')next=0;
+  if(event.key==='End')next=sections.length-1;
+  if(next!==undefined){event.preventDefault();location.hash=sections[next];selectSection(sections[next],true);}
+ });
+}
+window.addEventListener('hashchange',()=>selectSection(location.hash.slice(1)));
+selectSection(location.hash.slice(1));
+function renderOverview(data){
+ const c=data.collector||{},s=data.sensor_receiver||{},t=data.latest_transcription,e=data.latest_nexus;
+ put('primary-label',(c.label||'Primary receiver')+' · '+(c.device||'V4MAIN01'));
+ put('sensor-label',(s.label||'433 MHz receiver')+' · '+(s.device||'43300001'));
+ put('overview-sensor',e?numeric(e.temperature_c,' °C')+' / '+numeric(e.humidity_pct,' %'):'No detection yet');
+ put('overview-sensor-detail',e?(e.device_key||'Nexus-TH')+' · '+new Date(e.received_at).toLocaleString()+(data.latest_age_seconds>180?' · Stale reading':''):'Waiting for a sensor observation.');
+ put('overview-ais',data.ais_status?.state||'Unknown');
+ put('overview-ais-detail',(data.ais_targets||[]).length+' active targets · last reported collector status'+(data.ais_status?.updated_at?' · '+new Date(data.ais_status.updated_at).toLocaleString():''));
+ put('overview-accelerator',t?(t.accelerator_verified===true?'Verified for latest ASR':'Verification pending'):'No ASR evidence yet');
+ put('overview-accelerator-detail',t?(t.accelerator_requested||'Accelerator unspecified')+' · '+new Date(t.received_at).toLocaleString():'Run saved audio from Airband to produce ASR evidence.');
+ put('overview-utilization-detail','No utilization telemetry in the current API.');
+ put('overview-system','API responding');
+ put('overview-system-detail','Last response · '+new Date(data.server_time).toLocaleString());
+ put('system-time','Server time · '+new Date(data.server_time).toLocaleString());
+ put('system-asr',t?(t.model||'Unknown model')+' · '+(t.backend||'Unknown backend'):'No ASR event yet.');
+ put('system-evidence',t?(t.acceleration_note||'No additional runtime evidence reported.'):'Accelerator verification is not available yet.');
+ put('system-asr-time',t?'Latest stored result · '+(t.source||'Source unknown')+' · '+new Date(t.received_at).toLocaleString():'');
+}
+
+
+const el=id=>document.getElementById(id), put=(id,value)=>{el(id).textContent=value;};
+let last=null, fetchedAt=0, online=false;
+const numeric=(v,suffix)=>typeof v==='number'&&Number.isFinite(v)?v.toFixed(1)+suffix:'—';
+function ageText(seconds){if(seconds===null)return 'No event received';seconds=Math.floor(seconds);return seconds<60?seconds+' seconds ago':seconds<3600?Math.floor(seconds/60)+' minutes ago':Math.floor(seconds/3600)+' hours ago';}
+function updateAge(){if(!last)return;const age=last.latest_age_seconds===null?null:last.latest_age_seconds+(performance.now()-fetchedAt)/1000;put('age',ageText(age)+(age!==null&&age>180?' · Stale reading':''));el('age').className=age>180?'warn':'';}
+
+
+const observerLat=63.104753,observerLon=21.683053;
+
+function bearingFromObserver(lat,lon){
+ const rad=x=>x*Math.PI/180,deg=x=>x*180/Math.PI;
+ const lat1=rad(observerLat),lat2=rad(lat),dlon=rad(lon-observerLon);
+
+ const x=Math.sin(dlon)*Math.cos(lat2);
+ const y=Math.cos(lat1)*Math.sin(lat2)
+       -Math.sin(lat1)*Math.cos(lat2)*Math.cos(dlon);
+
+ const b=(deg(Math.atan2(x,y))+360)%360;
+ const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE',
+             'S','SSW','SW','WSW','W','WNW','NW','NNW'];
+
+ return Math.round(b)+'° '+dirs[Math.floor((b+11.25)/22.5)%16];
+}
+
+
+function aisAgeText(timestamp){
+ if(!timestamp)return '';
+
+ const then=Date.parse(timestamp);
+ if(!Number.isFinite(then))return '';
+
+ const seconds=Math.max(0,(Date.now()-then)/1000);
+
+ if(seconds<60)
+   return Math.round(seconds)+'s ago';
+
+ if(seconds<3600)
+   return Math.floor(seconds/60)+' min ago';
+
+ if(seconds<86400){
+   const hours=Math.floor(seconds/3600);
+   const minutes=Math.floor((seconds%3600)/60);
+   return hours+' h ago';
+ }
+
+ const days=Math.floor(seconds/86400);
+ const hours=Math.floor((seconds%86400)/3600);
+ return days+'d '+hours+'h ago';
+}
+
+function aisKnownBaseStationName(target){
+   const stations={
+     '2300077':'REF POINT LERVIKSUDD',
+     '2300122':'IKON'
+   };
+
+   return stations[String(target.mmsi)]||null;
+  }
+
+  function aisIsBaseStation(target){
+   return !!target.is_base_station || !!aisKnownBaseStationName(target) ||
+          Number(target.message_type)===4;
+  }
+
+  function aisIdentityText(target,includeMmsi=false){
+   const stationName=aisKnownBaseStationName(target);
+
+   if(stationName)
+     return includeMmsi
+       ? target.mmsi+' · '+stationName+' · AIS base station'
+       : stationName+' · AIS base station';
+
+   if(aisIsBaseStation(target))
+     return includeMmsi
+       ? target.mmsi+' · AIS base station'
+       : 'MMSI '+target.mmsi+' · AIS base station';
+
+   if(target.vessel_name)
+     return includeMmsi
+       ? target.mmsi+' · '+target.vessel_name
+       : target.vessel_name;
+
+   return includeMmsi
+     ? String(target.mmsi)
+     : 'MMSI '+target.mmsi;
+  }
+
+  function aisTargetAgeSeconds(target){
+   const then=Date.parse(target.last_seen);
+
+   if(!Number.isFinite(then))
+     return null;
+
+   return Math.max(0,(Date.now()-then)/1000);
+  }
+
+  function aisTargetOpacity(target){
+   const age=aisTargetAgeSeconds(target);
+   return age!==null && age>1800 ? 0.30 : 1;
+  }
+
+  function aisPersistentMapLabel(target){
+   const stationName=aisKnownBaseStationName(target);
+
+   if(stationName)
+     return stationName;
+
+   if(aisIsBaseStation(target))
+     return 'AIS base '+target.mmsi;
+
+   const age=aisTargetAgeSeconds(target);
+   const fresh=age===null || age<=1800;
+
+   if(
+     fresh &&
+     typeof target.speed_knots==='number' &&
+     target.speed_knots>0.5
+   )
+     return target.vessel_name||String(target.mmsi);
+
+   return '';
+  }
+
+  function aisMotionState(target){
+   let state;
+
+   if(aisIsBaseStation(target))
+     state='AIS base station';
+   else if(typeof target.speed_knots!=='number')
+     state='Motion unknown';
+   else if(target.speed_knots<=0.5)
+     state='Stationary / very slow at last report';
+   else
+     state='Moving at last report';
+
+   const age=aisAgeText(target.last_seen);
+
+   return age ? state+' · '+age : state;
+  }
+
+  function aisTargetLabel(target){
+   const parts=[aisIdentityText(target)];
+
+   if(
+     !aisIsBaseStation(target) &&
+     typeof target.speed_knots==='number'
+   )
+     parts.push(target.speed_knots.toFixed(1)+' kn');
+
+   if(
+     !aisIsBaseStation(target) &&
+     typeof target.course_deg==='number'
+   )
+     parts.push('COG '+Math.round(target.course_deg)+'°');
+
+   return parts.join(' · ');
+  }
+
+
+  function renderAIS(data){
+ const status=data.ais_status||{};
+ const targets=data.ais_targets||[];
+ const state=status.state||'unknown';
+
+ put('ais-state',state);
+ el('ais-state').className='pill '+(state==='running'?'ok':state==='stopped'?'':'warn');
+
+ const messages=Number.isFinite(status.messages)?status.messages:0;
+ put(
+   'ais-summary',
+   messages+' decoded messages this AIS slot · '
+   +targets.length+' active target'+(targets.length===1?'':'s')
+ );
+
+ put(
+   'ais-observer',
+   status.observer_configured
+     ? 'Position is retained as last known state; it may come from an earlier AIS message. Distance and bearing are calculated from the configured observer position.'
+     : 'Observer position not configured; distance and bearing are unavailable.'
+ );
+
+ const body=el('ais-body');
+ body.replaceChildren();
+
+ if(!targets.length){
+   const row=document.createElement('tr');
+   const cell=document.createElement('td');
+   cell.colSpan=11;
+   cell.textContent='No active AIS targets.';
+   row.append(cell);
+   body.append(row);
+   return;
+ }
+
+ for(const target of targets){
+   const row=document.createElement('tr');
+
+   const hasPosition=
+     typeof target.latitude==='number' &&
+     typeof target.longitude==='number';
+
+   const values=[
+      aisIdentityText(target,true),
+
+      target.message_type??'—',
+
+     hasPosition
+       ? target.latitude.toFixed(5)+', '+target.longitude.toFixed(5)
+       : '—',
+
+     typeof target.distance_km==='number'
+       ? target.distance_km.toFixed(1)+' km'
+       : '—',
+
+     hasPosition
+       ? bearingFromObserver(target.latitude,target.longitude)
+       : '—',
+
+     typeof target.speed_knots==='number'
+       ? target.speed_knots.toFixed(1)+' kn'
+       : '—',
+
+     typeof target.course_deg==='number'
+       ? Math.round(target.course_deg)+'°'
+       : '—',
+
+     typeof target.heading_deg==='number'
+       ? Math.round(target.heading_deg)+'°'
+       : '—',
+
+     aisMotionState(target),
+
+     typeof target.signalpower==='number'
+       ? target.signalpower.toFixed(1)
+       : '—',
+
+     target.last_seen
+       ? aisAgeText(target.last_seen)
+       : '—'
+   ];
+
+   for(const value of values){
+     const cell=document.createElement('td');
+     cell.textContent=value;
+     row.append(cell);
+   }
+
+   body.append(row);
+ }
+}
+
+
+function eventBodyText(event){
+ if(event.quality_status==='unreliable_atis_tiny')return 'Unreliable ATIS replay � old tiny model; see Airband for scheduled results';
+ if(event.event_type==='scheduler_state')
+   return (event.job||'Scheduler')+' · '+event.state;
+
+ if(event.event_type==='transcription')
+   return 'ASR · '+(event.text||'No text');
+
+ if(event.event_type==='interpretation')
+   return 'Summary · '+(event.summary||'No summary');
+
+ if(event.event_type==='ais_target_discovered')
+   return 'AIS discovered · '+(event.vessel_name||('MMSI '+(event.mmsi??'—')));
+
+ if(event.event_type==='ais_identity')
+   return 'AIS identity · '+(event.vessel_name||event.callsign||('MMSI '+(event.mmsi??'—')));
+
+ if(event.event_type==='ais_position')
+   return 'AIS position · '+(event.vessel_name||('MMSI '+(event.mmsi??'—')));
+
+ return (event.model||event.event_type)
+        +' · '+numeric(event.temperature_c,' °C')
+        +' / '+numeric(event.humidity_pct,' %');
+}
+
+function eventSubText(event){
+ if(event.quality_status==='unreliable_atis_tiny')return 'Not a valid ATIS interpretation � raw evidence retained';
+ if(event.event_type==='scheduler_state')
+   return (event.source==='simulation'?'SIMULATION':'Live')
+          +' · '
+          +(typeof event.frequency_hz==='number'
+             ?(event.frequency_hz/1e6).toFixed(3)+' MHz'
+             :'Receiver idle')
+          +(event.reason?' · '+event.reason:'');
+
+ if(event.event_type==='transcription')
+   return (event.language||'Unknown language')
+          +' · '+(event.model||'Unknown model');
+
+ if(event.event_type==='interpretation')
+   return (event.backend||'Unknown backend')
+          +' · '+(event.input_event_type||'event');
+
+ if(event.event_type && event.event_type.startsWith('ais_'))
+   return (typeof event.distance_km==='number'
+            ?event.distance_km.toFixed(1)+' km'
+            :'Distance —')
+          +' · '
+          +(typeof event.bearing_deg==='number'
+            ?Math.round(event.bearing_deg)+'° '+(event.bearing_text||'')
+            :'Bearing —')
+          +' · Type '+(event.message_type??'—');
+
+ return (event.device_key||'Unknown device')
+        +' · Channel '+(event.channel??'—');
+}
+
+
+
+const metHydroStations=[
+ {name:'Vaasa / Vasa',lat:63.081501,lon:21.571184},
+ {name:'Maalahti Strömmingsbådan',lat:62.978386,lon:20.740084},
+ {name:'Mustasaari Valassaaret',lat:63.435085,lon:21.068567},
+ {name:'Pietarsaari / Jakobstad',lat:63.708569,lon:22.689583},
+ {name:'Pietarsaari Kallan',lat:63.751434,lon:22.522818},
+ {name:'Kokkola Tankar',lat:63.951130,lon:22.845370}
+];
+
+function stationDistanceKm(lat1,lon1,lat2,lon2){
+ const rad=x=>x*Math.PI/180;
+ const R=6371.0088;
+ const dlat=rad(lat2-lat1);
+ const dlon=rad(lon2-lon1);
+ const a=Math.sin(dlat/2)**2+
+         Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dlon/2)**2;
+ return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function metHydroStationName(lat,lon){
+ if(typeof lat!=='number'||typeof lon!=='number')return null;
+
+ let best=null;
+
+ for(const station of metHydroStations){
+   const km=stationDistanceKm(lat,lon,station.lat,station.lon);
+   if(best===null||km<best.km)
+     best={name:station.name,km:km};
+ }
+
+ return best&&best.km<=0.75 ? best.name : null;
+}
+
+
+function latestMetHydroSites(rows){
+ const latest=new Map();
+
+ for(const item of rows||[]){
+   if(typeof item.latitude!=='number'||typeof item.longitude!=='number')
+     continue;
+
+   // ~10 m coordinate bucket; these stations are effectively fixed.
+   const key=item.latitude.toFixed(4)+','+item.longitude.toFixed(4);
+
+   const previous=latest.get(key);
+
+   if(!previous ||
+      Date.parse(item.received_at||0)>Date.parse(previous.received_at||0))
+     latest.set(key,item);
+ }
+
+ return [...latest.values()].sort(
+   (a,b)=>(a.distance_km??Infinity)-(b.distance_km??Infinity)
+ );
+}
+
+function metHydroWind(item){
+ const parts=[];
+ if(Number.isFinite(item.wind_speed))parts.push((item.wind_speed*0.514444).toFixed(1)+' m/s');
+ if(Number.isFinite(item.wind_gust))parts.push('gust '+(item.wind_gust*0.514444).toFixed(1)+' m/s');
+ if(Number.isFinite(item.wind_dir_deg))parts.push(item.wind_dir_deg+'°');
+ return parts.join(', ')||'—';
+}
+
+function metHydroWater(value){
+ return Number.isFinite(value)?(value>=0?'+':'')+value.toFixed(2)+' m':'—';
+}
+
+function metHydroExtras(item){
+ const parts=[];
+ if(item.visgreater===true||item.visgreater===1){
+   parts.push('Visibility >45 km');
+ }else if(Number.isFinite(item.visibility)&&item.visibility>=0){
+   const km=item.visibility*1.852;
+   parts.push('Visibility '+(item.visibility>=24.1?'>45':km.toFixed(km<10?1:0))+' km');
+ }
+ if(Number.isFinite(item.water_level_m))parts.push('water level '+metHydroWater(item.water_level_m));
+ return parts.join(', ')||'—';
+}
+
+function renderAISMetHydro(data){
+ const rows=latestMetHydroSites(data.ais_met_hydro||[]);
+ const body=el('ais-methydro-body');
+ body.replaceChildren();
+
+ if(!rows.length){
+   const row=document.createElement('tr');
+   const cell=document.createElement('td');
+   cell.colSpan=10;
+   cell.textContent='No AIS Met/Hydro observations stored yet.';
+   row.append(cell);
+   body.append(row);
+   return;
+ }
+
+ for(const item of rows){
+   const row=document.createElement('tr');
+
+   const stationName=metHydroStationName(item.latitude,item.longitude);
+
+   const position=
+     typeof item.latitude==='number' && typeof item.longitude==='number'
+       ? (stationName
+           ? stationName+' · '+item.latitude.toFixed(5)+', '+item.longitude.toFixed(5)
+           : item.latitude.toFixed(5)+', '+item.longitude.toFixed(5))
+       : '—';
+
+   const wind=metHydroWind(item);
+
+   const values=[
+     position,
+     typeof item.distance_km==='number'?item.distance_km.toFixed(1)+' km':'—',
+     typeof item.bearing_deg==='number'
+       ? Math.round(item.bearing_deg)+'° '+(item.bearing_text||'')
+       : '—',
+     wind,
+     typeof item.air_temp_c==='number'?item.air_temp_c.toFixed(1)+' °C':'—',
+     typeof item.humidity_pct==='number'?item.humidity_pct+' %':'—',
+     typeof item.pressure_hpa==='number'?item.pressure_hpa+' hPa':'—',
+     metHydroWater(item.water_level_m),
+     metHydroExtras(item),
+     item.received_at?new Date(item.received_at).toLocaleString():'—'
+   ];
+
+   for(const value of values){
+     const cell=document.createElement('td');
+     cell.textContent=value;
+     row.append(cell);
+   }
+
+   body.append(row);
+ }
+}
+
+
+
+let aisLandGeoJSON=null;
+
+fetch('static/map/kvarken_land.geojson')
+  .then(response=>{
+    if(!response.ok)
+      throw new Error('HTTP '+response.status);
+
+    return response.json();
+  })
+  .then(data=>{
+    aisLandGeoJSON=data;
+
+    if(last){
+      renderAISMap(last);
+      renderAISLocalMap(last);
+    }
+  })
+  .catch(error=>{
+    console.warn('AIS coastline unavailable:',error);
+  });
+
+function drawAISLand(add,offsetKm,center,scale){
+  if(!aisLandGeoJSON)return;
+
+  function project(coord){
+    const lon=coord[0];
+    const lat=coord[1];
+    const p=offsetKm(lat,lon);
+
+    return [
+      center+p.east*scale,
+      center-p.north*scale
+    ];
+  }
+
+  function ringPath(ring){
+    if(!ring||ring.length<3)return '';
+
+    let d='';
+
+    for(let i=0;i<ring.length;i++){
+      const p=project(ring[i]);
+
+      d+=(i===0?'M':'L')+
+        p[0].toFixed(2)+' '+
+        p[1].toFixed(2)+' ';
+    }
+
+    return d+'Z ';
+  }
+
+  function polygonPath(poly){
+    let d='';
+
+    for(const ring of poly)
+      d+=ringPath(ring);
+
+    return d;
+  }
+
+  for(const feature of aisLandGeoJSON.features||[]){
+    const geometry=feature.geometry||{};
+    let d='';
+
+    if(geometry.type==='Polygon'){
+      d=polygonPath(geometry.coordinates);
+    }else if(geometry.type==='MultiPolygon'){
+      for(const poly of geometry.coordinates)
+        d+=polygonPath(poly);
+    }
+
+    if(!d)continue;
+
+    add('path',{
+      d:d,
+      fill:'#e8e3d8',
+      stroke:'#9aa59d',
+      'stroke-width':0.8,
+      'vector-effect':'non-scaling-stroke',
+      'fill-rule':'evenodd'
+    });
+  }
+}
+
+function renderAISMap(data){
+ const svg=el('ais-map');
+ if(!svg)return;
+
+ svg.replaceChildren();
+
+ // Current configured observer position.
+ // Later we can expose this from the API to avoid duplicating it here.
+ const observer={
+   lat:63.104753,
+   lon:21.683053
+ };
+
+ function validRegionalPosition(point){
+   const lat=point.latitude,lon=point.longitude;
+   if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return false;
+   const rad=x=>x*Math.PI/180;
+   const h=Math.sin(rad(lat-observer.lat)/2)**2+
+     Math.cos(rad(observer.lat))*Math.cos(rad(lat))*Math.sin(rad(lon-observer.lon)/2)**2;
+   return 6371.0088*2*Math.asin(Math.sqrt(Math.min(1,Math.max(0,h))))<=250;
+ }
+ const targets=(data.ais_targets||[]).filter(validRegionalPosition);
+ const met=latestMetHydroSites(data.ais_met_hydro||[]).filter(validRegionalPosition);
+
+ const all=[
+   ...targets.map(x=>({...x,mapKind:'target'})),
+   ...met.map(x=>({...x,mapKind:'met'}))
+ ];
+
+ const center=400;
+ const earthKm=6371.0088;
+
+ const rad=x=>x*Math.PI/180;
+
+ function offsetKm(lat,lon){
+   const dy=earthKm*rad(lat-observer.lat);
+   const dx=earthKm*Math.cos(rad(observer.lat))*rad(lon-observer.lon);
+   return {east:dx,north:dy,distance:Math.hypot(dx,dy)};
+ }
+
+ let farthest=0;
+
+ for(const point of all){
+   const offset=offsetKm(point.latitude,point.longitude);
+   farthest=Math.max(farthest,offset.distance);
+ }
+
+ // Round map range upward to a useful 25-km increment.
+ let rangeKm=Math.ceil((farthest*1.15)/25)*25;
+ rangeKm=Math.min(350,Math.max(20,rangeKm));
+
+ const plotRadius=340;
+ const scale=plotRadius/rangeKm;
+
+ function add(tag,attrs,textValue){
+   const node=document.createElementNS('http://www.w3.org/2000/svg',tag);
+
+   for(const [key,value] of Object.entries(attrs||{}))
+     node.setAttribute(key,value);
+
+   if(textValue!==undefined)
+     node.textContent=textValue;
+
+   svg.append(node);
+   return node;
+ }
+
+ // Background
+ add('rect',{
+   x:0,y:0,width:800,height:800,
+   rx:18,
+   fill:'#dcecf3',
+   stroke:'#c7d3df'
+ });
+
+ // Offline Natural Earth land/coastline.
+ drawAISLand(add,offsetKm,center,scale);
+
+
+ // Crosshairs
+ add('line',{
+   x1:center,y1:55,x2:center,y2:745,
+   stroke:'#d5dee7',
+   'stroke-width':1
+ });
+
+ add('line',{
+   x1:55,y1:center,x2:745,y2:center,
+   stroke:'#d5dee7',
+   'stroke-width':1
+ });
+
+ // Distance rings.
+ const ringSteps=[];
+ for(let km=25;km<=rangeKm;km+=25)
+   ringSteps.push(km);
+
+ for(const km of ringSteps){
+   const r=km*scale;
+   if(r>plotRadius+1)continue;
+
+   add('circle',{
+     cx:center,cy:center,r:r,
+     fill:'none',
+     stroke:'#c7d3df',
+     'stroke-width':1
+   });
+
+   add('text',{
+     x:center+5,
+     y:center-r+16,
+     fill:'#667788',
+     'font-size':15
+   },km+' km');
+ }
+
+ // Compass labels
+ for(const [label,x,y] of [
+   ['N',center,35],
+   ['E',765,center+5],
+   ['S',center,780],
+   ['W',30,center+5]
+ ]){
+   add('text',{
+     x:x,y:y,
+     fill:'#46566a',
+     'font-size':22,
+     'font-weight':'600',
+     'text-anchor':'middle'
+   },label);
+ }
+
+ // Observer marker.
+ add('circle',{
+   cx:center,cy:center,r:8,
+   fill:'#111827'
+ });
+
+ add('circle',{
+   cx:center,cy:center,r:15,
+   fill:'none',
+   stroke:'#111827',
+   'stroke-width':2
+ });
+
+ add('text',{
+   x:center+18,
+   y:center-16,
+   fill:'#111827',
+   'font-size':17,
+   'font-weight':'600'
+ },'Observer');
+
+ // Plot points.
+ let targetCount=0;
+ let metCount=0;
+
+ for(const point of all){
+   const offset=offsetKm(point.latitude,point.longitude);
+   if(!Number.isFinite(offset.distance) || offset.distance>rangeKm)continue;
+
+   const x=center+offset.east*scale;
+   const y=center-offset.north*scale;
+
+   const isTarget=point.mapKind==='target';
+
+   if(isTarget)targetCount++;
+   else metCount++;
+
+   // Different shapes:
+   // circle = normal AIS target
+   // square = Met/Hydro site
+   let marker;
+
+   if(isTarget && aisIsBaseStation(point)){
+       marker=add('rect',{
+         x:x-7,
+         y:y-7,
+         width:14,
+         height:14,
+         rx:2,
+         fill:'#245b8a',
+         stroke:'#ffffff',
+         'stroke-width':2,
+         opacity:aisTargetOpacity(point)
+       });
+     }else if(isTarget){
+     marker=add('circle',{
+       cx:x,
+       cy:y,
+       r:7,
+       fill:'#0b6b57',
+       stroke:'#ffffff',
+       'stroke-width':2
+     });
+   }else{
+     marker=add('rect',{
+       x:x-6,
+       y:y-6,
+       width:12,
+       height:12,
+       rx:2,
+       fill:'#a55b00',
+       stroke:'#ffffff',
+       'stroke-width':2
+     });
+   }
+
+   const title=document.createElementNS(
+     'http://www.w3.org/2000/svg',
+     'title'
+   );
+
+   if(isTarget){
+     title.textContent=
+       'AIS target MMSI '+point.mmsi+
+       ' · '+offset.distance.toFixed(1)+' km'+
+       (point.message_type!==undefined
+          ?' · type '+point.message_type
+          :'');
+   }else{
+     const details=[];
+
+     if(typeof point.air_temp_c==='number')
+       details.push(point.air_temp_c.toFixed(1)+' °C');
+
+     if(metHydroWind(point)!=='—')
+       details.push('wind '+metHydroWind(point));
+
+     if(metHydroExtras(point)!=='—')
+       details.push(metHydroExtras(point));
+
+     const stationName=metHydroStationName(point.latitude,point.longitude);
+
+     title.textContent=
+       (stationName||'Met/Hydro site')+
+       ' · '+offset.distance.toFixed(1)+' km'+
+       (details.length?' · '+details.join(' · '):'');
+   }
+
+   marker.append(title);
+
+   // Compact label.
+   const stationName=!isTarget
+     ? metHydroStationName(point.latitude,point.longitude)
+     : null;
+
+   const label=isTarget
+     ? aisPersistentMapLabel(point)
+     : stationName
+       ? stationName
+       : (
+           typeof point.air_temp_c==='number'
+             ? point.air_temp_c.toFixed(1)+'°C'
+             : typeof point.water_level_m==='number'
+               ? metHydroWater(point.water_level_m)
+               : 'Met'
+         );
+
+   if(label){
+     add('text',{
+     x:x+10,
+     y:y-8,
+     fill:'#263548',
+     'font-size':15,
+       opacity:isTarget ? aisTargetOpacity(point) : 1
+   },label);
+     }
+ }
+
+ put(
+   'ais-map-summary',
+   targetCount+' AIS target'+(targetCount===1?'':'s')+
+   ' · '+metCount+' Met/Hydro site'+(metCount===1?'':'s')+
+   ' · map radius '+rangeKm+' km'
+ );
+
+ put(
+   'ais-map-range',
+   'Offline SVG · '+rangeKm+' km radius'
+ );
+}
+
+
+
+function renderAISLocalMap(data){
+ const svg=el('ais-local-map');
+ if(!svg)return;
+
+ svg.replaceChildren();
+
+ const observer={
+   lat:63.104753,
+   lon:21.683053
+ };
+
+ const rangeControl=el('ais-local-range');
+ const activeDistances=(data.ais_targets||[]).map(t=>t.distance_km).filter(d=>Number.isFinite(d) && d>=0 && d<=250);
+ const automaticRadius=Math.min(100,Math.max(20,Math.ceil(Math.max(0,...activeDistances)*1.15/5)*5));
+ const radiusKm=rangeControl && rangeControl.value!=='auto'
+   ? Math.min(100,Math.max(20,Number(rangeControl.value)||automaticRadius))
+   : automaticRadius;
+ const center=400;
+ const plotRadius=335;
+ const earthKm=6371.0088;
+ const rad=x=>x*Math.PI/180;
+
+ function offsetKm(lat,lon){
+   const north=earthKm*rad(lat-observer.lat);
+   const east=earthKm*Math.cos(rad(observer.lat))*rad(lon-observer.lon);
+   return {
+     east:east,
+     north:north,
+     distance:Math.hypot(east,north)
+   };
+ }
+
+ function add(tag,attrs,textValue){
+   const node=document.createElementNS(
+     'http://www.w3.org/2000/svg',
+     tag
+   );
+
+   for(const [key,value] of Object.entries(attrs||{}))
+     node.setAttribute(key,value);
+
+   if(textValue!==undefined)
+     node.textContent=textValue;
+
+   svg.append(node);
+   return node;
+ }
+
+ add('rect',{
+   x:0,y:0,width:800,height:800,
+   rx:18,
+   fill:'#dcecf3',
+   stroke:'#c7d3df'
+ });
+
+
+
+ // Arrowhead for COG vectors.
+ const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+ const marker=document.createElementNS('http://www.w3.org/2000/svg','marker');
+ marker.setAttribute('id','cog-arrow');
+ marker.setAttribute('viewBox','0 0 10 10');
+ marker.setAttribute('refX','9');
+ marker.setAttribute('refY','5');
+ marker.setAttribute('markerWidth','6');
+ marker.setAttribute('markerHeight','6');
+ marker.setAttribute('orient','auto-start-reverse');
+
+ const arrowPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+ arrowPath.setAttribute('d','M 0 0 L 10 5 L 0 10 z');
+ arrowPath.setAttribute('fill','#32465a');
+
+ marker.append(arrowPath);
+ defs.append(marker);
+ svg.append(defs);
+
+ const scale=plotRadius/radiusKm;
+
+ // Offline Natural Earth land/coastline.
+ drawAISLand(add,offsetKm,center,scale);
+
+ // Range rings
+ const ringStep=
+   radiusKm<=25 ? 5 :
+   radiusKm<=50 ? 10 :
+   20;
+
+ for(let km=ringStep;km<=radiusKm;km+=ringStep){
+   const r=km*scale;
+
+   add('circle',{
+     cx:center,
+     cy:center,
+     r:r,
+     fill:'none',
+     stroke:'#d2dce5',
+     'stroke-width':1
+   });
+
+   add('text',{
+     x:center+5,
+     y:center-r+15,
+     fill:'#667788',
+     'font-size':20
+   },km+' km');
+ }
+
+ add('line',{
+   x1:center,y1:55,x2:center,y2:745,
+   stroke:'#dbe3ea'
+ });
+
+ add('line',{
+   x1:55,y1:center,x2:745,y2:center,
+   stroke:'#dbe3ea'
+ });
+
+ for(const [label,x,y] of [
+   ['N',center,32],
+   ['E',770,center+5],
+   ['S',center,786],
+   ['W',27,center+5]
+ ]){
+   add('text',{
+     x:x,y:y,
+     'text-anchor':'middle',
+     fill:'#46566a',
+     'font-size':27,
+     'font-weight':'600'
+   },label);
+ }
+
+ // Observer
+ add('circle',{
+   cx:center,
+   cy:center,
+   r:8,
+   fill:'#111827'
+ });
+
+ add('circle',{
+   cx:center,
+   cy:center,
+   r:15,
+   fill:'none',
+   stroke:'#111827',
+   'stroke-width':2
+ });
+
+ const targets=(data.ais_targets||[])
+   .filter(t=>
+     typeof t.latitude==='number' &&
+     typeof t.longitude==='number'
+   )
+   .map(t=>({...t,_offset:offsetKm(t.latitude,t.longitude)}))
+   .filter(t=>t._offset.distance<=radiusKm);
+
+ const plottedTargets=[];
+
+  for(const target of targets){
+    const x=center+target._offset.east*scale;
+    const y=center-target._offset.north*scale;
+
+    plottedTargets.push({target:target,x:x,y:y});
+
+    const isBaseStation=aisIsBaseStation(target);
+    const opacity=aisTargetOpacity(target);
+
+    // COG arrow: direction vessel is moving over ground.
+    if(
+      !isBaseStation &&
+      typeof target.speed_knots==='number' &&
+      target.speed_knots>0.5 &&
+      typeof target.course_deg==='number'
+    ){
+      const angle=rad(target.course_deg);
+      const length=42;
+
+      const dx=Math.sin(angle)*length;
+      const dy=-Math.cos(angle)*length;
+
+      add('line',{
+        x1:x,
+        y1:y,
+        x2:x+dx,
+        y2:y+dy,
+        stroke:'#32465a',
+        'stroke-width':2,
+        'marker-end':'url(#cog-arrow)',
+        opacity:opacity
+      });
+    }
+
+    // Heading indicator: shorter dashed line.
+    if(
+      !isBaseStation &&
+      typeof target.speed_knots==='number' &&
+      target.speed_knots>0.5 &&
+      typeof target.heading_deg==='number'
+    ){
+      const angle=rad(target.heading_deg);
+      const length=25;
+
+      const dx=Math.sin(angle)*length;
+      const dy=-Math.cos(angle)*length;
+
+      add('line',{
+        x1:x,
+        y1:y,
+        x2:x+dx,
+        y2:y+dy,
+        stroke:'#7a8794',
+        'stroke-width':2,
+        'stroke-dasharray':'4 3',
+        opacity:opacity
+      });
+    }
+
+    let targetMarker;
+
+    if(isBaseStation){
+      targetMarker=add('rect',{
+        x:x-8,
+        y:y-8,
+        width:16,
+        height:16,
+        rx:2,
+        fill:'#245b8a',
+        stroke:'#ffffff',
+        'stroke-width':2,
+        opacity:opacity
+      });
+    }else{
+      targetMarker=add('circle',{
+        cx:x,
+        cy:y,
+        r:8,
+        fill:'#0b6b57',
+        stroke:'#ffffff',
+        'stroke-width':2,
+        opacity:opacity
+      });
+    }
+
+    const title=document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'title'
+    );
+
+    title.textContent=
+      aisTargetLabel(target)+
+      ' · '+target._offset.distance.toFixed(1)+' km'+
+      ' · '+aisMotionState(target);
+
+    targetMarker.append(title);
+
+    const persistentLabel=aisPersistentMapLabel(target);
+
+    if(persistentLabel){
+      add('text',{
+        x:x+12,
+        y:y-11,
+        fill:'#263548',
+        'font-size':20,
+        'font-weight':'600',
+        opacity:opacity
+      },persistentLabel);
+    }
+  }
+
+  // Mark screen-space overlaps without moving any AIS position.
+  const overlapRadiusPx=16;
+  const used=new Set();
+
+  for(let i=0;i<plottedTargets.length;i++){
+    if(used.has(i))
+      continue;
+
+    const cluster=[i];
+    used.add(i);
+
+    for(let j=i+1;j<plottedTargets.length;j++){
+      if(used.has(j))
+        continue;
+
+      const dx=plottedTargets[j].x-plottedTargets[i].x;
+      const dy=plottedTargets[j].y-plottedTargets[i].y;
+
+      if(Math.hypot(dx,dy)<=overlapRadiusPx){
+        cluster.push(j);
+        used.add(j);
+      }
+    }
+
+    if(cluster.length<=1)
+      continue;
+
+    const members=cluster.map(index=>plottedTargets[index]);
+
+    const badgeX=
+      members.reduce((sum,item)=>sum+item.x,0)/members.length + 14;
+
+    const badgeY=
+      members.reduce((sum,item)=>sum+item.y,0)/members.length - 14;
+
+    const badge=add('circle',{
+      cx:badgeX,
+      cy:badgeY,
+      r:12,
+      fill:'#263548',
+      stroke:'#ffffff',
+      'stroke-width':2
+    });
+
+    const title=document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'title'
+    );
+
+    title.textContent=
+      cluster.length+' AIS targets here: '+
+      members.map(item=>aisIdentityText(item.target)).join(', ');
+
+    badge.append(title);
+
+    add('text',{
+      x:badgeX,
+      y:badgeY+5,
+      fill:'#ffffff',
+      'font-size':14,
+      'font-weight':'700',
+      'text-anchor':'middle',
+      'pointer-events':'none'
+    },String(cluster.length));
+  }
+
+  put(
+   'ais-local-map-summary',
+   targets.length+
+   ' AIS target'+(targets.length===1?'':'s')+
+   ' within '+radiusKm+' km · solid arrow = COG · dashed line = heading'
+ );
+}
+
+function renderRFHealth(data){
+ const root=document.getElementById('rf-health');root.replaceChildren();
+ for(const r of data.rf_health||[]){
+  const row=document.createElement('div'),title=document.createElement('strong');
+  title.textContent=r.serial+'  '+r.status;title.className=r.status==='GREEN'?'ok':r.status==='DISABLED'||r.status==='BUSY'?'muted':'warn';row.append(title);
+  if(r.status!=='DISABLED'){
+   const lines=[r.detail||'',r.last_capture?'Last capture: '+r.last_capture.job_type+' · '+new Date(r.last_capture.completion_time).toLocaleTimeString():'No successful capture yet',
+    r.heartbeat_age_seconds!=null?'Last receiver heartbeat: '+Math.floor(r.heartbeat_age_seconds/60)+' min ago':'',
+    'Recent failures (24 h): '+(r.recent_failures??'—'),
+    r.last_application_result?'Last application result: '+r.last_application_result.job_type+' · '+new Date(r.last_application_result.completion_time).toLocaleTimeString()+' · '+formatRFApplication(r.last_application_result.application_status):'',
+    r.last_recovery?'Last recovery: '+r.last_recovery.action+' · '+r.last_recovery.result+' · '+r.last_recovery.detail+' · '+new Date(r.last_recovery.timestamp).toLocaleString():'Last recovery: none'];
+   for(const text of lines.filter(Boolean)){const p=document.createElement('div');p.className='muted';p.textContent=text;row.append(p);}
+  }
+  root.append(row);
+ }
+}
+function formatRFApplication(raw){try{const value=JSON.parse(raw);return value.messages!=null?value.messages+' AIS messages · '+(value.status==='quiet'?'RF quiet':(value.unique_mmsi??0)+' identities'):value.status||'Recorded';}catch{return 'Recorded';}}
+function render(data){renderRFHealth(data);renderOverview(data);last=data;renderAIS(data);renderAISMetHydro(data);renderAISMap(data);renderAISLocalMap(data);fetchedAt=performance.now();const c=data.collector,s=data.sensor_receiver||{},e=data.latest_nexus,t=data.latest_transcription,i=data.latest_interpretation;put('operating-mode',(c.mode==='simulation'?'SIMULATION · No RF reception':'Live RF')+(c.owner==='scheduler'?' · Scheduler cycle '+(c.cycle??'—'):c.owner==='satellite'?' · Satellite capture':' · Continuous collector'));put('state',c.state);el('state').className='value '+(c.state==='running'?'ok':'warn');put('detail',c.detail);const active=['running','starting'].includes(c.state);put('job',active?c.job||'—':'No active job');put('frequency',active&&typeof c.frequency_hz==='number'?(c.frequency_hz/1e6).toFixed(2)+' MHz':'—');const sensorActive=['running','starting'].includes(s.state);put('sensor-state',s.state||'unknown');el('sensor-state').className='value '+(s.state==='running'?'ok':s.state==='disabled'?'muted':'warn');put('sensor-detail',(sensorActive?(s.job||'Nexus-TH sensors'):'No active sensor job')+(typeof s.frequency_hz==='number'?' · '+(s.frequency_hz/1e6).toFixed(3)+' MHz':'')+' · FC0012');put('notice',data.warning||'');put('device',e?e.device_key:'No sensor yet');put('temperature',e?numeric(e.temperature_c,' °C'):'—');put('humidity',e?numeric(e.humidity_pct,' %'):'—');put('battery',e?(e.battery_ok===true?'Battery OK':e.battery_ok===false?'Battery low':'Unknown'):'—');put('channel',e?'Channel '+e.channel:'Channel —');put('timestamp',e?new Date(e.received_at).toLocaleString():'—');put('transcription-text',t?t.text:'—');put('transcription-status',t?(t.language||'Unknown language')+' · '+(t.accelerator_verified?'Accelerator verified':'Accelerator evidence pending'):'No ASR event yet');put('transcription-meta',t?(t.model||'Unknown model')+' · '+(t.backend||'Unknown backend')+' · '+numeric(t.processing_seconds,' s processing')+' · '+new Date(t.received_at).toLocaleString():'The dashboard reads normalized ASR events from its separate feed.');put('interpretation-text',i?i.summary:'—');put('interpretation-status',i?(i.backend||'Unknown backend'):'No interpretation yet');put('interpretation-meta',i?('Input: '+(i.input_event_type||'event')+' · '+new Date(i.received_at).toLocaleString()+(i.backend_error?' · fallback used':'')):'Generated from normalized events; raw source data remains available in the event log.');updateAge();el('feed').replaceChildren();for(const event of data.recent_events){const row=document.createElement('li'),body=document.createElement('div'),time=document.createElement('small');body.textContent=eventBodyText(event);const sub=document.createElement('small');sub.textContent=eventSubText(event);body.append(sub);time.textContent=new Date(event.received_at).toLocaleString();row.append(body,time);el('feed').append(row);}if(!data.recent_events.length){const row=document.createElement('li');row.textContent='No normalized events yet.';el('feed').append(row);}}
+function svgNode(tag,attrs,text){const node=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [key,value] of Object.entries(attrs||{}))node.setAttribute(key,value);if(text!==undefined)node.textContent=text;return node;}
+function drawChart(id,events,field,color,unit){
+ const svg=el(id);svg.replaceChildren();
+ const points=events.filter(e=>typeof e[field]==='number'&&Number.isFinite(e[field])).map(e=>({...e,time:Date.parse(e.received_at),value:e[field]})).filter(p=>Number.isFinite(p.time));
+ if(!points.length){svg.append(svgNode('text',{x:250,y:115,'text-anchor':'middle',fill:'#46566a','font-size':16},'No readings in this period'));return;}
+ const temperature=field==='temperature_c';
+ let min=points.reduce((v,p)=>Math.min(v,temperature?p.temperature_min:p.value),Infinity),max=points.reduce((v,p)=>Math.max(v,temperature?p.temperature_max:p.value),-Infinity);
+ const padding=Math.max((max-min)*0.15,temperature?0.5:1);min-=padding;max+=padding;if(!temperature){min=Math.max(0,min);max=Math.min(100,max);}
+ let start=points[0].time,end=Date.parse(points[points.length-1].last_at);if(start===end){start-=30000;end+=30000;}
+ const x=t=>62+(t-start)/(end-start)*418,y=v=>190-(v-min)/(max-min)*164;
+ for(let i=0;i<=4;i++){const value=min+(max-min)*i/4,yy=y(value);svg.append(svgNode('line',{x1:62,x2:480,y1:yy,y2:yy,stroke:'#d6dfe8'}),svgNode('text',{x:53,y:yy+5,'text-anchor':'end',fill:'#46566a','font-size':17},value.toFixed(1)));}
+ for(let i=0;i<3;i++){const t=start+(end-start)*i/2,anchor=i===0?'start':i===2?'end':'middle';svg.append(svgNode('text',{x:x(t),y:216,'text-anchor':anchor,fill:'#46566a','font-size':15},new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})),svgNode('text',{x:x(t),y:235,'text-anchor':anchor,fill:'#46566a','font-size':15},new Date(t).toLocaleDateString([],{month:'short',day:'numeric'})));}
+ // Segments come from raw reception gaps, never from the distance between bucket timestamps.
+ let path='';points.forEach((p,i)=>{path+=(i===0||p.segment!==points[i-1].segment?'M':'L')+x(p.time)+' '+y(p.value)+' ';});
+ if(temperature)for(const p of points){if(p.temperature_min!==p.temperature_max)svg.append(svgNode('line',{x1:x(p.time),x2:x(p.time),y1:y(p.temperature_min),y2:y(p.temperature_max),stroke:color,'stroke-opacity':.25,'stroke-width':1,'vector-effect':'non-scaling-stroke'}));}
+ svg.append(svgNode('path',{d:path,fill:'none',stroke:color,'stroke-width':2,'vector-effect':'non-scaling-stroke'}));
+ points.forEach((p,i)=>{
+  const isolated=(!i||points[i-1].segment!==p.segment)&&(i===points.length-1||points[i+1].segment!==p.segment);
+  const circle=svgNode('circle',{cx:x(p.time),cy:y(p.value),r:isolated?1.5:4,fill:color,class:'history-point'+(isolated?' isolated':'')});
+  const range=p.sample_count>1?' – '+new Date(p.last_at).toLocaleString():'';
+  const label=new Date(p.first_at).toLocaleString()+range+' · '+p.value.toFixed(1)+' '+unit+(p.sample_count>1?' average · '+p.sample_count+' readings':'')+(temperature&&p.sample_count>1?' · min '+p.temperature_min.toFixed(1)+' / max '+p.temperature_max.toFixed(1)+' °C':'');
+  circle.append(svgNode('title',{},label));circle.addEventListener('mouseenter',()=>put('chart-detail',label));circle.addEventListener('click',()=>put('chart-detail',label));svg.append(circle);
+ });
+}
+function renderCharts(data){
+ const select=el('chart-sensor');select.replaceChildren();
+ for(const sensor of data.sensors){const option=document.createElement('option');option.value=sensor.device_key;option.textContent=sensor.device_key;select.append(option);}
+ if(data.device_key)select.value=data.device_key;
+ drawChart('temperature-chart',data.points,'temperature_c','#a94312','°C');drawChart('humidity-chart',data.points,'humidity_pct','#075da8','%');
+ const periods={'1':'1 hour','6':'6 hours','24':'24 hours','168':'7 days','720':'30 days','all':'All history'},seconds=data.bucket_seconds;
+ const resolution=seconds?'displayed as '+(seconds%3600===0?seconds/3600+'-hour':seconds/60+'-minute')+' averages':'displayed at full resolution';
+ const dates=data.first_at?' · '+new Date(data.first_at).toLocaleString()+' – '+new Date(data.last_at).toLocaleString():'';
+ put('chart-summary',data.stored_count.toLocaleString()+' stored readings for this sensor · '+periods[data.period]+' · '+data.range_count.toLocaleString()+' readings in range · '+data.displayed_count.toLocaleString()+' displayed points · '+resolution+dates+(data.gap_limited?' · Additional points retained to preserve reception gaps':'')+(!data.range_count?' · No readings in this period.':''));
+}
+let historyController=null,historyTimer=null,historyRevision=0;
+async function pollHistory(selectionChanged=false){
+ const revision=++historyRevision;clearTimeout(historyTimer);if(historyController)historyController.abort();
+ const controller=new AbortController();historyController=controller;
+ const timer=setTimeout(()=>controller.abort(),15000);
+ if(selectionChanged){el('temperature-chart').replaceChildren();el('humidity-chart').replaceChildren();put('chart-summary','Loading selected history…');put('chart-detail','');}
+ try{
+  const query=new URLSearchParams({period:el('chart-period').value,sensor:el('chart-sensor').value});
+  const response=await fetch('/api/nexus/history?'+query,{cache:'no-store',signal:controller.signal});
+  const data=await response.json();if(!response.ok)throw Error(data.error||'History request failed');
+  if(revision===historyRevision)renderCharts(data);
+ }catch(error){if(revision===historyRevision)put('chart-summary','History unavailable; retrying. '+(selectionChanged?'':'Previously displayed points may be stale. ')+(error.name==='AbortError'?'Request timed out.':error.message));}
+ finally{clearTimeout(timer);if(revision===historyRevision){historyController=null;historyTimer=setTimeout(pollHistory,30000);}}
+}
+el('chart-sensor').addEventListener('change',()=>pollHistory(true));el('chart-period').addEventListener('change',()=>pollHistory(true));
+async function poll(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);try{const response=await fetch('/api/state',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error(response.status);render(await response.json());online=true;el('cached-notice').hidden=true;put('connection','Dashboard online');el('connection').className='pill ok';}catch(error){online=false;el('cached-notice').hidden=false;put('overview-system','Disconnected');put('connection','Dashboard disconnected');el('connection').className='pill warn';put('state','Connection lost');put('detail','Displayed readings are cached. Retrying…');put('job','Unknown');put('frequency','—');put('sensor-state','Connection lost');put('sensor-detail','Displayed receiver status is cached. Retrying…');}finally{clearTimeout(timer);setTimeout(poll,2000);}}
+
+let audioToken='', audioCatalog=[], audioBusy=false, audioSending=false, audioConnected=false, audioRevision='', audioPollActive=false;
+function updateAudioButton(){el('audio-run').disabled=!audioConnected||audioBusy||audioSending||!audioCatalog.some(x=>x.id===el('audio-recording').value&&x.ready);}
+function selectAudio(){
+ const item=audioCatalog.find(x=>x.id===el('audio-recording').value);
+ put('audio-selection',item?(item.ready?item.audio_seconds+' seconds · saved audio · mono 16 kHz':item.reason):'No supported speech clips found.');
+ const player=el('audio-preview');player.hidden=!item?.ready;
+ if(item?.ready){const src='/api/audio/file/'+item.id;if(player.getAttribute('src')!==src)player.src=src;}
+ else {player.removeAttribute('src');player.load();}
+ updateAudioButton();
+}
+function renderAudio(data){
+ put('overview-audio',data.run.state||'Unknown');put('overview-audio-detail',data.run.detail||'Choose a saved recording in Airband.');
+ audioToken=data.control_token;audioConnected=true;
+ const revision=JSON.stringify(data.recordings);
+ if(revision!==audioRevision){
+  audioRevision=revision;audioCatalog=data.recordings;
+  const selected=el('audio-recording').value;el('audio-recording').replaceChildren();
+  for(const item of audioCatalog){const option=document.createElement('option');option.value=item.id;option.textContent=item.name+(item.ready?' ('+item.audio_seconds+' s)':' — needs preparation');option.disabled=!item.ready;el('audio-recording').append(option);}
+  if(audioCatalog.some(x=>x.id===selected&&x.ready))el('audio-recording').value=selected;
+  else el('audio-recording').value=audioCatalog.find(x=>x.ready)?.id||'';
+  selectAudio();
+ }
+ const run=data.run;audioBusy=['queued','transcribing','summarizing'].includes(run.state);
+ put('audio-progress',run.detail||'Choose a saved recording.');
+ el('audio-progress').className=['failed','interrupted','completed_with_fallback'].includes(run.state)?'warn':'';
+ const t=run.transcription,i=run.interpretation;
+ el('audio-result').hidden=!t;
+ if(t){
+  put('audio-result-title','REPLAY · '+run.recording+' · '+new Date(run.started_at).toLocaleString());
+  const src='/api/audio/file/'+run.recording_id;
+  if(el('audio-result-player').getAttribute('src')!==src)el('audio-result-player').src=src;
+  put('audio-transcript',t.text||'No speech text');
+  put('audio-asr-meta',(t.language||'Unknown language')+' · '+numeric(t.audio_seconds,' s recording')+' · '+numeric(t.processing_seconds,' s processing')+' · '+(t.model||'')+' · '+(t.accelerator_verified?'Accelerator verified':'Whole-ASR accelerator verification pending'));
+  put('audio-summary',i?i.summary:(run.state==='failed'?'Summary unavailable.':'Waiting for Genie…'));
+  put('audio-genie-meta',i?(i.backend==='genie-qnn'?'Qualcomm Genie / QNN':'Plain transcript fallback · '+(i.backend_error||'Genie unavailable')):'');
+ }
+ updateAudioButton();
+}
+async function pollAudio(){
+ if(audioPollActive)return;
+ audioPollActive=true;
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+ try{const response=await fetch('/api/audio',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error('Workflow unavailable ('+response.status+')');renderAudio(await response.json());}
+ catch(error){audioConnected=false;put('overview-audio','Disconnected');put('overview-audio-detail','Speech workflow unavailable. Retrying…');put('audio-progress','Speech workflow disconnected. Retrying…');updateAudioButton();}
+ finally{audioPollActive=false;clearTimeout(timer);}
+}
+el('audio-recording').addEventListener('change',selectAudio);
+el('audio-refresh').addEventListener('click',pollAudio);
+el('audio-run').addEventListener('click',async()=>{
+ if(audioBusy||audioSending)return;
+ audioSending=true;updateAudioButton();put('audio-error','');
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+ try{
+  const response=await fetch('/api/audio/run',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':audioToken},body:JSON.stringify({recording_id:el('audio-recording').value,language:el('audio-language').value}),signal:controller.signal});
+  const data=await response.json();if(!response.ok)throw Error(data.error||'Could not start replay');
+  audioBusy=true;put('audio-progress',data.detail);await pollAudio();
+ }catch(error){put('audio-error',error.name==='AbortError'?'Start request timed out. Check run status before retrying.':error.message);}
+ finally{clearTimeout(timer);audioSending=false;updateAudioButton();}
+});
+setInterval(pollAudio,2000);pollAudio();
+const aisLocalRange=el('ais-local-range');
+if(aisLocalRange){
+  aisLocalRange.addEventListener('change',()=>{
+    if(last)renderAISLocalMap(last);
+  });
+}
+
+setInterval(updateAge,1000);poll();pollHistory();
+let atisBusy=false;
+async function pollATIS(){
+ if(atisBusy)return;
+ atisBusy=true;
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),8000);
+ try{
+  const response=await fetch('/api/atis',{cache:'no-store',signal:controller.signal});
+  if(!response.ok)throw Error('ATIS unavailable');
+  const data=await response.json();
+  put('atis-status',data.message||'Waiting for ATIS');
+  put('atis-meta',data.recording?('Recording '+data.recording+' · '+numeric(data.capture?.audio_seconds,' s')+' · every 10 min / 90 s; METEOR slots skipped'):'');
+  const player=el('atis-player');player.hidden=!data.audio_available;
+  if(data.audio_available){const src='/api/atis/audio?recording='+encodeURIComponent(data.recording);if(player.getAttribute('src')!==src)player.src=src;}
+  const t=data.transcript,i=data.interpretation;
+  put('atis-model',t?(t.model+' · transcription '+t.status+' · '+(i?.backend||'Interpretation pending')+' · accelerator profiling pending'):'Qualcomm Whisper small · processing pending');
+  el('atis-fields').replaceChildren();
+  const fields=i?.result?.fields||{};
+  for(const [key,value] of Object.entries(fields)){
+   const row=document.createElement('tr');
+   for(const text of [key.replaceAll('_',' '),value.evidence||'Not recovered',value.value?'Tentative — listen to verify':'Missing']){
+    const cell=document.createElement('td');cell.textContent=text;row.append(cell);
+   }
+   el('atis-fields').append(row);
+  }
+  if(!Object.keys(fields).length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=3;cell.textContent=i?.error||'No usable field interpretation yet.';row.append(cell);el('atis-fields').append(row);}
+  const uncertainties=i?.result?.uncertainties;
+  put('atis-uncertainties',Array.isArray(uncertainties)?uncertainties.join(' · '):uncertainties||'All numbers require listening review.');
+  el('atis-transcript').replaceChildren();
+  for(const segment of t?.segments||[]){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+(segment.text||('Failed: '+segment.error));el('atis-transcript').append(p);}
+ }catch(error){put('atis-status','ATIS disconnected. Any displayed result is cached. Retrying…');}
+ finally{clearTimeout(timeout);atisBusy=false;}
+}
+setInterval(pollATIS,8000);pollATIS();
+
+
+// Display pass provenance using text-only DOM fields; 2026-10-03 21:25:52 EEST, Thomas Vikström.
+let meteorPasses=[],meteorLoaded=false,meteorControlToken=null;
+function showMeteorProduct(){
+ const pass=meteorPasses.find(p=>p.pass_id===document.getElementById('meteor-pass').value);
+ const image=pass?.images.find(i=>String(i.id)===document.getElementById('meteor-product').value);
+ const img=document.getElementById('meteor-image'),link=document.getElementById('meteor-image-link');
+ img.hidden=link.hidden=!image;
+ if(image){img.src=image.url;img.alt=pass.satellite+' · '+image.product;link.href=image.url;}
+ else{img.removeAttribute('src');link.removeAttribute('href');}
+}
+function showMeteorPass(){
+ const pass=meteorPasses.find(p=>p.pass_id===document.getElementById('meteor-pass').value);
+ const products=document.getElementById('meteor-product');products.replaceChildren();
+ if(!pass){return;}
+ for(const image of pass.images){const option=document.createElement('option');option.value=image.id;option.textContent=image.product+' · '+image.width+' × '+image.height;products.append(option);}
+ document.getElementById('meteor-status').textContent=pass.classification+' · '+pass.satellite+(pass.source?.startsWith('imported')?' · IMPORTED':'')+(pass.reference?' · REFERENCE':'');
+ const retention=pass.retention,keep=document.getElementById('meteor-keep');
+ keep.disabled=!retention || !/^m2[34]-\d{8}T\d{6}Z$/.test(pass.pass_id);keep.textContent=pass.pinned?'Unpin recording':'Keep raw recording';
+ document.getElementById('meteor-retention').textContent=retention?((retention.raw_deleted?'Raw deleted':retention.raw_exists?'Raw available':'Raw missing')+' · '+(retention.disposition || (pass.pinned?'PROTECTED':retention.retention_class.replaceAll('_',' ')))+(retention.disposition==='GRACE'&&retention.deadline?' · Grace until '+new Date(retention.deadline).toLocaleString():'')+' · '+retention.reason+' · Offset check '+(retention.supported_procedure_completed?'completed':retention.frequency_evaluation_completed?'useful images verified':'pending/review')):'Reference/imported recording: protected';
+ document.getElementById('meteor-meta').textContent='Pass: '+new Date(pass.pass_start||pass.record_start).toLocaleString()+' · '+pass.sample_rate+' samples/s · '+(pass.frequency/1e6)+' MHz'+(pass.peak_elevation!=null?' · Peak elevation '+pass.peak_elevation.toFixed(1)+'°':'')+(pass.peak_snr!=null?' · Peak SNR '+pass.peak_snr:'')+' · IQ '+pass.raw_iq_state;
+ document.getElementById('meteor-meta').textContent+=' · '+(pass.source||'automatic_evk')+' · '+(pass.receiver||'RTL-SDR')+' · '+(pass.capture_host||'EVK')+' · '+(pass.capture_mode||'automatic')+(pass.end_time?' · End: '+new Date(pass.end_time).toLocaleString():'')+(pass.notes?' · '+pass.notes:'');
+ document.getElementById('meteor-lines').textContent='Decoded channel lines: '+Object.entries(pass.channel_lines).map(([ch,count])=>'Ch '+ch+': '+count).join(' · ');
+ showMeteorConditions(pass);
+ showMeteorProduct();
+}
+async function loadMeteor(){
+ try{
+  const response=await fetch('/api/meteor',{cache:'no-store'});if(!response.ok)throw Error('History unavailable');
+  const data=await response.json(),selector=document.getElementById('meteor-pass');
+  const old=selector.value,oldProduct=document.getElementById('meteor-product').value;
+  meteorPasses=data.passes;meteorControlToken=data.control_token;selector.replaceChildren();
+  document.getElementById('meteor-disk').textContent=(data.disk_warning?'Disk-space warning · ':'')+data.disk_free_gib+' GiB free · '+(data.cleanup_enabled?'Automatic raw cleanup enabled':'Cleanup dry-run: raw deletion disabled');
+  for(const pass of meteorPasses){const option=document.createElement('option');option.value=pass.pass_id;option.textContent=pass.satellite+' · '+new Date(pass.record_start).toLocaleString()+' · '+pass.classification+(pass.source?.startsWith('imported')?' · Imported':'')+(pass.reference?' · Reference':'');selector.append(option);}
+  const selected=meteorPasses.find(p=>p.pass_id===old)||meteorPasses.find(p=>['SUCCESS','PARTIAL_SUCCESS'].includes(p.classification))||meteorPasses[0];
+  if(selected){selector.value=selected.pass_id;showMeteorPass();if(selected.pass_id===old&&[...document.getElementById('meteor-product').options].some(o=>o.value===oldProduct)){document.getElementById('meteor-product').value=oldProduct;showMeteorProduct();}}
+  else{document.getElementById('meteor-status').textContent='No processed METEOR passes yet.';}
+  meteorLoaded=true;
+ }catch(error){document.getElementById('meteor-status').textContent='Satellite history unavailable. Retry shortly.';}
+}
+document.getElementById('meteor-pass').addEventListener('change',showMeteorPass);
+document.getElementById('meteor-product').addEventListener('change',showMeteorProduct);
+document.getElementById('meteor-keep').addEventListener('click',async()=>{
+ const pass=meteorPasses.find(p=>p.pass_id===document.getElementById('meteor-pass').value);if(!pass)return;
+ try{const response=await fetch('/api/meteor/pin',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':meteorControlToken},body:JSON.stringify({id:pass.pass_id,keep:!pass.pinned})});const data=await response.json();if(!response.ok)throw Error(data.error||'Keep update failed');await loadMeteor();}
+ catch(error){document.getElementById('meteor-retention').textContent=error.message;}
+});
+loadMeteor();setInterval(loadMeteor,60000);
+
+
+let scheduleBusy=false;
+function passTime(value, date=false){
+ if(!value)return '—';
+ const stamp=new Date(value);if(!Number.isFinite(stamp.getTime()))return '—';
+ return new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Helsinki',...(date?{day:'2-digit',month:'short'}:{}),hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(stamp);
+}
+function passDirection(value){
+ if(typeof value!=='number'||!Number.isFinite(value))return '—';
+ const angle=((value%360)+360)%360,directions=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+ return directions[Math.floor((angle+11.25)/22.5)%16]+' / '+Math.round(angle)%360+'°';
+}
+function renderSchedule(data){
+ const body=el('schedule-rows');body.replaceChildren();
+ const rows=data.passes||[],next=rows.find(p=>p.schedule_status==='Scheduled');
+ for(const pass of rows){
+  const row=document.createElement('tr');if(pass===next)row.className='next-pass';
+  const satellite=document.createElement('td'),name=document.createElement('strong'),status=document.createElement('small'),source=document.createElement('small');
+  name.textContent=pass.satellite;status.textContent=pass.schedule_status;status.className=pass.schedule_status==='Scheduled'?'status':'warn';source.textContent=pass.source;satellite.append(name,status,source);row.append(satellite);
+  const values=[passTime(pass.start,true),passDirection(pass.start_azimuth),passTime(pass.peak),passDirection(pass.peak_azimuth),typeof pass.peak_deg==='number'?pass.peak_deg.toFixed(1)+'°':'—',passTime(pass.stop,true),passDirection(pass.end_azimuth)];
+  values.forEach((value,index)=>{const cell=document.createElement('td');cell.textContent=value;if(index>=2&&index<=4)cell.className='peak';row.append(cell);});
+  const recording=document.createElement('td');
+  for(const text of [passTime(pass.record_start,true)+' – '+passTime(pass.record_stop,true),(pass.frequency/1e6).toFixed(3)+' MHz · '+(pass.sample_rate/1000)+' kS/s',pass.device,pass.trigger?(pass.unit?'Timer: ':'Dispatcher: ')+passTime(pass.trigger,true):'Timer: active',pass.tle_epoch?'TLE epoch: '+passTime(pass.tle_epoch,true):'Direction prediction unavailable']){const detail=document.createElement('small');detail.textContent=text||'—';recording.append(detail);}
+  if(pass.unit)recording.title=pass.unit;row.append(recording);body.append(row);
+ }
+ if(!rows.length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=9;cell.textContent='No upcoming scheduled captures.';row.append(cell);body.append(row);}
+ put('schedule-status',rows.length+' upcoming pass'+(rows.length===1?'':'es')+' · checked '+passTime(data.checked_at,true));
+ put('schedule-meta','Observer '+data.observer.latitude.toFixed(5)+'°, '+data.observer.longitude.toFixed(5)+'° · managed recording horizon '+data.horizon_deg+'° · planner updated '+passTime(data.generated_at,true));
+ put('schedule-warning',(data.warnings||[]).join(' · '));
+}
+async function loadSchedule(){
+ if(scheduleBusy)return;scheduleBusy=true;
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),25000);
+ try{const response=await fetch('/api/meteor/schedule',{cache:'no-store',signal:controller.signal});const data=await response.json();if(!response.ok)throw Error(data.error||'Schedule unavailable');renderSchedule(data);}
+ catch(error){put('schedule-status','Schedule unavailable. Any displayed passes are cached; retrying…');}
+ finally{clearTimeout(timer);scheduleBusy=false;}
+}
+loadSchedule();setInterval(loadSchedule,30000);
+
+
+function showMeteorConditions(pass){
+ const c=pass.conditions||{},body=el('meteor-conditions-rows');body.replaceChildren();
+ const rows=[['Pass start',c.start||pass.pass_start,c.start_azimuth,null],['Maximum altitude',c.peak,c.peak_azimuth??pass.peak_azimuth,c.peak_deg??pass.peak_elevation],['Pass end',c.stop||pass.pass_stop,c.end_azimuth,null],['Recording start (planned)',c.record_start||pass.record_start,null,null],['Recording end (planned)',c.record_stop||pass.end_time,null,null]];
+ for(const [event,time,az,alt] of rows){const row=document.createElement('tr');for(const text of [event,passTime(time,true),passDirection(az),typeof alt==='number'?alt.toFixed(1)+'°':'—']){const cell=document.createElement('td');cell.textContent=text;row.append(cell);}body.append(row);}
+ const settings=[typeof (c.frequency??pass.frequency)==='number'?((c.frequency??pass.frequency)/1e6).toFixed(3)+' MHz':null,typeof (c.sample_rate??pass.sample_rate)==='number'?((c.sample_rate??pass.sample_rate)/1000)+' kS/s':null,c.gain!=null?'Gain '+c.gain+' dB':null,c.device,c.pre_margin!=null&&c.post_margin!=null?'Margins −'+c.pre_margin+' s / +'+c.post_margin+' s':null];
+ put('meteor-capture-settings',settings.filter(Boolean).join(' · '));
+ const actual=['Actual IQ recording: '+passTime(c.actual_start,true)+' – '+passTime(c.actual_stop,true),c.iq_bytes!=null?(c.iq_bytes/1024/1024).toFixed(1)+' MiB':null,c.status?'Capture: '+c.status.replaceAll('_',' '):null,c.preflight?'IQ preflight '+(c.preflight.success===true?'passed':c.preflight.success===false?'failed':'unknown')+' · '+c.preflight.attempt_count+' attempt(s)':null];
+ put('meteor-actual-recording',actual.filter(Boolean).join(' · '));
+ const observer=c.observer?' · Observer '+c.observer.latitude.toFixed(5)+'°, '+c.observer.longitude.toFixed(5)+'° / '+c.observer.observer_elevation_m+' m':'';
+ const provenance=(c.geometry_source||'Full orbital details were not saved for this older recording')+(c.horizon_deg!=null?' · Horizon '+c.horizon_deg+'°':'')+observer+(c.tle_epoch?' · TLE epoch '+passTime(c.tle_epoch,true):'')+(c.saved_at?' · Saved '+passTime(c.saved_at,true):'');
+ put('meteor-condition-source',provenance+'. Geometry is predicted; SNR and decoder results are shown above.'+(c.warnings?.length?' '+c.warnings.join(' · '):''));
+}
+
+</script>
+<script>
+(()=>{
+ const panel=document.createElement('section');panel.className='card';
+ panel.innerHTML='<h2>Vaasa Tower · 120.950 MHz AM</h2><p>05:00–01:30 Europe/Helsinki · 30 s every ~3 min · METEOR takes priority</p><p id="tower-status">Waiting for Tower recording</p><p id="tower-meta"></p><audio id="tower-player" controls hidden></audio><div id="tower-transcript"></div>';
+ const anchor=document.getElementById('atis-transcript');
+ (anchor?.closest('section')?.parentElement||document.body).append(panel);
+ let busy=false;
+ async function poll(){if(busy)return;busy=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),7000);
+ try{const r=await fetch('/api/tower',{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error('unavailable');const d=await r.json();
+ document.getElementById('tower-status').textContent=d.message||d.status;
+ document.getElementById('tower-meta').textContent=d.recording?('Recording '+d.recording+' · '+d.status+' · text requires listening review'):'';
+ const audio=document.getElementById('tower-player');audio.hidden=!d.audio_available;
+ if(d.audio_available){const src='/api/tower/audio?recording='+encodeURIComponent(d.recording);if(audio.getAttribute('src')!==src)audio.src=src;}
+ const transcript=document.getElementById('tower-transcript');transcript.replaceChildren();
+ for(const segment of d.transcript?.segments||[]){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+(segment.text||segment.error);transcript.append(p);}
+ }catch(e){document.getElementById('tower-status').textContent='Tower unavailable; displayed result may be cached.';}
+ finally{clearTimeout(timeout);busy=false;}}
+ poll();setInterval(poll,8000);
+})();
+</script>
+
+</body></html>

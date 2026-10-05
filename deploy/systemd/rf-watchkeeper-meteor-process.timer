@@ -1,0 +1,10 @@
+# Retry queued METEOR post-processing after boot and every five minutes; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR processing timer
+
+[Timer]
+OnBootSec=4min
+OnUnitInactiveSec=5min
+
+[Install]
+WantedBy=timers.target

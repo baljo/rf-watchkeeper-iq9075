@@ -1,0 +1,9 @@
+// Dedicated FC0012 433 MHz sensor jobs. 2026-09-24 14:55 EEST, Thomas Vikström.
+{
+  "device": "43300001",
+  "ppm": 0,
+  "handoff_seconds": 60,
+  "jobs": [
+    {"id": "nexus", "name": "Nexus-TH sensors", "frequency_hz": 433920000, "mode": "nexus", "dwell_seconds": 70, "enabled": true, "priority": 30, "gain_db": null}
+  ]
+}

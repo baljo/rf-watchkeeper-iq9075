@@ -1,0 +1,587 @@
+{
+  "protected_unchanged": true,
+  "guard": null,
+  "services": {
+    "rf-watchkeeper-scheduler.service": "active",
+    "rf-watchkeeper-atis-process.service": "active",
+    "rf-watchkeeper-dashboard.service": "active"
+  },
+  "api": {
+    "tower": {
+      "http": 200,
+      "data": {
+        "status": "no_activity",
+        "kind": "tower",
+        "recording": "20261005T184518.499679Z",
+        "capture": {
+          "frequency_hz": 120950000,
+          "receiver_command": [
+            "rtl_fm",
+            "-d",
+            "V4MAIN01",
+            "-p",
+            "0",
+            "-g",
+            "19.7",
+            "-f",
+            "120950000",
+            "-M",
+            "am",
+            "-s",
+            "8000"
+          ],
+          "audio_seconds": 29.184,
+          "wall_seconds": 30.198214692994952,
+          "status": "ready",
+          "reason": null,
+          "source": "live",
+          "job_id": "vaasa-tower",
+          "kind": "tower",
+          "priority": "satellite first"
+        },
+        "transcript": {
+          "model": "Qualcomm Whisper small QCS9075 v0.50.2",
+          "accelerator_requested": "HTP/QNN",
+          "accelerator_verified": false,
+          "status": "no_activity",
+          "language_requested": "en",
+          "segmentation": {
+            "status": "no_activity",
+            "method": "energy-candidate-v1",
+            "frame_ms": 20,
+            "pause_ms": 1200,
+            "padding_ms": 200,
+            "noise_floor_rms": 10.988,
+            "threshold_rms": 40.0,
+            "regions": [],
+            "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+          },
+          "segments": [],
+          "note": "Energy-gated clips may include RF noise; numeric fields require review."
+        },
+        "interpretation": {
+          "status": "not_run",
+          "reason": "No valid transcript"
+        },
+        "processing": {
+          "status": "no_activity",
+          "transcript_status": "no_activity",
+          "interpretation_status": "not_run",
+          "transcript_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "processed_at": "2026-10-05T18:45:49.018168+00:00"
+        },
+        "audio_available": false,
+        "message": "No sustained audio activity detected; ASR skipped. This is not a receiver failure."
+      }
+    },
+    "atis": {
+      "http": 200,
+      "data": {
+        "status": "partial_success",
+        "kind": "atis",
+        "recording": "20261005T184244.223930Z",
+        "capture": {
+          "frequency_hz": 136450000,
+          "receiver_command": [
+            "rtl_fm",
+            "-d",
+            "V4MAIN01",
+            "-p",
+            "0",
+            "-g",
+            "49.6",
+            "-f",
+            "136450000",
+            "-M",
+            "am",
+            "-s",
+            "8000"
+          ],
+          "audio_seconds": 89.088,
+          "wall_seconds": 90.26154066500021,
+          "status": "ready",
+          "reason": null,
+          "source": "live",
+          "job_id": "vaasa-atis",
+          "kind": "atis",
+          "priority": "satellite first"
+        },
+        "transcript": {
+          "model": "Qualcomm Whisper small QCS9075 v0.50.2",
+          "accelerator_requested": "HTP/QNN",
+          "accelerator_verified": false,
+          "status": "experimental",
+          "language_requested": "en",
+          "segmentation": {
+            "status": "activity_detected",
+            "method": "energy-candidate-v1",
+            "frame_ms": 20,
+            "pause_ms": 1200,
+            "padding_ms": 200,
+            "noise_floor_rms": 163.431,
+            "threshold_rms": 408.578,
+            "regions": [
+              {
+                "start_seconds": 0.0,
+                "end_seconds": 28.0
+              },
+              {
+                "start_seconds": 28.0,
+                "end_seconds": 56.0
+              },
+              {
+                "start_seconds": 56.0,
+                "end_seconds": 67.54
+              },
+              {
+                "start_seconds": 70.64,
+                "end_seconds": 89.088
+              }
+            ],
+            "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+          },
+          "segments": [
+            {
+              "start_seconds": 0.0,
+              "text": "This is Vasa arrival and departure information level at time 1820. Expect.  ILS, finish road.",
+              "status": "experimental",
+              "raw": {
+                "text": "[580ms - 8990ms] This is Vasa arrival and departure information level at time 1820. Expect.[10870ms - 14820ms] ILS, finish road.[16670ms - 27990ms]",
+                "language": "English",
+                "init_ms": 434,
+                "processing_ms": 2948
+              },
+              "language": "English",
+              "language_requested": "en",
+              "normalization": {
+                "text": "This is Vasa arrival and departure information level at time 1820. Expect.  ILS, finish road.",
+                "changes": [],
+                "status": "spelling_only",
+                "numeric_values_verified": false
+              },
+              "raw_text": "This is Vasa arrival and departure information level at time 1820. Expect.  ILS, finish road."
+            },
+            {
+              "start_seconds": 28.0,
+              "text": "Transition Level 70 Automatic Report  and touchdown zone 180 degree, 13 knots, maximum 35mm 6 knots.   get it 1,600 feet overcast 3,400 feet.",
+              "status": "experimental",
+              "raw": {
+                "text": "[1160ms - 5280ms] Transition Level 70 Automatic Report[6600ms - 14820ms] and touchdown zone 180 degree, 13 knots, maximum 35mm 6 knots.[16670ms - 19220ms][21350ms - 27720ms] get it 1,600 feet overcast 3,400 feet.",
+                "language": "English",
+                "init_ms": 476,
+                "processing_ms": 1998
+              },
+              "language": "English",
+              "language_requested": "en",
+              "normalization": {
+                "text": "Transition Level 70 Automatic Report  and touchdown zone 180 degree, 13 knots, maximum 35mm 6 knots.   get it 1,600 feet overcast 3,400 feet.",
+                "changes": [],
+                "status": "spelling_only",
+                "numeric_values_verified": false
+              },
+              "raw_text": "Transition Level 70 Automatic Report  and touchdown zone 180 degree, 13 knots, maximum 35mm 6 knots.   get it 1,600 feet overcast 3,400 feet."
+            },
+            {
+              "start_seconds": 56.0,
+              "text": "temperature 142.11, FNH 9890, advise on initial contact to have information, Bravo!",
+              "status": "experimental",
+              "raw": {
+                "text": "[150ms - 11440ms] temperature 142.11, FNH 9890, advise on initial contact to have information, Bravo!",
+                "language": "English",
+                "init_ms": 405,
+                "processing_ms": 699
+              },
+              "language": "English",
+              "language_requested": "en",
+              "normalization": {
+                "text": "temperature 142.11, FNH 9890, advise on initial contact to have information, Bravo!",
+                "changes": [],
+                "status": "spelling_only",
+                "numeric_values_verified": false
+              },
+              "raw_text": "temperature 142.11, FNH 9890, advise on initial contact to have information, Bravo!"
+            },
+            {
+              "start_seconds": 70.64,
+              "text": "This is LASA arrival and departure information level at time 1820. Expect.",
+              "status": "experimental",
+              "raw": {
+                "text": "[340ms - 9310ms] This is LASA arrival and departure information level at time 1820. Expect.[11160ms - 15150ms][17000ms - 18450ms]",
+                "language": "English",
+                "init_ms": 476,
+                "processing_ms": 1327
+              },
+              "language": "English",
+              "language_requested": "en",
+              "normalization": {
+                "text": "This is LASA arrival and departure information level at time 1820. Expect.",
+                "changes": [],
+                "status": "spelling_only",
+                "numeric_values_verified": false
+              },
+              "raw_text": "This is LASA arrival and departure information level at time 1820. Expect."
+            }
+          ],
+          "note": "Energy-gated clips may include RF noise; numeric fields require review."
+        },
+        "interpretation": {
+          "status": "failed",
+          "error": "Model exited with code 1",
+          "human_review_required": true
+        },
+        "processing": {
+          "status": "partial_success",
+          "transcript_status": "experimental",
+          "interpretation_status": "failed",
+          "transcript_hash": "50cf8caec4751743327703ee29933c78be85cf37bfc1e11d5e3755017f5111ae",
+          "processed_at": "2026-10-05T18:44:48.551235+00:00"
+        },
+        "audio_available": true,
+        "message": "Transcript available; some recognition or interpretation failed. Listen to verify."
+      }
+    }
+  },
+  "replay": [
+    {
+      "source": "/root/rf-watchkeeper/recordings/atis/20261005T172215.438320Z/raw.wav",
+      "original_unchanged": true,
+      "clips": 5,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 175.455,
+        "threshold_rms": 438.637,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 5.84
+          },
+          {
+            "start_seconds": 8.02,
+            "end_seconds": 36.02
+          },
+          {
+            "start_seconds": 36.02,
+            "end_seconds": 64.02
+          },
+          {
+            "start_seconds": 64.02,
+            "end_seconds": 71.82
+          },
+          {
+            "start_seconds": 74.02,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "source": "/root/rf-watchkeeper/recordings/atis/20261005T175344.687793Z/raw.wav",
+      "original_unchanged": true,
+      "clips": 4,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 147.388,
+        "threshold_rms": 368.47,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 52.2
+          },
+          {
+            "start_seconds": 56.02,
+            "end_seconds": 84.02
+          },
+          {
+            "start_seconds": 84.02,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "source": "/root/rf-watchkeeper/recordings/atis/20261005T184244.223930Z/raw.wav",
+      "original_unchanged": true,
+      "clips": 4,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 163.431,
+        "threshold_rms": 408.578,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 67.54
+          },
+          {
+            "start_seconds": 70.64,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "id": "fm-reference",
+      "name": "FM reference",
+      "frequency_hz": 95600000,
+      "mode": "fm",
+      "dwell_seconds": 35,
+      "enabled": false,
+      "priority": 20,
+      "gain_db": 49.6
+    },
+    {
+      "id": "vaasa-tower",
+      "name": "Vaasa Tower AM",
+      "frequency_hz": 120950000,
+      "mode": "am",
+      "dwell_seconds": 30,
+      "enabled": true,
+      "priority": 30,
+      "gain_db": 19.7,
+      "sample_rate": 8000,
+      "tower_recording": true,
+      "interval_seconds": 180
+    },
+    {
+      "id": "ais",
+      "name": "AIS dual-channel",
+      "frequency_hz": 162000000,
+      "mode": "ais",
+      "dwell_seconds": 120,
+      "enabled": true,
+      "priority": 0
+    },
+    {
+      "id": "weather-satellite",
+      "name": "137 MHz weather satellites (planned)",
+      "frequency_hz": 137100000,
+      "mode": "satellite",
+      "dwell_seconds": 600,
+      "enabled": false,
+      "priority": 0
+    },
+    {
+      "id": "vaasa-atis",
+      "name": "Vaasa ATIS experimental recording",
+      "frequency_hz": 136450000,
+      "mode": "am",
+      "dwell_seconds": 90,
+      "enabled": true,
+      "priority": 20,
+      "gain_db": 49.6,
+      "sample_rate": 8000,
+      "atis_recording": true,
+      "interval_seconds": 600
+    }
+  ],
+  "live_captures": {
+    "tower": [
+      {
+        "recording": "20261005T184212.793258Z",
+        "capture": {
+          "frequency_hz": 120950000,
+          "receiver_command": [
+            "rtl_fm",
+            "-d",
+            "V4MAIN01",
+            "-p",
+            "0",
+            "-g",
+            "19.7",
+            "-f",
+            "120950000",
+            "-M",
+            "am",
+            "-s",
+            "8000"
+          ],
+          "audio_seconds": 29.184,
+          "wall_seconds": 30.223657584996545,
+          "status": "ready",
+          "reason": null,
+          "source": "live",
+          "job_id": "vaasa-tower",
+          "kind": "tower",
+          "priority": "satellite first"
+        },
+        "processing": {
+          "status": "no_activity",
+          "transcript_status": "no_activity",
+          "interpretation_status": "not_run",
+          "transcript_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "processed_at": "2026-10-05T18:42:52.960219+00:00"
+        }
+      },
+      {
+        "recording": "20261005T184518.499679Z",
+        "capture": {
+          "frequency_hz": 120950000,
+          "receiver_command": [
+            "rtl_fm",
+            "-d",
+            "V4MAIN01",
+            "-p",
+            "0",
+            "-g",
+            "19.7",
+            "-f",
+            "120950000",
+            "-M",
+            "am",
+            "-s",
+            "8000"
+          ],
+          "audio_seconds": 29.184,
+          "wall_seconds": 30.198214692994952,
+          "status": "ready",
+          "reason": null,
+          "source": "live",
+          "job_id": "vaasa-tower",
+          "kind": "tower",
+          "priority": "satellite first"
+        },
+        "processing": {
+          "status": "no_activity",
+          "transcript_status": "no_activity",
+          "interpretation_status": "not_run",
+          "transcript_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "processed_at": "2026-10-05T18:45:49.018168+00:00"
+        }
+      }
+    ],
+    "atis": [
+      {
+        "recording": "20261005T172215.438320Z",
+        "capture": {
+          "frequency_hz": 136450000,
+          "receiver_command": [
+            "rtl_fm",
+            "-d",
+            "V4MAIN01",
+            "-p",
+            "0",
+            "-g",
+            "49.6",
+            "-f",
+            "136450000",
+            "-M",
+            "am",
+            "-s",
+            "8000"
+          ],
+          "audio_seconds": 89.088,
+          "wall_seconds": 90.26454408300924,
+          "status": "ready",
+          "reason": null,
+          "source": "live",
+          "priority": "satellite first"
+        },
+        "processing": {
+          "status": "completed",
+          "transcript_status": "experimental",
+          "interpretation_status": "failed",
+          "transcript_hash": "3823ffe2ea5baee0fff3e3dd74320e31e40a89868a7bb821f5a756ee69ec81e1",
+          "processed_at": "2026-10-05T17:24:05.334193+00:00"
+        }
+      },
+      {
+        "recording": "20261005T175344.687793Z",
+        "capture": {
+          "frequency_hz": 136450000,
+          "receiver_command": [
+            "rtl_fm",
+            "-d",
+            "V4MAIN01",
+            "-p",
+            "0",
+            "-g",
+            "49.6",
+            "-f",
+            "136450000",
+            "-M",
+            "am",
+            "-s",
+            "8000"
+          ],
+          "audio_seconds": 89.088,
+          "wall_seconds": 90.12020701100118,
+          "status": "ready",
+          "reason": null,
+          "source": "live",
+          "priority": "satellite first"
+        },
+        "processing": {
+          "status": "partial_success",
+          "transcript_status": "experimental",
+          "interpretation_status": "failed",
+          "transcript_hash": "de5801943cdd065732fc96d99fcb43d21fae9a36b57c846e72caac181e4207af",
+          "processed_at": "2026-10-05T17:55:26.310551+00:00"
+        }
+      },
+      {
+        "recording": "20261005T184244.223930Z",
+        "capture": {
+          "frequency_hz": 136450000,
+          "receiver_command": [
+            "rtl_fm",
+            "-d",
+            "V4MAIN01",
+            "-p",
+            "0",
+            "-g",
+            "49.6",
+            "-f",
+            "136450000",
+            "-M",
+            "am",
+            "-s",
+            "8000"
+          ],
+          "audio_seconds": 89.088,
+          "wall_seconds": 90.26154066500021,
+          "status": "ready",
+          "reason": null,
+          "source": "live",
+          "job_id": "vaasa-atis",
+          "kind": "atis",
+          "priority": "satellite first"
+        },
+        "processing": {
+          "status": "partial_success",
+          "transcript_status": "experimental",
+          "interpretation_status": "failed",
+          "transcript_hash": "50cf8caec4751743327703ee29933c78be85cf37bfc1e11d5e3755017f5111ae",
+          "processed_at": "2026-10-05T18:44:48.551235+00:00"
+        }
+      }
+    ]
+  }
+}

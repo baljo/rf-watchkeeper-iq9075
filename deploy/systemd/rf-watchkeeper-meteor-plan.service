@@ -1,0 +1,12 @@
+# Refresh the persistent METEOR plan without taking the SDR; 2026-10-03 19:35:49 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR pass planning
+After=network-online.target time-sync.target rf-watchkeeper-meteor-recover.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/root/rf-watchkeeper/.satellite-venv/bin/python -u /root/rf-watchkeeper/meteor_pipeline.py plan
+TimeoutStartSec=120
+UMask=0077

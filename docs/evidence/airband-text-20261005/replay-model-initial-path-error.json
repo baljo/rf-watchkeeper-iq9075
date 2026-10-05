@@ -1,0 +1,82 @@
+{
+  "recording": "20261005T172215.438320Z",
+  "elapsed_seconds": 6.664612724998733,
+  "processing": {
+    "status": "failed",
+    "transcript_status": "failed",
+    "interpretation_status": "not_run",
+    "transcript_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "processed_at": "2026-10-05T17:45:08.185424+00:00"
+  },
+  "transcript": {
+    "model": "Qualcomm Whisper small QCS9075 v0.50.2",
+    "accelerator_requested": "HTP/QNN",
+    "accelerator_verified": false,
+    "status": "failed",
+    "language_requested": "en",
+    "segmentation": {
+      "status": "activity_detected",
+      "method": "energy-candidate-v1",
+      "frame_ms": 20,
+      "pause_ms": 1200,
+      "padding_ms": 200,
+      "noise_floor_rms": 175.455,
+      "threshold_rms": 438.637,
+      "regions": [
+        {
+          "start_seconds": 0.0,
+          "end_seconds": 5.84
+        },
+        {
+          "start_seconds": 8.02,
+          "end_seconds": 36.02
+        },
+        {
+          "start_seconds": 36.02,
+          "end_seconds": 64.02
+        },
+        {
+          "start_seconds": 64.02,
+          "end_seconds": 71.82
+        },
+        {
+          "start_seconds": 74.02,
+          "end_seconds": 89.088
+        }
+      ],
+      "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+    },
+    "segments": [
+      {
+        "start_seconds": 0.0,
+        "status": "failed",
+        "error": "Model exited with code 255"
+      },
+      {
+        "start_seconds": 8.02,
+        "status": "failed",
+        "error": "Model exited with code 255"
+      },
+      {
+        "start_seconds": 36.02,
+        "status": "failed",
+        "error": "Model exited with code 255"
+      },
+      {
+        "start_seconds": 64.02,
+        "status": "failed",
+        "error": "Model exited with code 255"
+      },
+      {
+        "start_seconds": 74.02,
+        "status": "failed",
+        "error": "Model exited with code 255"
+      }
+    ],
+    "note": "Energy-gated clips may include RF noise; numeric fields require review."
+  },
+  "interpretation": {
+    "status": "not_run",
+    "reason": "No valid transcript"
+  }
+}

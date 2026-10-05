@@ -1,0 +1,9 @@
+# Register completed legacy METEOR recordings with the managed pipeline; 2026-10-04 10:05 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR legacy capture registrar
+After=local-fs.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/root/rf-watchkeeper/.satellite-venv/bin/python -u /root/rf-watchkeeper/register_legacy_meteor.py

@@ -1,0 +1,20 @@
+{
+  "installed_at": "2026-10-05T17:47:13.250289+00:00",
+  "backup": "/root/rf-watchkeeper/backups/airband-text-20261005T174713Z",
+  "runtime_files": [
+    "airband_text.py",
+    "atis_pipeline.py",
+    "atis_view.py"
+  ],
+  "restarted_services": [
+    "rf-watchkeeper-atis-process.service",
+    "rf-watchkeeper-dashboard.service"
+  ],
+  "scheduler_restarted": false,
+  "rebooted": false,
+  "hashes": {
+    "airband_text.py": "0375583a64e588da0635f180f0858b7bf06d9ad4d43eeaf3f6e228c39c27da4e",
+    "atis_pipeline.py": "2af53058ac44a15d0b6b71ab3624a2e2984eb51467e27ae5f642cd575907436e",
+    "atis_view.py": "e390e787c9aa7d32ea8586e5f31c0d49a86dd1736633a7d663359bf6e1275ed6"
+  }
+}

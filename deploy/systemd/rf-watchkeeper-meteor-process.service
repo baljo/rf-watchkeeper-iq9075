@@ -1,0 +1,16 @@
+# Decode queued METEOR IQ independently of receiver ownership; 2026-10-03 19:59:55 EEST, Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper METEOR SatDump processing queue
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/root/rf-watchkeeper/.satellite-venv/bin/python -u /root/rf-watchkeeper/meteor_pipeline.py process
+TimeoutStartSec=35min
+KillMode=control-group
+Nice=15
+CPUWeight=10
+IOWeight=10
+UMask=0077

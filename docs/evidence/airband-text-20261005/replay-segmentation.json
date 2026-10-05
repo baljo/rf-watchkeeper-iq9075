@@ -1,0 +1,5141 @@
+{
+  "records": [
+    {
+      "recording": "20261002T190858.801769Z",
+      "original_sha256": "b78f63409b4606c6dbc9c738999756ccb871cfe78ce44127530511b1a8ac7255",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.60799999999999,
+      "preparation_seconds": 1.0083673790068133,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 128.479,
+        "threshold_rms": 321.198,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 11.36
+          },
+          {
+            "start_seconds": 14.06,
+            "end_seconds": 42.06
+          },
+          {
+            "start_seconds": 42.06,
+            "end_seconds": 70.06
+          },
+          {
+            "start_seconds": 70.06,
+            "end_seconds": 71.34
+          },
+          {
+            "start_seconds": 74.12,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T195345.348576Z",
+      "original_sha256": "d9d7db2a58723078dbc4186a92ecb06ff73ecc288bb4f6feb24a8f25123edcda",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 8,
+      "candidate_seconds": 79.94000000000001,
+      "preparation_seconds": 0.9935852609924041,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 166.841,
+        "threshold_rms": 417.102,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 6.06
+          },
+          {
+            "start_seconds": 7.06,
+            "end_seconds": 12.22
+          },
+          {
+            "start_seconds": 13.14,
+            "end_seconds": 22.42
+          },
+          {
+            "start_seconds": 23.36,
+            "end_seconds": 45.88
+          },
+          {
+            "start_seconds": 49.26,
+            "end_seconds": 71.04
+          },
+          {
+            "start_seconds": 72.02,
+            "end_seconds": 77.2
+          },
+          {
+            "start_seconds": 78.12,
+            "end_seconds": 87.38
+          },
+          {
+            "start_seconds": 88.34,
+            "end_seconds": 89.04
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T202514.017279Z",
+      "original_sha256": "232c22906b36c9f9a3d1f9d3102d23b8df24fd0d4531f8d1be5b783b3f654c0c",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 80.44,
+      "preparation_seconds": 0.989275882995571,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 161.979,
+        "threshold_rms": 404.948,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 6.38
+          },
+          {
+            "start_seconds": 7.34,
+            "end_seconds": 30.18
+          },
+          {
+            "start_seconds": 33.46,
+            "end_seconds": 55.06
+          },
+          {
+            "start_seconds": 57.48,
+            "end_seconds": 79.28
+          },
+          {
+            "start_seconds": 80.26,
+            "end_seconds": 86.78
+          },
+          {
+            "start_seconds": 87.68,
+            "end_seconds": 88.98
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T205643.201002Z",
+      "original_sha256": "b21077209bc8f8ec1e9aca70f5507e6cf84a7ea2efbad8a6d72651ab36ac0858",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 79.32,
+      "preparation_seconds": 0.9864213149994612,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 152.819,
+        "threshold_rms": 382.048,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 8.32
+          },
+          {
+            "start_seconds": 11.5,
+            "end_seconds": 33.44
+          },
+          {
+            "start_seconds": 34.42,
+            "end_seconds": 40.62
+          },
+          {
+            "start_seconds": 41.54,
+            "end_seconds": 51.84
+          },
+          {
+            "start_seconds": 52.78,
+            "end_seconds": 75.38
+          },
+          {
+            "start_seconds": 78.46,
+            "end_seconds": 88.42
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T212812.113206Z",
+      "original_sha256": "a692a90a25b26312952e6d74931abcf05313ebd095251471908257b4ee72bd82",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.03999999999999,
+      "preparation_seconds": 0.9977266700007021,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 144.251,
+        "threshold_rms": 360.628,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 16.44
+          },
+          {
+            "start_seconds": 19.4,
+            "end_seconds": 47.4
+          },
+          {
+            "start_seconds": 47.4,
+            "end_seconds": 66.44
+          },
+          {
+            "start_seconds": 69.4,
+            "end_seconds": 88.96
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T215940.107231Z",
+      "original_sha256": "96ab5f4f0fd2541c4f44f46dc77df8a40cf317286700fcb289ad85b08d1813d9",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 4,
+      "candidate_seconds": 84.50399999999999,
+      "preparation_seconds": 1.0085803010006202,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 147.814,
+        "threshold_rms": 369.536,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 48.78
+          },
+          {
+            "start_seconds": 53.62,
+            "end_seconds": 81.62
+          },
+          {
+            "start_seconds": 81.62,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T223108.959715Z",
+      "original_sha256": "e6f84b1a016727b4b6a2876c7c0a84bd771461bdefc098624e98c2c055604598",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 84.108,
+      "preparation_seconds": 1.0030374699999811,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 148.481,
+        "threshold_rms": 371.203,
+        "regions": [
+          {
+            "start_seconds": 1.6,
+            "end_seconds": 29.6
+          },
+          {
+            "start_seconds": 29.6,
+            "end_seconds": 57.6
+          },
+          {
+            "start_seconds": 57.6,
+            "end_seconds": 59.2
+          },
+          {
+            "start_seconds": 62.58,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T230237.652099Z",
+      "original_sha256": "faa06edd69360c1e8603bb97b61e1ead8a1b693de7646fff54e08cd09c5a7ae1",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 6,
+      "candidate_seconds": 82.584,
+      "preparation_seconds": 0.9973929170082556,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 145.925,
+        "threshold_rms": 364.814,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 8.52
+          },
+          {
+            "start_seconds": 9.46,
+            "end_seconds": 32.08
+          },
+          {
+            "start_seconds": 35.08,
+            "end_seconds": 50.1
+          },
+          {
+            "start_seconds": 51.08,
+            "end_seconds": 57.28
+          },
+          {
+            "start_seconds": 58.18,
+            "end_seconds": 68.48
+          },
+          {
+            "start_seconds": 69.42,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261002T233406.500863Z",
+      "original_sha256": "689cdcc9b336a42eb24f55faec962c6bd217523506ab6566ab234bcfabf81053",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 78.32000000000002,
+      "preparation_seconds": 0.9816492239915533,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 153.016,
+        "threshold_rms": 382.541,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 3.2
+          },
+          {
+            "start_seconds": 6.2,
+            "end_seconds": 21.0
+          },
+          {
+            "start_seconds": 22.0,
+            "end_seconds": 28.18
+          },
+          {
+            "start_seconds": 29.08,
+            "end_seconds": 39.28
+          },
+          {
+            "start_seconds": 40.24,
+            "end_seconds": 63.18
+          },
+          {
+            "start_seconds": 66.24,
+            "end_seconds": 81.04
+          },
+          {
+            "start_seconds": 82.02,
+            "end_seconds": 88.22
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T000535.207419Z",
+      "original_sha256": "48c3f71e2ade07fed6db6326e20721fd15f65c32c1f6ac0ca3ef6df254f40df7",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 82.328,
+      "preparation_seconds": 1.003674145002151,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 157.102,
+        "threshold_rms": 392.754,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 10.68
+          },
+          {
+            "start_seconds": 11.64,
+            "end_seconds": 34.62
+          },
+          {
+            "start_seconds": 37.6,
+            "end_seconds": 52.38
+          },
+          {
+            "start_seconds": 53.36,
+            "end_seconds": 59.54
+          },
+          {
+            "start_seconds": 60.44,
+            "end_seconds": 70.66
+          },
+          {
+            "start_seconds": 71.6,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T003703.766343Z",
+      "original_sha256": "8b9c570a116990a4995e805141d84930fbb2798294d7aa2e858c19b0ae29d25a",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 8,
+      "candidate_seconds": 79.78800000000001,
+      "preparation_seconds": 0.985789226993802,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 150.876,
+        "threshold_rms": 377.19,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 9.6
+          },
+          {
+            "start_seconds": 10.58,
+            "end_seconds": 16.78
+          },
+          {
+            "start_seconds": 17.7,
+            "end_seconds": 27.9
+          },
+          {
+            "start_seconds": 28.84,
+            "end_seconds": 50.36
+          },
+          {
+            "start_seconds": 53.98,
+            "end_seconds": 68.54
+          },
+          {
+            "start_seconds": 69.52,
+            "end_seconds": 75.72
+          },
+          {
+            "start_seconds": 76.64,
+            "end_seconds": 86.84
+          },
+          {
+            "start_seconds": 87.78,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T010832.463352Z",
+      "original_sha256": "67aa5e399a8efee678cac5980f904afe8e2c6665268eae6b60a86a7fe8a50fab",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 6,
+      "candidate_seconds": 78.784,
+      "preparation_seconds": 0.9810621869983152,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 145.317,
+        "threshold_rms": 363.293,
+        "regions": [
+          {
+            "start_seconds": 1.42,
+            "end_seconds": 11.66
+          },
+          {
+            "start_seconds": 12.62,
+            "end_seconds": 34.06
+          },
+          {
+            "start_seconds": 39.42,
+            "end_seconds": 54.28
+          },
+          {
+            "start_seconds": 55.26,
+            "end_seconds": 61.46
+          },
+          {
+            "start_seconds": 62.36,
+            "end_seconds": 72.62
+          },
+          {
+            "start_seconds": 73.56,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T014001.544788Z",
+      "original_sha256": "c6770beeb5fbab7e2ee2092df0ab8e7f46ba39a36a12442165881d59b912b0cb",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 4,
+      "candidate_seconds": 83.52,
+      "preparation_seconds": 1.0050099460058846,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 139.875,
+        "threshold_rms": 349.688,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 9.34
+          },
+          {
+            "start_seconds": 12.24,
+            "end_seconds": 40.24
+          },
+          {
+            "start_seconds": 40.24,
+            "end_seconds": 66.34
+          },
+          {
+            "start_seconds": 69.22,
+            "end_seconds": 89.3
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T021129.743092Z",
+      "original_sha256": "56aa7458fe4df70e98b61552b8d55782e7547567451b41d07dcd98a21bc25509",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 9,
+      "candidate_seconds": 77.96799999999998,
+      "preparation_seconds": 0.9747205429885071,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 144.717,
+        "threshold_rms": 361.791,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 5.16
+          },
+          {
+            "start_seconds": 7.82,
+            "end_seconds": 19.56
+          },
+          {
+            "start_seconds": 20.54,
+            "end_seconds": 25.22
+          },
+          {
+            "start_seconds": 26.2,
+            "end_seconds": 35.74
+          },
+          {
+            "start_seconds": 36.68,
+            "end_seconds": 53.16
+          },
+          {
+            "start_seconds": 55.82,
+            "end_seconds": 67.56
+          },
+          {
+            "start_seconds": 68.54,
+            "end_seconds": 73.22
+          },
+          {
+            "start_seconds": 74.2,
+            "end_seconds": 83.74
+          },
+          {
+            "start_seconds": 84.68,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T024831.473538Z",
+      "original_sha256": "a74b26205c971c9d063492f9de8e4428554c31304102ba1832ccb65c9af91c10",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.648,
+      "preparation_seconds": 1.0080099339975277,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 155.962,
+        "threshold_rms": 389.906,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 8.72
+          },
+          {
+            "start_seconds": 11.42,
+            "end_seconds": 39.42
+          },
+          {
+            "start_seconds": 39.42,
+            "end_seconds": 67.42
+          },
+          {
+            "start_seconds": 67.42,
+            "end_seconds": 68.72
+          },
+          {
+            "start_seconds": 71.46,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T031959.336311Z",
+      "original_sha256": "f40567f7a088cc31afc996e9de1a5e7749ab20ae264a97462610ded5126caa12",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 80.46000000000001,
+      "preparation_seconds": 0.9941278270125622,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 144.764,
+        "threshold_rms": 361.911,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 9.76
+          },
+          {
+            "start_seconds": 11.6,
+            "end_seconds": 33.38
+          },
+          {
+            "start_seconds": 34.36,
+            "end_seconds": 40.48
+          },
+          {
+            "start_seconds": 41.38,
+            "end_seconds": 51.64
+          },
+          {
+            "start_seconds": 52.58,
+            "end_seconds": 75.66
+          },
+          {
+            "start_seconds": 78.88,
+            "end_seconds": 88.34
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T035127.789428Z",
+      "original_sha256": "453bc8e2854912f05ec266f003cbc091dbf1db6d7f0556677814d660574a281b",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 81.06799999999998,
+      "preparation_seconds": 0.9954717509972397,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 169.041,
+        "threshold_rms": 422.603,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 11.42
+          },
+          {
+            "start_seconds": 12.42,
+            "end_seconds": 18.56
+          },
+          {
+            "start_seconds": 19.5,
+            "end_seconds": 29.8
+          },
+          {
+            "start_seconds": 30.76,
+            "end_seconds": 53.58
+          },
+          {
+            "start_seconds": 56.78,
+            "end_seconds": 78.38
+          },
+          {
+            "start_seconds": 79.38,
+            "end_seconds": 85.52
+          },
+          {
+            "start_seconds": 86.44,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T042255.789323Z",
+      "original_sha256": "614b217792dbe81a65aba902a0e5b7b1e81f2aad54c880ed265658c6e85ac28c",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 4,
+      "candidate_seconds": 84.74,
+      "preparation_seconds": 1.010477361996891,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 151.158,
+        "threshold_rms": 377.895,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 29.64
+          },
+          {
+            "start_seconds": 33.78,
+            "end_seconds": 61.78
+          },
+          {
+            "start_seconds": 61.78,
+            "end_seconds": 88.88
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T045423.854566Z",
+      "original_sha256": "268f377da8d856a38f71c8951a09fbbf5a2fe5bddcd30719e1045ef3d689d1a8",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 81.048,
+      "preparation_seconds": 0.9868819010007428,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 151.029,
+        "threshold_rms": 377.571,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 7.38
+          },
+          {
+            "start_seconds": 10.78,
+            "end_seconds": 38.78
+          },
+          {
+            "start_seconds": 38.78,
+            "end_seconds": 66.78
+          },
+          {
+            "start_seconds": 66.78,
+            "end_seconds": 72.18
+          },
+          {
+            "start_seconds": 76.82,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T052552.214931Z",
+      "original_sha256": "e5055929e7ed1d21f38610b4d1e38704632d17a2bac9665341c781e9e25f8193",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 89.088,
+      "preparation_seconds": 1.0350170559977414,
+      "segmentation": {
+        "status": "continuous_or_noise",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 211.313,
+        "threshold_rms": 528.282,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 84.0
+          },
+          {
+            "start_seconds": 84.0,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T055720.636822Z",
+      "original_sha256": "0f93c8d84bc7079e470fde87e58703faab228379313c0e66d2b5a108becc6fb8",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 89.088,
+      "preparation_seconds": 1.038160430995049,
+      "segmentation": {
+        "status": "continuous_or_noise",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 221.246,
+        "threshold_rms": 553.116,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 84.0
+          },
+          {
+            "start_seconds": 84.0,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T062849.537621Z",
+      "original_sha256": "181362e3a9b2423528b94b26f068dfbd5bfffca430f778dd6b07cf5c38183919",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 0,
+      "candidate_seconds": 0,
+      "preparation_seconds": 0.6031376070022816,
+      "segmentation": {
+        "status": "no_activity",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 223.151,
+        "threshold_rms": 557.877,
+        "regions": [],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T070017.969626Z",
+      "original_sha256": "9675470125580c4523ce7b6a78d41d74e622fdecb422d951bb36a2775477aa16",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 89.088,
+      "preparation_seconds": 1.035356332999072,
+      "segmentation": {
+        "status": "continuous_or_noise",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 188.589,
+        "threshold_rms": 471.472,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 84.0
+          },
+          {
+            "start_seconds": 84.0,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T073146.577569Z",
+      "original_sha256": "9374cd2c3994e153890b940146d39d178c3f5d69385de00f1e73e2e28d5acc4d",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 0,
+      "candidate_seconds": 0,
+      "preparation_seconds": 0.6009521100058919,
+      "segmentation": {
+        "status": "no_activity",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 208.525,
+        "threshold_rms": 521.313,
+        "regions": [],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T080314.886195Z",
+      "original_sha256": "7360a2b9f84a8aef9e09b5a030c037e90e79986b230285e9e38fc97c07647a64",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 89.088,
+      "preparation_seconds": 1.044476608003606,
+      "segmentation": {
+        "status": "continuous_or_noise",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 239.464,
+        "threshold_rms": 598.66,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 84.0
+          },
+          {
+            "start_seconds": 84.0,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T083443.185810Z",
+      "original_sha256": "9f06ef976f4b9c1a18432f7d97132bc87f840b6bb4103cae2ec9cf9112e7a901",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 81.82,
+      "preparation_seconds": 0.9981443410069915,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 176.635,
+        "threshold_rms": 441.587,
+        "regions": [
+          {
+            "start_seconds": 0.82,
+            "end_seconds": 28.82
+          },
+          {
+            "start_seconds": 28.82,
+            "end_seconds": 34.04
+          },
+          {
+            "start_seconds": 37.46,
+            "end_seconds": 65.46
+          },
+          {
+            "start_seconds": 65.46,
+            "end_seconds": 86.06
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T090610.716853Z",
+      "original_sha256": "76c5773d481f638991ed0c16b9d740f11af3d77335b56100c3d762ed3758df76",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 86.30799999999999,
+      "preparation_seconds": 1.0284993189998204,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 170.729,
+        "threshold_rms": 426.822,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 29.1
+          },
+          {
+            "start_seconds": 31.88,
+            "end_seconds": 59.88
+          },
+          {
+            "start_seconds": 59.88,
+            "end_seconds": 87.88
+          },
+          {
+            "start_seconds": 87.88,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T093751.334641Z",
+      "original_sha256": "a584bdb0ace4ef60f116b316c83611a1fe6499b2a4afa4658b8cf3f7cec65411",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 11,
+      "candidate_seconds": 44.5,
+      "preparation_seconds": 0.8249531920009758,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 210.825,
+        "threshold_rms": 527.064,
+        "regions": [
+          {
+            "start_seconds": 10.68,
+            "end_seconds": 12.28
+          },
+          {
+            "start_seconds": 17.68,
+            "end_seconds": 26.94
+          },
+          {
+            "start_seconds": 34.82,
+            "end_seconds": 37.4
+          },
+          {
+            "start_seconds": 39.4,
+            "end_seconds": 41.26
+          },
+          {
+            "start_seconds": 42.54,
+            "end_seconds": 44.46
+          },
+          {
+            "start_seconds": 46.12,
+            "end_seconds": 51.36
+          },
+          {
+            "start_seconds": 55.14,
+            "end_seconds": 60.2
+          },
+          {
+            "start_seconds": 61.52,
+            "end_seconds": 66.86
+          },
+          {
+            "start_seconds": 67.92,
+            "end_seconds": 73.28
+          },
+          {
+            "start_seconds": 77.0,
+            "end_seconds": 81.26
+          },
+          {
+            "start_seconds": 82.3,
+            "end_seconds": 84.32
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T100919.496009Z",
+      "original_sha256": "f5a9cdd8c547643237ed63dbdda3c11e7ed401caa1e966109579bea1d01996f4",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 89.088,
+      "preparation_seconds": 1.0357225379993906,
+      "segmentation": {
+        "status": "continuous_or_noise",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 246.307,
+        "threshold_rms": 615.769,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 84.0
+          },
+          {
+            "start_seconds": 84.0,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T104047.651484Z",
+      "original_sha256": "741bd973325e59d1e26fcfc178c74593aacf23f385b99a85eb3610bf0d706741",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 89.088,
+      "preparation_seconds": 1.0360039490042254,
+      "segmentation": {
+        "status": "continuous_or_noise",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 239.799,
+        "threshold_rms": 599.499,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 84.0
+          },
+          {
+            "start_seconds": 84.0,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T111215.952527Z",
+      "original_sha256": "cb2e121e9ad51e37c2d3c04a21a92f5fabbd14aa518448bab879701b2293ad11",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 62.50800000000001,
+      "preparation_seconds": 0.9119166110031074,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 211.785,
+        "threshold_rms": 529.463,
+        "regions": [
+          {
+            "start_seconds": 13.7,
+            "end_seconds": 39.96
+          },
+          {
+            "start_seconds": 43.88,
+            "end_seconds": 56.34
+          },
+          {
+            "start_seconds": 60.4,
+            "end_seconds": 65.94
+          },
+          {
+            "start_seconds": 67.28,
+            "end_seconds": 70.12
+          },
+          {
+            "start_seconds": 70.94,
+            "end_seconds": 72.54
+          },
+          {
+            "start_seconds": 73.48,
+            "end_seconds": 83.06
+          },
+          {
+            "start_seconds": 84.86,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T114344.901722Z",
+      "original_sha256": "ab14646674eb1239a8ef2641360ea9123d4e2da8d6d6fd63ae640589c73a4511",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 81.7,
+      "preparation_seconds": 0.9955149360030191,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 202.441,
+        "threshold_rms": 506.101,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 8.64
+          },
+          {
+            "start_seconds": 9.54,
+            "end_seconds": 24.98
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 33.32
+          },
+          {
+            "start_seconds": 34.92,
+            "end_seconds": 61.8
+          },
+          {
+            "start_seconds": 62.68,
+            "end_seconds": 80.68
+          },
+          {
+            "start_seconds": 81.6,
+            "end_seconds": 89.02
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T121513.647267Z",
+      "original_sha256": "c89b0b1e442ea93b486a404f1a8913e303aa14172f8d4e66c4603a015a7ca438",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 6,
+      "candidate_seconds": 81.02,
+      "preparation_seconds": 0.999166129011428,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 184.023,
+        "threshold_rms": 460.058,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 13.56
+          },
+          {
+            "start_seconds": 14.56,
+            "end_seconds": 20.78
+          },
+          {
+            "start_seconds": 21.7,
+            "end_seconds": 32.0
+          },
+          {
+            "start_seconds": 32.96,
+            "end_seconds": 56.18
+          },
+          {
+            "start_seconds": 60.06,
+            "end_seconds": 81.56
+          },
+          {
+            "start_seconds": 82.54,
+            "end_seconds": 88.76
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T124744.587445Z",
+      "original_sha256": "8433890a2459f8abc6f51962b04ef16442c1a82a26bbda2579be4291b354eb0e",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.568,
+      "preparation_seconds": 1.026437888998771,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 203.684,
+        "threshold_rms": 509.211,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 67.0
+          },
+          {
+            "start_seconds": 69.52,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T131912.535672Z",
+      "original_sha256": "113b33dff6ee7387e95908dd306a500b4a3e97dd8193adde29020653a105f143",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 85.02,
+      "preparation_seconds": 1.0281987979979021,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 202.691,
+        "threshold_rms": 506.728,
+        "regions": [
+          {
+            "start_seconds": 0.06,
+            "end_seconds": 28.06
+          },
+          {
+            "start_seconds": 28.06,
+            "end_seconds": 56.04
+          },
+          {
+            "start_seconds": 58.06,
+            "end_seconds": 77.62
+          },
+          {
+            "start_seconds": 78.5,
+            "end_seconds": 80.32
+          },
+          {
+            "start_seconds": 81.4,
+            "end_seconds": 89.06
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T135040.891623Z",
+      "original_sha256": "f5c192a6608bfee13ca61ce8a567dd90b62330c8e5b6760a0e655b9b27412c31",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 9,
+      "candidate_seconds": 79.16799999999999,
+      "preparation_seconds": 0.994591227005003,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 191.706,
+        "threshold_rms": 479.265,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 7.4
+          },
+          {
+            "start_seconds": 8.26,
+            "end_seconds": 10.06
+          },
+          {
+            "start_seconds": 11.04,
+            "end_seconds": 25.9
+          },
+          {
+            "start_seconds": 26.84,
+            "end_seconds": 42.7
+          },
+          {
+            "start_seconds": 46.2,
+            "end_seconds": 59.02
+          },
+          {
+            "start_seconds": 59.84,
+            "end_seconds": 61.92
+          },
+          {
+            "start_seconds": 62.9,
+            "end_seconds": 83.42
+          },
+          {
+            "start_seconds": 84.28,
+            "end_seconds": 86.08
+          },
+          {
+            "start_seconds": 87.06,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T142208.860540Z",
+      "original_sha256": "a89d72b494362f65a692425cb06617d95db43711bfbd0f884f08f37a88c923df",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 80.788,
+      "preparation_seconds": 1.0024002349964576,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 194.006,
+        "threshold_rms": 485.015,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 14.56
+          },
+          {
+            "start_seconds": 15.5,
+            "end_seconds": 32.08
+          },
+          {
+            "start_seconds": 35.72,
+            "end_seconds": 48.7
+          },
+          {
+            "start_seconds": 49.58,
+            "end_seconds": 51.66
+          },
+          {
+            "start_seconds": 52.64,
+            "end_seconds": 73.16
+          },
+          {
+            "start_seconds": 74.02,
+            "end_seconds": 75.8
+          },
+          {
+            "start_seconds": 76.8,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T145337.232512Z",
+      "original_sha256": "4b8c14fef2c247c427405e383393575f8c4bbe50ea32f6b4efa74c92abb65f52",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.70799999999998,
+      "preparation_seconds": 1.0142939310026122,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 181.958,
+        "threshold_rms": 454.896,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 5.38
+          },
+          {
+            "start_seconds": 8.06,
+            "end_seconds": 36.06
+          },
+          {
+            "start_seconds": 36.06,
+            "end_seconds": 64.06
+          },
+          {
+            "start_seconds": 64.06,
+            "end_seconds": 70.44
+          },
+          {
+            "start_seconds": 73.14,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T152505.614809Z",
+      "original_sha256": "d9a3e6160612dea88a7c149dd310661bcaf2cc47ea88a8479bec24b1dc32fef7",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.06,
+      "preparation_seconds": 1.0222080969979288,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 201.024,
+        "threshold_rms": 502.561,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 43.24
+          },
+          {
+            "start_seconds": 46.12,
+            "end_seconds": 74.12
+          },
+          {
+            "start_seconds": 74.12,
+            "end_seconds": 88.94
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T155634.086851Z",
+      "original_sha256": "31f6d7802881ecdfd7323b3902cf63a66ff7dd15d1e8fbfec0d87728281e6383",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 13,
+      "candidate_seconds": 60.139999999999986,
+      "preparation_seconds": 0.8985088900080882,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 233.175,
+        "threshold_rms": 582.938,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 2.24
+          },
+          {
+            "start_seconds": 3.06,
+            "end_seconds": 9.24
+          },
+          {
+            "start_seconds": 13.04,
+            "end_seconds": 25.1
+          },
+          {
+            "start_seconds": 26.24,
+            "end_seconds": 31.84
+          },
+          {
+            "start_seconds": 32.86,
+            "end_seconds": 36.3
+          },
+          {
+            "start_seconds": 37.6,
+            "end_seconds": 42.66
+          },
+          {
+            "start_seconds": 43.82,
+            "end_seconds": 48.24
+          },
+          {
+            "start_seconds": 49.14,
+            "end_seconds": 53.22
+          },
+          {
+            "start_seconds": 54.06,
+            "end_seconds": 56.28
+          },
+          {
+            "start_seconds": 57.16,
+            "end_seconds": 60.64
+          },
+          {
+            "start_seconds": 65.84,
+            "end_seconds": 69.14
+          },
+          {
+            "start_seconds": 74.08,
+            "end_seconds": 76.24
+          },
+          {
+            "start_seconds": 77.26,
+            "end_seconds": 83.16
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T162802.915163Z",
+      "original_sha256": "4ded82f535913deac2339a08680430fffe7c258d568c123823636b514f7ff8bd",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 8,
+      "candidate_seconds": 75.424,
+      "preparation_seconds": 0.9747583160060458,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 197.498,
+        "threshold_rms": 493.746,
+        "regions": [
+          {
+            "start_seconds": 3.9,
+            "end_seconds": 16.64
+          },
+          {
+            "start_seconds": 17.54,
+            "end_seconds": 19.6
+          },
+          {
+            "start_seconds": 20.76,
+            "end_seconds": 40.22
+          },
+          {
+            "start_seconds": 41.24,
+            "end_seconds": 56.1
+          },
+          {
+            "start_seconds": 57.1,
+            "end_seconds": 61.26
+          },
+          {
+            "start_seconds": 62.08,
+            "end_seconds": 73.24
+          },
+          {
+            "start_seconds": 76.88,
+            "end_seconds": 82.26
+          },
+          {
+            "start_seconds": 83.74,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T165931.123321Z",
+      "original_sha256": "cdc0fbc0a7d8e809ec5520e0a96d3ebe22de2ad80669534f9edea70df470cbf1",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 4,
+      "candidate_seconds": 86.624,
+      "preparation_seconds": 1.02064031700138,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 191.554,
+        "threshold_rms": 478.884,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 24.82
+          },
+          {
+            "start_seconds": 27.54,
+            "end_seconds": 55.54
+          },
+          {
+            "start_seconds": 55.54,
+            "end_seconds": 83.54
+          },
+          {
+            "start_seconds": 83.54,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T180228.974485Z",
+      "original_sha256": "1f60f918af8f5f3d7de63d37859732adec6fca1784e950584466716966349ad9",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 86.10799999999999,
+      "preparation_seconds": 1.0223194029968,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 179.959,
+        "threshold_rms": 449.899,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 29.86
+          },
+          {
+            "start_seconds": 32.84,
+            "end_seconds": 60.84
+          },
+          {
+            "start_seconds": 60.84,
+            "end_seconds": 88.84
+          },
+          {
+            "start_seconds": 88.84,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T183357.376966Z",
+      "original_sha256": "373174325d2f739b5738c1ba2b213527e3105c9751c8eed9a8811807f23e5f9b",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.88,
+      "preparation_seconds": 1.0060368480044417,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 184.056,
+        "threshold_rms": 460.139,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 1.84
+          },
+          {
+            "start_seconds": 4.36,
+            "end_seconds": 32.36
+          },
+          {
+            "start_seconds": 32.36,
+            "end_seconds": 51.88
+          },
+          {
+            "start_seconds": 54.36,
+            "end_seconds": 82.36
+          },
+          {
+            "start_seconds": 82.36,
+            "end_seconds": 88.88
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T190525.512933Z",
+      "original_sha256": "5757282dbabd1469d91ee6a558088de5509982efc4191f27caecd910e7ccd27d",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 81.948,
+      "preparation_seconds": 1.004549068005872,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 196.57,
+        "threshold_rms": 491.426,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 3.12
+          },
+          {
+            "start_seconds": 6.22,
+            "end_seconds": 34.22
+          },
+          {
+            "start_seconds": 34.22,
+            "end_seconds": 54.18
+          },
+          {
+            "start_seconds": 58.22,
+            "end_seconds": 86.22
+          },
+          {
+            "start_seconds": 86.22,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T193635.203091Z",
+      "original_sha256": "3243a2ed356361492fc95a80b35c80f4b763361ee2036529cdbabe0ba6cc5941",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 82.0,
+      "preparation_seconds": 1.0025405530032003,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 171.278,
+        "threshold_rms": 428.195,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 19.12
+          },
+          {
+            "start_seconds": 23.6,
+            "end_seconds": 51.6
+          },
+          {
+            "start_seconds": 51.6,
+            "end_seconds": 71.08
+          },
+          {
+            "start_seconds": 73.64,
+            "end_seconds": 89.04
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T200803.064266Z",
+      "original_sha256": "355a01c2fd0a1e974e622318650a426585e32e6abb27a176eb184a74163fcf0c",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 82.488,
+      "preparation_seconds": 1.0078158309916034,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 182.316,
+        "threshold_rms": 455.791,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 10.86
+          },
+          {
+            "start_seconds": 14.7,
+            "end_seconds": 42.7
+          },
+          {
+            "start_seconds": 42.7,
+            "end_seconds": 68.9
+          },
+          {
+            "start_seconds": 71.66,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T203931.024487Z",
+      "original_sha256": "3d719271b0328be5d3db979f03c5d7db6946e0482042e1fcf2442e6b055a0e00",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 82.24799999999999,
+      "preparation_seconds": 1.002141383010894,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 176.877,
+        "threshold_rms": 442.192,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 11.34
+          },
+          {
+            "start_seconds": 14.82,
+            "end_seconds": 42.82
+          },
+          {
+            "start_seconds": 42.82,
+            "end_seconds": 62.42
+          },
+          {
+            "start_seconds": 65.78,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T211100.086024Z",
+      "original_sha256": "cd11d8cda50499d7dce0fd56d5f3645e54689c1df83ed56d84af01d4cbad1d2a",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 81.68,
+      "preparation_seconds": 0.9987160260061501,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 180.207,
+        "threshold_rms": 450.518,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 24.76
+          },
+          {
+            "start_seconds": 28.74,
+            "end_seconds": 56.74
+          },
+          {
+            "start_seconds": 56.74,
+            "end_seconds": 76.78
+          },
+          {
+            "start_seconds": 79.76,
+            "end_seconds": 88.64
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T214228.467742Z",
+      "original_sha256": "5e5d0ca7f283752741bcce632c4de9adee41f3f8f89b7b7c179f5865d9c61fbe",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.888,
+      "preparation_seconds": 1.0187394630047493,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 175.517,
+        "threshold_rms": 438.793,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 41.2
+          },
+          {
+            "start_seconds": 44.4,
+            "end_seconds": 72.4
+          },
+          {
+            "start_seconds": 72.4,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T221356.684738Z",
+      "original_sha256": "e89d63ddc03d7ec20a8f0886e4ab1a5bb5165a73fc73d65af9c9e3fc28c19d72",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 4,
+      "candidate_seconds": 84.764,
+      "preparation_seconds": 1.0158314050058834,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 207.975,
+        "threshold_rms": 519.937,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 21.98
+          },
+          {
+            "start_seconds": 22.92,
+            "end_seconds": 46.32
+          },
+          {
+            "start_seconds": 49.02,
+            "end_seconds": 71.86
+          },
+          {
+            "start_seconds": 72.8,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T224525.203620Z",
+      "original_sha256": "a113741510f1729a6d9cc00cb6cefa0f2168f358c4e038a7c5b1ddbeff1daf86",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 7,
+      "candidate_seconds": 81.54399999999998,
+      "preparation_seconds": 1.0082128699868917,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 173.825,
+        "threshold_rms": 434.563,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 3.32
+          },
+          {
+            "start_seconds": 4.34,
+            "end_seconds": 30.84
+          },
+          {
+            "start_seconds": 33.82,
+            "end_seconds": 53.62
+          },
+          {
+            "start_seconds": 54.48,
+            "end_seconds": 56.3
+          },
+          {
+            "start_seconds": 57.38,
+            "end_seconds": 75.7
+          },
+          {
+            "start_seconds": 76.54,
+            "end_seconds": 80.4
+          },
+          {
+            "start_seconds": 81.42,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T231653.924272Z",
+      "original_sha256": "997b99a8bf8865ac96269a3a1213193ac968601e45a36bc55f53a7418994994a",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 79.56799999999998,
+      "preparation_seconds": 0.9867093100037891,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 189.54,
+        "threshold_rms": 473.849,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 11.6
+          },
+          {
+            "start_seconds": 14.86,
+            "end_seconds": 36.68
+          },
+          {
+            "start_seconds": 37.68,
+            "end_seconds": 42.74
+          },
+          {
+            "start_seconds": 43.7,
+            "end_seconds": 52.86
+          },
+          {
+            "start_seconds": 53.82,
+            "end_seconds": 73.58
+          },
+          {
+            "start_seconds": 76.92,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261003T234822.915636Z",
+      "original_sha256": "ffd7891f9325183441acfb08cd0f87aa40ffdda97be6fe3d22b947bd3d51b802",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 82.708,
+      "preparation_seconds": 1.0037961460038787,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 181.783,
+        "threshold_rms": 454.459,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 13.94
+          },
+          {
+            "start_seconds": 14.94,
+            "end_seconds": 33.04
+          },
+          {
+            "start_seconds": 33.88,
+            "end_seconds": 46.54
+          },
+          {
+            "start_seconds": 50.06,
+            "end_seconds": 71.98
+          },
+          {
+            "start_seconds": 73.0,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T001950.885894Z",
+      "original_sha256": "9b81b06cb40d3fd9734288fc6c9c7c7b75d76a07db8b4d91a46e1d9f18a1233f",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 87.288,
+      "preparation_seconds": 1.0296682539919857,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 175.014,
+        "threshold_rms": 437.536,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 18.26
+          },
+          {
+            "start_seconds": 20.06,
+            "end_seconds": 48.06
+          },
+          {
+            "start_seconds": 48.06,
+            "end_seconds": 76.06
+          },
+          {
+            "start_seconds": 76.06,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T005119.807655Z",
+      "original_sha256": "7961e8de056635bb7b2050903216027fa4ff909684036312a1d5bf885bf1dd0f",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.108,
+      "preparation_seconds": 1.0248664200044004,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 171.694,
+        "threshold_rms": 429.234,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 61.9
+          },
+          {
+            "start_seconds": 64.88,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T012248.232295Z",
+      "original_sha256": "7143aee1096124b85c0490a76b4dd27015e9e94d7217e8a596ec0fc69852579e",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.66799999999999,
+      "preparation_seconds": 1.0211920510046184,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 165.958,
+        "threshold_rms": 414.894,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 41.94
+          },
+          {
+            "start_seconds": 44.36,
+            "end_seconds": 72.36
+          },
+          {
+            "start_seconds": 72.36,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T015417.240059Z",
+      "original_sha256": "8452a07dddab7108a43f05f446d82d3d69823aa6f87ad7b531f0a4681729ba73",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 5,
+      "candidate_seconds": 84.39999999999999,
+      "preparation_seconds": 1.0204928230086807,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 177.52,
+        "threshold_rms": 443.801,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 1.98
+          },
+          {
+            "start_seconds": 4.42,
+            "end_seconds": 32.42
+          },
+          {
+            "start_seconds": 32.42,
+            "end_seconds": 52.0
+          },
+          {
+            "start_seconds": 54.46,
+            "end_seconds": 82.46
+          },
+          {
+            "start_seconds": 82.46,
+            "end_seconds": 89.3
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T022545.704205Z",
+      "original_sha256": "6e6dfc4af7282bb89f4ccf6488580a0efc19f964a840ac68c1eb40fbdda8ae5a",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 5,
+      "candidate_seconds": 86.36399999999999,
+      "preparation_seconds": 1.0253497609955957,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 170.586,
+        "threshold_rms": 426.465,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 56.98
+          },
+          {
+            "start_seconds": 59.96,
+            "end_seconds": 87.96
+          },
+          {
+            "start_seconds": 87.96,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T025714.447914Z",
+      "original_sha256": "2ec25e41126156a7a41885940a1d1905dcf42b669d6173783722e0026c64896a",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 8,
+      "candidate_seconds": 80.08800000000001,
+      "preparation_seconds": 0.9995831260021077,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 172.15,
+        "threshold_rms": 430.375,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 2.14
+          },
+          {
+            "start_seconds": 3.12,
+            "end_seconds": 9.24
+          },
+          {
+            "start_seconds": 10.16,
+            "end_seconds": 20.24
+          },
+          {
+            "start_seconds": 21.2,
+            "end_seconds": 43.86
+          },
+          {
+            "start_seconds": 47.14,
+            "end_seconds": 69.08
+          },
+          {
+            "start_seconds": 70.06,
+            "end_seconds": 76.18
+          },
+          {
+            "start_seconds": 77.1,
+            "end_seconds": 87.18
+          },
+          {
+            "start_seconds": 88.14,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T032843.026886Z",
+      "original_sha256": "071968fc88f76170cdcf99a9393617e63722427c7e5177bfde7720243090bf13",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 6,
+      "candidate_seconds": 79.94399999999999,
+      "preparation_seconds": 1.003273538997746,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 196.552,
+        "threshold_rms": 491.381,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 6.62
+          },
+          {
+            "start_seconds": 10.82,
+            "end_seconds": 38.82
+          },
+          {
+            "start_seconds": 38.82,
+            "end_seconds": 40.22
+          },
+          {
+            "start_seconds": 41.22,
+            "end_seconds": 69.22
+          },
+          {
+            "start_seconds": 69.22,
+            "end_seconds": 72.64
+          },
+          {
+            "start_seconds": 76.84,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T040604.220594Z",
+      "original_sha256": "d563f13c44b4ed40c0c01e825dd50c141ea0a4a91dbdecebe3aa2a6d9a957d81",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 80.588,
+      "preparation_seconds": 0.9974202859884826,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 175.274,
+        "threshold_rms": 438.185,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 6.94
+          },
+          {
+            "start_seconds": 7.98,
+            "end_seconds": 18.3
+          },
+          {
+            "start_seconds": 19.36,
+            "end_seconds": 30.94
+          },
+          {
+            "start_seconds": 34.36,
+            "end_seconds": 54.02
+          },
+          {
+            "start_seconds": 54.9,
+            "end_seconds": 56.72
+          },
+          {
+            "start_seconds": 57.78,
+            "end_seconds": 84.0
+          },
+          {
+            "start_seconds": 85.04,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T043732.683848Z",
+      "original_sha256": "9d17385152130384d967cc60469792fa3188c23d2c8ae062eb4a4102d1ea7578",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 82.088,
+      "preparation_seconds": 1.0194199989928165,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 171.39,
+        "threshold_rms": 428.475,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 7.86
+          },
+          {
+            "start_seconds": 8.84,
+            "end_seconds": 31.56
+          },
+          {
+            "start_seconds": 32.5,
+            "end_seconds": 49.84
+          },
+          {
+            "start_seconds": 50.8,
+            "end_seconds": 62.04
+          },
+          {
+            "start_seconds": 65.18,
+            "end_seconds": 86.88
+          },
+          {
+            "start_seconds": 87.86,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T050901.130698Z",
+      "original_sha256": "0483afaa277efc21d1e9d31b21ee68a776a39c6e162e25d1de5395ccc6b409a8",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 79.98799999999997,
+      "preparation_seconds": 0.9964462629868649,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 166.926,
+        "threshold_rms": 417.316,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 4.06
+          },
+          {
+            "start_seconds": 5.0,
+            "end_seconds": 21.24
+          },
+          {
+            "start_seconds": 25.64,
+            "end_seconds": 38.48
+          },
+          {
+            "start_seconds": 39.34,
+            "end_seconds": 41.38
+          },
+          {
+            "start_seconds": 42.36,
+            "end_seconds": 62.22
+          },
+          {
+            "start_seconds": 63.2,
+            "end_seconds": 78.1
+          },
+          {
+            "start_seconds": 79.04,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T054029.695920Z",
+      "original_sha256": "f47e389e5c45cafb2875cdc056a4a7c5abb4dfa8cb9ce722e05d4877150a6f1c",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 7,
+      "candidate_seconds": 81.00399999999999,
+      "preparation_seconds": 1.0054109640041133,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 177.398,
+        "threshold_rms": 443.494,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 3.56
+          },
+          {
+            "start_seconds": 4.52,
+            "end_seconds": 20.78
+          },
+          {
+            "start_seconds": 24.32,
+            "end_seconds": 37.12
+          },
+          {
+            "start_seconds": 38.02,
+            "end_seconds": 40.06
+          },
+          {
+            "start_seconds": 41.04,
+            "end_seconds": 60.88
+          },
+          {
+            "start_seconds": 61.88,
+            "end_seconds": 76.6
+          },
+          {
+            "start_seconds": 77.56,
+            "end_seconds": 89.344
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T061158.452923Z",
+      "original_sha256": "784ba475239efc53d7e021653d01645c8e2a6eb5ffd31dad00cc43bff284ad0c",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 4,
+      "candidate_seconds": 86.24000000000001,
+      "preparation_seconds": 1.0280742790055228,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 174.603,
+        "threshold_rms": 436.507,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 36.52
+          },
+          {
+            "start_seconds": 39.5,
+            "end_seconds": 67.5
+          },
+          {
+            "start_seconds": 67.5,
+            "end_seconds": 89.22
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T064326.532738Z",
+      "original_sha256": "9dfed178d84948aa44e904e6d15f22bd38e0be9d0d2da52d91f12a0949572852",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.52000000000001,
+      "preparation_seconds": 1.020854082002188,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 157.813,
+        "threshold_rms": 394.533,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 15.42
+          },
+          {
+            "start_seconds": 19.38,
+            "end_seconds": 47.38
+          },
+          {
+            "start_seconds": 47.38,
+            "end_seconds": 75.38
+          },
+          {
+            "start_seconds": 75.38,
+            "end_seconds": 87.48
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T071454.329874Z",
+      "original_sha256": "378c0d7764c1256ec3a354e09ed9c625f168bb2ac4881deb387421ae742b18ea",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.0,
+      "preparation_seconds": 1.0160771970113274,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 181.515,
+        "threshold_rms": 453.788,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 51.44
+          },
+          {
+            "start_seconds": 54.52,
+            "end_seconds": 82.52
+          },
+          {
+            "start_seconds": 82.52,
+            "end_seconds": 89.08
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T074622.904827Z",
+      "original_sha256": "a65eab53975a5d2a944ea8386f5b7631294710e4de21fbb5feecea0fca8b3582",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 12,
+      "candidate_seconds": 40.56000000000001,
+      "preparation_seconds": 0.8124733580043539,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 257.282,
+        "threshold_rms": 643.204,
+        "regions": [
+          {
+            "start_seconds": 3.16,
+            "end_seconds": 4.64
+          },
+          {
+            "start_seconds": 8.22,
+            "end_seconds": 13.14
+          },
+          {
+            "start_seconds": 22.16,
+            "end_seconds": 24.96
+          },
+          {
+            "start_seconds": 25.86,
+            "end_seconds": 34.0
+          },
+          {
+            "start_seconds": 39.0,
+            "end_seconds": 44.18
+          },
+          {
+            "start_seconds": 50.36,
+            "end_seconds": 51.44
+          },
+          {
+            "start_seconds": 52.88,
+            "end_seconds": 54.24
+          },
+          {
+            "start_seconds": 55.72,
+            "end_seconds": 57.6
+          },
+          {
+            "start_seconds": 59.94,
+            "end_seconds": 63.02
+          },
+          {
+            "start_seconds": 65.1,
+            "end_seconds": 69.32
+          },
+          {
+            "start_seconds": 70.18,
+            "end_seconds": 71.68
+          },
+          {
+            "start_seconds": 75.26,
+            "end_seconds": 80.18
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T081751.926707Z",
+      "original_sha256": "5d0707099445671d63b59c0c6b09c5c13001bf8f21006ab9ca81385e5d065c3e",
+      "original_unchanged": true,
+      "audio_seconds": 89.344,
+      "clips": 7,
+      "candidate_seconds": 34.82000000000001,
+      "preparation_seconds": 0.779433814008371,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 258.813,
+        "threshold_rms": 647.033,
+        "regions": [
+          {
+            "start_seconds": 2.78,
+            "end_seconds": 7.26
+          },
+          {
+            "start_seconds": 26.88,
+            "end_seconds": 29.22
+          },
+          {
+            "start_seconds": 35.3,
+            "end_seconds": 41.34
+          },
+          {
+            "start_seconds": 42.78,
+            "end_seconds": 53.42
+          },
+          {
+            "start_seconds": 62.46,
+            "end_seconds": 64.1
+          },
+          {
+            "start_seconds": 73.82,
+            "end_seconds": 78.28
+          },
+          {
+            "start_seconds": 83.26,
+            "end_seconds": 88.48
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T084920.784399Z",
+      "original_sha256": "bcf44027df2aceabaa2a117f7a0b832fe9fd91377f994833ccf2b16928206fbd",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 11,
+      "candidate_seconds": 76.08799999999998,
+      "preparation_seconds": 0.9801327209861483,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 266.361,
+        "threshold_rms": 665.903,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 6.08
+          },
+          {
+            "start_seconds": 7.52,
+            "end_seconds": 12.04
+          },
+          {
+            "start_seconds": 13.08,
+            "end_seconds": 21.36
+          },
+          {
+            "start_seconds": 22.22,
+            "end_seconds": 28.98
+          },
+          {
+            "start_seconds": 30.02,
+            "end_seconds": 46.98
+          },
+          {
+            "start_seconds": 50.18,
+            "end_seconds": 56.14
+          },
+          {
+            "start_seconds": 57.78,
+            "end_seconds": 59.04
+          },
+          {
+            "start_seconds": 59.86,
+            "end_seconds": 62.62
+          },
+          {
+            "start_seconds": 63.68,
+            "end_seconds": 66.58
+          },
+          {
+            "start_seconds": 67.4,
+            "end_seconds": 80.04
+          },
+          {
+            "start_seconds": 81.12,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T092045.715876Z",
+      "original_sha256": "f4252ab5b74db94db2754b45a5c84de3b3a3f4f06922ab807031a6fe84cc3e30",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.32799999999999,
+      "preparation_seconds": 1.0173410179995699,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 250.822,
+        "threshold_rms": 627.054,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 25.96
+          },
+          {
+            "start_seconds": 29.28,
+            "end_seconds": 35.42
+          },
+          {
+            "start_seconds": 37.02,
+            "end_seconds": 45.72
+          },
+          {
+            "start_seconds": 46.56,
+            "end_seconds": 74.56
+          },
+          {
+            "start_seconds": 74.56,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T095214.186119Z",
+      "original_sha256": "7d0e5269c4b8f0c983f8a131f924d38dab7666cecc8bb291c0c16ecdda4104fd",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 8,
+      "candidate_seconds": 64.65999999999998,
+      "preparation_seconds": 0.9191727120050928,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 279.737,
+        "threshold_rms": 699.342,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 9.42
+          },
+          {
+            "start_seconds": 10.44,
+            "end_seconds": 15.74
+          },
+          {
+            "start_seconds": 16.66,
+            "end_seconds": 30.52
+          },
+          {
+            "start_seconds": 44.08,
+            "end_seconds": 46.58
+          },
+          {
+            "start_seconds": 47.4,
+            "end_seconds": 48.98
+          },
+          {
+            "start_seconds": 50.28,
+            "end_seconds": 56.72
+          },
+          {
+            "start_seconds": 62.56,
+            "end_seconds": 72.72
+          },
+          {
+            "start_seconds": 73.68,
+            "end_seconds": 89.08
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T102342.812050Z",
+      "original_sha256": "ebf2ba02428b68940bcf4c32f12bea6179d0e5f7f262a75004e32cb3916844a4",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 10,
+      "candidate_seconds": 68.6,
+      "preparation_seconds": 0.9485384060099022,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 258.107,
+        "threshold_rms": 645.268,
+        "regions": [
+          {
+            "start_seconds": 2.12,
+            "end_seconds": 6.9
+          },
+          {
+            "start_seconds": 7.76,
+            "end_seconds": 12.66
+          },
+          {
+            "start_seconds": 13.82,
+            "end_seconds": 22.24
+          },
+          {
+            "start_seconds": 23.24,
+            "end_seconds": 26.06
+          },
+          {
+            "start_seconds": 30.2,
+            "end_seconds": 48.98
+          },
+          {
+            "start_seconds": 51.74,
+            "end_seconds": 57.82
+          },
+          {
+            "start_seconds": 59.18,
+            "end_seconds": 63.94
+          },
+          {
+            "start_seconds": 64.8,
+            "end_seconds": 69.7
+          },
+          {
+            "start_seconds": 70.86,
+            "end_seconds": 79.28
+          },
+          {
+            "start_seconds": 80.28,
+            "end_seconds": 85.02
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T105510.896239Z",
+      "original_sha256": "f7b2d592d396860baa1d2eb54766eb479e2e29081f59ccdb1268d423a7f1dc24",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 9,
+      "candidate_seconds": 78.78,
+      "preparation_seconds": 0.9964312159863766,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 233.634,
+        "threshold_rms": 584.086,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 13.36
+          },
+          {
+            "start_seconds": 14.36,
+            "end_seconds": 17.2
+          },
+          {
+            "start_seconds": 18.18,
+            "end_seconds": 32.54
+          },
+          {
+            "start_seconds": 33.9,
+            "end_seconds": 40.2
+          },
+          {
+            "start_seconds": 42.78,
+            "end_seconds": 48.88
+          },
+          {
+            "start_seconds": 50.2,
+            "end_seconds": 55.02
+          },
+          {
+            "start_seconds": 55.88,
+            "end_seconds": 70.36
+          },
+          {
+            "start_seconds": 71.36,
+            "end_seconds": 74.2
+          },
+          {
+            "start_seconds": 75.18,
+            "end_seconds": 88.86
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T112638.832716Z",
+      "original_sha256": "9d7a4502e6e03d83ba77f0edab5df55c4f2476adb05719fc7020910fe853ce54",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 8,
+      "candidate_seconds": 79.768,
+      "preparation_seconds": 1.006831507998868,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 226.671,
+        "threshold_rms": 566.679,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 9.56
+          },
+          {
+            "start_seconds": 10.54,
+            "end_seconds": 38.54
+          },
+          {
+            "start_seconds": 38.54,
+            "end_seconds": 55.24
+          },
+          {
+            "start_seconds": 58.84,
+            "end_seconds": 64.68
+          },
+          {
+            "start_seconds": 66.04,
+            "end_seconds": 68.22
+          },
+          {
+            "start_seconds": 69.6,
+            "end_seconds": 70.78
+          },
+          {
+            "start_seconds": 71.8,
+            "end_seconds": 73.52
+          },
+          {
+            "start_seconds": 74.5,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T122903.316496Z",
+      "original_sha256": "3b7c07ff667ab1931838eda98b395cec5e1078ece06ecb0dfabf3009ab89209d",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.46799999999999,
+      "preparation_seconds": 1.0358106859930558,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 160.684,
+        "threshold_rms": 401.711,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 38.86
+          },
+          {
+            "start_seconds": 41.48,
+            "end_seconds": 69.48
+          },
+          {
+            "start_seconds": 69.48,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T195344.846093Z",
+      "original_sha256": "ffe34578c872776f14b2bbdf39576f376ca2d3587b81ff5b5ca3067c612c218a",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.548,
+      "preparation_seconds": 1.012645959010115,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 160.55,
+        "threshold_rms": 401.376,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 30.28
+          },
+          {
+            "start_seconds": 33.54,
+            "end_seconds": 61.54
+          },
+          {
+            "start_seconds": 61.54,
+            "end_seconds": 80.3
+          },
+          {
+            "start_seconds": 82.58,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T202513.431863Z",
+      "original_sha256": "f40d2b57df52863014d1b77da61dab8c1efc81e1e789151bb2d3a17b917c39a3",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.88799999999999,
+      "preparation_seconds": 1.0252992479945533,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 163.719,
+        "threshold_rms": 409.299,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 44.86
+          },
+          {
+            "start_seconds": 48.06,
+            "end_seconds": 76.06
+          },
+          {
+            "start_seconds": 76.06,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T205642.000343Z",
+      "original_sha256": "7f0d5f6f6df61712cc3a9b158128bcd5b5bdefeb01b59ebf9c43a15d355d4eeb",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.62799999999999,
+      "preparation_seconds": 1.0198237610020442,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 150.509,
+        "threshold_rms": 376.271,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 7.78
+          },
+          {
+            "start_seconds": 10.54,
+            "end_seconds": 38.54
+          },
+          {
+            "start_seconds": 38.54,
+            "end_seconds": 57.82
+          },
+          {
+            "start_seconds": 60.52,
+            "end_seconds": 88.52
+          },
+          {
+            "start_seconds": 88.52,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T212810.168436Z",
+      "original_sha256": "a1cf113d26a67c7dacdb7a129ff5d0bcace239891c5a326ddbeee0e04ef76dc0",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.00799999999998,
+      "preparation_seconds": 1.009138361987425,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 144.608,
+        "threshold_rms": 361.521,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 17.28
+          },
+          {
+            "start_seconds": 20.32,
+            "end_seconds": 48.32
+          },
+          {
+            "start_seconds": 48.32,
+            "end_seconds": 67.3
+          },
+          {
+            "start_seconds": 70.34,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T215944.025341Z",
+      "original_sha256": "7a13b275eee55a20bd236e74e7900b7a46958897d3822d03706d101f9c23c6d4",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 84.02799999999998,
+      "preparation_seconds": 1.0432973999995738,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 146.204,
+        "threshold_rms": 365.51,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 27.9
+          },
+          {
+            "start_seconds": 30.44,
+            "end_seconds": 58.44
+          },
+          {
+            "start_seconds": 58.44,
+            "end_seconds": 77.96
+          },
+          {
+            "start_seconds": 80.48,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T223112.784297Z",
+      "original_sha256": "770e7cc854bb5f3a7102b991a49d7e0ff95ad400ac4a3a638fc2890d9f91bb43",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.74799999999999,
+      "preparation_seconds": 1.016453301999718,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 146.54,
+        "threshold_rms": 366.349,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 16.08
+          },
+          {
+            "start_seconds": 18.76,
+            "end_seconds": 46.76
+          },
+          {
+            "start_seconds": 46.76,
+            "end_seconds": 66.12
+          },
+          {
+            "start_seconds": 68.78,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T230240.873036Z",
+      "original_sha256": "5591b9a80deadf0fdaf58a09ad00053547909756d63b1505f25d64ff23bb9f4c",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.068,
+      "preparation_seconds": 1.0175175350013888,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 162.282,
+        "threshold_rms": 405.706,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 47.92
+          },
+          {
+            "start_seconds": 50.94,
+            "end_seconds": 78.94
+          },
+          {
+            "start_seconds": 78.94,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261004T233408.604335Z",
+      "original_sha256": "45056a145cb089c36042191883e36c136f773bab5dcdc4d3e0957a77f88ed37b",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.568,
+      "preparation_seconds": 1.0149844819970895,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 144.142,
+        "threshold_rms": 360.354,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 11.22
+          },
+          {
+            "start_seconds": 13.94,
+            "end_seconds": 41.94
+          },
+          {
+            "start_seconds": 41.94,
+            "end_seconds": 61.18
+          },
+          {
+            "start_seconds": 63.98,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T000537.046874Z",
+      "original_sha256": "25ab147fc440cfb386a6161263829a3fc4097bef889f6543c0452d3959d1303b",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.568,
+      "preparation_seconds": 1.020081893002498,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 151.842,
+        "threshold_rms": 379.605,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 27.06
+          },
+          {
+            "start_seconds": 30.58,
+            "end_seconds": 58.58
+          },
+          {
+            "start_seconds": 58.58,
+            "end_seconds": 86.58
+          },
+          {
+            "start_seconds": 86.58,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T003706.028812Z",
+      "original_sha256": "736647d070aa16534ed682b5ce49b7806ade496a4d8188c825f470392906271a",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 80.56799999999998,
+      "preparation_seconds": 0.9962812189914985,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 148.277,
+        "threshold_rms": 370.693,
+        "regions": [
+          {
+            "start_seconds": 0.6,
+            "end_seconds": 12.06
+          },
+          {
+            "start_seconds": 13.04,
+            "end_seconds": 19.34
+          },
+          {
+            "start_seconds": 20.26,
+            "end_seconds": 30.58
+          },
+          {
+            "start_seconds": 31.52,
+            "end_seconds": 54.52
+          },
+          {
+            "start_seconds": 57.7,
+            "end_seconds": 79.02
+          },
+          {
+            "start_seconds": 80.0,
+            "end_seconds": 86.32
+          },
+          {
+            "start_seconds": 87.24,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T010834.997306Z",
+      "original_sha256": "e8f12f8354a3d7828d313257a1bbc5a02b9e4140144b63285e2498a34ffea5d6",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.80799999999999,
+      "preparation_seconds": 1.0186675519944401,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 150.226,
+        "threshold_rms": 375.565,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 30.44
+          },
+          {
+            "start_seconds": 33.72,
+            "end_seconds": 61.72
+          },
+          {
+            "start_seconds": 61.72,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T014003.250820Z",
+      "original_sha256": "ca1f14a67ecef0b89da32e64f5166be1d60c52291f91c461de0bf7182f2bfee5",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 8,
+      "candidate_seconds": 79.688,
+      "preparation_seconds": 0.9953232380066765,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 158.714,
+        "threshold_rms": 396.784,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 0.74
+          },
+          {
+            "start_seconds": 1.74,
+            "end_seconds": 8.04
+          },
+          {
+            "start_seconds": 8.96,
+            "end_seconds": 19.26
+          },
+          {
+            "start_seconds": 20.22,
+            "end_seconds": 40.68
+          },
+          {
+            "start_seconds": 44.36,
+            "end_seconds": 65.76
+          },
+          {
+            "start_seconds": 66.74,
+            "end_seconds": 73.06
+          },
+          {
+            "start_seconds": 73.98,
+            "end_seconds": 84.28
+          },
+          {
+            "start_seconds": 85.22,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T021100.721684Z",
+      "original_sha256": "1a5b7aa3c6694683ce4511dec6029a5c3c5797721905ff4729a08849ac59149d",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 81.748,
+      "preparation_seconds": 1.0080325190065196,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 147.866,
+        "threshold_rms": 369.664,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 9.9
+          },
+          {
+            "start_seconds": 13.06,
+            "end_seconds": 41.06
+          },
+          {
+            "start_seconds": 41.06,
+            "end_seconds": 69.06
+          },
+          {
+            "start_seconds": 69.06,
+            "end_seconds": 72.92
+          },
+          {
+            "start_seconds": 77.1,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T024228.611590Z",
+      "original_sha256": "b3a5285a241fee307d35c365aa975eef0059b365475ef52b40b4d85eee98e5e0",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.96799999999999,
+      "preparation_seconds": 1.0249803439946845,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 142.924,
+        "threshold_rms": 357.31,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 41.04
+          },
+          {
+            "start_seconds": 44.16,
+            "end_seconds": 72.16
+          },
+          {
+            "start_seconds": 72.16,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T031357.009085Z",
+      "original_sha256": "708621c5c2d9ee6e63fba2d0b488adf443b4525d071bc5030f6e6d2b9961cd27",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.26,
+      "preparation_seconds": 1.004535443003988,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 153.63,
+        "threshold_rms": 384.075,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 21.06
+          },
+          {
+            "start_seconds": 23.86,
+            "end_seconds": 51.86
+          },
+          {
+            "start_seconds": 51.86,
+            "end_seconds": 79.86
+          },
+          {
+            "start_seconds": 79.86,
+            "end_seconds": 86.06
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T034525.123187Z",
+      "original_sha256": "3194d8f677a7eb9156374d523a1c2697076ef7c7504b2e7b3b6abd00aab21f1d",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.66799999999999,
+      "preparation_seconds": 1.0228831290005473,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 152.848,
+        "threshold_rms": 382.121,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 37.26
+          },
+          {
+            "start_seconds": 40.68,
+            "end_seconds": 68.68
+          },
+          {
+            "start_seconds": 68.68,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T041653.673897Z",
+      "original_sha256": "001b79e8cb56eea51b69b6443b9f7cbc27d7f3cb7b50a9a960980eeae7102db5",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.06799999999998,
+      "preparation_seconds": 1.0262519759999122,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 147.202,
+        "threshold_rms": 368.005,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 24.24
+          },
+          {
+            "start_seconds": 27.26,
+            "end_seconds": 55.26
+          },
+          {
+            "start_seconds": 55.26,
+            "end_seconds": 83.26
+          },
+          {
+            "start_seconds": 83.26,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T044821.705164Z",
+      "original_sha256": "5da530557a590a19dcebf788dc843a8480d7d5b08e2ab2e34bac2d954e56c24e",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 82.568,
+      "preparation_seconds": 1.008673987002112,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 143.447,
+        "threshold_rms": 358.618,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 4.34
+          },
+          {
+            "start_seconds": 8.12,
+            "end_seconds": 36.12
+          },
+          {
+            "start_seconds": 36.12,
+            "end_seconds": 64.12
+          },
+          {
+            "start_seconds": 64.12,
+            "end_seconds": 70.36
+          },
+          {
+            "start_seconds": 73.1,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T051950.527914Z",
+      "original_sha256": "574f7fcd085a36514a7d8d46e2d524eba33aab141d7d46db5f4f24a1d57945d6",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.98799999999999,
+      "preparation_seconds": 1.0114972009905614,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 145.477,
+        "threshold_rms": 363.692,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 18.84
+          },
+          {
+            "start_seconds": 20.84,
+            "end_seconds": 48.84
+          },
+          {
+            "start_seconds": 48.84,
+            "end_seconds": 67.8
+          },
+          {
+            "start_seconds": 70.9,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T055118.202059Z",
+      "original_sha256": "e92f8d3e1a2630b43e42a5428616bf57c893066854a297c37e2837a56788ef84",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.18799999999999,
+      "preparation_seconds": 1.0232121980079683,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 153.266,
+        "threshold_rms": 383.164,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 60.48
+          },
+          {
+            "start_seconds": 63.38,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T062246.136485Z",
+      "original_sha256": "ea30a794a00b41afda7d30fdb46eab76f89c92b6b7e7728d04b2c1bc5a4a5d82",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 81.70799999999998,
+      "preparation_seconds": 1.0022502600040752,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 152.841,
+        "threshold_rms": 382.102,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 6.1
+          },
+          {
+            "start_seconds": 7.02,
+            "end_seconds": 17.34
+          },
+          {
+            "start_seconds": 18.28,
+            "end_seconds": 40.7
+          },
+          {
+            "start_seconds": 43.38,
+            "end_seconds": 65.0
+          },
+          {
+            "start_seconds": 65.98,
+            "end_seconds": 72.1
+          },
+          {
+            "start_seconds": 73.02,
+            "end_seconds": 83.34
+          },
+          {
+            "start_seconds": 84.28,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T065414.753274Z",
+      "original_sha256": "e6f82648b91f30ccc104100071b7f968212433e005ca14b6fe7feddb0817f1f2",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 12,
+      "candidate_seconds": 74.148,
+      "preparation_seconds": 0.9710901150101563,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 223.772,
+        "threshold_rms": 559.43,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 0.98
+          },
+          {
+            "start_seconds": 2.04,
+            "end_seconds": 6.4
+          },
+          {
+            "start_seconds": 7.22,
+            "end_seconds": 18.2
+          },
+          {
+            "start_seconds": 20.9,
+            "end_seconds": 26.3
+          },
+          {
+            "start_seconds": 27.8,
+            "end_seconds": 40.04
+          },
+          {
+            "start_seconds": 40.86,
+            "end_seconds": 42.64
+          },
+          {
+            "start_seconds": 43.66,
+            "end_seconds": 49.66
+          },
+          {
+            "start_seconds": 51.02,
+            "end_seconds": 60.9
+          },
+          {
+            "start_seconds": 61.94,
+            "end_seconds": 67.0
+          },
+          {
+            "start_seconds": 68.08,
+            "end_seconds": 72.42
+          },
+          {
+            "start_seconds": 73.26,
+            "end_seconds": 84.24
+          },
+          {
+            "start_seconds": 86.94,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T072542.727876Z",
+      "original_sha256": "60af03216489639b64e13de0f0465f35d2d5f0e1eccb27da05eb382db9a7b662",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 12,
+      "candidate_seconds": 75.34800000000003,
+      "preparation_seconds": 0.9775517100060824,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 233.406,
+        "threshold_rms": 583.516,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 4.28
+          },
+          {
+            "start_seconds": 5.78,
+            "end_seconds": 17.9
+          },
+          {
+            "start_seconds": 18.72,
+            "end_seconds": 20.5
+          },
+          {
+            "start_seconds": 21.52,
+            "end_seconds": 27.7
+          },
+          {
+            "start_seconds": 29.06,
+            "end_seconds": 38.78
+          },
+          {
+            "start_seconds": 39.86,
+            "end_seconds": 44.92
+          },
+          {
+            "start_seconds": 45.98,
+            "end_seconds": 50.34
+          },
+          {
+            "start_seconds": 51.16,
+            "end_seconds": 62.08
+          },
+          {
+            "start_seconds": 64.86,
+            "end_seconds": 70.28
+          },
+          {
+            "start_seconds": 71.74,
+            "end_seconds": 83.9
+          },
+          {
+            "start_seconds": 84.72,
+            "end_seconds": 86.5
+          },
+          {
+            "start_seconds": 87.52,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T075711.197967Z",
+      "original_sha256": "e8feb2001dfe66bb0e95434eb8346d9fe485d0de5a04a0a7664ffb0eb986e91e",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 81.22,
+      "preparation_seconds": 0.9959750749985687,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 152.145,
+        "threshold_rms": 380.362,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 13.82
+          },
+          {
+            "start_seconds": 18.54,
+            "end_seconds": 40.66
+          },
+          {
+            "start_seconds": 41.64,
+            "end_seconds": 64.52
+          },
+          {
+            "start_seconds": 65.46,
+            "end_seconds": 87.86
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T082839.747378Z",
+      "original_sha256": "84ce73cb81763e32eda9a3b4814877a3cb2e2d9f82213c58f9cac5fe27997e4f",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 83.208,
+      "preparation_seconds": 1.0072206379991258,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 144.417,
+        "threshold_rms": 361.042,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 25.94
+          },
+          {
+            "start_seconds": 26.88,
+            "end_seconds": 49.96
+          },
+          {
+            "start_seconds": 53.92,
+            "end_seconds": 76.42
+          },
+          {
+            "start_seconds": 77.4,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T090032.845369Z",
+      "original_sha256": "a33609dce7fedec3e12941ead6c8b7c74a06f2787f03b36fa56e0e60b57eb2a2",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 80.6,
+      "preparation_seconds": 0.9921036720043048,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 148.768,
+        "threshold_rms": 371.919,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 20.0
+          },
+          {
+            "start_seconds": 23.68,
+            "end_seconds": 43.32
+          },
+          {
+            "start_seconds": 44.2,
+            "end_seconds": 46.02
+          },
+          {
+            "start_seconds": 47.08,
+            "end_seconds": 53.36
+          },
+          {
+            "start_seconds": 54.32,
+            "end_seconds": 60.42
+          },
+          {
+            "start_seconds": 61.24,
+            "end_seconds": 65.12
+          },
+          {
+            "start_seconds": 66.14,
+            "end_seconds": 89.02
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T093200.932662Z",
+      "original_sha256": "7c3407f33b6f61bd843346f23c7d22569e81652254bad8d493e4d56fc97199b3",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 83.608,
+      "preparation_seconds": 1.0080547120014671,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 147.989,
+        "threshold_rms": 369.973,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 7.34
+          },
+          {
+            "start_seconds": 9.72,
+            "end_seconds": 37.72
+          },
+          {
+            "start_seconds": 37.72,
+            "end_seconds": 65.72
+          },
+          {
+            "start_seconds": 65.72,
+            "end_seconds": 66.62
+          },
+          {
+            "start_seconds": 69.72,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T100328.785749Z",
+      "original_sha256": "61fdda245def3497f65116155abf36bca2b7379f75ae3d72f496536dc480ba02",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 82.1,
+      "preparation_seconds": 1.0019283829897176,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 156.854,
+        "threshold_rms": 392.135,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 4.42
+          },
+          {
+            "start_seconds": 8.02,
+            "end_seconds": 36.02
+          },
+          {
+            "start_seconds": 36.02,
+            "end_seconds": 64.02
+          },
+          {
+            "start_seconds": 64.02,
+            "end_seconds": 71.66
+          },
+          {
+            "start_seconds": 75.04,
+            "end_seconds": 89.08
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T103456.846052Z",
+      "original_sha256": "46902011eee14c5d1e33614601fc2291f10f5e1e711b3dd0ab79d9a32322d4b6",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 82.428,
+      "preparation_seconds": 0.9956387179990998,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 169.135,
+        "threshold_rms": 422.836,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 3.28
+          },
+          {
+            "start_seconds": 6.72,
+            "end_seconds": 34.72
+          },
+          {
+            "start_seconds": 34.72,
+            "end_seconds": 62.52
+          },
+          {
+            "start_seconds": 65.74,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T110625.664833Z",
+      "original_sha256": "1a915621ee3c0c766f1984e673bf8e6058ce451f97ff29ddd334364f10111901",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 7,
+      "candidate_seconds": 79.30799999999999,
+      "preparation_seconds": 0.9836428330017952,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 168.49,
+        "threshold_rms": 421.225,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 4.4
+          },
+          {
+            "start_seconds": 7.26,
+            "end_seconds": 19.24
+          },
+          {
+            "start_seconds": 20.22,
+            "end_seconds": 32.92
+          },
+          {
+            "start_seconds": 34.04,
+            "end_seconds": 38.68
+          },
+          {
+            "start_seconds": 39.7,
+            "end_seconds": 57.84
+          },
+          {
+            "start_seconds": 58.8,
+            "end_seconds": 74.42
+          },
+          {
+            "start_seconds": 77.26,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T113704.024011Z",
+      "original_sha256": "282e1cc45898de08e8ed15b51764b0a110525ccec98b21aa7ba0cf5753fe44eb",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 8,
+      "candidate_seconds": 79.78800000000001,
+      "preparation_seconds": 0.9882464349939255,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 195.973,
+        "threshold_rms": 489.932,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 3.72
+          },
+          {
+            "start_seconds": 4.74,
+            "end_seconds": 28.8
+          },
+          {
+            "start_seconds": 29.76,
+            "end_seconds": 34.84
+          },
+          {
+            "start_seconds": 35.9,
+            "end_seconds": 40.44
+          },
+          {
+            "start_seconds": 41.28,
+            "end_seconds": 52.06
+          },
+          {
+            "start_seconds": 55.66,
+            "end_seconds": 75.12
+          },
+          {
+            "start_seconds": 75.94,
+            "end_seconds": 77.78
+          },
+          {
+            "start_seconds": 78.78,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T120722.864195Z",
+      "original_sha256": "22e801283169aa56870393313e9bccf453d3b9d6094ab4eab688595b9b8c7826",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 9,
+      "candidate_seconds": 78.54799999999999,
+      "preparation_seconds": 0.9781907849974232,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 199.302,
+        "threshold_rms": 498.254,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 2.44
+          },
+          {
+            "start_seconds": 3.32,
+            "end_seconds": 5.14
+          },
+          {
+            "start_seconds": 6.2,
+            "end_seconds": 28.92
+          },
+          {
+            "start_seconds": 29.76,
+            "end_seconds": 33.62
+          },
+          {
+            "start_seconds": 34.66,
+            "end_seconds": 39.76
+          },
+          {
+            "start_seconds": 40.86,
+            "end_seconds": 57.24
+          },
+          {
+            "start_seconds": 60.9,
+            "end_seconds": 80.46
+          },
+          {
+            "start_seconds": 81.34,
+            "end_seconds": 83.16
+          },
+          {
+            "start_seconds": 84.24,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T123851.772230Z",
+      "original_sha256": "924d52d3f7f2567565ef0ebf5c23e4bf4289983d9755ed6a8b30d1aac8d786f3",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 85.2,
+      "preparation_seconds": 1.013692444001208,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 185.592,
+        "threshold_rms": 463.98,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 23.66
+          },
+          {
+            "start_seconds": 24.64,
+            "end_seconds": 52.64
+          },
+          {
+            "start_seconds": 52.64,
+            "end_seconds": 56.58
+          },
+          {
+            "start_seconds": 59.1,
+            "end_seconds": 87.1
+          },
+          {
+            "start_seconds": 87.1,
+            "end_seconds": 88.7
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T131021.131767Z",
+      "original_sha256": "91bfc2a7647cd8d84c288d6598a6a449f930a7795cda807ddca4a88ede320908",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 81.048,
+      "preparation_seconds": 0.9925813370064134,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 191.884,
+        "threshold_rms": 479.71,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 41.6
+          },
+          {
+            "start_seconds": 44.8,
+            "end_seconds": 61.98
+          },
+          {
+            "start_seconds": 63.76,
+            "end_seconds": 78.02
+          },
+          {
+            "start_seconds": 79.8,
+            "end_seconds": 85.64
+          },
+          {
+            "start_seconds": 86.92,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T134150.182686Z",
+      "original_sha256": "5f3707a1680d57a814f3f32b2de7e55ed19b3fb57281be6b0f2b34e5da9a8c9f",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 6,
+      "candidate_seconds": 80.74,
+      "preparation_seconds": 0.9954444999893894,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 194.279,
+        "threshold_rms": 485.698,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 7.94
+          },
+          {
+            "start_seconds": 9.24,
+            "end_seconds": 12.96
+          },
+          {
+            "start_seconds": 15.8,
+            "end_seconds": 20.98
+          },
+          {
+            "start_seconds": 22.04,
+            "end_seconds": 50.04
+          },
+          {
+            "start_seconds": 50.04,
+            "end_seconds": 78.04
+          },
+          {
+            "start_seconds": 78.04,
+            "end_seconds": 85.94
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T141319.179840Z",
+      "original_sha256": "558b6409e78f1de39f529dfec861ba2ef6a824ced586d9a73028e45f74a32a14",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 84.44,
+      "preparation_seconds": 1.0101020860020071,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 192.11,
+        "threshold_rms": 480.274,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 38.52
+          },
+          {
+            "start_seconds": 42.8,
+            "end_seconds": 70.8
+          },
+          {
+            "start_seconds": 70.8,
+            "end_seconds": 88.72
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T144448.432883Z",
+      "original_sha256": "488c7cd35af633579a2f71b8c57402d65ceb0f98a867f0088a2340a3b30b8df0",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.948,
+      "preparation_seconds": 1.0219573970098281,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 181.443,
+        "threshold_rms": 453.607,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 21.18
+          },
+          {
+            "start_seconds": 24.32,
+            "end_seconds": 52.32
+          },
+          {
+            "start_seconds": 52.32,
+            "end_seconds": 80.32
+          },
+          {
+            "start_seconds": 80.32,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T151617.997476Z",
+      "original_sha256": "a84d0cb1ebb446e36f1cac887f697d7c93100de3414ac23a4c0d5e2387281cd6",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 85.80799999999999,
+      "preparation_seconds": 1.0187905859929742,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 182.789,
+        "threshold_rms": 456.973,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 56.0
+          },
+          {
+            "start_seconds": 56.0,
+            "end_seconds": 68.76
+          },
+          {
+            "start_seconds": 72.04,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T154748.064068Z",
+      "original_sha256": "d702ba86297a05821c97f32bb442a5a640461f069319deb9d5f4e5dec229aed7",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.38799999999999,
+      "preparation_seconds": 1.018705427995883,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 193.12,
+        "threshold_rms": 482.801,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 39.04
+          },
+          {
+            "start_seconds": 41.74,
+            "end_seconds": 69.74
+          },
+          {
+            "start_seconds": 69.74,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T161918.137750Z",
+      "original_sha256": "c3b48ee9b3a3effe35a227be159572e5493f18a06d66049233b14dd9eac406de",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 84.568,
+      "preparation_seconds": 1.0159669559943723,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 187.545,
+        "threshold_rms": 468.862,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 41.88
+          },
+          {
+            "start_seconds": 44.62,
+            "end_seconds": 50.82
+          },
+          {
+            "start_seconds": 52.6,
+            "end_seconds": 80.6
+          },
+          {
+            "start_seconds": 80.6,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T165046.497573Z",
+      "original_sha256": "91aa84f5ed9c7e26fa2ef2917b7a431ff6589185d44f14ac044a294902bcce72",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 4,
+      "candidate_seconds": 86.228,
+      "preparation_seconds": 1.018706575006945,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 164.152,
+        "threshold_rms": 410.379,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 28.0
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 31.34
+          },
+          {
+            "start_seconds": 34.2,
+            "end_seconds": 62.2
+          },
+          {
+            "start_seconds": 62.2,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    },
+    {
+      "recording": "20261005T172215.438320Z",
+      "original_sha256": "6a97bdf37f21bd96a796888f1e0565d264442c95b5dc85f8b1e01ecaa295364c",
+      "original_unchanged": true,
+      "audio_seconds": 89.088,
+      "clips": 5,
+      "candidate_seconds": 84.708,
+      "preparation_seconds": 1.018981786997756,
+      "segmentation": {
+        "status": "activity_detected",
+        "method": "energy-candidate-v1",
+        "frame_ms": 20,
+        "pause_ms": 1200,
+        "padding_ms": 200,
+        "noise_floor_rms": 175.455,
+        "threshold_rms": 438.637,
+        "regions": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 5.84
+          },
+          {
+            "start_seconds": 8.02,
+            "end_seconds": 36.02
+          },
+          {
+            "start_seconds": 36.02,
+            "end_seconds": 64.02
+          },
+          {
+            "start_seconds": 64.02,
+            "end_seconds": 71.82
+          },
+          {
+            "start_seconds": 74.02,
+            "end_seconds": 89.088
+          }
+        ],
+        "note": "Energy candidates may include RF noise; absence is not an RF health failure."
+      }
+    }
+  ]
+}

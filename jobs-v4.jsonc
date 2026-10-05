@@ -1,0 +1,62 @@
+{
+  "device": "V4MAIN01",
+  "ppm": 0,
+  "audio_device": "default",
+  "handoff_seconds": 1,
+  "jobs": [
+    {
+      "id": "fm-reference",
+      "name": "FM reference",
+      "frequency_hz": 95600000,
+      "mode": "fm",
+      "dwell_seconds": 35,
+      "enabled": false,
+      "priority": 20,
+      "gain_db": 49.6
+    },
+    {
+      "id": "vaasa-tower",
+      "name": "Vaasa Tower AM",
+      "frequency_hz": 120950000,
+      "mode": "am",
+      "dwell_seconds": 30,
+      "enabled": true,
+      "priority": 30,
+      "gain_db": 19.7,
+      "sample_rate": 8000,
+      "tower_recording": true,
+      "interval_seconds": 180
+    },
+    {
+      "id": "ais",
+      "name": "AIS dual-channel",
+      "frequency_hz": 162000000,
+      "mode": "ais",
+      "dwell_seconds": 120,
+      "enabled": true,
+      "priority": 0
+    },
+    {
+      "id": "weather-satellite",
+      "name": "137 MHz weather satellites (planned)",
+      "frequency_hz": 137100000,
+      "mode": "satellite",
+      "dwell_seconds": 600,
+      "enabled": false,
+      "priority": 0
+    },
+    {
+      "id": "vaasa-atis",
+      "name": "Vaasa ATIS experimental recording",
+      "frequency_hz": 136450000,
+      "mode": "am",
+      "dwell_seconds": 90,
+      "enabled": true,
+      "priority": 20,
+      "gain_db": 49.6,
+      "sample_rate": 8000,
+      "atis_recording": true,
+      "interval_seconds": 600
+    }
+  ]
+}

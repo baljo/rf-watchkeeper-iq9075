@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-05T17:43:36.492207+00:00",
+  "boot_id": "676dfd99-f3d6-4487-8b9e-f65c978a33a8",
+  "protected_hashes": {
+    "jobs-v4.jsonc": "5c83009f4c87a18bcd5805598b80f84fa3f3cbfdc3a54292976f1f2234be55fe",
+    "job_manager.py": "4eaced986e6d0fd8b73911fce2524f9ecedb4f71c4e6891c809bc22400bba02a",
+    "satellite_capture.py": "4dd87d43fc144249ddeb8acb140dd4e34db8a8b364df71cd7901a6fcbd254699",
+    "satellite_planner.py": "88037ad668563565d5cfe972fff73152d055aaabb06a4e0e4d060cb6ae66e7d1",
+    "satellite_schedule.py": "b56852952934cc710ed5d3ec6ff2b4aa066645f72f9922af08888b2c941c41cc",
+    "satellite_v4_preflight.sh": "f2d13de5a07879fdd05f95778aa37ef2210c681b0ab644c6231502133a20182c",
+    "data/meteor-auto/plan.json": "78073581eb6b64554e350fd5aed9074c6de0ac38c48c95e9ec965c9c9944bb87"
+  },
+  "services": {
+    "rf-watchkeeper-scheduler.service": "ActiveState=active\nMainPID=97128\nResult=success",
+    "rf-watchkeeper-atis-process.service": "ActiveState=active\nMainPID=1017\nResult=success",
+    "rf-watchkeeper-dashboard.service": "ActiveState=active\nMainPID=107486\nResult=success"
+  }
+}

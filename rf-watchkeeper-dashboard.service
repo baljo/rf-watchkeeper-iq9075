@@ -1,0 +1,15 @@
+# Serve the LAN RF Watchkeeper dashboard with automatic restart. 2026-09-16 22:34 EEST — Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper local dashboard
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/dashboard.py --host 0.0.0.0 --port 8080
+Restart=on-failure
+RestartSec=5
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

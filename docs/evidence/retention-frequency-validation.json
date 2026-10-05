@@ -1,0 +1,434 @@
+{
+  "before": {
+    "iq_sha256": "a4c39702429e3f1ff7cc016883dabd5dd257dd87a304caae4d9c173ef4dcada6",
+    "metadata_sha256": "78496b293e7349af3e8984d93675181a094e6ed768897bff95bd894bfc1b2c2e",
+    "fingerprint": {
+      "device": 2050,
+      "inode": 2074936,
+      "bytes": 419954688,
+      "modified_ns": 1791201323814513050
+    }
+  },
+  "after": {
+    "iq_sha256": "a4c39702429e3f1ff7cc016883dabd5dd257dd87a304caae4d9c173ef4dcada6",
+    "metadata_sha256": "78496b293e7349af3e8984d93675181a094e6ed768897bff95bd894bfc1b2c2e",
+    "fingerprint": {
+      "device": 2050,
+      "inode": 2074936,
+      "bytes": 419954688,
+      "modified_ns": 1791201323814513050
+    }
+  },
+  "originals_unchanged": true,
+  "evaluation": {
+    "method": "nominal_then_spectrum_ranked_v1",
+    "completed": false,
+    "started_at": "2026-10-05T12:28:53.765661+00:00",
+    "input_fingerprint": {
+      "device": 2050,
+      "inode": 2074936,
+      "bytes": 419954688,
+      "modified_ns": 1791201323814513050
+    },
+    "span_hz": 60000,
+    "negative_result_verified": false,
+    "verification": null,
+    "trials": [
+      {
+        "output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-1",
+        "shift_hz": 0,
+        "returncode": 0,
+        "error": null,
+        "classification": "EMPTY/FAILED"
+      },
+      {
+        "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-2",
+        "shift_hz": 45000,
+        "returncode": 0,
+        "error": null,
+        "classification": "EMPTY/FAILED"
+      },
+      {
+        "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-3",
+        "shift_hz": 60000,
+        "returncode": 0,
+        "error": null,
+        "classification": "EMPTY/FAILED"
+      }
+    ],
+    "survey": {
+      "method": "sampled_broadband_spectrum_v1",
+      "span_hz": 60000,
+      "windows": 24,
+      "fft_samples": 16384,
+      "candidate_carrier_offsets_hz": [
+        -45000,
+        -60000
+      ],
+      "windows_evidence": [
+        {
+          "sample_start": 0,
+          "center_hz": -60000
+        },
+        {
+          "sample_start": 9128737,
+          "center_hz": -55000
+        },
+        {
+          "sample_start": 18257474,
+          "center_hz": -57500
+        },
+        {
+          "sample_start": 27386212,
+          "center_hz": -17500
+        },
+        {
+          "sample_start": 36514949,
+          "center_hz": -27500
+        },
+        {
+          "sample_start": 45643686,
+          "center_hz": -40000
+        },
+        {
+          "sample_start": 54772424,
+          "center_hz": -40000
+        },
+        {
+          "sample_start": 63901161,
+          "center_hz": -27500
+        },
+        {
+          "sample_start": 73029899,
+          "center_hz": -17500
+        },
+        {
+          "sample_start": 82158636,
+          "center_hz": -27500
+        },
+        {
+          "sample_start": 91287373,
+          "center_hz": -37500
+        },
+        {
+          "sample_start": 100416111,
+          "center_hz": -35000
+        },
+        {
+          "sample_start": 109544848,
+          "center_hz": -55000
+        },
+        {
+          "sample_start": 118673586,
+          "center_hz": -52500
+        },
+        {
+          "sample_start": 127802323,
+          "center_hz": -42500
+        },
+        {
+          "sample_start": 136931060,
+          "center_hz": -42500
+        },
+        {
+          "sample_start": 146059798,
+          "center_hz": -37500
+        },
+        {
+          "sample_start": 155188535,
+          "center_hz": -50000
+        },
+        {
+          "sample_start": 164317273,
+          "center_hz": -50000
+        },
+        {
+          "sample_start": 173446010,
+          "center_hz": -42500
+        },
+        {
+          "sample_start": 182574747,
+          "center_hz": -37500
+        },
+        {
+          "sample_start": 191703485,
+          "center_hz": -42500
+        },
+        {
+          "sample_start": 200832222,
+          "center_hz": -45000
+        },
+        {
+          "sample_start": 209960960,
+          "center_hz": -47500
+        }
+      ],
+      "negative_result_verified": false,
+      "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+    },
+    "best_output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-1",
+    "best_shift_hz": 0,
+    "best_carrier_offset_hz": 0,
+    "finished_at": "2026-10-05T12:29:39.504442+00:00",
+    "limitation": "No verified negative conclusion: sparse survey is not an exhaustive offset search; retain original IQ"
+  },
+  "retention": {
+    "schema_version": 1,
+    "retention_class": "unverified",
+    "reason": "Historical or incomplete frequency evaluation; retained",
+    "deadline": null,
+    "pinned": false,
+    "raw_exists": true,
+    "raw_valid": true,
+    "raw_unchanged": true,
+    "raw_bytes": 419954688,
+    "capture_completed": true,
+    "capture_failed": false,
+    "decode_completed_cleanly": false,
+    "decode_failed": true,
+    "useful_image_count": 0,
+    "result_classification": "EMPTY/FAILED",
+    "frequency_evaluation_completed": false,
+    "frequency_evaluation": {
+      "method": "nominal_then_spectrum_ranked_v1",
+      "completed": false,
+      "started_at": "2026-10-05T12:28:53.765661+00:00",
+      "input_fingerprint": {
+        "device": 2050,
+        "inode": 2074936,
+        "bytes": 419954688,
+        "modified_ns": 1791201323814513050
+      },
+      "span_hz": 60000,
+      "negative_result_verified": false,
+      "verification": null,
+      "trials": [
+        {
+          "output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-1",
+          "shift_hz": 0,
+          "returncode": 0,
+          "error": null,
+          "classification": "EMPTY/FAILED"
+        },
+        {
+          "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-2",
+          "shift_hz": 45000,
+          "returncode": 0,
+          "error": null,
+          "classification": "EMPTY/FAILED"
+        },
+        {
+          "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-3",
+          "shift_hz": 60000,
+          "returncode": 0,
+          "error": null,
+          "classification": "EMPTY/FAILED"
+        }
+      ],
+      "survey": {
+        "method": "sampled_broadband_spectrum_v1",
+        "span_hz": 60000,
+        "windows": 24,
+        "fft_samples": 16384,
+        "candidate_carrier_offsets_hz": [
+          -45000,
+          -60000
+        ],
+        "windows_evidence": [
+          {
+            "sample_start": 0,
+            "center_hz": -60000
+          },
+          {
+            "sample_start": 9128737,
+            "center_hz": -55000
+          },
+          {
+            "sample_start": 18257474,
+            "center_hz": -57500
+          },
+          {
+            "sample_start": 27386212,
+            "center_hz": -17500
+          },
+          {
+            "sample_start": 36514949,
+            "center_hz": -27500
+          },
+          {
+            "sample_start": 45643686,
+            "center_hz": -40000
+          },
+          {
+            "sample_start": 54772424,
+            "center_hz": -40000
+          },
+          {
+            "sample_start": 63901161,
+            "center_hz": -27500
+          },
+          {
+            "sample_start": 73029899,
+            "center_hz": -17500
+          },
+          {
+            "sample_start": 82158636,
+            "center_hz": -27500
+          },
+          {
+            "sample_start": 91287373,
+            "center_hz": -37500
+          },
+          {
+            "sample_start": 100416111,
+            "center_hz": -35000
+          },
+          {
+            "sample_start": 109544848,
+            "center_hz": -55000
+          },
+          {
+            "sample_start": 118673586,
+            "center_hz": -52500
+          },
+          {
+            "sample_start": 127802323,
+            "center_hz": -42500
+          },
+          {
+            "sample_start": 136931060,
+            "center_hz": -42500
+          },
+          {
+            "sample_start": 146059798,
+            "center_hz": -37500
+          },
+          {
+            "sample_start": 155188535,
+            "center_hz": -50000
+          },
+          {
+            "sample_start": 164317273,
+            "center_hz": -50000
+          },
+          {
+            "sample_start": 173446010,
+            "center_hz": -42500
+          },
+          {
+            "sample_start": 182574747,
+            "center_hz": -37500
+          },
+          {
+            "sample_start": 191703485,
+            "center_hz": -42500
+          },
+          {
+            "sample_start": 200832222,
+            "center_hz": -45000
+          },
+          {
+            "sample_start": 209960960,
+            "center_hz": -47500
+          }
+        ],
+        "negative_result_verified": false,
+        "limitation": "Sparse spectrum survey ranks candidates; interference/weak signals may be missed. Zero images remain unverified."
+      },
+      "best_output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-1",
+      "best_shift_hz": 0,
+      "best_carrier_offset_hz": 0,
+      "finished_at": "2026-10-05T12:29:39.504442+00:00",
+      "limitation": "No verified negative conclusion: sparse survey is not an exhaustive offset search; retain original IQ"
+    },
+    "raw_deleted": false,
+    "deletion": null,
+    "checked_at": "2026-10-05T12:29:39.504468+00:00",
+    "eligible": false
+  },
+  "attempts": [
+    {
+      "output": "/root/rf-watchkeeper/data/meteor-auto/passes/m24-20261005T114312Z/decode-1",
+      "returncode": 0,
+      "shift_hz": 0,
+      "metrics": {
+        "classification": "EMPTY/FAILED",
+        "channel_lines": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "line_count_source": "decoder_log",
+        "images": [],
+        "peak_snr": 0.0,
+        "decoder_activity": [
+          "viterbi_ber_thresold : 0.3",
+          "viterbi_outsync_after : 20",
+          "Viterbi : NOSYNC BER : 0.421143, Deframer : NOSYNC"
+        ],
+        "error": null,
+        "returncode": 0,
+        "satdump_crash": null
+      }
+    },
+    {
+      "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-2",
+      "returncode": 0,
+      "shift_hz": 45000,
+      "metrics": {
+        "classification": "EMPTY/FAILED",
+        "channel_lines": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "line_count_source": "decoder_log",
+        "images": [],
+        "evaluation_clean": false,
+        "peak_snr": 0.0,
+        "decoder_activity": [
+          "viterbi_ber_thresold : 0.3",
+          "viterbi_outsync_after : 20",
+          "Viterbi : NOSYNC BER : 0.417480, Deframer : NOSYNC"
+        ],
+        "error": null,
+        "returncode": 0,
+        "satdump_crash": null
+      }
+    },
+    {
+      "output": "/root/rf-watchkeeper/retention-stage-20261005/frequency-validation-v2/decode-3",
+      "returncode": 0,
+      "shift_hz": 60000,
+      "metrics": {
+        "classification": "EMPTY/FAILED",
+        "channel_lines": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "line_count_source": "decoder_log",
+        "images": [],
+        "evaluation_clean": false,
+        "peak_snr": 0.0,
+        "decoder_activity": [
+          "viterbi_ber_thresold : 0.3",
+          "viterbi_outsync_after : 20",
+          "Viterbi : NOSYNC BER : 0.422363, Deframer : NOSYNC"
+        ],
+        "error": null,
+        "returncode": 0,
+        "satdump_crash": null
+      }
+    }
+  ]
+}

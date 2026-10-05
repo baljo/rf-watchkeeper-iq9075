@@ -1,0 +1,52 @@
+{
+  "applied": true,
+  "attempts": [
+    {
+      "returncode": 139,
+      "classification": "PARTIAL_SUCCESS",
+      "channel_lines": {
+        "1": 888,
+        "2": 896,
+        "3": 0,
+        "4": 888,
+        "5": 0,
+        "6": 0
+      },
+      "peak_snr": 7.069854,
+      "images": 7
+    },
+    {
+      "returncode": 139,
+      "classification": "PARTIAL_SUCCESS",
+      "channel_lines": {
+        "1": 888,
+        "2": 896,
+        "3": 0,
+        "4": 888,
+        "5": 0,
+        "6": 0
+      },
+      "peak_snr": 7.069854,
+      "images": 7
+    },
+    {
+      "returncode": 139,
+      "classification": "PARTIAL_SUCCESS",
+      "channel_lines": {
+        "1": 888,
+        "2": 896,
+        "3": 0,
+        "4": 888,
+        "5": 0,
+        "6": 0
+      },
+      "peak_snr": 7.069854,
+      "images": 7
+    }
+  ],
+  "identical_product_hashes": true,
+  "state": "decoded_with_satdump_crash",
+  "no_retry_verified": true,
+  "other_passes_unchanged": true,
+  "config_and_plan_unchanged": true
+}

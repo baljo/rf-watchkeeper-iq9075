@@ -1,0 +1,20 @@
+# Run the RF Watchkeeper scheduler as the single receiver owner. 2026-09-16 22:52 EEST — Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper scheduler
+Conflicts=rf-watchkeeper.service
+After=rf-watchkeeper.service
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/job_manager.py
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+KillMode=control-group
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

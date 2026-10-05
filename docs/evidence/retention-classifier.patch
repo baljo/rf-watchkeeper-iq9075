@@ -1,0 +1,936 @@
+--- a/meteor_retention.py
++++ b/meteor_retention.py
+@@ -15,6 +15,8 @@
+ CLASSES = {'processing_failed', 'unverified', 'no_signal', 'poor', 'useful', 'excellent', 'pinned'}
+ 
+ def instant(value):
++    if not isinstance(value, str):
++        raise ValueError('Timestamp is missing or invalid')
+     t = datetime.fromisoformat(value.replace('Z', '+00:00'))
+     if t.tzinfo is None:
+         raise ValueError('Timezone required')
+@@ -66,70 +68,160 @@
+         yield
+ 
+ def classify(r, c, at=None):
++    """Disposition is independent of deletion gates and decoder result labels."""
+     at = at or datetime.now(UTC)
+     v = settings(c)
+     iq = Path(r['iq'])
+     raw = iq.is_file() and not iq.is_symlink()
++    size = iq.stat().st_size if raw else 0
+     m = r.get('capture', {})
+     attempts = r.get('decode_attempts', [])
+     a = next((a for a in attempts if a.get('output') == r.get('selected_decode_output')), attempts[-1] if attempts else {})
+     metrics = a.get('metrics', {})
+-    images = metrics.get('images', [])
++    images = [im for t in attempts for im in t.get('metrics', {}).get('images', [])]
+     useful = [im for im in images if re.fullmatch(r'MSU-MR-[1-6]', im.get('product', ''))
+               and im.get('width', 0) >= 256 and im.get('height', 0) >= v['useful_min_lines']]
++    useful_count = len({im.get('path', im.get('product')) for im in useful})
+     lines = max(metrics.get('channel_lines', {}).values(), default=0)
+-    size = iq.stat().st_size if raw else 0
++    # SIGNAL/UNUSABLE can mean only positive noise SNR with NOSYNC. Actual
++    # synchronization/partial products are ambiguous; the label alone is not.
++    ambiguous_signal = any(re.search(r'(?:Viterbi|Deframer)\s*:\s*(?:SYNC|SYNCED|LOCKED)\b', status, re.I)
++                           for t in attempts for status in t.get('metrics', {}).get('decoder_activity', []))
+     try:
+         expected = (instant(r['pass']['record_stop']) - instant(r['pass']['record_start'])).total_seconds() * m.get('sample_rate_sps', r['pass'].get('sample_rate', 0)) * 2
++        captured_at = instant(m.get('actual_stop') or r['pass']['record_stop'])
+     except (KeyError, TypeError, ValueError):
+-        expected = 0
++        expected, captured_at = 0, None
+     valid = raw and size > 0 and size % 2 == 0 and size == r.get('captured_iq_bytes') and expected > 0 and size >= expected * .95
+-    unchanged = valid and r.get('iq_fingerprint') == fingerprint(iq)
+-    capture_ok = m.get('status') == 'completed' and r.get('capture_returncode', 0) == 0
++    unchanged = raw and r.get('iq_fingerprint') == fingerprint(iq)
++    capture_ok = m.get('status') == 'completed' and r.get('capture_returncode', m.get('rtl_sdr_returncode', 0)) == 0
+     evaluation = r.get('frequency_evaluation', {})
+-    verified = (evaluation.get('completed') is True and
+-                evaluation.get('input_fingerprint') == r.get('iq_fingerprint') and
+-                evaluation.get('best_output') == a.get('output') and not evaluation.get('error') and
+-                evaluation.get('verification') in ('validated_channel_product', 'exhaustive_verified_search'))
+-    clean = (a.get('returncode') == 0 and not a.get('error') and not metrics.get('error')
+-             and metrics.get('evaluation_clean') is True and bool(a.get('finished_at')))
+-    retention_class, reason = 'unverified', 'Historical or incomplete frequency evaluation; retained'
+-    if r.get('pinned') is True:
+-        retention_class, reason = 'pinned', 'Manual Keep protection'
++    recorded_frequency = m.get('frequency_hz', r['pass'].get('frequency'))
++    from meteor_frequency import trial_clean, procedure_complete
++    clean = trial_clean(a)
++    verified = (evaluation.get('completed') is True and evaluation.get('input_fingerprint') == r.get('iq_fingerprint')
++                and evaluation.get('best_output') == a.get('output') and not evaluation.get('error')
++                and evaluation.get('verification') in ('validated_channel_product', 'exhaustive_verified_search'))
++    searched = procedure_complete(r, c)
++    retention_class = 'useful' if useful else 'poor' if lines or metrics.get('images') or ambiguous_signal else 'no_signal'
++    deadline = (captured_at + timedelta(hours=v['poor_hours'] if retention_class == 'poor' else v['no_signal_hours'])).isoformat() if captured_at else None
++    disposition, reason = 'REVIEW', 'Supported current frequency-offset procedure has not completed'
++    explicit = bool(r.get('pinned') is True or r.get('explicit_protection') or r.get('reference') or r.get('regression')
++                    or m.get('reference') is True or m.get('regression') is True or str(m.get('source', '')).startswith('imported'))
++    if explicit or useful or r.get('historical_useful_images'):
++        disposition = 'PROTECTED'
++        retention_class = 'pinned' if explicit else 'excellent' if lines >= v['excellent_min_lines'] else 'useful'
++        reason = r.get('explicit_protection') or ('Explicit reference/regression/Keep protection' if explicit else 'Useful channel products preserved, including historical/crash outputs')
++        deadline = None
+     elif r.get('state') in ACTIVE:
+-        reason = 'Capture/decoder/search/worker currently owns this pass'
+-    elif not capture_ok or (a and (a.get('returncode') != 0 or a.get('error') or metrics.get('error') or metrics.get('evaluation_errors'))) or any(t.get('returncode') != 0 or t.get('error') for t in evaluation.get('trials', [])):
+-        retention_class, reason = 'processing_failed', 'Processing or capture failed; retained indefinitely'
+-    elif unchanged and clean and verified:
+-        if useful and lines >= v['excellent_min_lines']:
+-            retention_class, reason = 'excellent', 'Substantial verified channel products; retained indefinitely'
+-        elif useful and lines >= v['useful_min_lines']:
+-            retention_class, reason = 'useful', 'Clean decode with validated channel products'
+-        elif lines > 0 or images:
+-            retention_class, reason = 'poor', 'Clean evaluated partial reception'
+-        elif evaluation.get('verification') == 'exhaustive_verified_search':
+-            retention_class, reason = 'no_signal', 'Clean normal decode and verified full offset search; no products'
+-    deadline = None
+-    if retention_class in ('no_signal', 'poor', 'useful'):
+-        # The latest completed evaluation starts the grace period, never file mtime.
+-        evaluated = max(instant(a['finished_at']), instant(evaluation['finished_at']))
+-        deadline = (evaluated + timedelta(hours=v[retention_class + '_hours'])).isoformat()
++        disposition, reason = 'PROTECTED', 'Capture/decoder/search/worker currently owns this pass'
++    elif deadline and at < instant(deadline):
++        disposition, reason = 'GRACE', 'Finite capture-completion grace period has not expired'
++    elif not raw:
++        reason = 'Raw IQ missing or symlink; metadata retained'
++    elif iq.parent.name != 'satellite' or iq.suffix != '.cu8' or r.get('owner') not in ('meteor-auto-v1', 'meteor-retention-legacy-v1'):
++        reason = 'Raw location or ownership is outside the supported retention scope'
++    elif not captured_at or not unchanged or (size and not valid):
++        reason = 'Incomplete capture metadata, invalid size, or changed IQ fingerprint'
++    elif r.get('review_reason'):
++        reason = r['review_reason']
++    elif c.get('frequency') is not None and type(recorded_frequency) not in (int, float):
++        reason = 'Recorded center-frequency metadata is missing or invalid'
++    elif c.get('frequency') is not None and abs(recorded_frequency - c['frequency']) > c.get('frequency_evaluation', {}).get('span_hz', 60000):
++        reason = 'Recorded center frequency is outside the supported offset-search span; unusual frequency needs review'
++    elif size == 0 and m.get('status') == 'failed_no_iq':
++        disposition, reason = 'DELETABLE', 'Expired failed capture contains zero IQ samples; history retained'
++        retention_class = 'processing_failed'
++    elif size == 0:
++        reason = 'Zero-byte IQ lacks explicit failed_no_iq capture evidence'
++    elif not capture_ok:
++        retention_class, reason = 'processing_failed', 'Capture error or incomplete capture needs review'
++    elif not attempts:
++        reason = 'No current decoding/frequency-offset evaluation evidence'
++    elif not clean or evaluation.get('error') or any(t.get('returncode') != 0 or t.get('error') for t in evaluation.get('trials', [])):
++        details = '; '.join(str(x) for x in (
++            'selected returncode=' + str(a.get('returncode')) if a.get('returncode') != 0 else None,
++            a.get('error'), metrics.get('error'), evaluation.get('error'),
++            'Missing completion stages or unrecognized decoder error' if not clean and a.get('returncode') == 0 and not a.get('error') else None) if x)
++        retention_class, reason = 'processing_failed', 'Decoder error or interrupted offset search needs review' + (': ' + details if details else '')
++    elif not searched:
++        reason = 'Supported current frequency-offset procedure has not completed'
++    elif lines or metrics.get('images') or ambiguous_signal:
++        reason = 'Partial channel/image or synchronized decoder evidence below useful threshold needs review'
++    else:
++        disposition, reason = 'DELETABLE', 'Capture grace expired; supported current nominal and offset procedure produced no useful images'
+     deleted = r.get('retention', {}).get('deletion')
+     if deleted:
+-        retention_class = deleted['classification']
+-        reason = deleted['reason']
++        retention_class, reason = deleted['classification'], deleted['reason']
++        disposition = 'PROTECTED'
+         deadline = r['retention'].get('deadline')
+-    return dict(schema_version=1, retention_class=retention_class, reason=reason,
+-                deadline=deadline, pinned=r.get('pinned') is True, raw_exists=raw,
++    return dict(schema_version=2, retention_class=retention_class, disposition=disposition, reason=reason,
++                deadline=deadline, grace_anchor='capture_completion', age_days=(at-captured_at).total_seconds()/86400 if captured_at else None,
++                pinned=r.get('pinned') is True, explicitly_protected=explicit, raw_exists=raw,
+                 raw_valid=valid, raw_unchanged=unchanged, raw_bytes=size,
+                 capture_completed=capture_ok, capture_failed=not capture_ok,
+                 decode_completed_cleanly=clean, decode_failed=bool(a) and not clean,
+-                useful_image_count=len(useful), result_classification=metrics.get('classification'),
+-                frequency_evaluation_completed=verified, frequency_evaluation=evaluation,
+-                raw_deleted=bool(deleted), deletion=deleted, checked_at=at.isoformat(),
+-                eligible=bool(not deleted and raw and unchanged and capture_ok and clean and verified
+-                              and deadline and at >= instant(deadline) and r.get('state') not in ACTIVE
+-                              and r.get('owner') == 'meteor-auto-v1' and not r.get('pinned')))
++                useful_image_count=useful_count, result_classification=metrics.get('classification'),
++                frequency_evaluation_completed=verified, supported_procedure_completed=searched,
++                frequency_evaluation=evaluation, raw_deleted=bool(deleted), deletion=deleted, checked_at=at.isoformat(),
++                eligible=bool(not deleted and disposition == 'DELETABLE' and r.get('owner') in ('meteor-auto-v1', 'meteor-retention-legacy-v1')))
++
++def inventory_records(root, c):
++    """Include all raw captures; absence of management is not reference protection."""
++    root = Path(root)
++    records, seen = [], set()
++    manifest = root / 'data/meteor-auto/retention-protected.json'
++    protected = json.loads(manifest.read_text()) if manifest.exists() else {}
++    history, useful_ids = [], set()
++    db = root / 'data/watchkeeper-meteor.db'
++    if db.exists():
++        with contextlib.closing(sqlite3.connect(str(db))) as conn:
++            history = [(pid, json.loads(meta)) for pid, meta in conn.execute('SELECT pass_id, metadata FROM meteor_passes')]
++            useful_ids = {pid for pid, product, width, height in conn.execute('SELECT pass_id, product, width, height FROM meteor_images')
++                          if re.fullmatch(r'MSU-MR-[1-6]', product or '') and (width or 0) >= 256 and (height or 0) >= settings(c)['useful_min_lines']}
++    for path in sorted((root / 'data/meteor-auto/passes').glob('*/pass.json')):
++        r = json.loads(path.read_text())
++        reviewed = root / 'data/meteor-auto/retention-review' / Path(r['iq']).stem / 'pass.json'
++        if reviewed.exists() and r.get('state') not in ACTIVE:
++            evidence = json.loads(reviewed.read_text())
++            evidence['decode_attempts'] = r.get('decode_attempts', []) + [a for a in evidence.get('decode_attempts', []) if a.get('output') not in {t.get('output') for t in r.get('decode_attempts', [])}]
++            evidence['pinned'] = r.get('pinned', False)
++            evidence['original_managed_record'] = str(path)
++            r, path = evidence, reviewed
++        records.append((path, r))
++        seen.add(r['iq'])
++    for iq in sorted((root / 'recordings/satellite').glob('*.cu8')):
++        if str(iq) in seen:
++            continue
++        path = root / 'data/meteor-auto/retention-review' / iq.stem / 'pass.json'
++        if path.exists():
++            r = json.loads(path.read_text())
++        else:
++            sidecar = iq.with_suffix('.json')
++            m = json.loads(sidecar.read_text()) if sidecar.exists() else {}
++            r = dict(owner='meteor-retention-legacy-v1', state='historical', iq=str(iq), capture=m,
++                     capture_metadata=str(sidecar), captured_iq_bytes=m.get('iq_bytes'), iq_fingerprint=fingerprint(iq),
++                     decode_attempts=[], pass_=dict(id='legacy-' + iq.stem, satellite=m.get('satellite'),
++                     record_start=m.get('record_start'), record_stop=m.get('record_stop'), sample_rate=m.get('sample_rate_sps'), frequency=m.get('frequency_hz')))
++            r['pass'] = r.pop('pass_')
++        records.append((path, r))
++    included = {str(path) for path, _ in records}
++    for path in sorted((root / 'data/meteor-auto/retention-review').glob('*/pass.json')):
++        if str(path) in included:
++            continue
++        r = json.loads(path.read_text())
++        if r.get('owner') == 'meteor-retention-legacy-v1' and not Path(r['iq']).exists():
++            records.append((path, r))
++    for path, r in records:
++        name = Path(r['iq']).name
++        if name in protected:
++            r['explicit_protection'] = protected[name]
++        matches = [meta for _, meta in history if r['iq'] in json.dumps(meta)]
++        if any(meta.get('reference') is True or str(meta.get('source', '')).startswith('imported') for meta in matches):
++            r.setdefault('explicit_protection', 'Imported/reference provenance in preserved database history')
++        r['historical_useful_images'] = any(pid in useful_ids for pid, meta in history if r['iq'] in json.dumps(meta))
++        r['historical_useful_images'] = bool(r.get('historical_useful_images')) or any(any(re.fullmatch(r'MSU-MR-[1-6]', im.get('product', '')) and im.get('width', 0) >= 256 and im.get('height', 0) >= settings(c)['useful_min_lines'] for im in meta.get('images', [])) for meta in matches)
++    return records
+ 
+ def sync_db(root, r):
+     """Merge retention into existing JSON metadata; preserve history and images."""
+@@ -185,15 +277,15 @@
+         free = shutil.disk_usage(root).free / 1024**3 if free_gib is None else free_gib
+         pressure = 'critical' if free < v['critical_free_gib'] else 'low' if free < v['normal_free_gib'] else 'normal'
+         rows, candidates = [], []
+-        for path in sorted((root / 'data/meteor-auto/passes').glob('*/pass.json')):
++        for path, r in inventory_records(root, c):
+             try:
+-                r = json.loads(path.read_text())
+                 state = classify(r, c)
+                 rows.append(dict(id=r['pass']['id'], iq=r['iq'], **state))
+                 if state['eligible']:
+                     candidates.append((path, r, state))
+                 # Dry-run is strictly read-only, including metadata.
+                 if apply:
++                    path.parent.mkdir(parents=True, exist_ok=True)
+                     r['retention'] = state
+                     atomic(path, r)
+                     sync_db(root, r)
+@@ -243,15 +335,19 @@
+         return dict(cleanup_enabled=enabled, dry_run=not apply, disk_free_gib=free, disk_pressure=pressure,
+                     warning='Disk critically low; protected recordings retained. New captures require reserve headroom.' if pressure == 'critical' else None,
+                     would_delete=[dict(id=r['pass']['id'], iq=r['iq'], reason=s['reason'], deadline=s['deadline'], bytes=s['raw_bytes']) for _, r, s in candidates],
+-                    deleted=deleted, passes=rows)
++                    deleted=deleted, passes=rows,
++                    reclaimable_bytes=sum(s['raw_bytes'] for _, _, s in candidates),
++                    summary={label:dict(count=sum(x.get('disposition') == label and x.get('raw_exists') for x in rows),
++                        bytes=sum(x.get('raw_bytes', 0) for x in rows if x.get('disposition') == label))
++                        for label in ('PROTECTED', 'GRACE', 'DELETABLE', 'REVIEW')})
+ 
+ def refresh(root, c):
+     with locks(root):
+-        for p in (Path(root) / 'data/meteor-auto/passes').glob('*/pass.json'):
+-            r = json.loads(p.read_text())
++        for p, r in inventory_records(root, c):
+             if r.get('state') in ACTIVE:
+                 continue
+             r['retention'] = classify(r, c)
++            p.parent.mkdir(parents=True, exist_ok=True)
+             atomic(p, r)
+             sync_db(root, r)
+ 
+@@ -270,12 +366,13 @@
+ 
+ def dashboard(root, c, history):
+     by_id = {p['pass_id']: p for p in history}
+-    for path in (Path(root) / 'data/meteor-auto/passes').glob('*/pass.json'):
+-        r = json.loads(path.read_text())
++    for path, r in inventory_records(root, c):
+         p = r['pass']
+         row = by_id.setdefault(p['id'], dict(pass_id=p['id'], satellite=p['satellite'],
+             record_start=p.get('record_start'), sample_rate=p.get('sample_rate'), frequency=p.get('frequency'),
+-            classification=r.get('classification', r.get('state')), images=[], channel_lines={}))
++            classification=r.get('classification', r.get('state')), images=[], channel_lines={},
++            source='historical_evk' if r.get('owner') == 'meteor-retention-legacy-v1' else 'automatic_evk',
++            raw_iq_state='retained' if Path(r['iq']).is_file() else 'missing'))
+         row.update(retention=classify(r, c), pinned=r.get('pinned', False), state=r.get('state'))
+     free = shutil.disk_usage(root).free / 1024**3
+     return dict(passes=sorted(by_id.values(), key=lambda p:p.get('record_start') or '', reverse=True),
+--- a/meteor_frequency.py
++++ b/meteor_frequency.py
+@@ -1,5 +1,65 @@
+ """Bounded broad-band IQ survey; a negative spectrum is never deletion evidence."""
+ from pathlib import Path
++
++def decoder_identity(c):
++    """Bind retention evidence to the supported wrapper and immutable image identity."""
++    import hashlib
++    paths = [Path(p) for p in c.get('satdump_command', []) if Path(p).is_file() and p.endswith('.py')]
++    wrapper = next(iter(paths), None)
++    runtime = wrapper.parent / 'data/meteor-native-runtime.json' if wrapper else None
++    return {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths + ([runtime] if runtime and runtime.is_file() else [])}
++
++def procedure_config(c):
++    return dict(pipeline=c.get('satdump_pipeline', 'meteor_m2-x_lrpt'), extra=c.get('satdump_extra', []),
++                frequency_evaluation=dict(dict(span_hz=60000, windows=24, max_candidates=2, budget_seconds=300), **c.get('frequency_evaluation', {})))
++
++def trial_clean(a):
++    """Nonblocking unused SDR-plugin/TLE-network notices do not invalidate file decoding.
++
++    All unknown error lines, invalid arguments, missing stage markers, crashes and
++    timeouts still block retention. The strict original evaluation_clean is preserved.
++    """
++    import re
++    m = a.get('metrics', {})
++    if a.get('returncode') != 0 or a.get('error') or m.get('error') or not a.get('finished_at'):
++        return False
++    if m.get('evaluation_clean') is True:
++        return True
++    logpath = Path(a.get('output', '')) / 'satdump.log'
++    if not logpath.is_file():
++        return False
++    log = re.sub(r'\x1b\[[0-9;]*m', '', logpath.read_text(errors='replace'))
++    if 'Demodulation finished' not in log or 'Done! Goodbye' not in log:
++        return False
++    if re.search(r'(invalid|unknown|not found|does not exist).*pipeline|unrecognized (argument|option)|EVK SatDump:|time limit reached', log, re.I):
++        return False
++    errors = [line for line in log.splitlines() if re.search(r'\[error\]|\[critical\]|\(E\)|\(C\)|\bfatal\b|Segmentation fault', line, re.I)]
++    def nonblocking(line):
++        return bool(re.search(r'Error loading /usr/lib/satdump/plugins/lib(?:bladerf|limesdr|plutosdr|usrp)_sdr_support\.so! Error : lib[^ ]+: cannot open shared object file:', line)
++                    or 'curl_easy_perform() failed: Could not resolve host: celestrak.org' in line
++                    or 'Error updating TLEs. Not updated.' in line)
++    return all(nonblocking(line) for line in errors)
++
++def procedure_complete(r, c):
++    """Validate every configured shifted trial, without claiming exhaustive coverage."""
++    e = r.get('frequency_evaluation', {})
++    if e.get('error') or e.get('input_fingerprint') != r.get('iq_fingerprint') or not e.get('finished_at'):
++        return False
++    if e.get('decoder_identity') != decoder_identity(c) or e.get('configuration') != procedure_config(c):
++        return False
++    if not e.get('procedure_completed'):
++        return False
++    survey = e.get('survey', {})
++    configured = procedure_config(c)['frequency_evaluation']
++    if survey.get('method') != 'sampled_broadband_spectrum_v1' or survey.get('span_hz') != configured['span_hz'] or survey.get('windows') != configured['windows'] or len(survey.get('candidate_carrier_offsets_hz', [])) != configured['max_candidates']:
++        return False
++    wanted = {0} | {-x for x in e.get('survey', {}).get('candidate_carrier_offsets_hz', [])}
++    trials = e.get('trials', [])
++    attempts = {a.get('output'): a for a in r.get('decode_attempts', [])}
++    if not trials or {t.get('shift_hz') for t in trials} != wanted:
++        return False
++    return all(t.get('output') in attempts and trial_clean(attempts[t['output']]) and
++               attempts[t['output']].get('frequency_shift_hz', 0) == t.get('shift_hz') for t in trials)
+ 
+ def survey(iq, rate, span_hz=60000, windows=24, max_candidates=2):
+     import numpy as np
+--- a/meteor_pipeline.py
++++ b/meteor_pipeline.py
+@@ -626,7 +626,10 @@
+         evaluation['trials'] = [dict(output=a['output'], shift_hz=a.get('frequency_shift_hz', 0),
+                                     returncode=a.get('returncode'), error=a.get('error'),
+                                     classification=a['metrics']['classification']) for a in trials]
+-        clean = all(a.get('returncode') == 0 and a['metrics'].get('evaluation_clean') and not a.get('error') for a in trials)
++        clean = all(meteor_frequency.trial_clean(a) for a in trials)
++        evaluation['procedure_completed'] = bool(clean and not evaluation.get('error') and (meteor_frequency.useful(best['metrics']) or len(trials) == 1 + len(evaluation.get('survey', {}).get('candidate_carrier_offsets_hz', []))))
++        evaluation['decoder_identity'] = meteor_frequency.decoder_identity(c)
++        evaluation['configuration'] = meteor_frequency.procedure_config(c)
+         evaluation.update(best_output=best['output'], best_shift_hz=best.get('frequency_shift_hz', 0),
+                           best_carrier_offset_hz=-best.get('frequency_shift_hz', 0),
+                           completed=bool(clean and meteor_frequency.useful(best['metrics'])),
+@@ -642,7 +645,7 @@
+     finally:
+         evaluation['finished_at'] = now().isoformat()
+         if not evaluation['completed']:
+-            evaluation['limitation'] = 'No verified negative conclusion: sparse survey is not an exhaustive offset search; retain original IQ'
++            evaluation['limitation'] = 'Bounded supported search is not proof of absent signal; retention considers grace, procedure completion, errors and protection separately'
+         r['frequency_evaluation'] = evaluation
+         r['retention'] = meteor_retention.classify(r, c)
+         save(path, r)
+--- a/test_meteor_retention.py
++++ b/test_meteor_retention.py
+@@ -3,6 +3,7 @@
+ import fcntl
+ import json
+ from pathlib import Path
++import sqlite3
+ import tempfile
+ import unittest
+ from unittest.mock import patch
+@@ -16,208 +17,212 @@
+         self.root = Path(self.temp.name)
+         self.raw = self.root / 'recordings/satellite/test.cu8'
+         self.raw.parent.mkdir(parents=True)
+-        self.raw.write_bytes(b'\x7f' * 200)
++        self.raw.write_bytes(b'x' * 200)
+         self.at = datetime.now(timezone.utc)
+-        end = (self.at - timedelta(days=10)).isoformat()
+-        self.c = dict(cleanup_enabled=True, retention=dict(automatic_deletion_validated=True))
+-        self.r = dict(owner='meteor-auto-v1', state='decoded_products', iq=str(self.raw),
+-            pass_=dict(id='m24-20261001T010000Z', satellite='M2-4', record_start=end,
+-                       record_stop=(self.at - timedelta(days=10) + timedelta(seconds=10)).isoformat(), sample_rate=10),
++        start = self.at - timedelta(days=10)
++        self.c = dict(cleanup_enabled=False, retention=dict(automatic_deletion_validated=False))
++        self.r = dict(owner='meteor-auto-v1', state='decode_failed', iq=str(self.raw),
+             capture=dict(status='completed', sample_rate_sps=10), captured_iq_bytes=200,
+-            iq_fingerprint=retention.fingerprint(self.raw), decode_attempts=[dict(output='decode-1', returncode=0,
+-                finished_at=end, metrics=dict(evaluation_clean=True, classification='SUCCESS',
+-                    channel_lines={'1':200}, images=[dict(product='MSU-MR-1',width=256,height=200)]))],
+-            frequency_evaluation=dict(completed=True, verification='validated_channel_product',
+-                best_output='decode-1', finished_at=end, input_fingerprint=retention.fingerprint(self.raw)))
+-        self.r['pass'] = self.r.pop('pass_')
+-        self.path = self.root / 'data/meteor-auto/passes' / self.r['pass']['id'] / 'pass.json'
++            iq_fingerprint=retention.fingerprint(self.raw),
++            decode_attempts=[dict(output='nominal', returncode=0, frequency_shift_hz=0, finished_at=self.at.isoformat(),
++                metrics=dict(evaluation_clean=True, classification='EMPTY/FAILED', images=[], channel_lines={'1':0}))])
++        self.r['pass'] = dict(id='m24-20261001T010000Z', satellite='M2-4', record_start=start.isoformat(), record_stop=(start+timedelta(seconds=10)).isoformat(), sample_rate=10)
++        for shift in (-45000, 45000):
++            a=copy.deepcopy(self.r['decode_attempts'][0])
++            a.update(output=str(shift), frequency_shift_hz=shift)
++            self.r['decode_attempts'].append(a)
++        self.r['selected_decode_output']='nominal'
++        self.r['frequency_evaluation']=dict(completed=False, procedure_completed=True, finished_at=self.at.isoformat(),
++            input_fingerprint=self.r['iq_fingerprint'], best_output='nominal',
++            decoder_identity=frequency.decoder_identity(self.c), configuration=frequency.procedure_config(self.c),
++            survey=dict(method='sampled_broadband_spectrum_v1', span_hz=60000, windows=24, candidate_carrier_offsets_hz=[45000,-45000]),
++            trials=[dict(output=a['output'],shift_hz=a['frequency_shift_hz'],returncode=0) for a in self.r['decode_attempts']])
++        self.path=self.root/'data/meteor-auto/passes'/self.r['pass']['id']/'pass.json'
+         self.path.parent.mkdir(parents=True)
+-        retention.atomic(self.path, self.r)
+-
+-    def result(self):
+-        return retention.classify(self.r, self.c, self.at)
+-
+-    def test_clean_useful_grace(self):
+-        s = self.result()
+-        self.assertEqual(s['retention_class'], 'useful')
+-        self.assertTrue(s['eligible'])
+-        self.assertEqual(retention.instant(s['deadline']) - retention.instant(self.r['decode_attempts'][0]['finished_at']), timedelta(days=7))
+-
+-    def test_pin_and_unpin(self):
+-        s = retention.pin(self.root, self.c, self.r['pass']['id'], True)
+-        self.assertEqual(s['retention_class'], 'pinned')
+-        self.assertFalse(retention.cleanup(self.root, self.c)['would_delete'])
+-        retention.pin(self.root, self.c, self.r['pass']['id'], False)
+-        self.assertEqual(len(retention.cleanup(self.root, self.c)['would_delete']), 1)
+-
+-    def test_all_active_states_protected(self):
++        self.save()
++    def save(self): retention.atomic(self.path,self.r)
++    def result(self): return retention.classify(self.r,self.c,self.at)
++    def test_disabled_gates_dry_run_candidates(self):
++        before=self.path.read_bytes()
++        with patch.object(Path,'unlink',side_effect=AssertionError('No deletion permitted')):
++            s=retention.cleanup(self.root,self.c)
++        self.assertFalse(s['cleanup_enabled']); self.assertEqual(len(s['would_delete']),1)
++        self.assertEqual(s['reclaimable_bytes'],200); self.assertEqual(s['deleted'],[])
++        self.assertEqual(before,self.path.read_bytes()); self.assertTrue(self.raw.exists())
++    def test_protected_success_even_after_crash(self):
++        self.r['decode_attempts'][0]['returncode']=139
++        self.r['decode_attempts'][0]['metrics'].update(images=[dict(product='MSU-MR-1',width=256,height=200,path='historical.png')])
++        self.assertEqual(self.result()['disposition'],'PROTECTED'); self.assertFalse(self.result()['eligible'])
++    def test_historical_success_not_selected(self):
++        self.r['decode_attempts'][-1]['metrics']['images']=[dict(product='MSU-MR-1',width=256,height=200)]
++        self.assertEqual(self.result()['disposition'],'PROTECTED')
++    def test_recent_failed_grace(self):
++        self.r['pass']['record_stop']=self.at.isoformat()
++        self.r['decode_attempts'][0]['returncode']=1
++        self.assertEqual(self.result()['disposition'],'GRACE')
++    def test_old_failed_no_image_deletable(self):
++        self.assertEqual(self.result()['disposition'],'DELETABLE'); self.assertTrue(self.result()['eligible'])
++    def test_actual_decoder_error_review(self):
++        self.r['decode_attempts'][0]['returncode']=1
++        self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_ambiguous_frequency_review(self):
++        self.r['review_reason']='Unusual frequency drift needs troubleshooting'
++        self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_unusual_recorded_frequency_review(self):
++        self.c['frequency']=137900000;self.r['capture']['frequency_hz']=137700000
++        self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_explicit_regression_reference(self):
++        for flag in ('pinned','reference','regression','explicit_protection'):
++            self.r[flag]=True
++            self.assertEqual(self.result()['disposition'],'PROTECTED'); self.r.pop(flag)
++    def test_imported_capture_metadata_protection(self):
++        for key,value in (('reference',True),('regression',True),('source','imported_reference')):
++            self.r['capture'][key]=value
++            self.assertEqual(self.result()['disposition'],'PROTECTED');self.r['capture'].pop(key)
++    def test_old_1024ksps_failed(self):
++        self.r['capture']['sample_rate_sps']=1024000
++        self.r['pass']['sample_rate']=1024000
++        self.r['pass']['record_start']=(retention.instant(self.r['pass']['record_stop'])-timedelta(seconds=200/(1024000*2))).isoformat()
++        self.assertEqual(self.result()['disposition'],'DELETABLE')
++    def test_hypothetical_delete_keeps_metadata_db_history_images(self):
++        db=self.root/'data/watchkeeper-meteor.db'
++        with sqlite3.connect(str(db)) as conn:
++            conn.execute('CREATE TABLE meteor_passes(pass_id TEXT,metadata TEXT)')
++            conn.execute('CREATE TABLE meteor_images(pass_id TEXT,product TEXT,width INTEGER,height INTEGER,path TEXT)')
++            conn.execute('INSERT INTO meteor_passes VALUES(?,?)',(self.r['pass']['id'],json.dumps(dict(history=['original'],recording_path=str(self.raw)))))
++            conn.execute('INSERT INTO meteor_images VALUES(?,?,?,?,?)',(self.r['pass']['id'],'diagnostic',10,10,'keep.png'))
++        image=self.path.parent/'keep.png'; image.write_bytes(b'preserved')
++        state=self.result(); state.update(raw_deleted=True,raw_exists=False,deletion=dict(classification='no_signal',reason='hypothetical expired candidate'))
++        self.r['retention']=state; self.save(); retention.sync_db(self.root,self.r)
++        with sqlite3.connect(str(db)) as conn:
++            m=json.loads(conn.execute('SELECT metadata FROM meteor_passes').fetchone()[0])
++            self.assertEqual(m['history'],['original']); self.assertEqual(m['raw_iq_state'],'deleted')
++            self.assertEqual(conn.execute('SELECT COUNT(*) FROM meteor_images').fetchone()[0],1)
++        self.assertEqual(image.read_bytes(),b'preserved'); self.assertTrue(self.raw.exists()); self.assertTrue(self.path.exists())
++    def test_apply_interlocks(self):
++        for enabled,validated in ((False,False),(True,False),(False,True)):
++            c=dict(cleanup_enabled=enabled,retention=dict(automatic_deletion_validated=validated))
++            with self.assertRaises(RuntimeError): retention.cleanup(self.root,c,apply=True)
++        self.assertTrue(self.raw.exists())
++    def test_active_states(self):
+         for state in retention.ACTIVE:
+-            with self.subTest(state=state):
+-                self.r['state'] = state
+-                self.assertFalse(self.result()['eligible'])
+-
+-    def test_crash_even_with_images(self):
+-        for rc in (139, -11, 124, 1):
+-            self.r['decode_attempts'][0]['returncode'] = rc
+-            self.assertEqual(self.result()['retention_class'], 'processing_failed')
+-            self.assertFalse(self.result()['eligible'])
+-
+-    def test_wrapper_exception(self):
+-        self.r['decode_attempts'][0]['error'] = 'timeout'
+-        self.assertFalse(self.result()['eligible'])
+-
+-    def test_missing_completion_marker(self):
+-        self.r['decode_attempts'][0]['metrics']['evaluation_clean'] = False
+-        self.assertEqual(self.result()['retention_class'], 'unverified')
+-
+-    def test_historical_without_search(self):
+-        del self.r['frequency_evaluation']
+-        self.assertEqual(self.result()['retention_class'], 'unverified')
+-
+-    def test_incomplete_search(self):
+-        self.r['frequency_evaluation']['completed'] = False
+-        self.assertFalse(self.result()['eligible'])
+-
+-    def test_search_error_or_failed_trial(self):
+-        self.r['frequency_evaluation']['error'] = 'budget'
+-        self.assertFalse(self.result()['eligible'])
+-        self.r['frequency_evaluation'].pop('error')
+-        self.r['frequency_evaluation']['trials'] = [dict(returncode=139)]
+-        self.assertEqual(self.result()['retention_class'], 'processing_failed')
+-
+-    def test_fingerprint_change(self):
+-        self.raw.write_bytes(b'x' * 200)
+-        self.assertFalse(self.result()['eligible'])
+-
+-    def test_incomplete_capture_and_bad_size(self):
+-        self.r['capture']['status'] = 'failed'
+-        self.assertEqual(self.result()['retention_class'], 'processing_failed')
+-        self.r['capture']['status'] = 'completed'
+-        self.r['captured_iq_bytes'] = 199
+-        self.assertFalse(self.result()['eligible'])
+-
+-    def test_excellent_indefinite(self):
+-        self.r['decode_attempts'][0]['metrics']['channel_lines']['1'] = 2500
+-        self.assertEqual(self.result()['retention_class'], 'excellent')
+-        self.assertIsNone(self.result()['deadline'])
+-
+-    def test_zero_images_sparse_never_no_signal(self):
+-        self.r['decode_attempts'][0]['metrics'].update(images=[], channel_lines={'1':0})
+-        self.r['frequency_evaluation']['completed'] = False
+-        self.assertEqual(self.result()['retention_class'], 'unverified')
+-
+-    def test_full_negative_and_poor_graces(self):
+-        self.r['frequency_evaluation']['verification'] = 'exhaustive_verified_search'
+-        m = self.r['decode_attempts'][0]['metrics']
+-        m.update(images=[], channel_lines={'1':0})
+-        self.assertEqual(self.result()['retention_class'], 'no_signal')
+-        self.assertEqual(retention.instant(self.result()['deadline']) - retention.instant(self.r['frequency_evaluation']['finished_at']), timedelta(hours=24))
+-        m['channel_lines']['1'] = 10
+-        self.assertEqual(self.result()['retention_class'], 'poor')
+-        self.assertEqual(retention.instant(self.result()['deadline']) - retention.instant(self.r['frequency_evaluation']['finished_at']), timedelta(hours=48))
+-
+-    def test_grace_begins_at_evaluation(self):
+-        self.r['frequency_evaluation']['finished_at'] = self.at.isoformat()
+-        self.assertFalse(self.result()['eligible'])
+-
+-    def test_dry_run_read_only_low_disk(self):
+-        before = self.path.read_bytes()
+-        s = retention.cleanup(self.root, self.c, free_gib=5)
+-        self.assertEqual(s['disk_pressure'], 'critical')
+-        self.assertEqual(len(s['would_delete']), 1)
+-        self.assertEqual(before, self.path.read_bytes())
++            self.r['state']=state; self.assertFalse(self.result()['eligible'])
++    def test_missing_metadata_review(self):
++        self.r['pass'].pop('record_stop'); self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_null_timestamp_metadata_review(self):
++        self.r['pass']['record_stop']=None; self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_manual_reference_null_timestamps_protected(self):
++        self.r['pass'].update(record_start=None,record_stop=None);self.r['reference']=True
++        self.assertEqual(self.result()['disposition'],'PROTECTED')
++    def test_fingerprint_changed_review(self):
++        self.raw.write_bytes(b'y'*200); self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_no_search_review(self):
++        self.r.pop('frequency_evaluation'); self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_budget_exhausted_review(self):
++        self.r['frequency_evaluation']['error']='budget'; self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_missing_offset_trial_review(self):
++        self.r['frequency_evaluation']['trials'].pop(); self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_wrong_decoder_identity_review(self):
++        self.r['frequency_evaluation']['decoder_identity']={'changed':'yes'}; self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_changed_search_config_review(self):
++        self.c['frequency_evaluation']={'span_hz':55000}; self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_missing_survey_review(self):
++        self.r['frequency_evaluation'].pop('survey'); self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_partial_evidence_review(self):
++        self.r['decode_attempts'][0]['metrics']['channel_lines']['1']=10
++        self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_noise_snr_nosync_without_products_deletable(self):
++        self.r['decode_attempts'][0]['metrics']['classification']='SIGNAL/UNUSABLE'
++        self.r['decode_attempts'][0]['metrics']['decoder_activity']=['Viterbi : NOSYNC BER : 0.4, Deframer : NOSYNC']
++        self.assertEqual(self.result()['disposition'],'DELETABLE')
++    def test_synchronized_signal_without_products_review(self):
++        self.r['decode_attempts'][0]['metrics']['classification']='SIGNAL/UNUSABLE'
++        self.r['decode_attempts'][0]['metrics']['decoder_activity']=['Viterbi : SYNC BER : 0.1, Deframer : SYNC']
++        self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_grace_not_reset_by_new_evaluation(self):
++        self.assertTrue(self.result()['eligible'])
++        self.assertEqual(retention.instant(self.result()['deadline'])-retention.instant(self.r['pass']['record_stop']),timedelta(hours=24))
++    def test_zero_byte_expired_failure(self):
++        self.raw.write_bytes(b''); self.r.update(iq_fingerprint=retention.fingerprint(self.raw),captured_iq_bytes=0)
++        self.r['capture']['status']='failed_no_iq'
++        self.assertEqual(self.result()['disposition'],'DELETABLE'); self.assertEqual(self.result()['raw_bytes'],0)
++    def test_zero_byte_completed_is_review(self):
++        self.raw.write_bytes(b'');self.r.update(iq_fingerprint=retention.fingerprint(self.raw),captured_iq_bytes=0)
++        self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_processing_lock_defers(self):
++        with (self.root/'data/meteor-auto/processing.lock').open('a') as stream:
++            fcntl.flock(stream,fcntl.LOCK_EX)
++            with self.assertRaises(BlockingIOError): retention.cleanup(self.root,self.c)
++    def test_raw_inventory_includes_legacy(self):
++        legacy=self.raw.with_name('legacy.cu8'); legacy.write_bytes(b'z'*200)
++        legacy.with_suffix('.json').write_text(json.dumps(dict(self.r['capture'],iq_bytes=200,record_start=self.r['pass']['record_start'],record_stop=self.r['pass']['record_stop'])))
++        rows=retention.inventory_records(self.root,self.c)
++        self.assertEqual(len(rows),2)
++        self.assertEqual(retention.classify(rows[1][1],self.c,self.at)['disposition'],'REVIEW')
++    def test_missing_legacy_raw_still_has_history(self):
++        r=copy.deepcopy(self.r);r.update(owner='meteor-retention-legacy-v1',iq=str(self.raw.with_name('hypothetically-deleted.cu8')))
++        r['pass']['id']='legacy-hypothetical'
++        p=self.root/'data/meteor-auto/retention-review/hypothetical/pass.json'
++        p.parent.mkdir(parents=True);retention.atomic(p,r)
++        rows=retention.inventory_records(self.root,self.c)
++        self.assertEqual(len(rows),2);self.assertEqual(rows[1][1]['pass']['id'],'legacy-hypothetical')
++        self.assertFalse(retention.classify(rows[1][1],self.c,self.at)['raw_exists'])
++        self.assertTrue(p.exists());self.assertTrue(self.raw.exists())
++    def test_reference_manifest(self):
++        (self.root/'data/meteor-auto/retention-protected.json').write_text(json.dumps({'test.cu8':'reference'}))
++        r=retention.inventory_records(self.root,self.c)[0][1]
++        self.assertEqual(retention.classify(r,self.c,self.at)['disposition'],'PROTECTED')
++    def test_nonblocking_notice_requires_completed_stages(self):
++        out=self.root/'decode'; out.mkdir()
++        a=copy.deepcopy(self.r['decode_attempts'][0]); a['output']=str(out); a['metrics']['evaluation_clean']=False
++        log=out/'satdump.log'
++        log.write_text('(E) curl_easy_perform() failed: Could not resolve host: celestrak.org\nDemodulation finished\nDone! Goodbye')
++        self.assertTrue(frequency.trial_clean(a))
++        log.write_text(log.read_text()+'\n(E) Decoder frame parser failed')
++        self.assertFalse(frequency.trial_clean(a))
++        log.write_text('Demodulation finished'); self.assertFalse(frequency.trial_clean(a))
++    def test_original_pass_reference_pin_honored_after_review(self):
++        review=self.root/'data/meteor-auto/retention-review'/self.raw.stem/'pass.json'
++        review.parent.mkdir(parents=True); retention.atomic(review,self.r)
++        self.r['pinned']=True; self.save()
++        r=retention.inventory_records(self.root,self.c)[0][1]
++        self.assertEqual(retention.classify(r,self.c,self.at)['disposition'],'PROTECTED')
++    def test_outside_path_review(self):
++        other=self.root/'outside.cu8'; other.write_bytes(self.raw.read_bytes())
++        self.r.update(iq=str(other),iq_fingerprint=retention.fingerprint(other))
++        self.assertEqual(self.result()['disposition'],'REVIEW')
++    def test_shared_raw_lock_blocks_hypothetical_apply(self):
++        c=dict(cleanup_enabled=True,retention=dict(automatic_deletion_validated=True))
++        with self.raw.open('rb') as stream, patch.object(Path,'unlink',side_effect=AssertionError('No deletion permitted')):
++            fcntl.flock(stream,fcntl.LOCK_SH)
++            self.assertEqual(retention.cleanup(self.root,c,apply=True)['deleted'],[])
+         self.assertTrue(self.raw.exists())
+-
+-    def test_deletion_interlocks(self):
+-        for c in (dict(cleanup_enabled=False), dict(cleanup_enabled=True)):
+-            with self.assertRaises(RuntimeError):
+-                retention.cleanup(self.root, c, apply=True)
++    def test_open_reader_blocks_hypothetical_apply(self):
++        c=dict(cleanup_enabled=True,retention=dict(automatic_deletion_validated=True))
++        with patch.object(retention,'open_elsewhere',return_value=True), patch.object(Path,'unlink',side_effect=AssertionError('No deletion permitted')):
++            self.assertEqual(retention.cleanup(self.root,c,apply=True)['deleted'],[])
+         self.assertTrue(self.raw.exists())
+-
+-    def test_open_file_or_shared_lock_blocks_apply(self):
+-        with self.raw.open('rb') as stream:
+-            fcntl.flock(stream, fcntl.LOCK_SH)
+-            self.assertFalse(retention.cleanup(self.root, self.c, apply=True)['deleted'])
+-        self.assertTrue(self.raw.exists())
+-
+-    def test_synthetic_delete_idempotent_preserves_image_and_metadata(self):
+-        image = self.path.parent / 'keep.png'
+-        image.write_bytes(b'untouched')
+-        self.assertEqual(len(retention.cleanup(self.root, self.c, apply=True)['deleted']), 1)
+-        self.assertFalse(self.raw.exists())
+-        self.assertTrue(self.path.exists())
+-        self.assertEqual(image.read_bytes(), b'untouched')
+-        self.assertFalse(retention.cleanup(self.root, self.c, apply=True)['deleted'])
+-        saved = json.loads(self.path.read_text())['retention']
+-        self.assertEqual(saved['retention_class'], 'useful')
+-        self.assertIn('grace period expired', saved['reason'])
+-        events = (self.root / 'data/meteor-auto/retention-events.jsonl').read_text()
+-        self.assertIn('raw_deleted', events)
+-        self.assertIn('frequency_evaluation_completed', events)
+-
+-    def test_global_processing_lock_defers_cleanup(self):
+-        p = self.root / 'data/meteor-auto/processing.lock'
+-        with p.open('a') as stream:
+-            fcntl.flock(stream, fcntl.LOCK_EX)
+-            with self.assertRaises(BlockingIOError):
+-                retention.cleanup(self.root, self.c, apply=True)
+-        self.assertTrue(self.raw.exists())
+-
+-    def test_symlink_and_external_path_not_deleted(self):
+-        other = self.root / 'outside.cu8'
+-        other.write_bytes(self.raw.read_bytes())
+-        self.r.update(iq=str(other), iq_fingerprint=retention.fingerprint(other))
+-        self.r['frequency_evaluation']['input_fingerprint'] = self.r['iq_fingerprint']
+-        retention.atomic(self.path, self.r)
+-        self.assertFalse(retention.cleanup(self.root, self.c, apply=True)['deleted'])
+-        self.assertTrue(other.exists())
+-
+-    def test_selection_prioritizes_expired_poor_under_pressure(self):
+-        poor = copy.deepcopy(self.r)
+-        poor['pass']['id'] = 'm23-20261001T020000Z'
+-        poor['decode_attempts'][0]['metrics'].update(images=[], channel_lines={'1':10})
+-        poor['frequency_evaluation']['verification'] = 'exhaustive_verified_search'
+-        p = self.path.parent.parent / poor['pass']['id'] / 'pass.json'
+-        p.parent.mkdir()
+-        retention.atomic(p, poor)
+-        s = retention.cleanup(self.root, self.c, free_gib=5)
+-        self.assertEqual(s['would_delete'][0]['id'], poor['pass']['id'])
+-
+-    def test_span_and_positive_detection(self):
+-        with self.assertRaises(ValueError):
+-            frequency.survey(self.raw, 100000, 60000)
+-        self.assertTrue(frequency.useful(self.r['decode_attempts'][0]['metrics']))
+-        self.r['decode_attempts'][0]['metrics']['images'][0]['height'] = 1
+-        self.assertFalse(frequency.useful(self.r['decode_attempts'][0]['metrics']))
+-
+-    def test_frequency_nominal_positive_requires_clean_markers(self):
++    def test_low_disk_keeps_reference(self):
++        self.r['pinned']=True; self.save()
++        s=retention.cleanup(self.root,self.c,free_gib=5)
++        self.assertEqual(s['disk_pressure'],'critical'); self.assertEqual(s['would_delete'],[])
++    def test_conservative_config_minima(self):
++        for k,v in (('no_signal_hours',23),('poor_hours',47),('useful_hours',167)):
++            with self.assertRaises(ValueError): retention.settings(dict(retention={k:v}))
++    def test_frequency_pipeline_records_completed_supported_negative(self):
+         import meteor_pipeline as pipeline
+-        c = dict(self.c, frequency_evaluation=dict(span_hz=60000, windows=24, max_candidates=2, budget_seconds=300))
+-        with patch.object(pipeline, 'ROOT', self.root), patch.object(pipeline, 'STATE', self.root / 'data/meteor-auto'), patch.object(pipeline.meteor_store, 'persist'), patch.object(retention, 'sync_db'), patch.object(frequency, 'survey') as scan:
+-            pipeline.evaluate_frequency(c, self.path)
+-            result = json.loads(self.path.read_text())
+-            self.assertTrue(result['frequency_evaluation']['completed'])
+-            self.assertEqual(result['frequency_evaluation']['best_shift_hz'], 0)
+-            scan.assert_not_called()
+-
+-    def test_survey_shift_selection_and_negative_protection(self):
+-        import meteor_pipeline as pipeline
+-        self.r['decode_attempts'][0]['metrics'].update(images=[], channel_lines={'1':0})
+-        retention.atomic(self.path, self.r)
+-        def decoder(c, path, frequency_shift):
+-            r = json.loads(path.read_text())
+-            a = copy.deepcopy(r['decode_attempts'][0])
+-            a.update(output='shift-' + str(frequency_shift), frequency_shift_hz=frequency_shift)
+-            r['decode_attempts'].append(a)
+-            retention.atomic(path, r)
+-        c = dict(self.c, decode_timeout_seconds=1800, frequency_evaluation=dict(span_hz=60000, windows=24, max_candidates=2, budget_seconds=300))
+-        with patch.object(pipeline, 'ROOT', self.root), patch.object(pipeline, 'STATE', self.root / 'data/meteor-auto'), patch.object(pipeline.meteor_store, 'persist'), patch.object(retention, 'sync_db'), patch.object(frequency, 'survey', return_value=dict(candidate_carrier_offsets_hz=[45000,-45000])), patch.object(pipeline, 'decode_once', side_effect=decoder) as decode:
+-            pipeline.evaluate_frequency(c, self.path)
+-            result = json.loads(self.path.read_text())
+-            self.assertEqual(decode.call_count, 2)
+-            self.assertEqual([t['shift_hz'] for t in result['frequency_evaluation']['trials']], [0,-45000,45000])
+-            self.assertFalse(result['frequency_evaluation']['completed'])
+-            self.assertFalse(result['retention']['eligible'])
+-
+-if __name__ == '__main__':
+-    unittest.main()
++        self.r['decode_attempts']=self.r['decode_attempts'][:1]; self.save()
++        def decoder(c,path,frequency_shift):
++            r=json.loads(path.read_text());a=copy.deepcopy(r['decode_attempts'][0])
++            a.update(output='shift'+str(frequency_shift),frequency_shift_hz=frequency_shift)
++            r['decode_attempts'].append(a);retention.atomic(path,r)
++        survey=dict(method='sampled_broadband_spectrum_v1',span_hz=60000,windows=24,candidate_carrier_offsets_hz=[45000,-45000])
++        c=dict(self.c,decode_timeout_seconds=1800)
++        with patch.object(pipeline,'ROOT',self.root),patch.object(pipeline,'STATE',self.root/'data/meteor-auto'),patch.object(pipeline.meteor_store,'persist'),patch.object(retention,'sync_db'),patch.object(frequency,'survey',return_value=survey),patch.object(pipeline,'decode_once',side_effect=decoder) as decode:
++            pipeline.evaluate_frequency(c,self.path)
++        r=json.loads(self.path.read_text())
++        self.assertEqual(decode.call_count,2); self.assertTrue(r['frequency_evaluation']['procedure_completed'])
++        self.assertFalse(r['frequency_evaluation']['completed'])
++        self.assertFalse(r['frequency_evaluation']['negative_result_verified'])
++        self.assertEqual(retention.classify(r,c,self.at)['disposition'],'DELETABLE')
++if __name__=='__main__': unittest.main()
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -1579,8 +1579,8 @@
+  for(const image of pass.images){const option=document.createElement('option');option.value=image.id;option.textContent=image.product+' · '+image.width+' × '+image.height;products.append(option);}
+  document.getElementById('meteor-status').textContent=pass.classification+' · '+pass.satellite+(pass.source?.startsWith('imported')?' · IMPORTED':'')+(pass.reference?' · REFERENCE':'');
+  const retention=pass.retention,keep=document.getElementById('meteor-keep');
+- keep.disabled=!retention;keep.textContent=pass.pinned?'Unpin recording':'Keep raw recording';
+- document.getElementById('meteor-retention').textContent=retention?((retention.raw_deleted?'Raw deleted':retention.raw_exists?'Raw available':'Raw missing')+' · '+(pass.pinned?'Pinned':retention.retention_class.replaceAll('_',' '))+(retention.deadline?' · Raw expires '+new Date(retention.deadline).toLocaleString():' · Retained indefinitely')+' · '+retention.reason+' · Frequency evaluation '+(retention.frequency_evaluation_completed?'verified':'unverified')):'Reference/imported recording: outside automatic cleanup';
++ keep.disabled=!retention || !/^m2[34]-\d{8}T\d{6}Z$/.test(pass.pass_id);keep.textContent=pass.pinned?'Unpin recording':'Keep raw recording';
++ document.getElementById('meteor-retention').textContent=retention?((retention.raw_deleted?'Raw deleted':retention.raw_exists?'Raw available':'Raw missing')+' · '+(retention.disposition || (pass.pinned?'PROTECTED':retention.retention_class.replaceAll('_',' ')))+(retention.disposition==='GRACE'&&retention.deadline?' · Grace until '+new Date(retention.deadline).toLocaleString():'')+' · '+retention.reason+' · Offset check '+(retention.supported_procedure_completed?'completed':retention.frequency_evaluation_completed?'useful images verified':'pending/review')):'Reference/imported recording: protected';
+  document.getElementById('meteor-meta').textContent='Pass: '+new Date(pass.pass_start||pass.record_start).toLocaleString()+' · '+pass.sample_rate+' samples/s · '+(pass.frequency/1e6)+' MHz'+(pass.peak_elevation!=null?' · Peak elevation '+pass.peak_elevation.toFixed(1)+'°':'')+(pass.peak_snr!=null?' · Peak SNR '+pass.peak_snr:'')+' · IQ '+pass.raw_iq_state;
+  document.getElementById('meteor-meta').textContent+=' · '+(pass.source||'automatic_evk')+' · '+(pass.receiver||'RTL-SDR')+' · '+(pass.capture_host||'EVK')+' · '+(pass.capture_mode||'automatic')+(pass.end_time?' · End: '+new Date(pass.end_time).toLocaleString():'')+(pass.notes?' · '+pass.notes:'');
+  document.getElementById('meteor-lines').textContent='Decoded channel lines: '+Object.entries(pass.channel_lines).map(([ch,count])=>'Ch '+ch+': '+count).join(' · ');
+--- a/docs/meteor.md
++++ b/docs/meteor.md
+@@ -26,78 +26,53 @@
+ 
+ The dashboard reads `data/watchkeeper-meteor.db` through `/api/meteor`, with current-per-product selection and retained attempt history, controlled image routes and schedule display. Imported reference recordings are distinct from automatic EVK passes. Decoded output does not by itself certify reception quality or image interpretation.
+ 
+-## Conservative raw retention and frequency evaluation — 2026-10-05
++## Dry-run retention classification — 2026-10-05
+ 
+-Implemented and verified at 12:37 UTC (15:37 Europe/Helsinki); final guards and repeated regression tests were applied afterward. **Automatic raw deletion remains disabled**: `cleanup_enabled=false` and `retention.automatic_deletion_validated=false`. Maintenance runs a read-only deletion preview and persists conservative retention metadata. The EVK working tree and [engineering log](project-log.md) remain authoritative.
++Actual deletion remains disabled by both `cleanup_enabled=false` and `retention.automatic_deletion_validated=false`. No raw IQ was deleted during this correction. The classifier and dry-run candidate list work independently of these two execution gates. `cleanup --apply` still refuses if either gate is false.
+ 
+-### What changed
++The previous implementation excluded most historical IQ because it only visited managed pass records. It also treated every failed/unverified result as indefinite retention and required an exhaustive negative frequency search that no production workflow could certify. Disabled gates were already separate from the old eligibility check; the observed zero candidates primarily came from these inventory/evidence requirements, rather than the gate values themselves.
+ 
+-- New `meteor_retention.py` supplies classification, shared locks, raw-only cleanup, durable deletion audit, pin protection and dashboard projection. New `meteor_frequency.py` supplies a bounded spectrum survey. New `test_meteor_retention.py` verifies the safety policy.
+-- Modified `meteor_pipeline.py` integrates normal decoding, bounded offset trials, pin/unpin commands, metadata refresh, maintenance and low-disk pre-capture cleanup. Capture selection, sample rate, gain and RF handover remain unchanged. Direct decoding now takes the processing lock. Failed nominal processing preserves existing bounded retry behavior instead of launching additional offset trials.
+-- Modified `meteor_store.py` adds independent clean-evaluation markers/error evidence and frequency/retention metadata while preserving existing image classification, crash handling, image rows and files.
+-- Modified `satdump_evk.py` holds a shared raw-file lock through the Docker lifecycle. Its raw mount remains read-only. `dashboard.py`/`dashboard.html` expose current retention, disk state and an authenticated Keep control, including managed passes that have no image/database row.
+-- Modified `meteor-config.json` adds the settings below. The old `raw_retention_days=14` field is retained for configuration compatibility and is **not** used to authorize deletion.
+-- Added `/etc/systemd/system/rf-watchkeeper-meteor-cleanup.timer.d/retention.conf` with `OnUnitActiveSec=15min`, reusing `rf-watchkeeper-meteor-cleanup.service` and its existing daily 02:00 UTC trigger. No new cleanup service or unrelated cron job exists. Reloaded systemd, restarted this cleanup timer and the dashboard to load changes. Capture/planning/dispatch/processing units and RF schedulers were not restarted or rewritten.
++`meteor_retention.inventory_records()` now includes every `recordings/satellite/*.cu8`, associates managed history, reads historical recording JSON and consults separate review records. Absence of a managed record does not imply reference protection. Historical evaluations live under `data/meteor-auto/retention-review/<raw-stem>/`, with chronological commands, logs, metrics, offset survey, selected output and raw fingerprint. Existing capture metadata and managed attempts are preserved. Additional products and a separate evaluation database remain under the review/staging directories.
+ 
+-### Previous and new frequency handling
++| Disposition | Meaning |
++|---|---|
++| PROTECTED | Explicit Keep/reference/regression material, useful channel products from any historical or current attempt (including crash outputs), or an active capture/decode/search/worker owner |
++| GRACE | A recent capture is still inside its finite configured grace period |
++| DELETABLE | Grace expired, raw fingerprint/metadata are consistent, and the current supported nominal plus configured frequency-offset procedure completed without a decoding failure and produced no useful/partial channel evidence; an expired zero-sample `failed_no_iq` capture is also eligible and reclaims zero bytes |
++| REVIEW | Missing/inconsistent metadata, changed raw IQ, real decoder/capture errors, timeouts, incomplete search, unusual frequency/troubleshooting evidence, or partial/signal evidence needing judgment |
+ 
+-The inspected `decode_argv()` previously passed `meteor_m2-x_lrpt baseband`, the recording JSON's actual sample rate, `--baseband_format cu8`, explicit satellite number and `--dc_block`. It supplied no `freq_shift`, no Doppler options, preprocessing or search. `satdump_evk.argv()` translated this to a read-only Docker IQ mount without adding frequency handling.
++`disposition` is the authoritative policy result; existing lowercase `retention_class` and decoder `classification` remain separate descriptive fields for compatibility. `eligible` and `would_delete` express hypothetical eligibility regardless of execution gates. Summary counts/bytes include existing raw files only; missing raw managed records remain in history without inflating totals. Explicit protections are recorded by exact basename/reason in `data/meteor-auto/retention-protected.json`. Useful MSU-MR channels require width ≥256 and height ≥128 (configured `useful_min_lines`). A later failed selected attempt cannot erase earlier useful-image protection. Imported/manual verification references remain protected.
+ 
+-The actual image's `Meteor-M.json` uses 72 ksymbol/s OQPSK, RRC alpha 0.5 and PLL bandwidth 0.002. SatDump 1.2.2's [PSK demodulator source](https://github.com/SatDump/SatDump/blob/1.2.2/src-core/modules/demod/module_psk_demod.cpp) has automatic Costas recovery, default maximum offset 1 rad/sample, after RRC filtering and resampling. The observed 256000-sample/s decode log shows resampling to 168000, making that limit approximately ±26.7 kHz at the loop. This is a mathematical limit, **not** a measured capture/acquisition guarantee. It does not establish reliable recovery at ±45–60 kHz, especially after filtering. The pipeline does not assume a mathematically exact zero carrier, but its automatic recovery is insufficient evidence for deleting a zero-image capture.
++### Finite grace
+ 
+-New evaluation preserves the nominal decoder first. With no substantial native channel product, it surveys 24 small IQ windows distributed across the entire recording over ±60000 Hz, ranking broad LRPT-like power while clipping narrow interferers. It runs at most two additional full-IQ decodes, using `--freq_shift` before resampling/filtering, without creating another large IQ file. The [base demodulator](https://github.com/SatDump/SatDump/blob/1.2.2/src-core/modules/demod/module_demod_base.cpp) and [rotator](https://github.com/SatDump/SatDump/blob/1.2.2/src-core/common/dsp/utils/freq_shift.cpp) establish the ordering and sign: a candidate carrier at +45000 Hz gets shift -45000 Hz. Metadata distinguishes carrier offset from applied shift. At 256 kS/s, Nyquist is ±128 kHz; an approximately 108 kHz LRPT band displaced by 60 kHz still fits theoretically inside the saved bandwidth. Capture clipping/interference cannot be repaired afterward.
++The existing configured durations are retained: `no_signal_hours=24`, `poor_hours=48`. Grace now starts at saved capture completion (`actual_stop`, or saved `record_stop`), not the latest re-evaluation. This is a deliberate semantic correction: repeated failed evaluations cannot continually restart grace. No arbitrary duration was added. No-image/uncertain captures use 24 hours; partial/synchronized signal evidence uses 48 hours and becomes REVIEW after grace unless useful products protect it. Missing completion timestamps require REVIEW. `useful_hours=168` and `raw_retention_days=14` remain compatibility fields; useful channel products are protected rather than aged out. Disk pressure never shortens grace or overrides protection.
+ 
+-Configuration: `frequency_evaluation.span_hz=60000`, `windows=24`, `max_candidates=2`, `budget_seconds=300`; survey grid 2500 Hz and FFT 16384 samples. The budget limits additions after the nominal attempt; the existing nominal timeout remains 1800 seconds. Trials retain separate commands/logs/metrics in chronological `decode_attempts`, consuming the existing three-attempt cap. A separate `selected_decode_output`/`frequency_evaluation.best_output` records the best result. No useful crash decode is redundantly searched.
++### Frequency and decoder evidence
+ 
+-**A sparse power survey is not a reliable negative-signal detector.** Zero-image/partial results without a verified exhaustive search remain `unverified`. Only clean positive channel products can currently complete frequency evaluation. No production code presently certifies an exhaustive negative search. The `no_signal`/`poor` deadline policies exist for a future validated evaluator; they do not turn old zero-image files into deletion candidates.
++Before an old nonempty no-image IQ file can become DELETABLE, run the existing supported native SatDump wrapper using the **recorded** sample rate and satellite. The existing spectrum survey spans ±60 kHz, samples 24 windows, and ranks two candidate carrier offsets. The wrapper's `--freq_shift` applies the opposite sign of each surveyed carrier offset. Trials keep separate output directories. The existing additional search budget remains 300 seconds; historical review nominal attempts use a bounded 180-second timeout without changing production capture/decoder configuration. No assumption requires the carrier to be exactly 137.900 MHz.
+ 
+-### Retention settings and eligibility
++`procedure_completed` means the supported bounded procedure completed. It is deliberately separate from `completed`/`negative_result_verified`: sparse surveys and zero images do not establish physical absence of signal or exhaustive offset coverage. Retention is a finite policy decision after this supported procedure, not a claim of scientific proof. Candidate evidence is tied to the raw fingerprint, wrapper/native runtime manifest identity, pipeline options and current search configuration. Missing shifted trials, changed decoder/search configuration, a budget error, crashes, or incomplete processing produce REVIEW. Stronger future searches may recover signals missed by the current procedure; review the candidate list before any cleanup authorization.
+ 
+-| Class | Raw grace period | Current eligibility |
+-|---|---|---|
+-| `processing_failed` | Indefinite | Never automatically deleted, including useful products followed by SIGSEGV |
+-| `unverified` | Indefinite | Historical, incomplete, interrupted or ambiguous evaluation retained |
+-| `no_signal` | 24 hours | Requires clean nominal decoding and a verified exhaustive negative search; currently not certified |
+-| `poor` | 48 hours | Requires clean completed frequency evaluation; currently uncertified partial results stay unverified |
+-| `useful` | 168 hours / 7 days | Clean verified native channel PNG ≥256×128 and matching ≥128 channel lines |
+-| `excellent` | Indefinite | Clean verified product plus ≥2000 channel lines; conservative retention heuristic |
+-| `pinned` | Indefinite | Manual Keep overrides automatic cleanup |
++The strict original `evaluation_clean` marker is preserved. Retention distinguishes known nonblocking file-decoder notices about four unused optional SDR plugins and unavailable celestrak.org TLE refresh from actual decoder errors. It checks full logs for required `Demodulation finished` and `Done! Goodbye` markers; unknown error lines, invalid arguments, timeouts and crashes remain blocking. Spectrum power alone is never deletion evidence. Partial channel/image evidence or actual synchronized decoder evidence remains REVIEW after grace; a `SIGNAL/UNUSABLE` label caused solely by positive noise SNR with NOSYNC does not establish ambiguity; documented troubleshooting/reference captures remain PROTECTED.
+ 
+-Settings live under `retention`: `no_signal_hours=24`, `poor_hours=48`, `useful_hours=168`, `normal_free_gib=20`, `critical_free_gib=10`, `useful_min_lines=128`, `excellent_min_lines=2000`, `automatic_deletion_validated=false`. Grace periods start at the later decode/evaluation completion time, not recording age. Validation rejects settings shorter than these initial conservative grace periods.
++### Persistence and execution safeguards
+ 
+-Each managed `pass.json` keeps persistent capture/decode state, IQ size/fingerprint, all attempts, frequency survey/trials/best result, pin state and `retention` (class, reason, deadline, raw validity/existence/deletion and useful image count). Retention/frequency information is merged into the existing `meteor_passes.metadata` JSON when that pass has a DB row. Capture failures remain visible through the dashboard's managed-record projection. Existing recording JSON, pass history, geometry, image rows and decoded products are preserved. Cleanup never removes images or metadata. Durable deletion-intent/completion entries under `data/meteor-auto/retention-events.jsonl` record pass ID, filename, bytes, classification, reason, timestamp, frequency completion and decoder/image result; pin/unpin changes are also audited.
++Dry-run classification does not rewrite capture metadata, pass history, database rows, raw IQ or images. Maintenance may persist retention metadata and review evidence. Hypothetical raw-only deletion retains recording JSON, pass records, chronological attempts, decoded images, evaluation database/history and durable retention audit entries. No cleanup operation deletes images or metadata. Shared capture/processing/retention locks, active-owner exclusions, approved raw directory/suffix, fingerprint checks, exclusive raw advisory locks and open-reader checks remain in place for any future gated execution.
+ 
+-### Keep / Pin and inspection
++### Exact inventory and verification
+ 
+-In the dashboard's Satellites tab, choose a managed pass and click **Keep raw recording**. **Unpin recording** removes the protection. Imported/reference records are outside automatic cleanup; Keep is disabled there. The existing dashboard control token protects `POST /api/meteor/pin` with `{id, keep}`. Active satellite operations may return “retry shortly” because locks prevent racing metadata changes.
++The current complete report, JSON and CSV are linked below. They list filenames, saved satellite/pass timestamps, recorded sample rates, exact bytes, MiB/GiB, disposition/reason, image evidence, explicit reference status and age. Group totals distinguish all satellite raw IQ from the METEOR subset and separately quantify >1 GiB, 256 kS/s, 1.024 MS/s, protected/reference and failed/no-image material.
+ 
+-On the EVK, the equivalent commands are:
++- [Exact dry-run inventory and report](evidence/retention-classifier-report.md)
++- [Machine-readable inventory](evidence/retention-classifier-inventory.json)
++- [Inventory CSV](evidence/retention-classifier-inventory.csv)
++- [Authoritative dry-run output](evidence/retention-classifier-dry-run.json)
++- [Verification and live health](evidence/retention-classifier-verification.json)
++- [Tests](evidence/retention-classifier-tests.txt)
+ 
+-```sh
+-cd /root/rf-watchkeeper
+-.satellite-venv/bin/python meteor_pipeline.py pin --id m24-20261005T014957Z
+-.satellite-venv/bin/python meteor_pipeline.py unpin --id m24-20261005T014957Z
+-.satellite-venv/bin/python meteor_pipeline.py cleanup --dry-run
+-.satellite-venv/bin/python meteor_pipeline.py retention-refresh
+-```
++The test suite covers disabled deletion gates with nonzero dry-run candidates, useful/crash/historical product protection, recent failed grace, old no-image eligibility, actual errors and ambiguous signal REVIEW, explicit references, old 1.024 MS/s no-image material, hypothetical metadata/history/image persistence, changed fingerprints, missing trials, changed decoder/search identities, scope checks, locks, open readers and unchanged conservative duration minima. The metadata-survival test simulates deletion metadata without deleting its raw test file. The capture/recovery suite uses mocked reboot/device operations; no real reboot or hardware recovery was invoked.
+ 
+-`frequency-search --record data/meteor-auto/passes/<ID>/pass.json` explicitly evaluates an existing normal attempt, preserving its original IQ and prior outputs. `cleanup --apply` refuses while either deletion gate is false; `--dry-run` and `--apply` cannot be combined.
++Older managed records that predate fingerprint collection can be evaluated in a separate review record after confirming the current raw matches the task baseline and recorded capture size. The review records explicitly describe this new fingerprint provenance; they do not invent a capture-time fingerprint or rewrite original metadata.
+ 
+-### Disk pressure and concurrency
+ 
+-Above 20 GiB free, normal deadlines apply. At 10–20 GiB free, maintenance/pre-capture cleanup selects normally expired raw files promptly. Below 10 GiB, it prioritizes the oldest expired `no_signal`/`poor` files, without shortening any grace period. Nothing protected is sacrificed for space. The existing capture headroom guard requires predicted capture bytes **plus 10 GiB** free; otherwise capture is skipped with a logged reason. The dashboard displays a disk warning below 20 GiB and exposes current deletion mode.
+-
+-Cleanup acquires the same capture/processing locks used by managed capture, direct decode, processing and external worker claims, plus a retention lock. Active capture/search/decode/reboot/worker states are ineligible, including unresolved worker leases. It checks fresh metadata, recorded fingerprint/size, approved raw directory/suffix, symlinks, an exclusive IQ advisory lock and all accessible `/proc/*/fd` handles before unlink. Unreadable process information causes a conservative refusal. Reruns are idempotent. Cooperative wrappers protect delayed Docker opens. Uncooperative manually launched readers cannot be made fully race-safe by a `/proc` snapshot alone; require use of the wrapper/shared lock or a stronger enforced access protocol before enabling actual deletion.
+-
+-### Validation, operational result and follow-up
+-
+-- **67 tests passed** both staged and deployed: retention safety, pin/unpin, token rejection, failed/crash/timeout states, fingerprints, locks, grace periods, low-disk ordering, synthetic-only deletion/idempotence, selected shifts, historical metadata handling and capture/reboot recovery regressions. Dashboard JavaScript syntax also checked.
+-- Dry-run against eight managed passes: **zero would-delete files**; five unverified and three processing-failed, all retained. Simulated 5 GiB and pin protection used temporary/synthetic fixtures and the live pin API; the live pass's original pin state was restored.
+-- `m24-20261005T114312Z` (256 kS/s) was evaluated using a cloned pass/separate validation DB: nominal and applied +45000/+60000 Hz shift trials all exited 0 with zero images. IQ SHA-256 and original pass metadata SHA-256 were unchanged during experimentation. Search result/evidence reference were then explicitly added to the managed metadata without rewriting previous attempts. The surveyed candidate carrier offsets were -45000/-60000 Hz; broad power does **not** prove a satellite carrier.
+-- Offset logs confirm `freq_shift` was accepted before demodulation. Missing optional BladeRF/LimeSDR/Pluto/USRP libraries and failed TLE refreshes in the network-isolated container produce error diagnostics. The clean-evaluation gate conservatively treats these as unresolved. No positive offset reception was demonstrated on this recording. A controlled positive offset recording and adjudication of those startup diagnostics are required before changing this gate.
+-- Deployment snapshots verified unchanged raw files, five future planned passes, their 256000 sample rates/137900000 Hz/V4MAIN01 settings, ten DB pass rows, 79 image rows and all previous metadata values (apart from explicit new retention/frequency/pin fields). Seven crash-regression image routes still return HTTP 200. Free disk at 12:37 UTC: **56.92 GiB**.
+-- Dashboard, cleanup/planning/dispatch/processing timers, V4 scheduler and RF health timer were active. `rf-watchkeeper.service` was inactive in this snapshot; that unit was not controlled by this task. No reboot, RF retune, unrelated scheduler change or historical batch deletion was performed.
+-
+-Follow-up: validate successful recovery with known positive offset IQ, implement/validate an exhaustive negative evaluator before no-signal expiry, resolve or explicitly adjudicate SatDump startup/TLE errors, and enforce cooperative raw access for all manual tools. Keep both deletion flags false until these conditions support safe unattended deletion.
+-
+-Evidence: [final verification](evidence/retention-verification.json), [dry-run](evidence/retention-dry-run.json), [67-test output](evidence/retention-tests.txt), [frequency experiment](evidence/retention-frequency-validation.json), [exact final patch](evidence/meteor-retention.patch). Backups: `/root/rf-watchkeeper/backups/retention-20261005T123352Z/`; complete stage/logs: `/root/rf-watchkeeper/retention-stage-20261005/`.
++Verified result: PROTECTED: 9 files / 7,986,741,248 bytes; GRACE: 2 files / 840,171,520 bytes; DELETABLE: 18 files / 19,179,241,472 bytes; REVIEW: 2 files / 2,033,188,864 bytes. Dry-run reclaimable 19,179,241,472 bytes; actual reclaimed 0. 84 staged/deployed tests passed. Both deletion gates remain disabled.
+--- a/docs/project-log.md
++++ b/docs/project-log.md
+@@ -143,3 +143,17 @@
+ - Satellite interaction: Airband now reuses read-only `rf_health.satellite_guard()` and reads managed plan planned/claimed/capturing reservation windows plus existing manual timers, with 5-minute buffer and fail-closed malformed/missing plan. Inspection found old Airband guard only considered manual unit prefixes, missing managed plan reservations. New guard is active in restarted processing worker. Running scheduler PID 97128 still has its previously imported Airband module; strengthened capture-side guard loads on its next normal restart (e.g. METEOR handoff/restoration). Existing satellite capture remains responsible for stopping/restoring ordinary RF work. No live RF test performed; offline native replay checked no imminent/active reservation and yielded on guard failures.
+ - Validation/evidence: **22 native EVK tests pass** (11 new, 7 retained capture/priority, 4 retained dashboard/tiny exclusion); [test output](evidence/airband-text-20261005/tests.txt). Segmentation replay of **119 completed retained captures** verifies original WAV hashes unchanged; [audit](evidence/airband-text-20261005/replay-segmentation.json). Latest 89.088-second saved audio yielded 5 clips covering 84.708 seconds; all five ASR segments produced text; native replay 15.35s including preparation/model startup/failed Genie, not a QNN acceleration benchmark. Initial isolated test referenced a stage-relative model path and failed; harness corrected to existing operational small model and replay succeeded. [Native result](evidence/airband-text-20261005/replay-model-result.json). Failure/preemption, corrupt/missing outputs, no-activity, short speech, managed reservation and stale-output tests included. Final API/audio HTTP 200; three services active/success; scheduler PID and boot ID unchanged; job configuration, scheduler source, satellite capture/planner/schedule/preflight and plan hashes unchanged. [Verification](evidence/airband-text-20261005/verification.json).
+ - Result/follow-up: experimental/incomplete. Native transcript is usable but contains station/weather recognition errors; Genie still exits 1 and dashboard correctly reports partial_success. Example unverified fragment: “wind touchdown zone 170 degrees, 11 knots”. No new reliable numeric-field accuracy claim. Remaining: labelled ATIS/Tower references and field accuracy scores; learned/calibrated RF speech detection; Tower recorded-text workflow without scheduler interference; Finnish/language selection (ASR still requests English); Genie runtime failure; graph/latency profiling; ATIS-only retention and reviewed change alerts; verify new guard loading at next ordinary scheduler restart and a future automatic capture. METEOR retention/classification/cleanup, planner/capture/decode/database/history were not modified by this work.
++
++### 2026-10-05T20:58:10.896210+03:00 — METEOR dry-run classifier corrected; deletion disabled
++
++- Problem: the former preview excluded most historical IQ and retained failed/unverified captures indefinitely, waiting for an exhaustive negative evaluator that did not exist. The execution gates were already separate; the classifier/inventory semantics caused the zero-candidate outcome.
++- Change: independent PROTECTED/GRACE/DELETABLE/REVIEW dispositions; all historical raw included; 24h no-image/48h partial grace anchored to capture completion; useful historical/current/crash products and explicit references protected. Existing capture configuration, 256 kS/s planning, RF scheduler and systemd units unchanged. Both deletion gates false.
++- Frequency handling: supported native SatDump at each recording’s saved sample rate, existing ±60 kHz/24-window survey and both ranked corrections, full stage/known-nonblocking-notice checks. No exhaustive absence-of-signal claim. Decoder errors and ambiguous synchronized/partial evidence become REVIEW. Two older managed records lacked fingerprints; separate review records establish unchanged current inputs with explicit provenance, leaving original capture records untouched.
++- Inventory: 31 satellite raw files, 30,039,343,104 bytes (30.039343104 GB); METEOR subset 30 / 29,979,836,416 bytes. >1 GiB: 15 / 24,540,872,704 bytes, all 1.024 MS/s.
++- Dispositions: PROTECTED 9 files / 7,986,741,248 bytes; GRACE 2 files / 840,171,520 bytes; DELETABLE 18 files / 19,179,241,472 bytes; REVIEW 2 files / 2,033,188,864 bytes.
++- Dry-run recovery: 19,179,241,472 bytes (17.862060546875 GiB). Actual deleted/reclaimed: 0 files / 0 bytes. Three historical large recordings yielded newly recovered useful images and are protected. Exact inventory/rate/reference/no-image totals and candidate names appear in the evidence below.
++- REVIEW: M2-3_20260928_223042_137900000.cu8 and M2-4_20261001_043500_137900000.cu8: nominal decoder SIGSEGV (returncode 139) without useful images; the offset procedure cannot be certified complete.
++- Tests: 84 passed staged and deployed, including all requested cases, disabled gates with nonzero candidates, historical/useful/reference protection, grace expiry, errors/ambiguity, old 1.024 MS/s material, hypothetical history/image persistence (including missing legacy raw), scope, shared locks/open readers, decoder/search identities and missing/null metadata. Dashboard JavaScript syntax passed; live API returns updated dispositions.
++- Verification: all original raw fingerprints, recording JSON, capture/scheduler configuration/source hashes, original DB history and image rows preserved. Only new retention/frequency fields and separate review evidence were added. Planner/dispatch/process/cleanup/registration services report success; associated timers, RF scheduler, dashboard and health timer active. No new failed units; pre-existing unrelated rmtfs.service failure unchanged. No reboot, RF retune or pass disruption. Dashboard web process alone restarted to load the classifier/UI.
++- Evidence: [complete report and candidate list](evidence/retention-classifier-report.md), [JSON inventory](evidence/retention-classifier-inventory.json), [CSV inventory](evidence/retention-classifier-inventory.csv), [dry run](evidence/retention-classifier-dry-run.json), [verification](evidence/retention-classifier-verification.json), [84-test output](evidence/retention-classifier-tests.txt), [exact patch](evidence/retention-classifier.patch). Full logs/new products/evaluation DB: retention-classifier-20261005/ and data/meteor-auto/retention-review/. Backup: /root/rf-watchkeeper/backups/retention-classifier-20261005T175543Z.
++- Next action: review the concrete dry-run candidate list before any cleanup permission. Real deletion remains disabled.
+--- /dev/null
++++ b/data/meteor-auto/retention-protected.json
+@@ -0,0 +1,6 @@
++{
++  "M2-3_20260929_202718_137900000.cu8": "Documented native-decoder regression and frequency-offset troubleshooting reference (historical-cleanup-20261005/report.md)",
++  "M2-4_20261004_150317_137900000.cu8": "Documented weak/poor reception regression reference (historical-cleanup-20261005/report.md)",
++  "M2-3_manual_20260928_2112_137900000.cu8": "Explicit manual decoder reference; incomplete capture metadata",
++  "V4-VERIFY_20260930_193204_137900000.cu8": "Explicit V4 hardware verification/reference recording"
++}
