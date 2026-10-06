@@ -283,10 +283,31 @@ def process(folder, stop):
     for path in folder.glob('clip-*'):
         if path.suffix in ('.wav', '.json', '.log'):
             path.unlink(missing_ok=True)
-    if outcome == 'no_activity':
+    if folder.parent.name == 'tower':
+        retain_tower_audio(folder.parent)
+    elif outcome == 'no_activity':
         for name in ('raw.wav', 'listen.wav'):
             (folder/name).unlink(missing_ok=True)
         save(folder/'audio-retention.json', {'status':'silence_removed', 'metadata_retained':True})
+
+def retain_tower_audio(base, keep=20):
+    """Only prune processed silent live Tower WAVs; preserve metadata and speech."""
+    folders=sorted((p for p in base.iterdir() if p.is_dir() and not p.is_symlink()
+                    and re.fullmatch(r'\d{8}T\d{6}\.\d{6}Z',p.name)
+                    and (p/'capture.json').is_file()),key=lambda p:p.name,reverse=True)
+    for index,p in enumerate(folders):
+        try:
+            capture=json.loads((p/'capture.json').read_text())
+            processed=json.loads((p/'processed.json').read_text())
+            if capture.get('source')!='live' or capture.get('kind')!='tower' or processed.get('status')!='no_activity':continue
+            if index < keep:
+                save(p/'audio-retention.json', {'status':'recent_silence_retained','window_captures':keep,'metadata_retained':True})
+                continue
+            for name in ('raw.wav','listen.wav'):
+                path=p/name
+                if not path.is_symlink():path.unlink(missing_ok=True)
+            save(p/'audio-retention.json', {'status':'silence_removed','window_captures':keep,'metadata_retained':True})
+        except (OSError,ValueError):continue
 
 def validate_interpretation(parsed, segments):
     if not isinstance(parsed,dict) or not isinstance(parsed.get('fields'),dict):
@@ -366,3 +387,4 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--process',type=Path);args=parser.parse_args()
     if args.process:process(args.process,threading.Event())
     else:worker()
+

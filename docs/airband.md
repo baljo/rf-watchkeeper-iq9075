@@ -17,3 +17,8 @@ Capture skips below 512 MiB free. Historical recordings are untouched by the new
 ## Evidence and limits
 
 [28-test deployment report](evidence/airband-ops-20261005/report.md): live Tower 29.184 s, retained interval 185.706 s, ATIS 89.088 s. Tower examples were quiet; no positive received Tower utterance was established. Synthetic fixtures prove wiring only. Saved native ATIS replay establishes model operation, not labelled accuracy. APIs returned 200 again during this documentation task. Numeric/weather accuracy, Finnish recognition and accelerator performance remain unverified. See [ATIS](atis.md) and [testing](testing-and-validation.md).
+
+
+## Tower capture visibility — 2026-10-06
+
+Tower displays the latest 20 capture attempts, including no_activity, at the top of Airband. Times use Europe/Helsinki. Available audio has playback/download controls; expired audio retains capture metadata. Silent live Tower WAVs remain within the latest 20 capture folders; older processed silence is pruned without touching speech, reference, ATIS or satellite material. See [project log](project-log.md).

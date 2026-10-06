@@ -1667,20 +1667,25 @@ function showMeteorConditions(pass){
 </script>
 <script>
 (()=>{
- const panel=document.createElement('section');panel.className='card';
- panel.innerHTML='<h2>Vaasa Tower · 120.950 MHz AM</h2><p>05:00–01:30 Europe/Helsinki · 30 s every ~3 min · METEOR takes priority</p><p id="tower-status">Waiting for Tower recording</p><p id="tower-meta"></p><audio id="tower-player" controls hidden></audio><div id="tower-transcript"></div>';
- const anchor=document.getElementById('atis-transcript');
- (anchor?.closest('section')?.parentElement||document.body).append(panel);
- let busy=false;
- async function poll(){if(busy)return;busy=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),7000);
- try{const r=await fetch('/api/tower',{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error('unavailable');const d=await r.json();
- document.getElementById('tower-status').textContent=d.message||d.status;
- document.getElementById('tower-meta').textContent=d.recording?('Recording '+d.recording+' · '+d.status+' · text requires listening review'):'';
- const audio=document.getElementById('tower-player');audio.hidden=!d.audio_available;
- if(d.audio_available){const src='/api/tower/audio?recording='+encodeURIComponent(d.recording);if(audio.getAttribute('src')!==src)audio.src=src;}
- const transcript=document.getElementById('tower-transcript');transcript.replaceChildren();
- for(const segment of d.transcript?.segments||[]){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+(segment.text||segment.error);transcript.append(p);}
- }catch(e){document.getElementById('tower-status').textContent='Tower unavailable; displayed result may be cached.';}
+ const panel=document.createElement('section');panel.className='card section';
+ panel.innerHTML='<h2>Vaasa Tower  /  120.950 MHz AM  -  Recent captures</h2><p>05:00-01:30 Europe/Helsinki  /  30 s every ~3 min  /  METEOR takes priority</p><p id="tower-status" role="status">Loading capture history...</p><p>Latest 20 capture attempts, including recorded silence. Transcript text requires listening review.</p><div id="tower-recent"></div>';
+ document.getElementById('panel-airband').prepend(panel);
+ let busy=false,signature='';
+ async function poll(){if(busy)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),7000);
+ try{const r=await fetch('/api/tower',{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error('unavailable');const d=await r.json(),rows=d.recent_captures||[];
+ document.getElementById('tower-status').textContent=rows.length?rows.length+' recent capture attempts  /  updated '+new Date().toLocaleTimeString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki':'No Tower captures recorded yet.';
+ const next=JSON.stringify(rows);if(next===signature)return;signature=next;
+ const list=document.getElementById('tower-recent');list.replaceChildren();
+ for(const row of rows){const card=document.createElement('section'),title=document.createElement('h3'),detail=document.createElement('p');
+ title.textContent=new Date(row.captured_at).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki';
+ detail.textContent=(typeof row.duration_seconds==='number'?row.duration_seconds.toFixed(3)+' s':'Duration unavailable')+'  /  '+row.result+'  /  '+row.message;card.append(title,detail);
+ for(const segment of row.transcript?.segments||[]){if(segment.text){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+segment.text;card.append(p);}}
+ if(row.audio_url){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=row.audio_url;
+ const link=document.createElement('a');link.href=row.audio_url;link.download=row.recording+'.wav';link.textContent='Download WAV';
+ audio.addEventListener('error',()=>{link.hidden=true;const p=document.createElement('p');p.textContent='Audio expired or unavailable; capture metadata remains.';card.append(p);},{once:true});card.append(audio,document.createTextNode(' '),link);
+ }else{const p=document.createElement('p');p.textContent='Audio unavailable / expired; capture metadata retained.';card.append(p);}
+ list.append(card);}
+ }catch(e){document.getElementById('tower-status').textContent='Tower history unavailable; displayed captures may be cached.';}
  finally{clearTimeout(timeout);busy=false;}}
  poll();setInterval(poll,8000);
 })();

@@ -26,3 +26,8 @@ Read-only inspection during this task subsequently found **14 satellite cu8 / 11
 Finalized new Tower/ATIS `no_activity` removes raw/listening WAVs but retains capture/segmentation/transcript/status metadata. Temporary clip WAV/JSON/logs are removed after finalization. Positive/uncertain audio and historical evidence remain. Positive archives and database growth still need a verified bounded policy.
 
 Git excludes raw IQ/WAV, databases, model/native runtime assets, generated runs, backups/staging, raw logs/events, credentials/private keys and machine-specific outputs. Small reports/test evidence and safe source/config snapshots are selected explicitly. See [.gitignore](../.gitignore) and [publication manifest](publication-manifest.md).
+
+
+## Tower capture visibility — 2026-10-06
+
+Tower displays the latest 20 capture attempts, including no_activity, at the top of Airband. Times use Europe/Helsinki. Available audio has playback/download controls; expired audio retains capture metadata. Silent live Tower WAVs remain within the latest 20 capture folders; older processed silence is pruned without touching speech, reference, ATIS or satellite material. See [project log](project-log.md).

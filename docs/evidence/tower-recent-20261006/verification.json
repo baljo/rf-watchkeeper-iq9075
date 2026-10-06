@@ -1,0 +1,150 @@
+{
+  "/": {
+    "http": 200
+  },
+  "/api/tower": {
+    "http": 200
+  },
+  "/api/atis": {
+    "http": 200
+  },
+  "/api/meteor": {
+    "http": 200
+  },
+  "/api/state": {
+    "http": 200
+  },
+  "audio": {
+    "http": 200,
+    "recording": "20261006T153145.222237Z",
+    "seconds": 29.184
+  },
+  "recent": [
+    {
+      "recording": "20261006T153145.222237Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": true
+    },
+    {
+      "recording": "20261006T152736.438208Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": true
+    },
+    {
+      "recording": "20261006T152427.567949Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": true
+    },
+    {
+      "recording": "20261006T152118.759115Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T151710.001888Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T151401.273833Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T151052.380557Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T150643.314228Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T150334.381931Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T150025.419151Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T145616.476636Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T145307.644436Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T144958.579632Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T144549.721441Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T144240.709356Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T143931.666610Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T143522.619601Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T143213.763045Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T142904.850301Z",
+      "result": "no_activity",
+      "duration_seconds": 29.184,
+      "audio_available": false
+    },
+    {
+      "recording": "20261006T142455.993370Z",
+      "result": "no_activity",
+      "duration_seconds": 28.928,
+      "audio_available": false
+    }
+  ],
+  "scheduler_and_meteor_hashes_unchanged": true,
+  "services": [
+    "active",
+    "active",
+    "active"
+  ]
+}

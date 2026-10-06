@@ -20,3 +20,8 @@
 AIS map distinguishes local/regional targets, base stations and data age. Sensor history remains visible when the receiver is disabled. Overview health separates samples from application outcome. Satellite history preserves attempts, historical rates and crash diagnostics.
 
 Read-only checks of state, Tower, ATIS, audio, METEOR and schedule returned HTTP 200 during this task. Route availability does not prove recognition accuracy or uptime. Image-route evidence is retained in [METEOR regression](evidence/meteor-crash-regression.json). Never publish session-token values. See [operation](operation.md).
+
+
+## Tower capture visibility — 2026-10-06
+
+Tower displays the latest 20 capture attempts, including no_activity, at the top of Airband. Times use Europe/Helsinki. Available audio has playback/download controls; expired audio retains capture metadata. Silent live Tower WAVs remain within the latest 20 capture folders; older processed silence is pruned without touching speech, reference, ATIS or satellite material. See [project log](project-log.md).

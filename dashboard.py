@@ -336,12 +336,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond({'error':'Satellite image unavailable'}, status=404)
         if route == "/api/tower":
             try:
-                return self.respond(atis_view.snapshot(ROOT, 'tower'))
+                data=atis_view.snapshot(ROOT, 'tower')
+                data['recent_captures']=atis_view.recent(ROOT)
+                return self.respond(data)
             except (OSError, ValueError) as error:
                 return self.respond({'status':'unavailable','message':str(error)}, status=503)
         if route == "/api/tower/audio":
             try:
-                return self.respond(atis_view.audio(ROOT, 'tower'), "audio/wav")
+                return self.respond(atis_view.audio(ROOT, 'tower', parse_qs(urlsplit(self.path).query).get('recording', [None])[0]), "audio/wav")
             except (OSError, ValueError):
                 return self.respond({'error':'Tower audio unavailable'}, status=404)
         if route == "/api/atis":

@@ -1,0 +1,40 @@
+test_audio_is_pinned_to_selected_capture_and_rejects_escape (test_tower_recent.TowerRecentTests.test_audio_is_pinned_to_selected_capture_and_rejects_escape) ... ok
+test_history_includes_twenty_silent_attempts_and_missing_audio (test_tower_recent.TowerRecentTests.test_history_includes_twenty_silent_attempts_and_missing_audio) ... ok
+test_retention_preserves_speech_references_metadata_and_latest_twenty (test_tower_recent.TowerRecentTests.test_retention_preserves_speech_references_metadata_and_latest_twenty) ... ok
+test_speech_and_failure_status (test_tower_recent.TowerRecentTests.test_speech_and_failure_status) ... ok
+test_genie_preemption_preserves_base_transcript (test_airband_ops.OperatingTests.test_genie_preemption_preserves_base_transcript) ... ok
+test_helsinki_window_boundaries_and_winter (test_airband_ops.OperatingTests.test_helsinki_window_boundaries_and_winter) ... ok
+test_independent_slots_and_restart (test_airband_ops.OperatingTests.test_independent_slots_and_restart) ... ok
+test_meteor_skip_is_recorded_without_execute_or_health_failure (test_airband_ops.OperatingTests.test_meteor_skip_is_recorded_without_execute_or_health_failure) ... {"schema_version": 1, "event_type": "scheduler_state", "received_at": "2026-10-06T15:34:19.487214+00:00", "source": "live", "mode": "live", "state": "skipped", "cycle": 1, "job_id": "tower", "job": "Tower", "frequency_hz": 120950000, "processing_mode": "am", "dwell_seconds": 30, "reason": "Intentional METEOR skip: Satellite ownership: meteor-auto-capture.service"}
+{"schema_version": 1, "event_type": "scheduler_state", "received_at": "2026-10-06T15:34:19.487429+00:00", "source": "live", "mode": "live", "state": "waiting", "cycle": 1, "job_id": null, "job": null, "frequency_hz": null, "processing_mode": null, "dwell_seconds": null, "reason": "No jobs due in current operating window"}
+{"schema_version": 1, "event_type": "scheduler_state", "received_at": "2026-10-06T15:34:19.487789+00:00", "source": "live", "mode": "live", "state": "stopped", "cycle": 1, "job_id": null, "job": null, "frequency_hz": null, "processing_mode": null, "dwell_seconds": null, "reason": "Requested cycles completed"}
+ok
+test_tower_uses_base_asr_without_genie_and_keeps_positive_audio (test_airband_ops.OperatingTests.test_tower_uses_base_asr_without_genie_and_keeps_positive_audio) ... ok
+test_valid_empty_asr_is_normal_no_speech (test_airband_ops.OperatingTests.test_valid_empty_asr_is_normal_no_speech) ... ok
+test_active_persisted_ownership_blocks (test_airband_text.AirbandTests.test_active_persisted_ownership_blocks) ... ok
+test_asr_and_genie_failures_have_distinct_status (test_airband_text.AirbandTests.test_asr_and_genie_failures_have_distinct_status) ... ok
+test_continuous_audio_is_retained_but_not_certified_as_speech (test_airband_text.AirbandTests.test_continuous_audio_is_retained_but_not_certified_as_speech) ... ok
+test_managed_reservation_and_corrupt_plan_block (test_airband_text.AirbandTests.test_managed_reservation_and_corrupt_plan_block) ... ok
+test_model_without_new_output_cannot_reuse_stale_transcript (test_airband_text.AirbandTests.test_model_without_new_output_cannot_reuse_stale_transcript) ... ok
+test_pending_interrupted_and_corrupt_outputs (test_airband_text.AirbandTests.test_pending_interrupted_and_corrupt_outputs) ... ok
+test_preemption_leaves_recording_retryable (test_airband_text.AirbandTests.test_preemption_leaves_recording_retryable) ... ok
+test_separate_bursts_and_click_rejection (test_airband_text.AirbandTests.test_separate_bursts_and_click_rejection) ... ok
+test_short_speech_is_padded_not_discarded (test_airband_text.AirbandTests.test_short_speech_is_padded_not_discarded) ... ok
+test_silence_skips_models_and_is_not_failure (test_airband_text.AirbandTests.test_silence_skips_models_and_is_not_failure) ... ok
+test_spelling_is_auditable_and_does_not_repair_weather_numbers (test_airband_text.AirbandTests.test_spelling_is_auditable_and_does_not_repair_weather_numbers) ... ok
+test_active_satellite_blocks (test_atis_pipeline.SafetyTests.test_active_satellite_blocks) ... ok
+test_does_not_match_description (test_atis_pipeline.SafetyTests.test_does_not_match_description) ... ok
+test_interval_survives_restart (test_atis_pipeline.SafetyTests.test_interval_survives_restart) ... ok
+test_preprocessing_preserves_original_and_bounds_clips (test_atis_pipeline.SafetyTests.test_preprocessing_preserves_original_and_bounds_clips) ... ok
+test_processing_does_not_start_during_satellite (test_atis_pipeline.SafetyTests.test_processing_does_not_start_during_satellite) ... ok
+test_unknown_schedule_blocks (test_atis_pipeline.SafetyTests.test_unknown_schedule_blocks) ... ok
+test_upcoming_timer_blocks (test_atis_pipeline.SafetyTests.test_upcoming_timer_blocks) ... ok
+test_interpretation_classification_uses_actual_source (test_atis_view.ATISViewTests.test_interpretation_classification_uses_actual_source) ... ok
+test_old_summary_is_not_exposed_as_success (test_atis_view.ATISViewTests.test_old_summary_is_not_exposed_as_success) ... ok
+test_status_is_review_required_even_after_success (test_atis_view.ATISViewTests.test_status_is_review_required_even_after_success) ... ok
+test_tiny_cannot_be_run_on_stale_atis_id (test_atis_view.ATISViewTests.test_tiny_cannot_be_run_on_stale_atis_id) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 1.384s
+
+OK
