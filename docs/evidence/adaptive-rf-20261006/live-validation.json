@@ -1,0 +1,65 @@
+{
+  "evidence_scope": "Public aggregate results; detailed operational trace retained only in local workspace and EVK shared evidence.",
+  "tests": {
+    "scheduler_airband": 48,
+    "health_ais_meteor": 111,
+    "deployed_subset": 20
+  },
+  "tower": {
+    "completed_in_observation": 6,
+    "unblocked_cadence_seconds_min": 61.537,
+    "unblocked_cadence_seconds_max": 61.689,
+    "activity_extensions_observed": 0,
+    "positive_transmission_observed": false,
+    "probe_seconds": 15,
+    "quiet_tail_seconds": 10,
+    "hard_limit_seconds": 75,
+    "threshold_rms": 40
+  },
+  "atis": {
+    "completed_audio_seconds": 89.088,
+    "processing": "partial_success"
+  },
+  "ais": {
+    "received_channels": {
+      "A": 96,
+      "B": 64
+    },
+    "decoder_storage_unchanged": true
+  },
+  "ownership": {
+    "samples": 207,
+    "collision_samples": 0,
+    "max_owners": 1
+  },
+  "api": {
+    "/": 200,
+    "/api/state": 200,
+    "/api/tower": 200,
+    "/api/atis": 200,
+    "/api/meteor": 200
+  },
+  "history": {
+    "recent_rows": 20,
+    "silent_audio_rate": 8000,
+    "silent_audio_channels": 1,
+    "silent_audio_seconds": 14.08,
+    "silent_audio_http_status": 200,
+    "retention_regression_tests_pass": true
+  },
+  "health": {
+    "services_active": true,
+    "scheduler_failure_restarts": 0,
+    "failed_receiver_jobs": 0
+  },
+  "preservation": {
+    "dashboard_server_unchanged": true,
+    "history_source_unchanged": true,
+    "dashboard_only_label_changed": true,
+    "deployed_scheduler_config_hashes_matched": true
+  },
+  "limitations": [
+    "Activity extensions and METEOR preemption use injected PCM/guard tests; no real Tower speech or METEOR interruption was observed.",
+    "Bounded process observation is not indefinite reliability acceptance."
+  ]
+}

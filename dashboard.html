@@ -1668,7 +1668,7 @@ function showMeteorConditions(pass){
 <script>
 (()=>{
  const panel=document.createElement('section');panel.className='card section';
- panel.innerHTML='<h2>Vaasa Tower  /  120.950 MHz AM  -  Recent captures</h2><p>05:00-01:30 Europe/Helsinki  /  30 s every ~3 min  /  METEOR takes priority</p><p id="tower-status" role="status">Loading capture history...</p><p>Latest 20 capture attempts, including recorded silence. Transcript text requires listening review.</p><div id="tower-recent"></div>';
+ panel.innerHTML='<h2>Vaasa Tower  /  120.950 MHz AM  -  Recent captures</h2><p>05:00-01:30 Europe/Helsinki  /  15 s probes about every minute / activity hold up to 75 s  /  METEOR takes priority</p><p id="tower-status" role="status">Loading capture history...</p><p>Latest 20 capture attempts, including recorded silence. Transcript text requires listening review.</p><div id="tower-recent"></div>';
  document.getElementById('panel-airband').prepend(panel);
  let busy=false,signature='';
  async function poll(){if(busy)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),7000);

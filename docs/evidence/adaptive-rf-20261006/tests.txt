@@ -1,0 +1,8 @@
+...................{"schema_version": 1, "event_type": "scheduler_state", "received_at": "2026-10-06T15:53:42.484562+00:00", "source": "live", "mode": "live", "state": "skipped", "cycle": 1, "job_id": "tower", "job": "Tower", "frequency_hz": 120950000, "processing_mode": "am", "dwell_seconds": 30, "reason": "Intentional METEOR skip: Satellite ownership: meteor-auto-capture.service"}
+{"schema_version": 1, "event_type": "scheduler_state", "received_at": "2026-10-06T15:53:42.484770+00:00", "source": "live", "mode": "live", "state": "waiting", "cycle": 1, "job_id": null, "job": null, "frequency_hz": null, "processing_mode": null, "dwell_seconds": null, "reason": "No jobs due in current operating window"}
+{"schema_version": 1, "event_type": "scheduler_state", "received_at": "2026-10-06T15:53:42.485151+00:00", "source": "live", "mode": "live", "state": "stopped", "cycle": 1, "job_id": null, "job": null, "frequency_hz": null, "processing_mode": null, "dwell_seconds": null, "reason": "Requested cycles completed"}
+.............................
+----------------------------------------------------------------------
+Ran 48 tests in 2.691s
+
+OK

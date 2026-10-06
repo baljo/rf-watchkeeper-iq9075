@@ -38,3 +38,7 @@ Tests below predate this audit. The [original watchdog report](evidence/rf-healt
 | Hourly and per-pass loop protection | Implemented and directly tested | `test_hourly_guard_survives_reopen`, `test_failed_stages_respect_reboot_rate_limit`, `test_one_reboot_only`, `test_concurrent_reboot_request_is_refused`, `test_second_interruption_never_recaptures`; no destructive loop test needed |
 
 **New watchdog/recovery tests in this audit: none.** Five existing AIS validation tests were run offline after changing the observer fixture to an example; all passed. Existing safe-stage validation is adequate; no live fault injection, forced sample probe, receiver reset, scheduler restart or reboot was performed. New work was read-only evidence collection and publication/privacy validation. Genuine remaining gaps are a safe receiver-only USB reset implementation, real fault escalation/hardware recovery and real reboot/resume acceptance, plus long-run monitoring. Do not deliberately cause a risky failure just to close reboot documentation.
+
+## Adaptive hopping — 6 October 2026
+
+48 native scheduler/Airband tests and 111 existing health/AIS/METEOR regression tests passed. Live roughly one-minute Tower probes, AIS gaps, normal ATIS, unchanged Tower recent history/silent audio, and bounded ownership observation passed. METEOR exclusion/preemption and activity extensions used injected capture-loop tests; no positive live Tower transmission or real satellite interruption was induced. See the [report and evidence](evidence/adaptive-rf-20261006/report.md).

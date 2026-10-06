@@ -8,7 +8,7 @@ The EVK puts ARM64 Linux, containerized signal processing and Qualcomm ASR/Genie
 
 | Workload | Deployed behavior |
 | --- | --- |
-| Vaasa Tower | 120.950 MHz AM; approximately 30 s every 3 min; 05:00–01:30 next day, Europe/Helsinki |
+| Vaasa Tower | 120.950 MHz AM; 15 s probes about every minute; energy-triggered hold, 10 s quiet tail, 75 s maximum; 05:00–01:30 next day, Europe/Helsinki |
 | Vaasa ATIS | 136.450 MHz AM; approximately 90 s every 10 min, all day; experimental text |
 | AIS | Dual-channel AIS-catcher around 162 MHz; current background slots capped at 30 s |
 | METEOR-M2 LRPT | Planner, V4 capture, SatDump 1.2.2 ARM64 decode and dashboard images; future managed captures **256 kS/s** |

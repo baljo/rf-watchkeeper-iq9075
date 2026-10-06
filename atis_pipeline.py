@@ -17,6 +17,7 @@ import time
 import wave
 import rf_health
 import airband_text
+from adaptive_rf import TowerHold
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / 'recordings' / 'atis'
@@ -70,7 +71,7 @@ def managed_satellite_reason(seconds, margin):
     for entry in plan['passes']:
         if entry['status'] not in ('planned', 'claimed', 'capturing'):
             continue
-        start = rf_health.timestamp(entry['record_start'])
+        start = rf_health.timestamp(entry.get('trigger', entry['record_start']))
         end = rf_health.timestamp(entry['record_stop'])
         if end > now and start <= now + seconds + margin:
             return 'Satellite managed reservation: ' + entry['id']
@@ -106,7 +107,7 @@ def stop_child(proc):
             proc.wait(timeout=2)
 
 def capture(config, job, stop, publisher):
-    reason = satellite_reason(job['dwell_seconds'])
+    reason = satellite_reason(job['dwell_seconds'] + 6, margin=0)
     if reason:
         publisher.transition('skipped', job, reason)
         return 'skipped'
@@ -124,6 +125,9 @@ def capture(config, job, stop, publisher):
     completed = False
     interrupted = None
     started = time.monotonic()
+    hold = TowerHold(rate, job) if job.get('adaptive_tower') else None
+    extended = False
+    audio_offset = None
     try:
         with (folder / 'receiver.log').open('wb') as log, wave.open(str(folder / 'raw.wav'), 'wb') as wav:
             wav.setnchannels(1); wav.setsampwidth(2); wav.setframerate(rate)
@@ -133,8 +137,8 @@ def capture(config, job, stop, publisher):
             while not stop.is_set() and time.monotonic() < deadline:
                 publisher.tick()
                 if time.monotonic() >= next_check:
-                    interrupted = satellite_reason(max(0, deadline - time.monotonic()))
-                    next_check = time.monotonic() + 5
+                    interrupted = satellite_reason(max(6, deadline - time.monotonic() + 6), margin=0)
+                    next_check = time.monotonic() + 1
                     if interrupted:
                         break
                 if select.select([proc.stdout], [], [], 0.2)[0]:
@@ -142,17 +146,31 @@ def capture(config, job, stop, publisher):
                     if not block:
                         interrupted = 'Receiver exited early'
                         break
-                    wav.writeframesraw(block[:len(block)//2*2])
+                    block = block[:len(block)//2*2]
+                    wav.writeframesraw(block)
+                    if hold:
+                        if audio_offset is None:
+                            audio_offset = max(0, time.monotonic()-started-len(block)/(2*rate))
+                        hold.feed(block)
+                        deadline = started + min(hold.maximum, max(hold.probe, audio_offset + (hold.last_activity or 0) + hold.quiet))
+                        if deadline-started > job['dwell_seconds'] and not extended:
+                            extended = True
+                            publisher.transition('running', job, 'Tower energy activity: extending until quiet tail or hard maximum')
             completed = not stop.is_set() and not interrupted and time.monotonic() >= deadline
     finally:
         stop_child(proc)
+        if proc and proc.stdout:
+            proc.stdout.close()
     with wave.open(str(folder / 'raw.wav')) as wav:
         duration = wav.getnframes() / rate
-    completed = completed and duration >= job['dwell_seconds'] * 0.8
+    completed = completed and duration >= (deadline-started) * 0.8
+    job['_listen_seconds'] = duration
+    job['_activity_extension'] = extended
     save(folder / 'capture.json', {'frequency_hz': job['frequency_hz'], 'receiver_command': argv,
         'audio_seconds': duration, 'wall_seconds': time.monotonic() - started,
         'status': 'ready' if completed else 'interrupted', 'reason': interrupted or ('Stop requested' if stop.is_set() else None),
-        'source': 'live', 'job_id': job['id'], 'kind': base.name, 'priority': 'satellite first'})
+        'source': 'live', 'job_id': job['id'], 'kind': base.name, 'priority': 'satellite first',
+        'activity_hold': hold.report() if hold else None, 'activity_extended': extended})
     health_id = job.get("_rf_health_id")
     if health_id:
         if stop.is_set() or interrupted and interrupted.startswith('Satellite'):

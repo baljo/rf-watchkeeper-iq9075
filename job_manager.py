@@ -18,10 +18,12 @@ import watchkeeper
 import rf_health
 import subprocess
 import atis_pipeline
+import adaptive_rf
 from zoneinfo import ZoneInfo
 
 # Reuse the tested demo's FM/AM pipeline instead of duplicating its commands/lifecycle.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent / "backends"))
 from sdr_demo import scheduler as demo
 
 ROOT = Path(__file__).resolve().parent
@@ -74,7 +76,12 @@ def load_config(path):
         if job.get("atis_recording") or job.get("tower_recording"):
             if job["mode"] != "am" or job["frequency_hz"] != (120950000 if job.get("tower_recording") else 136450000) or job.get("sample_rate") != 8000:
                 raise ValueError("ATIS requires AM 136450000 Hz at 8000 Hz")
-            finite(job.get("interval_seconds", 1800), "interval_seconds", 180)
+            finite(job.get("interval_seconds", 1800), "interval_seconds", 15 if job.get("tower_recording") else 180)
+            if job.get("adaptive_tower"):
+                for key, default, minimum in (("quiet_seconds", 10, 1), ("max_listen_seconds", 75, job["dwell_seconds"]), ("activity_rms", 40, 1)):
+                    finite(job.get(key, default), key, minimum)
+                if job.get("max_listen_seconds", 75) > 90:
+                    raise ValueError("Tower hard maximum is 90 seconds")
             if job["dwell_seconds"] > 120:
                 raise ValueError("ATIS capture is limited to 120 seconds")
         if job["mode"] == "am":
@@ -197,6 +204,7 @@ def execute(config, job, output, stop, publisher):
             argv += ["--health-id", str(job["_rf_health_id"])]
         process = subprocess.Popen(argv, start_new_session=True)
         hard_deadline = time.monotonic() + job["dwell_seconds"] + 20
+        next_guard = 0
 
         try:
             while process.poll() is None:
@@ -217,6 +225,11 @@ def execute(config, job, output, stop, publisher):
                         os.killpg(process.pid, signal.SIGKILL)
                         process.wait(timeout=3)
                     return False
+                if time.monotonic() >= next_guard:
+                    next_guard = time.monotonic() + 1
+                    if atis_pipeline.satellite_reason(6, margin=0):
+                        if job.get('_rf_health_id'): rf_health.cancel(job['_rf_health_id'], 'AIS released for METEOR')
+                        return 'skipped'  # finally terminates the entire collector group.
                 publisher.tick()
                 stop.wait(0.2)
 
@@ -233,7 +246,7 @@ def execute(config, job, output, stop, publisher):
     return demo.run_job(config, demo_job(job), output, stop, on_tick=publisher.tick)
 
 
-def schedule(config, output, stop, publisher, cycles=0):
+def legacy_schedule(config, output, stop, publisher, cycles=0):
     jobs = ordered_jobs(config)
     cycle = 0
     had_failure = False
@@ -291,6 +304,122 @@ def schedule(config, output, stop, publisher, cycles=0):
             wait_slot(1, stop, publisher)
     publisher.transition("stopped", reason="Stop requested" if stop.is_set() else "Requested cycles completed", cycle=cycle)
     return int(had_failure)
+
+
+def last_slot(job, output):
+    try:
+        value = json.loads(atis_pipeline.slot_path(job, output).read_text())['attempted_at']
+        return finite(value, 'attempted_at')
+    except FileNotFoundError:
+        return 0
+    except (OSError, ValueError, KeyError, TypeError):
+        # Recover corrupt or future-clock state with one cadence of backoff.
+        atis_pipeline.reserve(job, output)
+        return time.time()
+
+
+def schedule(config, output, stop, publisher, cycles=0):
+    if not config.get('adaptive_hopping'):
+        return legacy_schedule(config, output, stop, publisher, cycles)
+    jobs = ordered_jobs(config)
+    metrics_path = output / 'adaptive-metrics.json'
+    try:
+        metrics = json.loads(metrics_path.read_text())
+    except (OSError, ValueError):
+        metrics = {}
+    if not isinstance(metrics, dict):
+        metrics = {}
+    for name in ('tower_probes', 'tower_extensions', 'tower_seconds', 'ais_seconds', 'atis_runs', 'meteor_skips'):
+        if not isinstance(metrics.get(name), (int, float)):
+            metrics[name] = 0
+    cycle = 0
+    failure = False
+    blocked = False
+    while not stop.is_set() and (not cycles or cycle < cycles):
+        reason = atis_pipeline.satellite_reason(0, margin=0) if publisher.mode == 'live' else None
+        if reason:
+            if not blocked:
+                metrics['meteor_skips'] += 1
+                atis_pipeline.save(metrics_path, metrics)
+                publisher.transition('skipped', reason='Intentional METEOR skip: '+reason, cycle=cycle)
+            blocked = True
+            wait_slot(1, stop, publisher)
+            continue
+        now = time.time()
+        for job in jobs:
+            if job.get('tower_recording') or job.get('atis_recording'):
+                if last_slot(job, output) > now:
+                    atis_pipeline.reserve(job, output)
+        job = adaptive_rf.choose(jobs, now, lambda j: last_slot(j, output), in_window)
+        if job is None:
+            wait_slot(1, stop, publisher)
+            continue
+        reason = atis_pipeline.satellite_reason(job['dwell_seconds']+6, margin=0) if publisher.mode == 'live' else None
+        if reason and (job.get('tower_recording') or job.get('atis_recording')):
+            # A long due slot may not fit before METEOR; use a safe shorter gap.
+            deferred_id = job['id']
+            filler = adaptive_rf.choose(jobs, now, lambda j: last_slot(j, output),
+                                       lambda j: j['id'] != deferred_id and in_window(j))
+            if filler:
+                filler_reason = atis_pipeline.satellite_reason(filler['dwell_seconds']+6, margin=0) if publisher.mode == 'live' else None
+                if not filler_reason:
+                    publisher.transition('skipped', job, 'Intentional METEOR defer: '+reason, cycle)
+                    metrics['meteor_skips'] += 1
+                    job, reason = filler, None
+        if reason:
+            if not blocked:
+                metrics['meteor_skips'] += 1
+                atis_pipeline.save(metrics_path, metrics)
+                publisher.transition('skipped', job, 'Intentional METEOR skip: '+reason, cycle)
+            # No cadence reservation until a real attempt. Avoid tight guard loops.
+            blocked = True
+            wait_slot(1, stop, publisher)
+            continue
+        blocked = False
+        error = dependency_error(config, job) if publisher.mode == 'live' else None
+        cycle += 1
+        if job.get('tower_recording') or job.get('atis_recording'):
+            atis_pipeline.reserve(job, output)
+        if error:
+            publisher.transition('failed', job, error, cycle)
+            wait_slot(5, stop, publisher)
+            failure = True
+            continue
+        publisher.transition('running', job, cycle=cycle)
+        if job.get('tower_recording'): metrics['tower_probes'] += 1
+        if job.get('atis_recording'): metrics['atis_runs'] += 1
+        metrics['updated_at'] = datetime.now(timezone.utc).isoformat()
+        atis_pipeline.save(metrics_path, metrics)
+        health_id = None
+        if publisher.mode == 'live':
+            health_id = rf_health.begin(job['id'], job.get('max_listen_seconds', job['dwell_seconds']))
+            job['_rf_health_id'] = health_id
+        started = time.monotonic()
+        try:
+            success = execute(config, job, output, stop, publisher)
+        except Exception as error:
+            if health_id: rf_health.finish(health_id, False, reason=str(error))
+            publisher.transition('failed', job, str(error), cycle)
+            raise  # Let systemd clear the cgroup before another device owner.
+        if health_id:
+            if stop.is_set() or success == 'skipped': rf_health.cancel(health_id, 'Intentional stop / METEOR release')
+            rf_health.finish(health_id, False, reason='Backend returned without sample evidence')
+        seconds = job.get('_listen_seconds', time.monotonic()-started)
+        if job.get('tower_recording'):
+            metrics['tower_seconds'] += seconds
+            metrics['tower_extensions'] += int(job.get('_activity_extension', False))
+        if job['mode'] == 'ais': metrics['ais_seconds'] += seconds
+        if success == 'skipped': metrics['meteor_skips'] += 1
+        metrics['updated_at'] = datetime.now(timezone.utc).isoformat()
+        atis_pipeline.save(metrics_path, metrics)
+        publisher.transition('cancelled' if stop.is_set() else 'skipped' if success == 'skipped' else 'completed' if success else 'failed',
+                             job, 'METEOR preemption' if success == 'skipped' else None, cycle)
+        failure = failure or (not success and not stop.is_set())
+        if not stop.is_set():
+            publisher.transition('waiting', cycle=cycle)
+            wait_slot(config.get('handoff_seconds', 1), stop, publisher)
+    publisher.transition('stopped', cycle=cycle)
+    return int(failure)
 
 
 def main(argv=None):

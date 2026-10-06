@@ -19,20 +19,24 @@
       "name": "Vaasa Tower AM",
       "frequency_hz": 120950000,
       "mode": "am",
-      "dwell_seconds": 30,
+      "dwell_seconds": 15,
       "enabled": true,
       "priority": 30,
       "gain_db": 19.7,
       "sample_rate": 8000,
       "tower_recording": true,
-      "interval_seconds": 180
+      "interval_seconds": 60,
+      "adaptive_tower": true,
+      "quiet_seconds": 10,
+      "max_listen_seconds": 75,
+      "activity_rms": 40
     },
     {
       "id": "ais",
       "name": "AIS dual-channel",
       "frequency_hz": 162000000,
       "mode": "ais",
-      "dwell_seconds": 120,
+      "dwell_seconds": 45,
       "enabled": true,
       "priority": 0
     },
@@ -58,5 +62,6 @@
       "atis_recording": true,
       "interval_seconds": 600
     }
-  ]
+  ],
+  "adaptive_hopping": true
 }

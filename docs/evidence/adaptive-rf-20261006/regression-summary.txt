@@ -1,0 +1,4 @@
+Native EVK .satellite-venv/bin/python -m unittest test_rf_health test_ais_validation test_meteor_recovery test_meteor_retention test_meteor_history test_satellite_import
+Ran 111 tests in 4.114s
+OK
+Full test output retained on EVK: /root/rf-watchkeeper/adaptive-stage-20261006/regressions.txt

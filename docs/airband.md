@@ -1,6 +1,6 @@
 # Airband capture and text
 
-Current [RF jobs](rf-jobs.md): Tower 120.950 MHz AM, 30 s every at least 180 s within 05:00–01:30 Europe/Helsinki; ATIS 136.450 MHz AM, 90 s every at least 600 s all day. Periodic FM is disabled. Cadence is approximate on a shared receiver.
+Current [RF jobs](rf-jobs.md): Tower 120.950 MHz AM, 15 s probes targeting 60 s between starts, extending to 10 s after energy activity with a 75 s hard limit within 05:00–01:30 Europe/Helsinki; ATIS 136.450 MHz AM, 90 s every at least 600 s all day. Periodic FM is disabled. Cadence is approximate on a shared receiver.
 
 ## Processing path
 
@@ -10,7 +10,7 @@ Current [RF jobs](rf-jobs.md): Tower 120.950 MHz AM, 30 s every at least 180 s w
 4. Prior clip JSON is deleted before each model attempt. Valid empty output is `no_speech`; missing/new-output errors are failures, preventing reuse of stale text.
 5. Spelling normalization joins Q N H/ILS/ATIS and normalizes niner/fife, retaining raw text/change lists. It does not infer uncertain numbers, callsigns or stations.
 6. Tower exposes base transcripts without ATIS-specific Genie. ATIS optionally extracts evidence-checked fields; failure/preemption can leave `partial_success`. Worker and model loops yield to satellite ownership.
-7. Tower/ATIS APIs expose pending/interrupted/no_activity/failed/partial_success distinctly. Finalized quiet WAVs and temporary clip WAV/JSON/logs are removed; capture, segmentation, transcript/status metadata survives. Positive/uncertain audio remains.
+7. Tower/ATIS APIs expose pending/interrupted/no_activity/failed/partial_success distinctly. Tower quiet WAVs follow the latest-20 rolling retention below; ATIS quiet WAVs and temporary clip WAV/JSON/logs are removed; capture, segmentation, transcript/status metadata survives. Positive/uncertain audio remains.
 
 Capture skips below 512 MiB free. Historical recordings are untouched by the new silence rule. Positive/uncertain archive growth still needs review.
 
