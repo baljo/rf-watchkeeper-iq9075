@@ -1,4 +1,3 @@
-# Observer fixture uses approximate example Vaasa city-centre coordinates.
 # Verify AIS outlier rejection, active target timeouts, and identity retention using isolated SQLite data; 2026-10-03 22:52 EEST, Thomas Vikström.
 import unittest
 import tempfile
@@ -9,16 +8,32 @@ import ais_store as store
 
 class Validation(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
+        self.temp = tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parent)
         self.db = Path(self.temp.name)/'test.db'
         self.now = datetime.now(timezone.utc)
         store.observer_position = lambda: (63.08, 21.57)
 
     def tearDown(self):
+        import gc
+        gc.collect()
         self.temp.cleanup()
 
     def report(self, mmsi=230040000, **fields):
         return dict(mmsi=mmsi, timestamp=self.now.isoformat(), type=1, lat=63.1, lon=21.7, speed=12, shipname='AURORA BOTNIA', **fields)
+
+    def test_history_uses_position_time_and_keeps_live_filter(self):
+        for mmsi, hours in [(101, 2), (102, 25), (103, 168), (104, 169)]:
+            message = self.report(mmsi)
+            message['timestamp'] = (self.now-timedelta(hours=hours)).isoformat()
+            store.store_target(message, db_path=self.db)
+        store.store_target(dict(mmsi=104, type=5, timestamp=self.now.isoformat(), shipname='OLD POSITION'), db_path=self.db)
+        self.assertEqual([t['mmsi'] for t in store.historical_targets(24, db_path=self.db, now=self.now)], [101])
+        self.assertEqual([t['mmsi'] for t in store.historical_targets(168, db_path=self.db, now=self.now)], [101, 102, 103])
+        self.assertEqual(store.historical_targets(168, 1, self.db, self.now)[0]['mmsi'], 101)
+        self.assertTrue(all(t['latitude'] is None for t in store.recent_targets(db_path=self.db, now=self.now)))
+        with sqlite3.connect(self.db) as con:
+            con.execute('UPDATE ais_targets SET latitude=-84.05, longitude=-59.24 WHERE mmsi=101')
+        self.assertEqual(store.historical_targets(24, db_path=self.db, now=self.now), [])
 
     def test_outliers(self):
         self.assertTrue(store.store_target(self.report(), db_path=self.db))

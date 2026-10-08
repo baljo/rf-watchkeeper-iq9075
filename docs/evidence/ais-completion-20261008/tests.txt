@@ -1,0 +1,36 @@
+Existing schema migrated; historical base station still active at 23 hours
+Impossible 100 km jump in 60 seconds rejected; previous position retained
+Antarctic MMSI 463653452 rejected; distance 16856.6 km; nearby map radius remains 20 km
+Static message keeps identity active while stale position is hidden
+MMSI 230040000 active through 1800 seconds; hidden after boundary
+MMSI 2 active through 3600 seconds; hidden after boundary
+MMSI 3 active through 3600 seconds; hidden after boundary
+MMSI 2300077 active through 86400 seconds; hidden after boundary
+MMSI 5 active through 7200 seconds; hidden after boundary
+All identities retained; returning AURORA BOTNIA updates one existing MMSI
+test_backward_compatible_migration (test_ais_validation.Validation.test_backward_compatible_migration) ... /root/rf-watchkeeper/docs/evidence/ais-completion-20261008/test-stage/test_ais_validation.py:18: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffff8b3ba200>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_history_uses_position_time_and_keeps_live_filter (test_ais_validation.Validation.test_history_uses_position_time_and_keeps_live_filter) ... ok
+test_jump (test_ais_validation.Validation.test_jump) ... WARNING:root:Rejected AIS jump MMSI=230040000 lat=64 lon=21.7 distance_km=100.07557221017905 jump_km=100.07557221017905 elapsed_s=60.0
+ok
+test_outliers (test_ais_validation.Validation.test_outliers) ... WARNING:root:Rejected AIS position MMSI=230040000 lat=-84.05 lon=-59.24 distance_km=16856.630162459558
+WARNING:root:Rejected AIS position MMSI=230040000 lat=91 lon=20 distance_km=None
+WARNING:root:Rejected AIS position MMSI=230040000 lat=63 lon=181 distance_km=None
+WARNING:root:Rejected AIS position MMSI=230040000 lat=nan lon=20 distance_km=None
+WARNING:root:Rejected AIS position MMSI=230040000 lat=63 lon=None distance_km=None
+WARNING:root:Rejected AIS position MMSI=463653452 lat=-84.05 lon=-59.24 distance_km=16856.630162459558
+ok
+test_static_does_not_refresh_position (test_ais_validation.Validation.test_static_does_not_refresh_position) ... ok
+test_timeouts_and_retention (test_ais_validation.Validation.test_timeouts_and_retention) ... /root/rf-watchkeeper/docs/evidence/ais-completion-20261008/test-stage/test_ais_validation.py:18: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffff8b3bac50>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.370s
+
+OK
+
+exit=0

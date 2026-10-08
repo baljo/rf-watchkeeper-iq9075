@@ -83,12 +83,19 @@ th{color:var(--muted);font-size:13px;font-weight:650}
 <section class="card section" aria-labelledby="ais-map-heading">
 <div class="split">
 <h2 id="ais-map-heading">AIS regional map</h2>
+<label class="muted">Show
+<select id="ais-map-history" aria-label="AIS map reception history">
+<option value="recent">Recent</option>
+<option value="24" selected>24 hours</option>
+<option value="168">7 days</option>
+</select></label>
 <span class="muted" id="ais-map-range">Local SVG · offline</span>
 </div>
 
 <p class="muted">
 Observer-centered RF plot. AIS targets and Met/Hydro measurement sites are shown separately.
 No external map service or internet connection is used.
+<span id="ais-history-note">Last-known positions received within 24 hours; older targets are faded. Hover a target for its position reception time. This is reception history, not current vessel locations.</span>
 </p>
 
 <div style="max-width:620px;margin:0 auto;">
@@ -118,7 +125,7 @@ No external map service or internet connection is used.
 </div>
 
 <p class="muted">
-Local vessel view using AIS-reported position and motion data.
+Local vessel view using the same reception-history window selected above. Older positions are faded; motion arrows are shown only for recent targets.
 Course and heading are shown only when present in the received AIS messages.
 </p>
 
@@ -318,8 +325,24 @@ function aisKnownBaseStationName(target){
      : 'MMSI '+target.mmsi;
   }
 
+function aisMapWindow(){return el('ais-map-history')?.value||'24';}
+function aisMapWindowLabel(){return aisMapWindow()==='recent'?'Recent':aisMapWindow()==='168'?'7 days':'24 hours';}
+function aisMapTargets(data){
+ const window=aisMapWindow();
+ if(window==='recent')return data.ais_targets||[];
+ const now=Number.isFinite(Date.parse(data.server_time))?Date.parse(data.server_time):Date.now();
+ const live=new Set((data.ais_targets||[]).filter(t=>Number.isFinite(t.latitude)&&Number.isFinite(t.longitude)).map(t=>t.mmsi));
+ return (data.ais_history_targets||[]).filter(t=>{
+   const time=Date.parse(t.position_seen);
+   return Number.isFinite(time)&&time<=now&&now-time<=Number(window)*3600000;
+ }).map(t=>({...t,_historical:!live.has(t.mmsi)}));
+}
+function aisPositionTime(target){
+ return target.position_seen?'Position received '+new Date(target.position_seen).toLocaleString()+' ('+aisAgeText(target.position_seen)+')':'Position reception time unknown';
+}
+
   function aisTargetAgeSeconds(target){
-   const then=Date.parse(target.last_seen);
+   const then=Date.parse(target.position_seen||target.last_seen);
 
    if(!Number.isFinite(then))
      return null;
@@ -328,11 +351,13 @@ function aisKnownBaseStationName(target){
   }
 
   function aisTargetOpacity(target){
+   if(target._historical)return 0.65;
    const age=aisTargetAgeSeconds(target);
    return age!==null && age>1800 ? 0.30 : 1;
   }
 
   function aisPersistentMapLabel(target){
+   if(target._historical)return (target.vessel_name||String(target.mmsi))+' · '+aisAgeText(target.position_seen);
    const stationName=aisKnownBaseStationName(target);
 
    if(stationName)
@@ -372,7 +397,7 @@ function aisKnownBaseStationName(target){
   }
 
   function aisTargetLabel(target){
-   const parts=[aisIdentityText(target)];
+   const parts=[aisIdentityText(target),aisPositionTime(target),target._historical?'Historical last-known position':'Recent position'];
 
    if(
      !aisIsBaseStation(target) &&
@@ -783,7 +808,7 @@ function renderAISMap(data){
      Math.cos(rad(observer.lat))*Math.cos(rad(lat))*Math.sin(rad(lon-observer.lon)/2)**2;
    return 6371.0088*2*Math.asin(Math.sqrt(Math.min(1,Math.max(0,h))))<=250;
  }
- const targets=(data.ais_targets||[]).filter(validRegionalPosition);
+ const targets=aisMapTargets(data).filter(validRegionalPosition);
  const met=latestMetHydroSites(data.ais_met_hydro||[]).filter(validRegionalPosition);
 
  const all=[
@@ -954,6 +979,7 @@ function renderAISMap(data){
        cy:y,
        r:7,
        fill:'#0b6b57',
+       opacity:aisTargetOpacity(point),
        stroke:'#ffffff',
        'stroke-width':2
      });
@@ -977,7 +1003,7 @@ function renderAISMap(data){
 
    if(isTarget){
      title.textContent=
-       'AIS target MMSI '+point.mmsi+
+       aisTargetLabel(point)+
        ' · '+offset.distance.toFixed(1)+' km'+
        (point.message_type!==undefined
           ?' · type '+point.message_type
@@ -1034,7 +1060,7 @@ function renderAISMap(data){
 
  put(
    'ais-map-summary',
-   targetCount+' AIS target'+(targetCount===1?'':'s')+
+   aisMapWindowLabel()+' · '+targetCount+' AIS target'+(targetCount===1?'':'s')+
    ' · '+metCount+' Met/Hydro site'+(metCount===1?'':'s')+
    ' · map radius '+rangeKm+' km'
  );
@@ -1059,7 +1085,7 @@ function renderAISLocalMap(data){
  };
 
  const rangeControl=el('ais-local-range');
- const activeDistances=(data.ais_targets||[]).map(t=>t.distance_km).filter(d=>Number.isFinite(d) && d>=0 && d<=250);
+ const activeDistances=aisMapTargets(data).map(t=>t.distance_km).filter(d=>Number.isFinite(d) && d>=0 && d<=250);
  const automaticRadius=Math.min(100,Math.max(20,Math.ceil(Math.max(0,...activeDistances)*1.15/5)*5));
  const radiusKm=rangeControl && rangeControl.value!=='auto'
    ? Math.min(100,Math.max(20,Number(rangeControl.value)||automaticRadius))
@@ -1196,7 +1222,7 @@ function renderAISLocalMap(data){
    'stroke-width':2
  });
 
- const targets=(data.ais_targets||[])
+ const targets=aisMapTargets(data)
    .filter(t=>
      typeof t.latitude==='number' &&
      typeof t.longitude==='number'
@@ -1205,6 +1231,7 @@ function renderAISLocalMap(data){
    .filter(t=>t._offset.distance<=radiusKm);
 
  const plottedTargets=[];
+ const labelBoxes=[];
 
   for(const target of targets){
     const x=center+target._offset.east*scale;
@@ -1217,7 +1244,7 @@ function renderAISLocalMap(data){
 
     // COG arrow: direction vessel is moving over ground.
     if(
-      !isBaseStation &&
+      !isBaseStation && !target._historical &&
       typeof target.speed_knots==='number' &&
       target.speed_knots>0.5 &&
       typeof target.course_deg==='number'
@@ -1242,7 +1269,7 @@ function renderAISLocalMap(data){
 
     // Heading indicator: shorter dashed line.
     if(
-      !isBaseStation &&
+      !isBaseStation && !target._historical &&
       typeof target.speed_knots==='number' &&
       target.speed_knots>0.5 &&
       typeof target.heading_deg==='number'
@@ -1306,11 +1333,23 @@ function renderAISLocalMap(data){
     const persistentLabel=aisPersistentMapLabel(target);
 
     if(persistentLabel){
+      const labelWidth=Math.min(330,persistentLabel.length*8.5);
+      const labelX=Math.max(12,Math.min(788-labelWidth,x+12));
+      let labelY=y-11;
+      for(let attempt=0;attempt<40;attempt++){
+        const step=Math.ceil(attempt/2)*25;
+        const candidateY=y-11+(attempt%2?step:-step);
+        const box={x:labelX,y:candidateY-18,width:labelWidth,height:24};
+        if(candidateY<24||candidateY>775)continue;
+        if(labelBoxes.some(b=>box.x<b.x+b.width&&box.x+box.width>b.x&&box.y<b.y+b.height&&box.y+box.height>b.y))continue;
+        labelY=candidateY;labelBoxes.push(box);break;
+      }
+      if(Math.abs(labelY-(y-11))>1)add('line',{x1:x,y1:y,x2:labelX,y2:labelY-6,stroke:'#718096','stroke-width':1,opacity:0.45});
       add('text',{
-        x:x+12,
-        y:y-11,
+        x:labelX,
+        y:labelY,
         fill:'#263548',
-        'font-size':20,
+        'font-size':16,
         'font-weight':'600',
         opacity:opacity
       },persistentLabel);
@@ -1385,7 +1424,7 @@ function renderAISLocalMap(data){
 
   put(
    'ais-local-map-summary',
-   targets.length+
+   aisMapWindowLabel()+' · '+targets.length+
    ' AIS target'+(targets.length===1?'':'s')+
    ' within '+radiusKm+' km · solid arrow = COG · dashed line = heading'
  );
@@ -1520,6 +1559,14 @@ el('audio-run').addEventListener('click',async()=>{
  finally{clearTimeout(timer);audioSending=false;updateAudioButton();}
 });
 setInterval(pollAudio,2000);pollAudio();
+const aisHistoryControl=el('ais-map-history');
+if(aisHistoryControl){
+ aisHistoryControl.addEventListener('change',()=>{
+  put('ais-history-note',aisMapWindow()==='recent'?'Recent positions using the live target timeouts.':
+   'Last-known positions received within '+aisMapWindowLabel()+'; older targets are faded. Hover a target for its position reception time. This is reception history, not current vessel locations.');
+  if(last){renderAISMap(last);renderAISLocalMap(last);}
+ });
+}
 const aisLocalRange=el('ais-local-range');
 if(aisLocalRange){
   aisLocalRange.addEventListener('change',()=>{

@@ -1,0 +1,10 @@
+{
+  "ais_unit_tests": 6,
+  "ais_unit_tests_passed": 6,
+  "python_compile_passed": true,
+  "dashboard_javascript_syntax_passed": true,
+  "diff_check_passed": true,
+  "private_location_scan_passed": true,
+  "public_observer_centres_preserved": true,
+  "installed_runtime_changed_by_repair": false
+}

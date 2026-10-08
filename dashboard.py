@@ -194,11 +194,13 @@ def snapshot(log_path, status_path, transcription_path=None, db_path=rf_store.DE
 
     try:
         ais_targets = ais_store.recent_targets(50, db_path)
+        ais_history_targets = ais_store.historical_targets(168, 500, db_path)
         ais_met_hydro = ais_store.recent_met_hydro(50, db_path)
         ais_met_hydro = enrich_met_hydro(ais_met_hydro, ROOT / "logs" / "ais-type8-raw.jsonl")
         ais_warning = None
     except Exception as error:
         ais_targets = []
+        ais_history_targets = []
         ais_met_hydro = []
         ais_warning = "SQLite AIS history unavailable: " + str(error)
 
@@ -245,6 +247,7 @@ def snapshot(log_path, status_path, transcription_path=None, db_path=rf_store.DE
             "nexus_history": nexus_history,
           "ais_status": ais_status,
           "ais_targets": ais_targets,
+          "ais_history_targets": ais_history_targets,
           "ais_met_hydro": ais_met_hydro,
             "capabilities": {"controls": False, "airband": False, "ais": True,
                              "satellites": True, "utilization": False}}

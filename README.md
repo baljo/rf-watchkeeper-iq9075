@@ -50,3 +50,7 @@ flowchart LR
 Indoor reception varies. Labelled Tower/ATIS accuracy, dependable numbers, Finnish recognition and accelerator profiling remain open. Optional Genie currently fails on retained runs; valid base transcripts remain available. SatDump's SIGSEGV is unresolved; partial-success classification preserves imagery rather than repairing the decoder. A real reboot acceptance test of the new watchdog remains outstanding.
 
 The repository includes verified application source, a preserved scheduler dependency and installed service snapshots. Models, binaries, databases, recordings and machine-specific prerequisites are excluded. A fresh clone is not a turnkey EVK image; see [installation](docs/installation.md). The detailed chronological engineering log remains preserved.
+
+## Agent and Work sessions
+
+Read [AGENTS.md](AGENTS.md) and [engineering workflow](docs/workflow.md) before changing RF Watchkeeper. Perform the mandatory completion check before declaring work finished.

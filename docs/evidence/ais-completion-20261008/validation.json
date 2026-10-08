@@ -1,0 +1,23 @@
+{
+  "observed_utc": "2026-10-08T18:52:32.884016+00:00",
+  "server_time": "2026-10-08T18:52:33.202409+00:00",
+  "counts": {
+    "recent_api_targets": 2,
+    "recent_plottable_targets": 2,
+    "24_hour_plottable_targets": 5,
+    "7_day_plottable_targets": 13
+  },
+  "served_html_matches_installed": true,
+  "shared_selector_redraws_both_maps": true,
+  "api_http": 200,
+  "dashboard_http": 200,
+  "source_sha256": {
+    "ais_store.py": "301124f58a13037fba900e0392647aed7a05cffbada133f030599edcf8aab92a",
+    "dashboard.py": "9bc9815ba2f59a4611708f175c45a8ae220ec5d9a8cc64367dc2a68eddd35952",
+    "dashboard.html": "22ca458ca4931a67a40c47721b725565a4d7de992d3bf54d846a42a1ad75c7db"
+  },
+  "tests_exit": 0,
+  "reboot_verified": false,
+  "browser_visual_verified": false,
+  "unattended_acceptance_verified": false
+}

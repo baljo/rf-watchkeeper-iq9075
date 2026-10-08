@@ -203,6 +203,32 @@ def store_target(message, distance_km=None, db_path=DEFAULT_DB):
         connection.close()
 
 
+def historical_targets(hours=168, limit=500, db_path=DEFAULT_DB, now=None):
+    """Validated last-known positions by position time, separate from live targets."""
+    hours = max(1, min(float(hours), 168))
+    limit = max(1, min(int(limit), 500))
+    now = now or datetime.now(timezone.utc)
+    connection = connect(db_path)
+    try:
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute('SELECT * FROM ais_targets ORDER BY position_seen DESC').fetchall()
+        targets = []
+        for raw in rows:
+            row = dict(raw)
+            if seconds_since(row.get('position_seen'), now) > hours * 3600:
+                continue
+            distance = position_distance(row['latitude'], row['longitude'])
+            if distance is None or distance > 250:
+                continue
+            row['distance_km'] = distance
+            targets.append(row)
+            if len(targets) >= limit:
+                break
+        return targets
+    finally:
+        connection.close()
+
+
 def recent_targets(limit=50, db_path=DEFAULT_DB, now=None):
     limit = max(1, min(int(limit), 500))
     connection = connect(db_path)
