@@ -243,3 +243,8 @@ Standing AGENTS.md/workflow and AIS history source, guides, dated log and saniti
 ### 9 October 2026 09:39 Helsinki / 06:39 UTC — Tower/AD terminal failure completion audit
 
 Deployed empty-recording fix independently verified without repeating deployment: matching worker hash, nine isolated regression tests passed, 471 terminal entries excluded (14 zero_frames, 457 historical missing_audio), preserved originals/metadata, bounded retries/backoff and eight later unattended scores. Shared [full audit](tower-failure-fix-20261009.md) records exact worker/service configuration, additive JSON reclassification (no DB migration), rollback, prior Work report incorporation and completion checklist. Implemented/validated, deployed, production-active shadow diagnostics and short-window unattended verification achieved. Forced restart/reboot and sustained capacity remain unverified. Queue 92 at09:38:05 →94 at09:39:26, one capture arrival/zero scores; resource deferral remains a throughput limitation. No runtime changes in this follow-up. Sanitized source/tests/patch/docs reconciled for canonical publication; publication receipt follows separately.
+
+
+### 9 October 2026 — publication gate
+
+Completion payload committed locally as 598ccb2f74ea8995eedbf51990312244f6495a33. Public push was rejected by automatic approval review pending explicit approval of the exact public source/test/evidence/documentation payload. No public publication receipt is claimed. Live shared documentation and private evidence are installed and verified; overall workflow completion remains pending publication. Forced restart/reboot and sustained throughput remain operational limitations.
