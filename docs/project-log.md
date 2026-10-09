@@ -258,3 +258,6 @@ Thomas explicitly approved publication. Source/test/evidence/audit commit 598ccb
 ### 2026-10-09 10:07 Europe/Helsinki — Tower unreviewed manual-review queue
 
 Corrected stale anomaly-only review filtering to show latest 20 unreviewed voice, anomaly or uncertain captures, newest first. Saved human labels remove items and immediately refill the list; history, review/training files, retention and pins unchanged. Dashboard alone restarted. Live API and browser verified recent 9 October candidates, ordinary history and reviewed labels. Eleven targeted tests pass; two broader pre-existing failures reproduce on original code. Exact patch, inventories, tests, rollback, publication scope and remaining reboot/unattended limitations: [completion record](tower-queue-fix-20261009.md), [evidence](evidence/tower-queue-20261009/). No RF scheduling/capture restart or detector/ASR change.
+
+
+Tower queue publication follow-up (9 October 2026): Thomas approved public publication. Fix/evidence commit a1d3a41fbf6bc2a603e01003d67267634244f945 pushed to canonical main; remote reference verified equal. Public-disclosure gate resolved. No runtime change.
