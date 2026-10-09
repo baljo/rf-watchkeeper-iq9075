@@ -19,3 +19,6 @@ At the 2026-10-05 11:44 UTC inspection, the main database contained 15,245 Nexus
 Tower is now recorded/transcribed through the common Airband pipeline, not playback-only. `/api/tower` and `/api/tower/audio` join the ATIS routes. Current cadence, disabled FM and capped AIS background dwell are authoritative in [RF jobs](rf-jobs.md). [Dashboard](dashboard.md) gives the full route inventory; [operation](operation.md) describes installed systemd services/timers; [installation](installation.md) identifies external prerequisites.
 
 Retention is policy-classified and execution-gated, with the separately authorized reviewed cleanup recorded in [data retention](data-retention.md). The empty canonical GitHub repository was reconciled through a local checkout because EVK had neither Git metadata nor Git executable. Runtime source hashes match the read-only [publication inspection](evidence/publication-inspection.json); exported service definitions are snapshots, not runtime changes.
+
+
+Tower AD terminal failure handling and recovery: [9 October audit](tower-failure-fix-20261009.md). Automatic shadow diagnostics verified in a short window; sustained capacity and reboot verification remain outstanding.

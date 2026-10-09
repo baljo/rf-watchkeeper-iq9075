@@ -1,0 +1,214 @@
+--- a/tower_anomaly_shadow.py
++++ b/tower_anomaly_shadow.py
+@@ -10,6 +10,8 @@
+ import subprocess
+ import sys
+ import time
++import wave
++from datetime import datetime, timezone
+ 
+ 
+ def review_metadata(result, processing):
+@@ -91,11 +93,41 @@
+     return None
+ 
+ 
++def state_path(output, folder):
++    return Path(output)/'failures'/(folder.name+'.json')
++
++
++def read_state(output, folder):
++    path = state_path(output, folder)
++    if not path.exists(): return {}
++    # Unreadable state must fail closed, never reset the retry budget.
++    try:
++        state = json.loads(path.read_text())
++        if not isinstance(state, dict): raise ValueError('Invalid state object')
++        return state
++    except (OSError, ValueError):
++        return dict(status='failed_terminal', reason='unreadable_failure_state')
++
++
++def save_state(output, folder, status, reason, attempts=0, next_retry=0, detail=None):
++    path = state_path(output, folder)
++    path.parent.mkdir(parents=True, exist_ok=True)
++    record = dict(id=folder.name, status=status, reason=reason, attempts=attempts,
++                  next_retry_at=next_retry, updated_at=datetime.now(timezone.utc).isoformat(),
++                  original_audio=str(folder/'raw.wav'), originals_preserved=True,
++                  affects_retention=False, affects_transcription=False, detail=detail)
++    tmp = path.with_suffix('.tmp')
++    tmp.write_text(json.dumps(record, indent=2)+'\n')
++    tmp.replace(path)
++    return record
++
++
+ def pending(root, output):
+     base = Path(root)/'recordings/tower'
+-    if base.is_symlink(): return []
++    if base.is_symlink() or not base.exists(): return []
+     selected = []
+-    for folder in sorted(base.iterdir(), reverse=True):
++    # Oldest first: new arrivals cannot starve the backlog.
++    for folder in sorted(base.iterdir()):
+         if folder.is_symlink() or not folder.is_dir(): continue
+         processing_path = folder/'processed.json'
+         if not processing_path.is_file(): processing_path = folder/'tower-classification.json'
+@@ -103,10 +135,56 @@
+         try:
+             if not json.loads(processing_path.read_text()).get('status'): continue
+         except (OSError, ValueError): continue
+-        path = folder/'raw.wav'
+-        if path.is_symlink() or not path.is_file() or path.stat().st_size > 5_000_000: continue
+-        if not (Path(output)/(folder.name+'.json')).exists(): selected.append(folder)
++        if (Path(output)/(folder.name+'.json')).exists(): continue
++        if read_state(output, folder).get('status') in ('unscorable', 'failed_terminal'): continue
++        selected.append(folder)
+     return selected
++
++
++def audio_reason(path):
++    if path.is_symlink(): return 'unsafe_audio_symlink'
++    try:
++        size = path.stat().st_size
++        if size == 0: return 'empty_audio'
++        if size > 5_000_000: return 'audio_size_limit'
++        with wave.open(str(path), 'rb') as audio:
++            frames, channels, width, rate = (audio.getnframes(), audio.getnchannels(),
++                                           audio.getsampwidth(), audio.getframerate())
++            if frames == 0: return 'zero_frames'
++            if width != 2 or rate not in (8000, 16000): return 'unsupported_audio_format'
++            if len(audio.readframes(frames)) != frames*channels*width: return 'corrupt_audio'
++            if frames < rate: return 'too_short_audio'
++    except FileNotFoundError: return 'missing_audio'
++    except (wave.Error, EOFError, ValueError): return 'corrupt_audio'
++    return None
++
++
++def reclassify(root, output):
++    skipped = []
++    for folder in pending(root, output):
++        try: reason = audio_reason(folder/'raw.wav')
++        except OSError: continue  # permission/I/O failures are transient
++        if reason:
++            save_state(output, folder, 'unscorable', reason)
++            skipped.append(dict(id=folder.name, reason=reason))
++    return skipped
++
++
++def retry_failure(output, folder, reason, detail=None):
++    if reason == 'resource_preempted':
++        # Shared-resource contention is not evidence that audio is unscorable.
++        state = read_state(output, folder)
++        save_state(output, folder, 'retry_wait', reason, state.get('attempts', 0),
++                   time.time()+60, detail)
++        return dict(status='retry_scheduled', id=folder.name, reason=reason)
++    attempts = read_state(output, folder).get('attempts', 0) + 1
++    terminal = attempts >= 5
++    save_state(output, folder, 'failed_terminal' if terminal else 'retry_wait',
++               'retry_exhausted' if terminal else reason, attempts,
++               0 if terminal else time.time()+min(3600, 60*2**(attempts-1)),
++               detail=dict(last_reason=reason, error=detail))
++    return dict(status='failed_terminal' if terminal else 'retry_scheduled',
++                id=folder.name, reason=reason, attempts=attempts)
+ 
+ 
+ def run_once(root, model, output, guard=busy_reason, timeout=15):
+@@ -117,14 +195,24 @@
+     if reason: return {'status':'deferred_busy','reason':reason}
+     candidates = pending(root,output)
+     if not candidates: return {'status':'no_pending_audio'}
++    candidates = [f for f in candidates if read_state(output, f).get('next_retry_at', 0) <= time.time()]
++    if not candidates: return {'status':'retry_backoff'}
+     folder = candidates[0]
++    try: invalid = audio_reason(folder/'raw.wav')
++    except OSError as error: return retry_failure(output, folder, 'audio_io_error', str(error))
++    if invalid:
++        save_state(output, folder, 'unscorable', invalid)
++        return {'status':'unscorable', 'id':folder.name, 'reason':invalid}
+     output.mkdir(parents=True,exist_ok=True)
+     target = output/(folder.name+'.json')
+     temporary = target.with_suffix('.pending')
+-    child = subprocess.Popen([sys.executable,str(Path(__file__).resolve()),'--score-child',
++    try:
++        child = subprocess.Popen([sys.executable,str(Path(__file__).resolve()),'--score-child',
+                               '--audio',str(folder/'raw.wav'),'--model',str(model),'--output',str(temporary)],
+                              stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,
+                              env=dict(os.environ,OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1'))
++    except OSError as error:
++        return retry_failure(output, folder, 'child_start_error', str(error))
+     started = time.monotonic()
+     try:
+         while child.poll() is None:
+@@ -133,38 +221,54 @@
+                 child.terminate()
+                 try: child.wait(timeout=2)
+                 except subprocess.TimeoutExpired: child.kill(); child.wait(timeout=2)
+-                return {'status':'deferred_or_timeout','reason':reason or 'shadow_time_budget_exceeded'}
++                return retry_failure(output, folder, 'resource_preempted' if reason else 'inference_timeout', reason)
+             time.sleep(0.25)
+-        if child.returncode or guard(): return {'status':'failed_or_deferred'}
++        if child.returncode: return retry_failure(output, folder, 'inference_error', 'child exit %s' % child.returncode)
+         result = json.loads(temporary.read_text())
+         processing_path = folder/'processed.json'
+         if not processing_path.is_file(): processing_path = folder/'tower-classification.json'
+         result['review'] = review_metadata(result, json.loads(processing_path.read_text()))
+         temporary.write_text(json.dumps(result, indent=2)+'\n')
+         temporary.replace(target)
++        state_path(output, folder).unlink(missing_ok=True)
+         return {'status':'scored','id':folder.name}
++    except (OSError, ValueError, KeyError, TypeError) as error:
++        return retry_failure(output, folder, 'inference_error', str(error))
+     finally:
+         if child.poll() is None: child.kill(); child.wait(timeout=2)
+         temporary.unlink(missing_ok=True)
+ 
+ 
+-def run_batch(root, model, output, guard=busy_reason, max_seconds=45, max_recordings=6,
++def run_batch(root, model, output, guard=busy_reason, max_seconds=45, max_recordings=5,
+               runner=run_once, clock=time.monotonic):
+     """Bounded idle batch; each recording retains run_once's resource guards."""
++    if runner is run_once:
++        root, output = Path(root).resolve(), Path(output).resolve()
++        if output == root or root/'recordings' == output or root/'recordings' in output.parents:
++            raise ValueError('Shadow output must be separate from recordings')
+     started = clock()
+     scored = []
++    failures = []
++    reclassified = reclassify(root, output) if runner is run_once else []
++    attempted = 0
+     result = {'status': 'batch_limit'}
+-    while len(scored) < max_recordings:
++    while attempted < max_recordings:
+         remaining = max_seconds - (clock() - started)
+         if remaining <= 0:
+             result = {'status': 'batch_time_limit'}
+             break
+         result = runner(root, model, output, guard=guard, timeout=min(15, remaining))
++        if result.get('status') in ('unscorable', 'retry_scheduled', 'failed_terminal'):
++            failures.append(result)
++            attempted += 1
++            continue
+         if result.get('status') != 'scored':
+             break
++        attempted += 1
+         scored.append(result['id'])
+     return {'status': 'batch_complete', 'scored_count': len(scored),
+-            'ids': scored, 'stop_reason': result['status'] if len(scored) < max_recordings else 'batch_limit',
++            'ids': scored, 'reclassified_count': len(reclassified), 'reclassified': reclassified,
++            'failures': failures, 'stop_reason': result['status'] if attempted < max_recordings else 'batch_limit',
+             'elapsed_seconds': round(clock() - started, 3)}
+ 
+ 
+@@ -185,4 +289,11 @@
+     else:
+         if not args.root: parser.error('--root required')
+         run = run_batch if args.batch else run_once
+-        print(json.dumps(run(args.root,args.model,args.output)))
++        import fcntl
++        Path(args.output).mkdir(parents=True, exist_ok=True)
++        with (Path(args.output)/'.worker.lock').open('a') as lock:
++            try: fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
++            except BlockingIOError:
++                print(json.dumps(dict(status='deferred_busy', reason='Worker already running')))
++            else:
++                print(json.dumps(run(args.root,args.model,args.output)))

@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-09T06:39:26.442477+00:00",
+  "pending": 94,
+  "total_captures": 2470,
+  "total_scores": 1901,
+  "terminal_count": 471,
+  "failure_reasons": {
+    "missing_audio": 457,
+    "zero_frames": 14,
+    "resource_preempted": 1
+  },
+  "stop_reasons": {
+    "deferred_busy": 1
+  },
+  "scored_since": 0,
+  "services": "Id=rf-watchkeeper-tower-anomaly-shadow.service\nActiveState=activating\nSubState=start\nResult=success\n\nId=rf-watchkeeper-tower-anomaly-shadow.timer\nActiveState=active\nSubState=running\nResult=success\n\nId=rf-watchkeeper-scheduler.service\nActiveState=active\nSubState=running\nResult=success\n\nId=rf-watchkeeper-dashboard.service\nActiveState=active\nSubState=running\nResult=success\n",
+  "originals_preserved": true,
+  "first_at": "2026-10-09T06:38:05.640199+00:00",
+  "first_pending": 92,
+  "captures_delta": 1,
+  "scores_delta": 0,
+  "worker_sha256": "8ffb0361b5fdf68bafbe6c965b2bc4248583ae31f5f33f9983d5c3a11566437e"
+}

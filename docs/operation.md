@@ -35,3 +35,6 @@ curl -f http://localhost:8080/api/meteor/schedule
 ```
 
 These are read-only checks. See [troubleshooting](troubleshooting.md), [RF jobs](rf-jobs.md) and [retention](data-retention.md).
+
+
+Tower AD terminal failure handling and recovery: [9 October audit](tower-failure-fix-20261009.md). Automatic shadow diagnostics verified in a short window; sustained capacity and reboot verification remain outstanding.
