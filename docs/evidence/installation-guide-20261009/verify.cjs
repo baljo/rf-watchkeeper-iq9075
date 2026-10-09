@@ -33,7 +33,7 @@ const deps = process.argv[2] || path.resolve(path.dirname(process.execPath), '..
   }
   const added = require('child_process').execFileSync('git',['diff','--unified=0','--','docs/installation.md','README.md','docs/project-log.md'],{cwd:root,encoding:'utf8'}).split('\n').filter(l=>l.startsWith('+')&&!l.startsWith('+++')).join('\n');
   if (/\b\d{2}\.\d{3,}\s*[,/]\s*\d{2}\.\d{3,}\b/.test(added)) throw new Error('Precise coordinate pair in added prose');
-  const report = {date:'2026-10-09',checks:results,render:'marked + headless Chromium; table/code present; no horizontal overflow; screenshot inspected separately',privacy:'Added prose contains no precise coordinate pair; manual scope review also required',liveInspection:'SSH authentication failed; not deployed',runtimeTests:'Not run: documentation-only change; no EVK credentials',completionRecord:'completion.md'};
+  const report = {date:'2026-10-09',checks:results,render:'marked + headless Chromium; table/code present; no horizontal overflow; screenshot inspected separately',privacy:'Added prose contains no precise coordinate pair; manual scope review also required',liveInspection:fs.existsSync(path.join(__dirname,'followup.json')) ? 'Follow-up access and documentation sync verified; see followup.json' : 'Initial SSH authentication failed; not deployed',runtimeTests:'Not run: documentation-only change; live read-only checks recorded separately',completionRecord:'completion.md'};
   fs.writeFileSync(path.join(__dirname,'validation.json'),JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report,null,2));
 })().catch(e=>{console.error(e);process.exit(1)});

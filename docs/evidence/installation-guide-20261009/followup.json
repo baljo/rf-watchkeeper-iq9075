@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-09",
+  "backup": "/root/rf-watchkeeper/backups/installation-guide-20261009T1419Z",
+  "documentationHashes": {
+    "docs/installation.md": "c27fc8276b95c25df045a4bf8945df3ed73dbacf287774b01148829db70c4dc2",
+    "README.md": "81b6793c06fc24de163b99ca5af9547a374f03dc4d5c8241e5cace3a90b2916e",
+    "docs/evidence/installation-guide-20261009/completion.md": "743ff817f08954de0d3eccc565aee74794d959e7a2d56b11f4571b4906a2e186",
+    "docs/evidence/installation-guide-20261009/validation.json": "a05f406ff8ba097cb2b5eb8aabee7d22083c00498028a5c7d3d2f201e12a29e6",
+    "docs/evidence/installation-guide-20261009/verify.cjs": "526e33df895d5d95bd61f7542e5b9b52fa04fcbf44ae8a1ef4d795ec04c3bddf"
+  },
+  "log": "appended new entries only; existing history preserved",
+  "services": {
+    "rf-watchkeeper-dashboard.service": "active",
+    "rf-watchkeeper-scheduler.service": "active",
+    "rf-watchkeeper-atis-process.service": "active",
+    "rf-watchkeeper-health.timer": "active"
+  },
+  "api": {
+    "/api/state": "200",
+    "/api/meteor/schedule": "200"
+  },
+  "runtimeChanges": false,
+  "restartReboot": "not performed; operational acceptance remains unverified",
+  "rollback": "Restore only the backed-up documentation; preserve subsequent log entries.",
+  "liveInspectionGate": "resolved",
+  "sharedDocumentationGate": "resolved"
+}

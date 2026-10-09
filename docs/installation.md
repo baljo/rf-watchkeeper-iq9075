@@ -2,7 +2,7 @@
 
 **A fresh clone is not a turnkey EVK image.** This repository exports the working application, not an operating system, model distribution or complete installer. Binaries, models, runtime manifests, databases and recordings are excluded. Clean-device deployment and a packaged installer have not been validated.
 
-Use section A for a new device and section B for maintenance. Do not overwrite an existing deployment with a clone. This guide was reconciled with repository source and dated evidence on 9 October 2026. Live SSH inspection failed authentication in this session; today's live service state is not certified here.
+Use section A for a new device and section B for maintenance. Do not overwrite an existing deployment with a clone. This guide was reconciled with repository source and dated evidence on 9 October 2026. Follow-up live inspection succeeded after explicitly selecting the existing SSH key; dashboard/scheduler/processing/health timer were active and state/schedule APIs returned HTTP 200. This verifies the existing deployment, not a clean-device installation.
 
 ## A. Fresh installation / reproduction for an external IQ-9075 user
 
@@ -166,6 +166,6 @@ Preserved [ATIS proof of concept](../ATIS_POC.md) and [audio workflow](../AUDIO_
 
 - Fresh OS provisioning, SDR/AIS-catcher installation and exact versions, and locked Python dependencies lack an end-to-end validated recipe.
 - Docker provisioning, original image build stage/runtime manifest, proprietary ASR/Whisper/Genie artifacts, speaker guard/drop-ins and missing interpreter-unit snapshot require separate acquisition/reconstruction.
-- No clean-device acceptance run occurred for this revision. SSH authentication prevented live inspection and shared EVK documentation installation; no live deployment is claimed.
+- No clean-device acceptance run occurred for this revision. Follow-up access resolved the initial SSH authentication gap; only documentation was synchronized to the EVK, with no runtime deployment or restart.
 - ATIS/numeric/Finnish accuracy and QNN performance remain unverified; Tower ASR is deferred. Genie failures and SatDump SIGSEGV remain unresolved. Retained useful crash products do not mean the decoder is repaired.
 - Real reboot recovery and sustained unattended RF reliability remain operational gates. This remains an application export, not a turnkey installation.

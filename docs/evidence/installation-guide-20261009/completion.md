@@ -28,3 +28,9 @@ Scope: documentation only; baseline canonical main `abfe6cf`. No source, runtime
 ## Publication and completion limits
 
 Commit and normal non-force push of explicit documentation paths are required by workflow; the session reports their result. Fresh-install acceptance and external dependency acquisition remain outstanding. The documentation repair can be reviewed independently, but overall live-inspection/shared-EVK completion gates cannot be marked passed.
+
+## Follow-up — 9 October 2026
+
+The initial commit b3c573bc615f5211156558587bd792cda87a1b19 was pushed and remote main verified. Explicit selection of the existing non-default SSH key restored Tailscale access. Live AGENTS/workflow, document baselines, services, scheduler drop-in and state/schedule APIs were inspected. Installation guide synchronized after backup, README link changed without replacing its older Tower row, and only new project-log entries appended; differing historical log bytes preserved. [Follow-up results](followup.json) resolve rules 1 and 4's earlier outstanding live gates. No RF/configuration/data change, service restart or reboot occurred. Clean-device and operational acceptance limits remain open.
+
+Synchronization first stopped safely on baseline differences; inspection reconciled the older installation paragraph and README row. A Windows command-length error was resolved by SSH standard input. A mixed-encoding log read failed before changes; byte-oriented append preserved the original log. Final documentation content/hash checks and active services/HTTP 200 checks passed. Markdown/link/whitespace/privacy checks repeated for follow-up changes. Rollback uses the recorded private backup and preserves subsequent log entries.
