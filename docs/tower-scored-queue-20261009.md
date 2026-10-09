@@ -13,3 +13,8 @@ Only dashboard restarted. RF scheduler, interpreter and ATIS worker PIDs unchang
 Rollback: restore atis_view.py and dashboard.html from docs/evidence/tower-scored-queue-20261009/backup and restart only rf-watchkeeper-dashboard.
 
 Exact operational patch and test suite preserved. Canonical checkout is older than live operational baseline, so publication uses an exact baseline-specific patch rather than replacing unrelated canonical code. Precise location information omitted. Completion check: live inspection, schema/data verification, backups, patch, tests, deployment, active API, restart, protected services/data, shared docs/log and rollback complete; reboot/unattended duration not verified. Source-control reference is reported separately.
+
+### 2026-10-09 — Approved AD-scored Tower queue publication
+
+Thomas explicitly approved publication to the canonical repository's main branch. Published fix: [cda4169](https://github.com/baljo/rf-watchkeeper-iq9075/commit/cda41692e0786d2cf94eb3f590ba74834fe7d74e). The remote main reference was verified after push. This supersedes the earlier pending-publication gate. Newer canonical commits were preserved; the fix was reapplied in an isolated checkout, with no force push and no alteration of unrelated local work. EVK deployment and validation remain as documented in [the scored queue report](tower-scored-queue-20261009.md); no additional deployment or service restart was necessary.
+

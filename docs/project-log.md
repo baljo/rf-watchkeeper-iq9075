@@ -261,3 +261,8 @@ Corrected stale anomaly-only review filtering to show latest 20 unreviewed voice
 
 
 Tower queue publication follow-up (9 October 2026): Thomas approved public publication. Fix/evidence commit a1d3a41fbf6bc2a603e01003d67267634244f945 pushed to canonical main; remote reference verified equal. Public-disclosure gate resolved. No runtime change.
+
+### 2026-10-09 — Approved AD-scored Tower queue publication
+
+Thomas explicitly approved publication to the canonical repository's main branch. Published fix: [cda4169](https://github.com/baljo/rf-watchkeeper-iq9075/commit/cda41692e0786d2cf94eb3f590ba74834fe7d74e). The remote main reference was verified after push. This supersedes the earlier pending-publication gate. Newer canonical commits were preserved; the fix was reapplied in an isolated checkout, with no force push and no alteration of unrelated local work. EVK deployment and validation remain as documented in [the scored queue report](tower-scored-queue-20261009.md); no additional deployment or service restart was necessary.
+
