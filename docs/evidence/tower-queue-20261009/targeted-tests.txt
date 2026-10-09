@@ -1,0 +1,43 @@
+test_http_save_refills_queue (test_tower_queue.QueueTests.test_http_save_refills_queue) ... ok
+test_labels_and_candidate_types (test_tower_queue.QueueTests.test_labels_and_candidate_types) ... ok
+test_save_refills_twenty_and_preserves_history (test_tower_queue.QueueTests.test_save_refills_twenty_and_preserves_history) ... ok
+test_bands (test_tower_anomaly_review.HumanReviewTests.test_bands) ... ok
+test_saved_labels_and_history_are_additive (test_tower_anomaly_review.HumanReviewTests.test_saved_labels_and_history_are_additive) ... ok
+test_duration_union_and_gaps (test_tower_validation.ValidationTests.test_duration_union_and_gaps) ... ok
+test_weak_voice_missing_evidence_and_label_updates (test_tower_validation.ValidationTests.test_weak_voice_missing_evidence_and_label_updates) ... ok
+test_continues_and_stops_on_busy (test_tower_ad_batch.BatchTests.test_continues_and_stops_on_busy) ... ok
+test_failure_stops (test_tower_ad_batch.BatchTests.test_failure_stops) ... ok
+test_recording_bound (test_tower_ad_batch.BatchTests.test_recording_bound) ... ok
+test_time_bound_and_child_budget (test_tower_ad_batch.BatchTests.test_time_bound_and_child_budget) ... ok
+test_benchmark_content_quarantined_even_under_earlier_alias (test_tower_anomaly.AnomalyTests.test_benchmark_content_quarantined_even_under_earlier_alias) ... ok
+test_gmm_separates_unseen_distribution_and_roundtrips (test_tower_anomaly.AnomalyTests.test_gmm_separates_unseen_distribution_and_roundtrips) ... ok
+test_incomplete_symlink_and_oversized_audio_are_not_queued (test_tower_anomaly.AnomalyTests.test_incomplete_symlink_and_oversized_audio_are_not_queued) ... FAIL
+test_kernel_lock_guard_does_not_use_stale_owner_metadata (test_tower_anomaly.AnomalyTests.test_kernel_lock_guard_does_not_use_stale_owner_metadata) ... ok
+test_metadata_and_audio_activity_are_excluded (test_tower_anomaly.AnomalyTests.test_metadata_and_audio_activity_are_excluded) ... ok
+test_real_manifest_no_content_leak_and_disjoint_splits (test_tower_anomaly.AnomalyTests.test_real_manifest_no_content_leak_and_disjoint_splits) ... skipped 'Set TOWER_ANOMALY_EVIDENCE to generated evaluation'
+test_resampling_mono_dc_and_window_boundaries (test_tower_anomaly.AnomalyTests.test_resampling_mono_dc_and_window_boundaries) ... ok
+test_shadow_defer_does_not_touch_originals (test_tower_anomaly.AnomalyTests.test_shadow_defer_does_not_touch_originals) ... ok
+test_shadow_scoring_is_additive_and_hash_preserving (test_tower_anomaly.AnomalyTests.test_shadow_scoring_is_additive_and_hash_preserving) ... ok
+test_process_identity_guard (test_tower_anomaly.ReviewTests.test_process_identity_guard) ... ok
+test_shadow_threshold_and_production_outcomes (test_tower_anomaly.ReviewTests.test_shadow_threshold_and_production_outcomes) ... ok
+
+======================================================================
+FAIL: test_incomplete_symlink_and_oversized_audio_are_not_queued (test_tower_anomaly.AnomalyTests.test_incomplete_symlink_and_oversized_audio_are_not_queued)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_anomaly.py", line 156, in test_incomplete_symlink_and_oversized_audio_are_not_queued
+    self.assertEqual(shadow.pending(root,root/'evaluation'),[])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [PosixPath('/tmp/tmp3ktcj3vu/recordings/tower/test')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmp3ktcj3vu/recordings/tower/test')
+
+- [PosixPath('/tmp/tmp3ktcj3vu/recordings/tower/test')]
++ []
+
+----------------------------------------------------------------------
+Ran 22 tests in 1.280s
+
+FAILED (failures=1, skipped=1)

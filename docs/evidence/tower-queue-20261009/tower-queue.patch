@@ -1,0 +1,57 @@
+--- a/atis_view.py
++++ b/atis_view.py
+@@ -151,6 +151,16 @@
+             return path
+     return None
+ 
++def needs_tower_review(row):
++    human_label = (row.get('human_review') or {}).get('human_review_label')
++    review = row.get('anomaly_review') or {}
++    state = human_label or review.get('review_state')
++    reviewed = bool(state and state != 'unreviewed')
++    classification = (row.get('classification') or {}).get('status', row.get('status'))
++    return not reviewed and (review.get('anomaly_candidate') or
++                             classification in ('voice_candidate', 'uncertain'))
++
++
+ def recent(root, kind='tower', limit=20, end_recording=None, candidates_only=False):
+     base=Path(root)/'recordings'/kind
+     rows=[]
+@@ -161,7 +171,7 @@
+         try:
+             stamp=datetime.strptime(p.name, '%Y%m%dT%H%M%S.%fZ' if '.' in p.name else '%Y%m%dT%H%M%SZ').replace(tzinfo=timezone.utc)
+             row=snapshot(root,kind,p.name)
+-            if candidates_only and not row.get('anomaly_review',{}).get('anomaly_candidate'): continue
++            if candidates_only and not needs_tower_review(row): continue
+         except (ValueError, OSError):continue
+         row['captured_at']=stamp.isoformat()
+         row['duration_seconds']=(row['capture'] or {}).get('audio_seconds')
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -1793,7 +1793,7 @@
+  panel.innerHTML='<h2>Vaasa Tower  /  120.950 MHz AM  -  Recent captures</h2><p>05:00-01:30 Europe/Helsinki  /  15 s probes about every minute / activity hold up to 75 s  /  METEOR takes priority</p><p id="tower-status" role="status">Loading capture history...</p><p>Latest 20 retained captures. Tower ASR is disabled; listen and assign a human label.</p><div id="tower-recent"></div>';
+  document.getElementById('panel-airband').prepend(panel);
+  const filter=document.createElement('input');filter.type='checkbox';filter.id='tower-candidates';filter.checked=true;
+- const label=document.createElement('label');label.append(filter,document.createTextNode(' Show latest 20 voice or uncertain candidates for manual review'));panel.insertBefore(label,document.getElementById('tower-recent'));
++ const label=document.createElement('label');label.append(filter,document.createTextNode(' Show latest 20 unreviewed voice, anomaly or uncertain candidates'));panel.insertBefore(label,document.getElementById('tower-recent'));
+  const note=document.createElement('p');note.textContent='Shadow anomaly score measures difference from learned background. Exceeding threshold does not imply voice: squelch, carrier, interference, static, clicks or speech can contribute. Unreviewed means a human has not yet classified the clip. Severity describes anomaly strength, not speech probability or validated voice thresholds. Bands: below 45.6744 background; 45.6744 to below 75 weak; 75 through 200 notable; above 200 strong. Candidates retain the existing 30-day policy; permanent preservation requires the existing explicit Tower pin command.';panel.insertBefore(note,document.getElementById('tower-recent'));
+  const comparison=document.createElement('details');const heading=document.createElement('summary');heading.textContent='Reviewed anomaly comparison table';comparison.append(heading);const grid=document.createElement('table');const tableScroll=document.createElement('div');tableScroll.style.overflowX='auto';tableScroll.append(grid);comparison.append(tableScroll);panel.append(comparison);
+  async function loadReviews(){try{const response=await fetch('/api/tower/reviews',{cache:'no-store'});const data=await response.json();grid.replaceChildren();const keys=['capture_id','peak_score','median_score','threshold','severity_band','vad_result','asr_status','asr_result','human_review_label'];const header=document.createElement('tr');for(const key of keys){const cell=document.createElement('th');cell.textContent=key;header.append(cell);}grid.append(header);for(const row of data.reviews||[]){const tr=document.createElement('tr');for(const key of keys){const td=document.createElement('td');const value=row[key];td.textContent=key==='vad_result'&&value&&typeof value==='object'?(value.status||'unavailable')+' / '+(value.method||'') : key==='asr_result'&&value&&typeof value==='object'?(value.segments||[]).map(segment=>segment.text||segment.error||segment.status||'').join('; ')||value.status||'unavailable':String(value??'unavailable');tr.append(td);}grid.append(tr);}}catch(e){grid.textContent='Reviewed comparison unavailable.';}}comparison.addEventListener('toggle',()=>{if(comparison.open)loadReviews();});
+@@ -1818,7 +1818,7 @@
+  let busy=false,signature='',towerToken=null;
+  async function poll(){if(busy)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),7000);
+  try{const r=await fetch('/api/tower'+(filter.checked?'?review=anomaly_candidate':''),{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error('unavailable');const d=await r.json(),rows=d.recent_captures||[];towerToken=d.control_token;
+- document.getElementById('tower-status').textContent=rows.length?rows.length+' recent capture attempts  /  updated '+new Date().toLocaleTimeString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki':'No Tower captures recorded yet.';
++ document.getElementById('tower-status').textContent=rows.length?rows.length+(filter.checked?' unreviewed candidates':' recent capture attempts')+'  /  updated '+new Date().toLocaleTimeString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki':(filter.checked?'No unreviewed Tower candidates. Turn off the filter to see recent history.':'No Tower captures recorded yet.');
+  const next=JSON.stringify(rows);if(next===signature)return;signature=next;
+  const list=document.getElementById('tower-recent');list.replaceChildren();
+  for(const row of rows){const card=document.createElement('section'),title=document.createElement('h3'),detail=document.createElement('p');
+@@ -1829,7 +1829,7 @@
+  const select=document.createElement('select');select.setAttribute('aria-label','Human review label for '+row.recording);
+  for(const label of ['unreviewed','confirmed_voice','probable_voice','no_voice','carrier_or_squelch','interference','unclear']){const option=document.createElement('option');option.value=label;option.textContent=label;select.append(option);}select.value=row.anomaly_review.review_state;
+  const save=document.createElement('button'),message=document.createElement('span');save.textContent='Save human review';
+- save.onclick=async()=>{save.disabled=true;try{const response=await fetch('/api/tower/review',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':towerToken},body:JSON.stringify({capture_id:row.recording,label:select.value})});const result=await response.json();if(!response.ok)throw Error(result.error);message.textContent=' Saved: '+result.human_review_label;signature='';if(comparison.open)loadReviews();}catch(e){message.textContent=' '+e.message;}finally{save.disabled=false;}};card.append(select,save,message);}
++ save.onclick=async()=>{save.disabled=true;try{const response=await fetch('/api/tower/review',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':towerToken},body:JSON.stringify({capture_id:row.recording,label:select.value})});const result=await response.json();if(!response.ok)throw Error(result.error);message.textContent=' Saved: '+result.human_review_label;signature='';await poll();refreshValidation();if(comparison.open)loadReviews();}catch(e){message.textContent=' '+e.message;}finally{save.disabled=false;}};card.append(select,save,message);}
+  for(const segment of row.transcript?.segments||[]){if(segment.text){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+segment.text;card.append(p);}}
+  if(row.audio_url){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=row.audio_url;
+  const link=document.createElement('a');link.href=row.audio_url;link.download=row.recording+'.wav';link.textContent='Download WAV';

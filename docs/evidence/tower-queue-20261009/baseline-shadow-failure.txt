@@ -1,0 +1,22 @@
+test_incomplete_symlink_and_oversized_audio_are_not_queued (test_tower_anomaly.AnomalyTests.test_incomplete_symlink_and_oversized_audio_are_not_queued) ... FAIL
+
+======================================================================
+FAIL: test_incomplete_symlink_and_oversized_audio_are_not_queued (test_tower_anomaly.AnomalyTests.test_incomplete_symlink_and_oversized_audio_are_not_queued)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_anomaly.py", line 156, in test_incomplete_symlink_and_oversized_audio_are_not_queued
+    self.assertEqual(shadow.pending(root,root/'evaluation'),[])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [PosixPath('/tmp/tmpicokmoip/recordings/tower/test')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmpicokmoip/recordings/tower/test')
+
+- [PosixPath('/tmp/tmpicokmoip/recordings/tower/test')]
++ []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=1)

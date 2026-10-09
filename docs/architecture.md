@@ -22,3 +22,8 @@ Retention is policy-classified and execution-gated, with the separately authoriz
 
 
 Tower AD terminal failure handling and recovery: [9 October audit](tower-failure-fix-20261009.md). Automatic shadow diagnostics verified in a short window; sustained capacity and reboot verification remain outstanding.
+
+
+## Tower manual-review queue — 9 October 2026
+
+The optional Tower filter now displays the latest 20 unreviewed voice_candidate, uncertain or shadow anomaly candidates, newest first. Any saved human classification removes a capture from this queue; saving refreshes it immediately. Disable the filter for inclusive recent history. Authoritative human_review_label records remain in evaluation/tower-anomaly/human-review; the queue does not affect training/audit data, 30-day audio retention, permanent pins, scoring thresholds or deferred Tower ASR. [Verified deployment, tests and rollback](tower-queue-fix-20261009.md).

@@ -1,0 +1,71 @@
+{
+  "observed_at": "2026-10-09T07:07:20.218449+00:00",
+  "total": 2492,
+  "days_utc": {
+    "20261008": {
+      "total": 644,
+      "unreviewed_eligible": 633,
+      "reviewed": 11,
+      "status_counts": {
+        "uncertain": 636,
+        "voice_candidate": 8
+      },
+      "anomaly_candidates": 0
+    },
+    "20261009": {
+      "total": 168,
+      "unreviewed_eligible": 168,
+      "reviewed": 0,
+      "status_counts": {
+        "uncertain": 162,
+        "voice_candidate": 6
+      },
+      "anomaly_candidates": 0
+    }
+  },
+  "eligible_total": 1144,
+  "queue": [
+    "20261009T070553.404581Z",
+    "20261009T070451.730925Z",
+    "20261009T070350.146893Z",
+    "20261009T070248.633511Z",
+    "20261009T070147.015164Z",
+    "20261009T070045.524843Z",
+    "20261009T065943.884862Z",
+    "20261009T065842.268499Z",
+    "20261009T065740.712683Z",
+    "20261009T065552.866278Z",
+    "20261009T065451.320045Z",
+    "20261009T065349.672295Z",
+    "20261009T065248.009319Z",
+    "20261009T065146.415810Z",
+    "20261009T065044.799183Z",
+    "20261009T064943.273203Z",
+    "20261009T064841.689823Z",
+    "20261009T064740.090316Z",
+    "20261009T064552.122174Z",
+    "20261009T064450.477889Z"
+  ],
+  "protected_hashes": {
+    "tower_retention.py": "61a97d332e387ed865a79c2981d7a5949d7cde4ab096c9041c7fce84b4c7b26c",
+    "tower_classification.py": "f55b1bbf01e3fc56ee386a042b26bd8fe9bcadb707329d5c886e4aab203ac9f5",
+    "job_manager.py": "15cdc83dd24d861708a48fe91dc5c46dfa835cb3aad822cacd2c53780091e0d0",
+    "watchkeeper.py": "6af60da128bcf2a49685396d57452c60c9f90b08bef53fd0804c07d4178cf738",
+    "tower_anomaly_shadow.py": "8ffb0361b5fdf68bafbe6c965b2bc4248583ae31f5f33f9983d5c3a11566437e",
+    "tower_anomaly_review.py": "5c8e8198dcd374c37eb49761f972dd0a48409ca5a500d2663b2416de6a85c77b",
+    "human_reviews": "59571cee0ddf6e6c534541e9677a22b9fc61ff2e7f1622d18005e99f43dc8a28"
+  },
+  "service_pids": {
+    "rf-watchkeeper-atis-process.service": "1037",
+    "rf-watchkeeper-atis-shadow.service": "1038",
+    "rf-watchkeeper-dashboard.service": "102905",
+    "rf-watchkeeper-interpreter.service": "1035",
+    "rf-watchkeeper-scheduler.service": "4680"
+  },
+  "live_api": {
+    "queue_count": 20,
+    "history_count": 20,
+    "historical_reviews": 78,
+    "compatible_alias": true
+  }
+}

@@ -1,0 +1,31 @@
+test_atis_no_activity_retention_and_clip_cleanup_unchanged (test_tower_retention.TowerRetentionTests.test_atis_no_activity_retention_and_clip_cleanup_unchanged) ... ERROR
+
+======================================================================
+ERROR: test_atis_no_activity_retention_and_clip_cleanup_unchanged (test_tower_retention.TowerRetentionTests.test_atis_no_activity_retention_and_clip_cleanup_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_retention.py", line 67, in test_atis_no_activity_retention_and_clip_cleanup_unchanged
+    atis_pipeline.process(p,threading.Event())
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rf-watchkeeper/atis_pipeline.py", line 258, in process
+    sh.prepare(folder/'raw.wav',folder)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rf-watchkeeper/atis_shadow.py", line 170, in prepare
+    with wave.open(str(source)) as w:
+         ~~~~~~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/wave.py", line 661, in open
+    return Wave_read(f)
+  File "/usr/lib/python3.14/wave.py", line 286, in __init__
+    self.initfp(f)
+    ~~~~~~~~~~~^^^
+  File "/usr/lib/python3.14/wave.py", line 251, in initfp
+    self._file = _Chunk(file, bigendian = 0)
+                 ~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/wave.py", line 121, in __init__
+    raise EOFError from None
+EOFError
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+FAILED (errors=1)

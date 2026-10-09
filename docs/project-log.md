@@ -253,3 +253,8 @@ Completion payload committed locally as 598ccb2f74ea8995eedbf51990312244f6495a33
 ### 2026-10-09T06:58:41.182861+00:00 UTC — approved Tower failure audit publication verified
 
 Thomas explicitly approved publication. Source/test/evidence/audit commit 598ccb2f74ea8995eedbf51990312244f6495a33 and gate-record commit 0e2fed26974be990a3739cab97f12f23c08ce333 pushed to canonical main. Remote main independently verified equal to 0e2fed26974be990a3739cab97f12f23c08ce333. The earlier approval gate is resolved. Required follow-up verification, shared documentation, prior report incorporation and repository publication are complete. Reboot/forced restart and sustained throughput remain explicitly unverified operational limitations; no runtime change was made during this follow-up.
+
+
+### 2026-10-09 10:07 Europe/Helsinki — Tower unreviewed manual-review queue
+
+Corrected stale anomaly-only review filtering to show latest 20 unreviewed voice, anomaly or uncertain captures, newest first. Saved human labels remove items and immediately refill the list; history, review/training files, retention and pins unchanged. Dashboard alone restarted. Live API and browser verified recent 9 October candidates, ordinary history and reviewed labels. Eleven targeted tests pass; two broader pre-existing failures reproduce on original code. Exact patch, inventories, tests, rollback, publication scope and remaining reboot/unattended limitations: [completion record](tower-queue-fix-20261009.md), [evidence](evidence/tower-queue-20261009/). No RF scheduling/capture restart or detector/ASR change.

@@ -1,0 +1,16 @@
+test_http_save_refills_queue (test_tower_queue.QueueTests.test_http_save_refills_queue) ... ok
+test_labels_and_candidate_types (test_tower_queue.QueueTests.test_labels_and_candidate_types) ... ok
+test_save_refills_twenty_and_preserves_history (test_tower_queue.QueueTests.test_save_refills_twenty_and_preserves_history) ... ok
+test_bands (test_tower_anomaly_review.HumanReviewTests.test_bands) ... ok
+test_saved_labels_and_history_are_additive (test_tower_anomaly_review.HumanReviewTests.test_saved_labels_and_history_are_additive) ... ok
+test_duration_union_and_gaps (test_tower_validation.ValidationTests.test_duration_union_and_gaps) ... ok
+test_weak_voice_missing_evidence_and_label_updates (test_tower_validation.ValidationTests.test_weak_voice_missing_evidence_and_label_updates) ... ok
+test_continues_and_stops_on_busy (test_tower_ad_batch.BatchTests.test_continues_and_stops_on_busy) ... ok
+test_failure_stops (test_tower_ad_batch.BatchTests.test_failure_stops) ... ok
+test_recording_bound (test_tower_ad_batch.BatchTests.test_recording_bound) ... ok
+test_time_bound_and_child_budget (test_tower_ad_batch.BatchTests.test_time_bound_and_child_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.649s
+
+OK

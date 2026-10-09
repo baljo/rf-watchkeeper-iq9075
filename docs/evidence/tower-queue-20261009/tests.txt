@@ -1,0 +1,50 @@
+test_labels_and_candidate_types (test_tower_queue.QueueTests.test_labels_and_candidate_types) ... ok
+test_save_refills_twenty_and_preserves_history (test_tower_queue.QueueTests.test_save_refills_twenty_and_preserves_history) ... ok
+test_bands (test_tower_anomaly_review.HumanReviewTests.test_bands) ... ok
+test_saved_labels_and_history_are_additive (test_tower_anomaly_review.HumanReviewTests.test_saved_labels_and_history_are_additive) ... ok
+test_atis_no_activity_retention_and_clip_cleanup_unchanged (test_tower_retention.TowerRetentionTests.test_atis_no_activity_retention_and_clip_cleanup_unchanged) ... ERROR
+test_atis_scope_excluded (test_tower_retention.TowerRetentionTests.test_atis_scope_excluded) ... ok
+test_boundary_and_incomplete_capture (test_tower_retention.TowerRetentionTests.test_boundary_and_incomplete_capture) ... ok
+test_fm_cleanup_explicitly_excludes_tower_and_reference_audio (test_tower_retention.TowerRetentionTests.test_fm_cleanup_explicitly_excludes_tower_and_reference_audio) ... ok
+test_no_activity_survives_short_term_cleanup (test_tower_retention.TowerRetentionTests.test_no_activity_survives_short_term_cleanup) ... ok
+test_pin_rejects_other_channels_and_missing_audio (test_tower_retention.TowerRetentionTests.test_pin_rejects_other_channels_and_missing_audio) ... ok
+test_pinned_survives_all_normal_cleanup_and_keeps_originals (test_tower_retention.TowerRetentionTests.test_pinned_survives_all_normal_cleanup_and_keeps_originals) ... ok
+test_protected_reference_processing_cannot_modify_or_cleanup (test_tower_retention.TowerRetentionTests.test_protected_reference_processing_cannot_modify_or_cleanup) ... ok
+test_reference_flags_markers_and_symlinks_fail_closed (test_tower_retention.TowerRetentionTests.test_reference_flags_markers_and_symlinks_fail_closed) ... ok
+test_unpinned_eventually_expires_regardless_of_classifier (test_tower_retention.TowerRetentionTests.test_unpinned_eventually_expires_regardless_of_classifier) ... ok
+test_duration_union_and_gaps (test_tower_validation.ValidationTests.test_duration_union_and_gaps) ... ok
+test_weak_voice_missing_evidence_and_label_updates (test_tower_validation.ValidationTests.test_weak_voice_missing_evidence_and_label_updates) ... ok
+test_continues_and_stops_on_busy (test_tower_ad_batch.BatchTests.test_continues_and_stops_on_busy) ... ok
+test_failure_stops (test_tower_ad_batch.BatchTests.test_failure_stops) ... ok
+test_recording_bound (test_tower_ad_batch.BatchTests.test_recording_bound) ... ok
+test_time_bound_and_child_budget (test_tower_ad_batch.BatchTests.test_time_bound_and_child_budget) ... ok
+
+======================================================================
+ERROR: test_atis_no_activity_retention_and_clip_cleanup_unchanged (test_tower_retention.TowerRetentionTests.test_atis_no_activity_retention_and_clip_cleanup_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_retention.py", line 67, in test_atis_no_activity_retention_and_clip_cleanup_unchanged
+    atis_pipeline.process(p,threading.Event())
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rf-watchkeeper/atis_pipeline.py", line 258, in process
+    sh.prepare(folder/'raw.wav',folder)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rf-watchkeeper/atis_shadow.py", line 170, in prepare
+    with wave.open(str(source)) as w:
+         ~~~~~~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/wave.py", line 661, in open
+    return Wave_read(f)
+  File "/usr/lib/python3.14/wave.py", line 286, in __init__
+    self.initfp(f)
+    ~~~~~~~~~~~^^^
+  File "/usr/lib/python3.14/wave.py", line 251, in initfp
+    self._file = _Chunk(file, bigendian = 0)
+                 ~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/wave.py", line 121, in __init__
+    raise EOFError from None
+EOFError
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.106s
+
+FAILED (errors=1)
