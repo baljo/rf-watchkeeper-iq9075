@@ -271,3 +271,11 @@ Thomas explicitly approved publication to the canonical repository's main branch
 ### 2026-10-09 — Tower candidate threshold queue correction
 
 Deployed: completed valid AD + score >= its recorded model threshold + unreviewed. Voice/uncertain acoustic classifications no longer bypass AD. Twelve tests pass; live queue verified; retention and pins preserved. [Evidence and rollback](tower-threshold-queue-20261009.md). Reboot and extended unattended operation unverified.
+
+### 2026-10-09 17:09 Europe/Helsinki / 14:09 UTC — installation guide reproduction and maintenance paths
+
+- Change/reason: expanded `docs/installation.md` into sequential fresh-device reproduction and separate existing-deployment maintenance paths; README link clarified. Source-backed dependency/layout/config/service instructions replace the compressed prerequisite list without inventing host package recipes.
+- Safeguards: local observer copies/private dashboard centres, initially disabled METEOR capture despite enabled example, both deletion gates false, receiver ownership, backup/reconciliation/rollback, Tower ASR deferral and existing retention/pins preserved. Historical installers/defaults explicitly qualified.
+- Validation/evidence: [completion check](evidence/installation-guide-20261009/completion.md), [reproducible rendering/link checker](evidence/installation-guide-20261009/verify.cjs), [validation results](evidence/installation-guide-20261009/validation.json). Markdown rendered with marked/Chromium, local links checked, explicit diff/privacy/size review and Git whitespace check; runtime tests not rerun for prose-only changes.
+- Status/remaining gates: implemented in canonical checkout; no live deployment or service/RF/data changes. Required live inspection attempted but SSH authentication failed. Shared EVK log/doc installation, clean-device acceptance, restart/reboot and sustained unattended operation remain unverified. Missing external binaries/models, decoder build stage/manifest, host dependency recipes and service drop-ins are documented. Repository commit/publication receipt is reported by the session, not inferred from this entry.
+- Rollback: revert only this documentation/evidence commit; do not copy whole-project backups onto the EVK. No production rollback or restart is required for this prose revision.

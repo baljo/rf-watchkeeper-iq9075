@@ -38,7 +38,7 @@ flowchart LR
 
 ## Documentation
 
-- [Architecture](docs/architecture.md), [hardware](docs/hardware.md), [installation](docs/installation.md)
+- [Architecture](docs/architecture.md), [hardware](docs/hardware.md), [fresh installation and deployment updates](docs/installation.md)
 - [Operation and services](docs/operation.md), [scheduler and RF jobs](docs/rf-jobs.md)
 - [Airband](docs/airband.md), [ATIS](docs/atis.md), [AIS](docs/ais.md), [433 MHz](docs/433mhz.md), [METEOR](docs/meteor.md)
 - [Dashboard/APIs](docs/dashboard.md), [watchdog/recovery](docs/watchdog-and-recovery.md)
