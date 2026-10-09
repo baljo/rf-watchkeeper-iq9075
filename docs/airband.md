@@ -27,3 +27,8 @@ Tower displays the latest 20 capture attempts, including no_activity, at the top
 ## Tower manual-review queue — 9 October 2026
 
 The optional Tower filter now displays the latest 20 unreviewed voice_candidate, uncertain or shadow anomaly candidates, newest first. Any saved human classification removes a capture from this queue; saving refreshes it immediately. Disable the filter for inclusive recent history. Authoritative human_review_label records remain in evaluation/tower-anomaly/human-review; the queue does not affect training/audit data, 30-day audio retention, permanent pins, scoring thresholds or deferred Tower ASR. [Verified deployment, tests and rollback](tower-queue-fix-20261009.md).
+
+
+### 2026-10-09 — Tower candidate threshold queue correction
+
+Deployed: completed valid AD + score >= its recorded model threshold + unreviewed. Voice/uncertain acoustic classifications no longer bypass AD. Twelve tests pass; live queue verified; retention and pins preserved. [Evidence and rollback](tower-threshold-queue-20261009.md). Reboot and extended unattended operation unverified.
