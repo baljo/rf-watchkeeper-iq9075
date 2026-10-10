@@ -30,3 +30,9 @@ Append later findings or corrections to the engineering log; do not fill these g
 ## Publication reconciliation — 5 October 2026
 
 The current Airband deployment adds Tower transcription and shortened cadence; recognition accuracy remains open. METEOR scheduler restoration was observed in the later Airband report and publication inspection, closing that particular earlier observation gap. This does not establish all-pass restoration or real reboot acceptance. The earlier reviewed cleanup is complete; automatic deletion gates remain disabled. See [testing](testing-and-validation.md) and [retention](data-retention.md).
+
+## Reconciliation — 10 October 2026
+
+Older Tower-transcription and accelerator-placement-unverified summaries above describe earlier experiments. Current Tower ASR is deferred; acoustic screening/AD shadow and human review are separate. The corrected device1 HTP path has isolated execution evidence and a passing scoped overlap demonstration, but completed integrated acceptance failed. [Definitive utilization status](evk-utilization-status-20261009.md), [current ATIS](atis.md), [Tower](tower-anomaly.md).
+
+Outstanding experiments: native/DMA/Genie repair plus a new passing unattended run; full workload profiling and drop/preemption evidence; Tower backlog capacity/labelled calibration; numeric/Finnish/reference accuracy; SatDump underlying SIGSEGV and live-image repeatability; optional second-SDR interference; fresh installation and real watchdog reboot acceptance. Source export is not completion of those experiments.

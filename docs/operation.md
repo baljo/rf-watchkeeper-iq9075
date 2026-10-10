@@ -1,40 +1,40 @@
-# Operation and service inventory
+# Operation and service layout
 
-The live project is `/root/rf-watchkeeper`. Inspect ownership before intervention: ordinary scheduling intentionally stops while METEOR owns V4. Avoid competing receivers, forced probes or reboots during reservations.
+Inspected **10 October 2026**. Live project: `/root/rf-watchkeeper`; primary backend: `/root/sdr_demo/scheduler.py`. Inspect ownership/reservations before intervention. Ordinary scheduling intentionally stops during managed METEOR capture; an inactive successful oneshot is normal between timer activations.
 
-Installed definitions were inspected on 5 October; snapshots are in `deploy/systemd/`. Drop-ins and current code can override original base-unit comments.
-
-| Unit | Role / scheduling |
-| --- | --- |
-| `rf-watchkeeper-dashboard.service` | Enabled dashboard, port 8080 |
-| `rf-watchkeeper-scheduler.service` | Enabled V4 scheduler; external drop-in requires installed 30% speaker guard |
-| `rf-watchkeeper-atis-process.service` | Enabled low-priority Tower/ATIS worker |
-| `rf-watchkeeper-interpreter.service` | Enabled legacy interpretation bridge; does not certify Genie success |
-| `rf-watchkeeper-health.service` / `.timer` | Two minutes after boot, then every five minutes |
-| `rf-watchkeeper-meteor-plan.service` / `.timer` | Hourly planning; two minutes after boot |
-| `rf-watchkeeper-meteor-dispatch.service` / `.timer` | Claims due pass; three minutes after boot, then 30 s after inactivity |
-| `meteor-auto-capture.service` | Claimed capture; 40-minute bound and stop-hook recovery |
-| `rf-watchkeeper-meteor-process.service` / `.timer` | Docker/SatDump queue; four minutes after boot, then five minutes after inactivity |
+| Unit | Role / observed scheduling |
+|---|---|
+| `rf-watchkeeper-dashboard.service` | Active; dashboard/API port 8080 |
+| `rf-watchkeeper-scheduler.service` | Active; adaptive V4 sharing. Speaker-volume drop-in requires `evk-speaker-volume.service` at 30% |
+| `rf-watchkeeper-atis-process.service` | Active; Tower acoustic classification and production ATIS device1 ASR/optional Genie |
+| `rf-watchkeeper-atis-shadow.service` | Active; separate durable candidate queue, lowest-priority accelerator leases |
+| `rf-watchkeeper-atis-validation.service` / `.timer` | Candidate discovery without inference; 90 s after boot then every 60 s; timer active |
+| `rf-watchkeeper-tower-anomaly-shadow.service` / `.timer` | Bounded diagnostic batches; 2 min after boot then 60 s after inactivity; timer active; batch drop-in sets 70 s timeout |
+| `rf-watchkeeper-interpreter.service` | Active legacy saved-event Genie bridge; activity does not establish successful interpretation |
+| `rf-watchkeeper-health.service` / `.timer` | 2 min after boot then every 5 min; timer active |
+| `rf-watchkeeper-meteor-plan.service` / `.timer` | Hourly planning; 2 min after boot |
+| `rf-watchkeeper-meteor-dispatch.service` / `.timer` | Claims due pass; 3 min after boot then 30 s after inactivity |
+| `meteor-auto-capture.service` | Claimed capture; bounded 40 min, stop-hook recovery |
+| `rf-watchkeeper-meteor-process.service` / `.timer` | Docker/SatDump file processing; 4 min after boot then 5 min after inactivity |
 | `rf-watchkeeper-meteor-recover.service` | Enabled boot repair/resume |
-| `rf-watchkeeper-meteor-cleanup.service` / `.timer` | Maintenance daily 02:00 UTC plus 15-minute active interval from drop-in; deletion gates false |
-| `rf-watchkeeper-meteor-legacy-register.service` / `.timer` | Registers historical metadata; 45 s after boot, then every 60 s |
-| `satellite-v4-preflight.service` | Legacy preflight through guarded health/reboot helper |
-| `rf-watchkeeper-sensors.service` | Disabled optional 433 receiver |
-| `rf-watchkeeper-ais.service`, `rf-watchkeeper.service` | Disabled standalone/legacy paths; ordinary AIS uses primary scheduler |
+| `rf-watchkeeper-meteor-cleanup.service` / `.timer` | Daily 02:00 UTC plus 15-min maintenance drop-in; **both deletion gates false** |
+| `rf-watchkeeper-meteor-legacy-register.service` / `.timer` | Legacy metadata registration; 45 s after boot then 60 s |
+| `satellite-v4-preflight.service` | Legacy guarded preflight/reboot helper |
+| `rf-watchkeeper-sensors.service`, `rf-watchkeeper-ais.service`, `rf-watchkeeper.service` | Optional/standalone/legacy receiver paths disabled; normal AIS uses the scheduler |
 
-Historical dated `meteor-m23-*`, `meteor-m24-*` and `satellite-v4-preflight-*` timers remain as prior evidence; inspected historical timers were disabled. Manual reservations participate in guards.
+METEOR timers were active; capture/process/health oneshots need not be continuously running. Historical dated satellite/preflight timers are evidence, not a fresh-install activation list. Manual reservations participate in guards. Effective definitions include drop-ins; public snapshots are in [deploy/systemd](../deploy/systemd/). Root duplicate units are older snapshots. The speaker guard executable/unit and external ASR/model environments remain acquisition prerequisites; exported drop-ins alone do not supply them.
 
 ```sh
 cd /root/rf-watchkeeper
 systemctl status rf-watchkeeper-dashboard.service rf-watchkeeper-scheduler.service
-systemctl status meteor-auto-capture.service rf-watchkeeper-health.timer
+systemctl status rf-watchkeeper-atis-process.service rf-watchkeeper-atis-shadow.service
 systemctl list-timers --all
+systemctl cat rf-watchkeeper-scheduler.service rf-watchkeeper-tower-anomaly-shadow.service
 journalctl -u rf-watchkeeper-scheduler.service -n 50 --no-pager
-curl -f http://localhost:8080/api/state
-curl -f http://localhost:8080/api/meteor/schedule
+curl --max-time 10 -f http://localhost:8080/api/state
+curl --max-time 10 -f http://localhost:8080/api/meteor/schedule
 ```
 
-These are read-only checks. See [troubleshooting](troubleshooting.md), [RF jobs](rf-jobs.md) and [retention](data-retention.md).
+Commands above are read-only and bounded; state can time out despite an active dashboard. Review journals/retained results rather than restarting everything. Inspect pending inference and METEOR ownership before a necessary component restart; preserve newer records, local observer config and pins. No forced probe/reset/reboot/service restart occurred in this audit. [Recovery](watchdog-and-recovery.md), [troubleshooting](troubleshooting.md), [installation/update procedure](installation.md).
 
-
-Tower AD terminal failure handling and recovery: [9 October audit](tower-failure-fix-20261009.md). Automatic shadow diagnostics verified in a short window; sustained capacity and reboot verification remain outstanding.
+The audit exports already installed source/units to GitHub and synchronizes documentation only to the EVK. It does not redeploy runtime, enable optional units, repair Genie/DMA failures or validate reboot persistence. [Completion evidence](evidence/repository-audit-20261010/completion.md).

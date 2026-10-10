@@ -174,3 +174,11 @@ The following exact paths are the public initial import. Topic files updated fro
 - `docs/evidence/publication-validation.json`
 
 Additional preserved runtime dependencies: `dashboard.html`, `satellite_v4_preflight.sh`, `run_ais_gain_test.sh`.
+
+## Source/documentation reconciliation — 10 October 2026
+
+The list above is the **initial** import manifest, not the current tree. Private `ais-config.json`/`meteor-config.json` have since become ignored local files initialized from committed examples. Current source includes later deployed device1/resource-control, ATIS parsing/consensus/shadow/validation and Tower classification/retention/validation dependencies, with speech/diagnostic unit/drop-in snapshots. Historical root units remain dated examples; `deploy/systemd/` is the reviewed snapshot set.
+
+One-off historical review/cleanup/collection helpers and superseded acoustic-only queue fixtures remain EVK-only because they are not application dependencies/current contracts. External candidate environments/models/cache/config, recordings, databases, failure state, labels and private coordinates remain excluded. The public AIS test intentionally keeps newer history coverage and approximate observer fixtures absent from the older live test. Exact export hashes, deliberate divergence and known runtime gaps are in [current audit](current-status.md) and [inspection](evidence/repository-audit-20261010/inspection.json).
+
+Historical links in the engineering log and original staged guides to `data/`, `backups/` or absent stage installers are EVK-only evidence, intentionally unavailable from a clone. Do not reinterpret them as a verified external installation recipe. New current guide links are checked separately from preserved chronological evidence.

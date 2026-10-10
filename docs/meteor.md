@@ -88,3 +88,9 @@ Production `decode()` calls `decode_once()` for the nominal decode, then `evalua
 This is explicit external candidate correction, not verified exhaustive native acquisition coverage. No numeric claim about SatDump's internal carrier-loop capture range was established. Tuning to 137.900 MHz does not prove centered LRPT; sparse survey/interference/weak-signal limitations remain. Historical recordings retain their original rate and frequency.
 
 Later read-only [publication inspection](evidence/publication-inspection.json) found 14 raw satellite cu8 files totaling 11,281,367,040 bytes, reflecting capture after the earlier cleanup snapshot. No raw file, product, historical metadata, retention gate or satellite schedule was modified for documentation. Indoor imagery remains experimental: useful channel products demonstrate that weak indoor captures can be recoverable, not reliable pass-by-pass reception.
+
+## Live reconciliation — 10 October 2026
+
+The live configuration still enables automation at 256000 samples/s, 137900000 Hz and gain 49.6 dB on V4MAIN01. Planning remains 36 h, 10-degree horizon, minimum 25-degree peak, south sector 120–240 degrees for 60 s, maximum four passes/day. Margins are 90 s before/after with 120 s preflight, 12 s dispatch lead and 30 s maximum lateness. TLE maximum age is 3 days. Free-space gate requires 10 GiB beyond estimated capture storage. Decode timeout is 1800 s, at most three attempts with 3600 s retry spacing. Both automatic raw-deletion gates are false.
+
+Plan/dispatch/process/cleanup/legacy-register timers are active; idle successful oneshots are expected. Current raw satellite inventory was 31 cu8 / 18,356,895,744 bytes, a time-dependent snapshot rather than a fixed expected count. Useful retained partial-success products do not resolve SatDump SIGSEGV or establish reliable live pass reception. [Audit evidence](evidence/repository-audit-20261010/inspection.json).

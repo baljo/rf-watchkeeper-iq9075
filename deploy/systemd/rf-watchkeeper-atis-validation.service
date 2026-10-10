@@ -1,0 +1,9 @@
+[Unit]
+Description=Discover existing ATIS validation candidates without inference
+After=rf-watchkeeper-atis-shadow.service
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/atis_validation.py --sync
+Nice=15
+UMask=0077

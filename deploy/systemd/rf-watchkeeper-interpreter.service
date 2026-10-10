@@ -1,0 +1,14 @@
+# Run the RF Watchkeeper Genie interpretation bridge for new normalized ASR events. 2026-09-17 23:00 EEST — Thomas Vikström.
+[Unit]
+Description=RF Watchkeeper Genie interpreter
+After=rf-watchkeeper-dashboard.service
+
+[Service]
+Type=simple
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/interpret_stream.py --input /root/rf-watchkeeper/logs/asr-events.jsonl --output /root/rf-watchkeeper/logs/asr-events.jsonl --genie-config /root/genie/qwen3-4b-iq9075/genie_config.absolute.json
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

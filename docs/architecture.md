@@ -1,34 +1,27 @@
-# Architecture
+# Architecture and data flow
 
-Verified by installed source, unit definitions and read-only APIs on 2026-10-05. See [project log](project-log.md) for dated milestones and [workflow](workflow.md) for recording changes.
+Reconciled against deployed source/configuration and installed units on **10 October 2026**. [Current status](current-status.md) records evidence and remaining gates. Historical implementation reports are dated evidence, not current defaults.
 
-- `job_manager.py` delegates receiver work to `/root/sdr_demo/scheduler.py`. The primary scheduler owns V4MAIN01 for ordinary jobs; the separate sensor unit selects 43300001. [RF jobs](rf-jobs.md) describes scheduling and handoff.
-- `rf_store.py` stores sensor/audio records in `data/watchkeeper.db`; `ais_collector.py` and `ais_store.py` supply AIS targets and met/hydro observations. The empty root-level `watchkeeper.db` is a legacy file, not the live database.
-- `dashboard.py` serves `dashboard.html` and controlled APIs on port 8080 through `rf-watchkeeper-dashboard.service`. Current routes include `/api/state`, `/api/nexus/history`, `/api/audio`, `/api/atis`, `/api/meteor` and `/api/meteor/schedule`. Image files are served through `/api/meteor/image/<id>`.
-- `audio_workflow.py`, `asr_offline.py` and `interpret.py` coordinate saved speech with retained diagnostics. Reuse [AUDIO_WORKFLOW.md](../AUDIO_WORKFLOW.md), a dated implementation/validation guide.
-- `atis_pipeline.py` and `atis_view.py` provide experimental recorded ATIS processing and dashboard data; see [ATIS status](atis.md).
-- `meteor_pipeline.py` coordinates planning, capture, decoding and opt-in retention. `satellite_capture.py` records IQ; `satdump_evk.py` runs the isolated decoder. `meteor_store.py` keeps product history in `data/watchkeeper-meteor.db`. See [METEOR](meteor.md).
-- `rf_health.py` and `rf_health_monitor.py` record sample evidence and guarded recovery in additive health tables in the main database. See [reliability](reliability.md) and the preserved [RF_HEALTH.md](../RF_HEALTH.md).
+## Receiver and CPU workloads
 
-Persistent evidence is retained in `logs/`, `sensor-logs/`, `recordings/`, `data/meteor-auto/`, experiment stages and `backups/`. The dashboard is a trusted-LAN service; existing saved-audio write operations require a session token, not internet-grade user authentication.
+`job_manager.py` uses `adaptive_rf.py` and `sdr_demo.scheduler` (deployed at `/root/sdr_demo/scheduler.py`, exported under `backends/sdr_demo/`). The primary scheduler selects V4MAIN01 for Tower, ATIS and AIS. `satellite_schedule.py` guards reservations; METEOR stops/restores ordinary scheduling while holding the device. File-only SatDump decoding does not own the SDR. [Allocation and cadence](rf-jobs.md).
 
-At the 2026-10-05 11:44 UTC inspection, the main database contained 15,245 Nexus measurements, 42 AIS targets and 18,762 met/hydro rows; the METEOR database contained nine passes and 79 image rows. Counts are an observation, not fixed requirements. See [inspection evidence](evidence/documentation-inspection.json).
+`atis_pipeline.capture()` demodulates Airband through serial-selected `rtl_fm` into 8 kHz mono PCM. Tower screening uses saved acoustic evidence through `tower_classification.py`, independently of speech inference. `tower_anomaly.py` scores window features against the retained model; bounded `tower_anomaly_shadow.py` adds shadow diagnostics and persistent failure state. Human labels live in `evaluation/tower-anomaly/human-review/`; `tower_validation.py` computes cumulative diagnostics. Tower ASR is deferred. [Tower status](tower-anomaly.md).
 
-## Current Airband/publication reconciliation — 5 October 2026
+AIS-catcher supplies dual-channel messages through `ais_collector.py`; `ais_store.py` stores validated target positions/identity and met/hydro observations. `rf_store.py` stores sensor/audio and sample-health data in `data/watchkeeper.db`; the empty root-level database is legacy. Optional 433 reception is disabled. [AIS](ais.md), [433 MHz](433mhz.md).
 
-Tower is now recorded/transcribed through the common Airband pipeline, not playback-only. `/api/tower` and `/api/tower/audio` join the ATIS routes. Current cadence, disabled FM and capped AIS background dwell are authoritative in [RF jobs](rf-jobs.md). [Dashboard](dashboard.md) gives the full route inventory; [operation](operation.md) describes installed systemd services/timers; [installation](installation.md) identifies external prerequisites.
+## ATIS accelerator and derived evidence
 
-Retention is policy-classified and execution-gated, with the separately authorized reviewed cleanup recorded in [data retention](data-retention.md). The empty canonical GitHub repository was reconciled through a local checkout because EVK had neither Git metadata nor Git executable. Runtime source hashes match the read-only [publication inspection](evidence/publication-inspection.json); exported service definitions are snapshots, not runtime changes.
+Production `atis_pipeline.py` retains full ATIS coverage, prepares high-pass/resampled clips through `atis_shadow.prepare()`, and launches `atis_runtime_device1.py` using the candidate environment. That runtime executes encoder/decoder QNN HTP contexts with `deviceID=1` and cleanup on interruption. Per-clip hash/execution evidence is retained under the capture's `runtime-device1/`. `inference_resource.py` serializes accelerator leases, gives production waiters priority and makes shadow work defer. Shared resource control also covers saved-audio ASR and Genie interpretation.
 
+Original ASR, conservative normalization, `atis_lexicon.py` corrections, `atis_parser.py` fields and optional Genie remain separate. `atis_consensus.py` derives agreement only from consecutive captures anchored to the newest; it cannot outvote disagreement or establish numeric truth. Production publication completes before separate `atis_shadow.py` enqueue. Its durable queue is `data/atis-shadow/jobs.sqlite3`. `atis_validation.py` maintains a distinct human-reference/evaluation database under `data/atis-validation/`. [ATIS details and external dependencies](atis.md).
 
-Tower AD terminal failure handling and recovery: [9 October audit](tower-failure-fix-20261009.md). Automatic shadow diagnostics verified in a short window; sustained capacity and reboot verification remain outstanding.
+## Satellite products, retention and presentation
 
+`meteor_pipeline.py` coordinates planning, capture, decode/retry and gated retention. `satellite_capture.py` writes cu8 IQ; `satdump_evk.py` checks pinned runtime/image identity and invokes isolated SatDump. `meteor_frequency.py` provides a bounded recorded-rate offset survey. `meteor_store.py` indexes history/products in `data/watchkeeper-meteor.db`; `meteor_retention.py` classifies raw IQ with protection and execution gates. [METEOR](meteor.md).
 
-## Tower manual-review queue — 9 October 2026
+`tower_retention.py` provides 30-day Tower audio retention and permanent reference pinning; classification/review metadata survives audio expiry. ATIS review/shadow holds are distinct from permanent pins. [Retention](data-retention.md).
 
-The optional Tower filter now displays the latest 20 unreviewed voice_candidate, uncertain or shadow anomaly candidates, newest first. Any saved human classification removes a capture from this queue; saving refreshes it immediately. Disable the filter for inclusive recent history. Authoritative human_review_label records remain in evaluation/tower-anomaly/human-review; the queue does not affect training/audit data, 30-day audio retention, permanent pins, scoring thresholds or deferred Tower ASR. [Verified deployment, tests and rollback](tower-queue-fix-20261009.md).
+`dashboard.py` serves `dashboard.html` on port 8080, reading histories and controlled audio/image routes. Review POSTs use session tokens. It is a trusted-LAN service without public multi-user authentication. Numeric observer/map centres are public approximations in the export and private locally. [Dashboard](dashboard.md), [privacy](location-privacy.md).
 
-
-### 2026-10-09 — Tower candidate threshold queue correction
-
-Deployed: completed valid AD + score >= its recorded model threshold + unreviewed. Voice/uncertain acoustic classifications no longer bypass AD. Twelve tests pass; live queue verified; retention and pins preserved. [Evidence and rollback](tower-threshold-queue-20261009.md). Reboot and extended unattended operation unverified.
+`rf_health.py`/`rf_health_monitor.py` distinguish sample progress from useful application results and perform bounded, reservation-aware recovery. Real reboot acceptance remains unverified. Active processes or successful isolated HTP execution do not establish unattended reliability: the completed integrated run failed. [Recovery](watchdog-and-recovery.md), [utilization evidence](evk-utilization-status-20261009.md).

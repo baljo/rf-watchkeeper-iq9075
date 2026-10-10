@@ -30,3 +30,15 @@ journalctl -u rf-watchkeeper-health.service -n 50 --no-pager
 Exact antenna/filter inventory and V4-only USB reset are gaps. Read [retention](data-retention.md) and [watchdog](watchdog-and-recovery.md) before active actions. No RF setting/service change occurred for documentation.
 
 Before proposing another fault test, consult the [watchdog stage classification](testing-and-validation.md#watchdog-stage-classification--5-october-2026). A successful simulated reboot/resume is not a real reboot recovery. Current safe-stage evidence does not justify repeating injection tests; leave risky reboot acceptance explicitly unvalidated. Before sharing logs/configs/patches, apply the [location privacy policy](location-privacy.md), including numeric map centres and historical snapshot contents.
+
+## Current failure triage — 10 October 2026
+
+- ATIS `partial_success`: inspect original ASR/runtime-device1 evidence separately from `interpretation.json`; the latest 12 inspected Genie attempts failed. Do not label it complete or substitute shadow output.
+- HTP/DMA allocation errors: device1/context cleanup passed isolated tests but failed integrated memory/reliability acceptance. Preserve native logs, DMA evidence and capture hashes; global DMA is not NPU utilization. A safe permanent repair remains unresolved.
+- Dashboard active but state API slow: use bounded requests, journals and retained endpoint-specific evidence; `/api/state` timed out at 10 s in this audit. Other 200 responses do not close the timeout issue.
+- Tower queue empty: verify completed valid score >= recorded threshold, audio availability and absent human label. Acoustic voice/uncertain status alone cannot enter the filtered queue. Disable the filter for inclusive recent history.
+- Tower capture absent: inspect the 07:00–23:00 Helsinki window, pause-until file, due cadence and METEOR guard before inferring failure. ASR is intentionally deferred.
+- Tower terminal failure: missing/zero/corrupt audio is excluded durably. Clearing a marker cannot recover missing WAVs; repair the cause and archive only that item's failure record before retrying.
+- Reproduction import/runtime errors: the current device1 candidate environment/model/cache/config artifacts are external. Unit/source snapshots cannot supply them; use [installation](installation.md).
+
+This documentation audit made no runtime intervention. [Audit and unresolved work](current-status.md).

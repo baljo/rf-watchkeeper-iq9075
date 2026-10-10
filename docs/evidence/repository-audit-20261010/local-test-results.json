@@ -1,0 +1,12 @@
+{
+  "environment": "local Ubuntu through WSL, exported checkout",
+  "command": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -m unittest -v test_atis_shadow test_tower_retention test_tower_recent test_tower_anomaly_review test_tower_validation test_tower_ad_batch test_tower_failures test_tower_scored_queue test_tower_threshold_queue test_ais_validation test_adaptive_rf",
+  "tests": 74,
+  "passed": 74,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "seconds": 11.081,
+  "warnings": "Existing AIS fixture sqlite connections emit non-fatal ResourceWarnings; fixture collection closes temporary state without affecting production.",
+  "scope": "Isolated temporary roots and mocked children; no production data, receiver or native model invocation"
+}

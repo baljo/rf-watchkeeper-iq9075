@@ -2,7 +2,7 @@
 
 `ais_collector.py` runs `/root/AIS-catcher` on V4MAIN01, JSON output (`-o 5`), automatic tuner gain, RTL AGC enabled and 192K bandwidth. It receives both AIS channels around 162 MHz. `ais_store.py` persists targets and met/hydro observations in `data/watchkeeper.db`, distinguishing position/motion ages and calculating distance/bearing from configured observer coordinates.
 
-`jobs-v4.jsonc` retains 120 s AIS dwell; `job_manager.py` currently caps background slots to **30 s** with Tower recording configured. Airband is revisited frequently and METEOR overrides AIS. This is intermittent monitoring rather than continuous all-message reception.
+`jobs-v4.jsonc` configures **45 s maximum AIS chunks**; adaptive scheduling shortens a chunk to the next due Tower/ATIS job. Airband is revisited frequently and METEOR overrides AIS. This is intermittent monitoring rather than continuous all-message reception.
 
 The dashboard map distinguishes local/regional targets, base stations and age. `/api/state` contains AIS/met-hydro data; no dedicated `/api/ais` route exists in the installed dashboard. Stored records support Aurora Botnia and local base stations. [AIS Hydro study](ais-hydro-cadence.md) finds sub-ten-minute observation steps for Vaasa/Pietarsaari water levels, unlike examined weather sites. Packet receipt, observation time and value changes are distinct measurements.
 
@@ -17,3 +17,9 @@ Both the regional and local AIS maps use the shared Recent / 24 hours / 7 days s
 Hover text gives Position received with browser-local timestamp and elapsed reception age. Historical targets outside the live positioned MMSI set are faded to opacity 0.65 and receive name/MMSI plus age labels; other targets older than 30 minutes fade to 0.30. Local map labels are spaced with connector lines where displaced. Reception age describes the last position message, not current vessel freshness.
 
 See [dated validation, tests, restart, rollback and showcase evidence](ais-dashboard-completion-20261008.md). Counts in that report are time-dependent observations, never fixed expected totals.
+
+## Current scheduling and dashboard — 10 October 2026
+
+Ordinary AIS is the V4 scheduler's home workload, with **45 s maximum chunks shortened to due Tower/ATIS starts**, not the older 30 s cap. METEOR reservations preempt ordinary work; a quiet short slot does not prove RF failure. AIS-catcher still decodes both channels, using JSON output, automatic tuner gain/RTL AGC and 192K bandwidth. Sample-health evidence is independent of decoded message counts.
+
+Both maps use Recent / 24 hours / 7 days, default 24 hours. The API provides latest retained position per MMSI within 168 h, valid coordinates/250 km observer radius, capped at 500. Static identity updates cannot refresh position age. This is last-known reception history, not a vessel track or current location guarantee. [Dashboard details](dashboard.md), [8 October validation](ais-dashboard-completion-20261008.md). Precise observer coordinates stay in ignored local configuration.

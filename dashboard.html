@@ -1,4 +1,3 @@
-<!-- Public export: all observer/map centres use approximate example Vaasa city-centre coordinates. Keep installation coordinates private; this file is not deployed over the live EVK dashboard. -->
 <!-- Display RF, AIS and historical METEOR images with imported/reference provenance; 2026-10-03 21:25:52 EEST, Thomas Vikström. -->
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RF Watchkeeper</title>
@@ -26,8 +25,10 @@ th{color:var(--muted);font-size:13px;font-weight:650}
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}.tabs button{background:var(--panel);color:var(--accent);border-color:var(--line)}.tabs button[aria-selected="true"]{background:var(--accent);color:white;border-color:var(--accent)}:focus-visible{outline:3px solid #075da8;outline-offset:3px}[role="tabpanel"]{margin-top:20px}a{color:var(--accent)}
 
 .pass-schedule{min-width:1040px}.pass-schedule th{text-align:center;background:#233447;color:#fff}.pass-schedule td{text-align:center}.pass-schedule .peak{font-weight:700}.pass-schedule tr.next-pass{background:#fff8bf}.pass-schedule small{display:block;white-space:normal;max-width:210px}.pass-schedule caption{text-align:left;color:var(--muted);font-size:14px;padding-bottom:12px}.pass-schedule .status{color:var(--accent);font-weight:650}
+#atis-consensus td{white-space:normal;overflow-wrap:anywhere}#atis-consensus{margin-bottom:24px}#atis-consensus th:first-child,#atis-consensus td:first-child{min-width:135px}#atis-recent details{border-top:1px solid var(--line);padding:16px 0}#atis-recent summary{cursor:pointer;font-weight:650;line-height:1.6}#atis-recent td{white-space:normal;overflow-wrap:anywhere}#atis-recent pre{font:inherit;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);padding:14px;border-radius:8px}#atis-recent h3{font-size:16px;margin:18px 0 8px}
 </style></head><body><main>
 <header><div><div class="eyebrow">Dragonwing IQ-9075 EVK · Local RF observatory</div><h1>RF Watchkeeper</h1><div class="muted">Dual-SDR RF monitoring</div></div><div id="connection" class="pill">Connecting…</div></header>
+<p><a id="atis-review-direct-link" href="/?atis_review=1#airband" style="display:inline-block;padding:10px 16px;border:1px solid var(--accent);border-radius:8px;font-weight:650">Review saved ATIS recordings</a> <span class="muted">Open the human-reference queue; recent failed captures are listed separately.</span></p>
 <nav class="tabs" role="tablist" aria-label="Dashboard sections"><button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true" tabindex="0">Overview</button><button type="button" role="tab" id="tab-433" aria-controls="panel-433" aria-selected="false" tabindex="-1">433 MHz</button><button type="button" role="tab" id="tab-airband" aria-controls="panel-airband" aria-selected="false" tabindex="-1">Airband</button><button type="button" role="tab" id="tab-ais" aria-controls="panel-ais" aria-selected="false" tabindex="-1">AIS</button><button type="button" role="tab" id="tab-satellites" aria-controls="panel-satellites" aria-selected="false" tabindex="-1">Satellites</button><button type="button" role="tab" id="tab-system" aria-controls="panel-system" aria-selected="false" tabindex="-1">System / AI</button></nav><div id="notice" role="status"></div><p id="cached-notice" class="warn" role="status" hidden>Connection lost. All displayed readings and evidence are cached until the dashboard reconnects.</p><noscript>This dashboard requires JavaScript to load readings and switch sections.</noscript><section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0"><h2>Live overview</h2><section class="card section" aria-label="RF system health"><h2>RF system health</h2><div id="rf-health">Checking receiver health…</div></section><br><div class="grid"><section class="card"><div class="label"><span id="primary-label">Primary receiver · V4MAIN01</span></div><div id="state" class="value">Unknown</div><div id="detail" class="meta">Waiting for V4 status</div></section><section class="card"><div class="label">V4 current RF job</div><div id="job" class="value">—</div><div id="frequency" class="meta">—</div><div id="operating-mode" class="meta">Waiting for scheduler</div></section><section class="card"><div class="label"><span id="sensor-label">433 MHz receiver · 43300001</span></div><div id="sensor-state" class="value">Unknown</div><div id="sensor-detail" class="meta">Waiting for FC0012 status</div></section></div>
 
 <div class="grid section"><section class="card"><div class="label">Latest 433 MHz detection</div><div id="overview-sensor" class="value">Waiting for status…</div><div id="overview-sensor-detail" class="meta"></div></section><section class="card"><div class="label">AIS reception</div><div id="overview-ais" class="value">Waiting for status…</div><div id="overview-ais-detail" class="meta"></div></section><section class="card"><div class="label">Saved-audio job · replay</div><div id="overview-audio" class="value">Waiting for status…</div><div id="overview-audio-detail" class="meta"></div></section></div><div class="grid section"><section class="card"><div class="label">ASR accelerator evidence</div><div id="overview-accelerator" class="value">Waiting for status…</div><div id="overview-accelerator-detail" class="meta"></div></section><section class="card"><div class="label">CPU / NPU / DSP utilization</div><div id="overview-utilization" class="value">Not available</div><div id="overview-utilization-detail" class="meta"></div></section><section class="card"><div class="label">Dashboard status</div><div id="overview-system" class="value">Waiting for status…</div><div id="overview-system-detail" class="meta"></div></section></div><section class="card section"><div class="split"><h2>Recent events</h2><small>Live updates · every 2 seconds</small></div><ul id="feed" class="feed"><li>Waiting for normalized events…</li></ul></section>
@@ -36,14 +37,11 @@ th{color:var(--muted);font-size:13px;font-weight:650}
 
 </section><section id="panel-airband" role="tabpanel" aria-labelledby="tab-airband" tabindex="0" hidden><h2>Airband / speech</h2><section class="card section" aria-labelledby="atis-heading">
 <div class="split"><h2 id="atis-heading">Scheduled Vaasa ATIS · 136.450 MHz</h2><span class="pill warn">Recognition needs review</span></div>
-<p class="warn">The audio capture is working. Automatic transcription and interpretation are still unreliable, especially numbers. No field below is confirmed.</p>
+<p class="muted">Compare the exact ASR reading with corrections and inferred fields. All inferred values need listening review.</p>
 <p id="atis-status" role="status">Loading scheduled ATIS results…</p>
-<p id="atis-meta" class="meta"></p>
-<audio id="atis-player" controls preload="none" hidden></audio>
-<p id="atis-model" class="meta"></p>
-<div class="table-wrap"><table><thead><tr><th>ATIS field</th><th>Tentative source quote</th><th>Status</th></tr></thead><tbody id="atis-fields"></tbody></table></div>
-<p id="atis-uncertainties" class="warn"></p>
-<details class="section"><summary>Inspect the small-model transcript and errors</summary><p class="muted">Overlapping clips repeat phrases. These are raw model readings, not a verified transcript.</p><div id="atis-transcript" class="speech-text"></div></details>
+<p class="meta">Recent captures · newest 20 · timestamps in Europe/Helsinki. Older recordings remain retained.</p>
+<section aria-labelledby="atis-consensus-heading"><h3 id="atis-consensus-heading">Consensus across repeated captures</h3><div id="atis-consensus">Checking repeated ATIS evidence…</div></section>
+<h3>Individual ATIS results · latest first</h3><div id="atis-recent"></div>
 </section>
 <p class="muted">Scheduled ATIS results are above. The general speech lab below uses the older tiny model and is not an ATIS decoder.</p><section class="card section" aria-labelledby="audio-heading">
 <div class="split"><h2 id="audio-heading">Recorded speech lab</h2><span class="pill">REPLAY · No radio needed</span></div>
@@ -1575,7 +1573,78 @@ if(aisLocalRange){
 }
 
 setInterval(updateAge,1000);poll();pollHistory();
-let atisBusy=false;
+// ATIS display uses text-only DOM nodes, never transcript HTML.
+function atisNode(tag,text){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;}
+function atisValue(value,unit=''){
+ if(value===null||value===undefined||value==='')return 'Unavailable';
+ if(Array.isArray(value))return value.length?value.map(v=>typeof v==='object'?v.coverage+' '+v.height_ft+' ft':v).join(' · '):'Unavailable';
+ return String(value)+unit;
+}
+function renderATISResults(rows){
+ const host=el('atis-recent'),opened=new Set(Array.from(host.querySelectorAll('details[open]')).map(d=>d.dataset.recording));
+ const firstRender=!host.children.length,oldTop=host.firstElementChild?.dataset.recording;
+ const fragments=[];
+ for(const [index,data] of rows.entries()){
+  const card=atisNode('details');card.dataset.recording=data.recording;
+  card.open=opened.has(data.recording)||(index===0&&(firstRender||oldTop!==data.recording));
+  let stamp=data.recording||'Unavailable';
+  if(data.captured_at){const date=new Date(data.captured_at);if(!Number.isNaN(date.getTime()))stamp=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Helsinki',dateStyle:'medium',timeStyle:'medium'}).format(date)+' Helsinki';}
+  card.append(atisNode('summary',stamp+' · Parser '+(data.parser_status||'unavailable')));
+  const quality=data.quality;
+  card.append(atisNode('p',(data.message||'')+' Capture: '+atisValue(data.capture?.audio_seconds,' s')));
+  if(quality)card.append(atisNode('p',quality.recognized_fields+' / '+quality.supported_fields+' fields recognized · '+quality.conflicting_fields+' conflicting · '+quality.failed_asr_segments+' / '+quality.asr_segments+' ASR segments failed. Counts describe extraction, not accuracy. Listening review required.'));
+  if(data.transcript)card.append(atisNode('p',(data.transcript.model||'ASR model unavailable')+' · ASR status '+(data.transcript.status||'unavailable')));
+  if(data.audio_available){const player=atisNode('audio');player.controls=true;player.preload='none';player.src=data.audio_url||'/api/atis/audio?recording='+encodeURIComponent(data.recording);card.append(player);}
+  card.append(atisNode('h3','Raw ASR — exact transcript'));
+  card.append(atisNode('pre',data.raw_asr?.text||'Unavailable'));
+  card.append(atisNode('h3','Normalized / corrected transcript'));
+  card.append(atisNode('pre',data.normalized?.text||'Unavailable'));
+  card.append(atisNode('p','Normalization and conservative lexical correction are shown above. Structured parsing uses raw ASR with conservative lexical correction; values remain unverified.'));
+  card.append(atisNode('h3','Structured ATIS'));
+  const wrapper=atisNode('div');wrapper.className='table-wrap';const table=atisNode('table'),head=atisNode('thead'),header=atisNode('tr');
+  for(const title of ['Field','Inferred value','Status / raw source evidence'])header.append(atisNode('th',title));head.append(header);table.append(head);
+  const body=atisNode('tbody'),structured=data.structured_atis||{},fields=structured.fields||{};
+  const specs=[['information_identifier','Information letter',''],['observation_time_utc','Observation time',''],['wind_direction_deg','Wind direction','°'],['wind_speed_kt','Wind speed',' knots'],['gust_speed_kt','Wind gust',' knots'],['visibility_m','Visibility',' m'],['weather_phenomena','Weather',''],['cloud_layers','Clouds',''],['temperature_c','Temperature',' °C'],['dew_point_c','Dew point',' °C'],['qnh_hpa','QNH',' hPa'],['runway','Runway',''],['approach_wording','Approach',''],['landing_wording','Landing',''],['departure_wording','Departure','']];
+  for(const [key,label,unit] of specs){
+   const row=atisNode('tr'),state=structured.field_status?.[key]||'unknown';
+   const evidence=[...new Set((structured.evidence?.[key]||[]).map(e=>e.quote))].join(' · ');
+   row.append(atisNode('td',label),atisNode('td',atisValue(fields[key],unit)),atisNode('td',(state==='recognized'?'Recognized — unverified':state==='conflicting'?'Conflicting — unavailable':'Unavailable')+(evidence?' · '+evidence:'')));body.append(row);
+  }
+  table.append(body);wrapper.append(table);card.append(wrapper);
+  if(data.interpretation?.error)card.append(atisNode('p','Separate interpretation: '+data.interpretation.error));
+  fragments.push(card);
+ }
+ host.replaceChildren(...fragments);
+}
+
+function renderATISConsensus(consensus){
+ const host=el('atis-consensus');host.replaceChildren();
+ if(!consensus){host.append(atisNode('p','Consensus unavailable. Latest individual result remains below.'));return;}
+ const group=consensus.group||{},quality=consensus.quality||{},captures=group.captures||[];
+ host.append(atisNode('p','Consensus: '+consensus.status.replaceAll('_',' ')+' · '+(group.capture_count||0)+' consecutive captures grouped · '+(quality.agreed_fields||0)+' / '+(quality.supported_fields||15)+' fields repeated.'));
+ host.append(atisNode('p','A consensus value needs agreement in at least two separate captures. Counts are repeated ASR evidence, not confidence or audio verification. The latest individual parse and original transcripts remain below.'));
+ if(consensus.boundary){
+  const boundary=consensus.boundary,labels={message_identity_change:'Information letter or observation time changed — earlier message excluded.',material_field_disagreement:'Material disagreement — grouping stopped and disputed fields remain unavailable.',insufficient_message_match:'Not enough evidence that the preceding capture is the same message.',no_recognized_fields:'A capture has no recognized fields — no merging across it.',individual_conflict:'An individual capture has conflicting values — no merging across it.',capture_gap:'Capture gap exceeds 15 minutes.',group_time_limit:'Group limited to 30 minutes.',capture_not_usable:'An incomplete or unusable capture prevents merging.',capture_context_change:'Capture source, job or frequency changed.'};
+  host.append(atisNode('p',(labels[boundary.reason]||'Grouping stopped: '+boundary.reason.replaceAll('_',' '))+ (boundary.recording?' Boundary capture '+boundary.recording+'.':'')));
+ }
+ if(captures.length){
+  const list=atisNode('ul');
+  for(const capture of captures){const item=atisNode('li'),link=atisNode('a',capture.recording+' · individual evidence');link.href=capture.individual_url;item.append(link);list.append(item);}host.append(list);
+ }
+ const wrapper=atisNode('div');wrapper.className='table-wrap';const table=atisNode('table'),head=atisNode('thead'),header=atisNode('tr');
+ for(const title of ['Field','Consensus value','Agreement / uncertainty'])header.append(atisNode('th',title));head.append(header);table.append(head);
+ const body=atisNode('tbody');
+ const specs=[['information_identifier','Information letter',''],['observation_time_utc','Observation time',''],['wind_direction_deg','Wind direction','°'],['wind_speed_kt','Wind speed',' knots'],['gust_speed_kt','Wind gust',' knots'],['visibility_m','Visibility',' m'],['weather_phenomena','Weather',''],['cloud_layers','Clouds',''],['temperature_c','Temperature',' °C'],['dew_point_c','Dew point',' °C'],['qnh_hpa','QNH',' hPa'],['runway','Runway',''],['approach_wording','Approach',''],['landing_wording','Landing',''],['departure_wording','Departure','']];
+ for(const [key,label,unit] of specs){
+  const row=atisNode('tr'),state=consensus.field_status?.[key]||'unknown',count=consensus.support?.[key]?.agreeing_capture_count||0;
+  let detail=state==='agreed'?'Agreed in '+count+' separate captures — unverified':state==='single_observation'?'Only one capture — unavailable':state==='conflicting'?'Conflicting — unavailable':'Unavailable';
+  if(state==='conflicting'&&consensus.conflicts?.[key]?.length)detail+=' · competing parses: '+consensus.conflicts[key].map(v=>atisValue(v,unit)).join(' / ');
+  row.append(atisNode('td',label),atisNode('td',atisValue(consensus.fields?.[key],unit)),atisNode('td',detail));body.append(row);
+ }
+ table.append(body);wrapper.append(table);host.append(wrapper);
+}
+
+let atisBusy=false,atisSignature='',atisConsensusSignature='';
 async function pollATIS(){
  if(atisBusy)return;
  atisBusy=true;
@@ -1583,31 +1652,37 @@ async function pollATIS(){
  try{
   const response=await fetch('/api/atis',{cache:'no-store',signal:controller.signal});
   if(!response.ok)throw Error('ATIS unavailable');
-  const data=await response.json();
-  put('atis-status',data.message||'Waiting for ATIS');
-  put('atis-meta',data.recording?('Recording '+data.recording+' · '+numeric(data.capture?.audio_seconds,' s')+' · every 10 min / 90 s; METEOR slots skipped'):'');
-  const player=el('atis-player');player.hidden=!data.audio_available;
-  if(data.audio_available){const src='/api/atis/audio?recording='+encodeURIComponent(data.recording);if(player.getAttribute('src')!==src)player.src=src;}
-  const t=data.transcript,i=data.interpretation;
-  put('atis-model',t?(t.model+' · transcription '+t.status+' · '+(i?.backend||'Interpretation pending')+' · accelerator profiling pending'):'Qualcomm Whisper small · processing pending');
-  el('atis-fields').replaceChildren();
-  const fields=i?.result?.fields||{};
-  for(const [key,value] of Object.entries(fields)){
-   const row=document.createElement('tr');
-   for(const text of [key.replaceAll('_',' '),value.evidence||'Not recovered',value.value?'Tentative — listen to verify':'Missing']){
-    const cell=document.createElement('td');cell.textContent=text;row.append(cell);
-   }
-   el('atis-fields').append(row);
-  }
-  if(!Object.keys(fields).length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=3;cell.textContent=i?.error||'No usable field interpretation yet.';row.append(cell);el('atis-fields').append(row);}
-  const uncertainties=i?.result?.uncertainties;
-  put('atis-uncertainties',Array.isArray(uncertainties)?uncertainties.join(' · '):uncertainties||'All numbers require listening review.');
-  el('atis-transcript').replaceChildren();
-  for(const segment of t?.segments||[]){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+(segment.text||('Failed: '+segment.error));el('atis-transcript').append(p);}
+  const data=await response.json(),rows=data.recent_results||(data.recording?[data]:[]);
+  put('atis-status',rows.length?rows.length+' recent ATIS results · '+(data.message||''):data.message||'No ATIS captures available.');
+  const consensusSignature=JSON.stringify(data.consensus_atis);
+  if(consensusSignature!==atisConsensusSignature){renderATISConsensus(data.consensus_atis);atisConsensusSignature=consensusSignature;}
+  const signature=JSON.stringify(rows);
+  if(signature!==atisSignature){renderATISResults(rows);atisSignature=signature;}
  }catch(error){put('atis-status','ATIS disconnected. Any displayed result is cached. Retrying…');}
  finally{clearTimeout(timeout);atisBusy=false;}
 }
 setInterval(pollATIS,8000);pollATIS();
+const shadowHost=document.createElement('div');
+document.getElementById('atis-status').after(shadowHost);
+async function pollATISShadow(){
+ try{
+  const response=await fetch('/api/atis/shadow',{cache:'no-store',signal:AbortSignal.timeout(7000)});
+  if(!response.ok)throw new Error('unavailable');const data=await response.json();
+  shadowHost.replaceChildren();shadowHost.append(atisNode('h3','ATIS shadow candidate'));
+  const latest=data.latest,done=data.latest_completed;
+  shadowHost.append(atisNode('p','Latest: '+(latest?.state||'waiting')+' · pending/deferred: '+data.pending_deferred+
+   ' · last completed runtime: '+(done?done.shadow_runtime_seconds.toFixed(2)+' s':'none')+
+   ' · production result remains unchanged.'));
+  if(latest?.reason)shadowHost.append(atisNode('p',latest.reason));
+  if(done){const details=document.createElement('details');details.append(atisNode('summary','Latest completed comparison · '+done.capture_id));
+   details.append(atisNode('h4','PRODUCTION'),atisNode('p',done.production_raw_transcript||'No production text'),
+    atisNode('h4','SHADOW CANDIDATE'),atisNode('p',done.shadow_raw_transcript),atisNode('p','Both recognizers require listening review.'));
+   shadowHost.append(details);}
+  for(const issue of data.recent_issues||[])shadowHost.append(atisNode('p',issue.capture_id+' · '+issue.state+' · '+issue.reason));
+ }catch(error){shadowHost.textContent='ATIS shadow status unavailable; retrying.';}
+}
+setInterval(pollATISShadow,10000);pollATISShadow();
+
 
 
 // Display pass provenance using text-only DOM fields; 2026-10-03 21:25:52 EEST, Thomas Vikström.
@@ -1715,17 +1790,46 @@ function showMeteorConditions(pass){
 <script>
 (()=>{
  const panel=document.createElement('section');panel.className='card section';
- panel.innerHTML='<h2>Vaasa Tower  /  120.950 MHz AM  -  Recent captures</h2><p>05:00-01:30 Europe/Helsinki  /  15 s probes about every minute / activity hold up to 75 s  /  METEOR takes priority</p><p id="tower-status" role="status">Loading capture history...</p><p>Latest 20 capture attempts, including recorded silence. Transcript text requires listening review.</p><div id="tower-recent"></div>';
+ panel.innerHTML='<h2>Vaasa Tower  /  120.950 MHz AM  -  Recent captures</h2><p>05:00-01:30 Europe/Helsinki  /  15 s probes about every minute / activity hold up to 75 s  /  METEOR takes priority</p><p id="tower-status" role="status">Loading capture history...</p><p>Latest 20 retained captures. Tower ASR is disabled; listen and assign a human label.</p><div id="tower-recent"></div>';
  document.getElementById('panel-airband').prepend(panel);
- let busy=false,signature='';
+ const filter=document.createElement('input');filter.type='checkbox';filter.id='tower-candidates';filter.checked=true;
+ const label=document.createElement('label');label.append(filter,document.createTextNode(' Show latest 20 unreviewed AD candidates at or above their configured threshold'));panel.insertBefore(label,document.getElementById('tower-recent'));
+ const note=document.createElement('p');note.textContent='Shadow anomaly score measures difference from learned background. Exceeding threshold does not imply voice: squelch, carrier, interference, static, clicks or speech can contribute. Unreviewed means a human has not yet classified the clip. Severity describes anomaly strength, not speech probability or validated voice thresholds. Bands: below 45.6744 background; 45.6744 to below 75 weak; 75 through 200 notable; above 200 strong. Candidates retain the existing 30-day policy; permanent preservation requires the existing explicit Tower pin command.';panel.insertBefore(note,document.getElementById('tower-recent'));
+ const comparison=document.createElement('details');const heading=document.createElement('summary');heading.textContent='Reviewed anomaly comparison table';comparison.append(heading);const grid=document.createElement('table');const tableScroll=document.createElement('div');tableScroll.style.overflowX='auto';tableScroll.append(grid);comparison.append(tableScroll);panel.append(comparison);
+ async function loadReviews(){try{const response=await fetch('/api/tower/reviews',{cache:'no-store'});const data=await response.json();grid.replaceChildren();const keys=['capture_id','peak_score','median_score','threshold','severity_band','vad_result','asr_status','asr_result','human_review_label'];const header=document.createElement('tr');for(const key of keys){const cell=document.createElement('th');cell.textContent=key;header.append(cell);}grid.append(header);for(const row of data.reviews||[]){const tr=document.createElement('tr');for(const key of keys){const td=document.createElement('td');const value=row[key];td.textContent=key==='vad_result'&&value&&typeof value==='object'?(value.status||'unavailable')+' / '+(value.method||'') : key==='asr_result'&&value&&typeof value==='object'?(value.segments||[]).map(segment=>segment.text||segment.error||segment.status||'').join('; ')||value.status||'unavailable':String(value??'unavailable');tr.append(td);}grid.append(tr);}}catch(e){grid.textContent='Reviewed comparison unavailable.';}}comparison.addEventListener('toggle',()=>{if(comparison.open)loadReviews();});
+ const validationPanel=document.createElement('details');
+ validationPanel.innerHTML='<summary>Informative Tower reviews and cumulative shadow validation</summary><p>Priorities select informative cases, including below-threshold controls. These proposals never filter retention. Listen and label; words do not need to be intelligible. Tower ASR is deferred.</p>';
+ const validationBody=document.createElement('div');validationPanel.append(validationBody);panel.append(validationPanel);
+ async function refreshValidation(){if(!validationPanel.open)return;try{
+  const response=await fetch('/api/tower/reviews',{cache:'no-store'});if(!response.ok)throw Error('unavailable');const data=(await response.json()).validation;
+  validationBody.replaceChildren();const summary=document.createElement('p');summary.textContent=data.total_reviewed+' reviewed / target about 50. '+Object.entries(data.label_counts).map(([k,v])=>k+': '+v).join(' / ');validationBody.append(summary);
+  const metrics=document.createElement('table');const head=document.createElement('tr');for(const t of ['Shadow rule','Voice recall','Reviewed precision','Non-voice FPR','Missed voices']){const cell=document.createElement('th');cell.textContent=t;head.append(cell);}metrics.append(head);
+  const percent=v=>v==null?'unknown':(v*100).toFixed(1)+'%';
+  for(const [name,m] of Object.entries(data.rules)){const tr=document.createElement('tr');for(const text of [name+' (unknown '+m.unknown_ids.length+')',percent(m.recall)+' ['+m.tp+'/'+(m.tp+m.fn)+']',percent(m.precision),percent(m.non_voice_fpr)+' ['+m.fp+'/'+(m.fp+m.tn)+']',m.false_negatives.join(', ')||'none']){const cell=document.createElement('td');cell.textContent=text;tr.append(cell);}metrics.append(tr);}validationBody.append(metrics);
+  if(data.lowest_scoring_confirmed_voice){const weak=document.createElement('p');weak.textContent='Lowest confirmed voice: '+data.lowest_scoring_confirmed_voice.capture_id+' / peak '+data.lowest_scoring_confirmed_voice.peak_score.toFixed(4);validationBody.append(weak);const weakAudio=document.createElement('audio');weakAudio.controls=true;weakAudio.preload='none';weakAudio.src='/api/tower/audio?recording='+data.lowest_scoring_confirmed_voice.capture_id;validationBody.append(weakAudio);}const warning=document.createElement('p');warning.textContent='Selected-set results, not production accuracy. '+data.formal_analysis_triggers.join(' / ');validationBody.append(warning);
+  for(const row of data.review_queue){const card=document.createElement('section');const title=document.createElement('h4');title.textContent=row.capture_id+' / peak '+row.peak_score.toFixed(3);const reason=document.createElement('p');reason.textContent=row.reasons.join(' / ')+(row.persistence?' / consecutive windows '+row.persistence.longest_run_windows+' / anomalous union '+row.persistence.anomalous_union_seconds.toFixed(1)+' s':' / complete persistence unavailable');card.append(title,reason);
+   const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=row.audio_url;card.append(audio);
+   const select=document.createElement('select');for(const name of ['confirmed_voice','probable_voice','no_voice','carrier_or_squelch','interference','unclear']){const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);}select.value='unclear';
+   const clear=document.createElement('input');clear.type='checkbox';const clearLabel=document.createElement('label');clearLabel.append(clear,document.createTextNode(' Substantially clearer confirmed voice: preserve permanently for future ASR benchmark (ASR stays deferred)'));card.append(clearLabel);const save=document.createElement('button');save.textContent='Save human label';const status=document.createElement('span');save.onclick=async()=>{save.disabled=true;try{const response=await fetch('/api/tower/review',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':towerToken},body:JSON.stringify({capture_id:row.capture_id,label:select.value,clear_benchmark:clear.checked})});const result=await response.json();if(!response.ok)throw Error(result.error);status.textContent='Saved '+result.human_review_label;card.remove();refreshValidation();}catch(e){status.textContent=String(e.message);}finally{save.disabled=false;}};card.append(select,save,status);validationBody.append(card);
+  }
+ }catch(e){validationBody.textContent='Cumulative validation unavailable: '+e.message;}}
+ const refreshButton=document.createElement('button');refreshButton.textContent='Refresh Tower validation queue';refreshButton.onclick=refreshValidation;validationPanel.insertBefore(refreshButton,validationBody);validationPanel.addEventListener('toggle',refreshValidation);
+
+ let busy=false,signature='',towerToken=null;
  async function poll(){if(busy)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),7000);
- try{const r=await fetch('/api/tower',{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error('unavailable');const d=await r.json(),rows=d.recent_captures||[];
- document.getElementById('tower-status').textContent=rows.length?rows.length+' recent capture attempts  /  updated '+new Date().toLocaleTimeString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki':'No Tower captures recorded yet.';
+ try{const r=await fetch('/api/tower'+(filter.checked?'?review=anomaly_candidate':''),{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error('unavailable');const d=await r.json(),rows=d.recent_captures||[];towerToken=d.control_token;
+ document.getElementById('tower-status').textContent=rows.length?rows.length+(filter.checked?' unreviewed AD-scored candidates':' recent capture attempts')+'  /  updated '+new Date().toLocaleTimeString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki':(filter.checked?'No unreviewed above-threshold Tower candidates. Background, pending, failed and unscored captures remain in recent history; turn off this filter to see them.':'No Tower captures recorded yet.');
  const next=JSON.stringify(rows);if(next===signature)return;signature=next;
  const list=document.getElementById('tower-recent');list.replaceChildren();
  for(const row of rows){const card=document.createElement('section'),title=document.createElement('h3'),detail=document.createElement('p');
  title.textContent=new Date(row.captured_at).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki';
  detail.textContent=(typeof row.duration_seconds==='number'?row.duration_seconds.toFixed(3)+' s':'Duration unavailable')+'  /  '+row.result+'  /  '+row.message;card.append(title,detail);
+ const identity=document.createElement('p');identity.textContent='Recording '+row.recording+' / production: '+(row.processing?.status||row.status);card.append(identity);
+ if(row.anomaly_review){const badge=document.createElement('p');badge.className=row.anomaly_review.anomaly_candidate?'pill':'meta';badge.textContent=(row.anomaly_review.anomaly_candidate?'anomaly_candidate · SHADOW':'Shadow anomaly')+' / '+row.anomaly_review.severity_band+' / '+row.anomaly_review.review_state+' / peak '+(row.anomaly_review.score==null?'unavailable':row.anomaly_review.score.toFixed(3))+' / threshold '+(row.anomaly_review.threshold==null?'unavailable':row.anomaly_review.threshold.toFixed(4));badge.style.whiteSpace='normal';badge.style.overflowWrap='anywhere';card.append(badge);
+ const select=document.createElement('select');select.setAttribute('aria-label','Human review label for '+row.recording);
+ for(const label of ['unreviewed','confirmed_voice','probable_voice','no_voice','carrier_or_squelch','interference','unclear']){const option=document.createElement('option');option.value=label;option.textContent=label;select.append(option);}select.value=row.anomaly_review.review_state;
+ const save=document.createElement('button'),message=document.createElement('span');save.textContent='Save human review';
+ save.onclick=async()=>{save.disabled=true;try{const response=await fetch('/api/tower/review',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':towerToken},body:JSON.stringify({capture_id:row.recording,label:select.value})});const result=await response.json();if(!response.ok)throw Error(result.error);message.textContent=' Saved: '+result.human_review_label;signature='';await poll();refreshValidation();if(comparison.open)loadReviews();}catch(e){message.textContent=' '+e.message;}finally{save.disabled=false;}};card.append(select,save,message);}
  for(const segment of row.transcript?.segments||[]){if(segment.text){const p=document.createElement('p');p.textContent=segment.start_seconds+' s: '+segment.text;card.append(p);}}
  if(row.audio_url){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=row.audio_url;
  const link=document.createElement('a');link.href=row.audio_url;link.download=row.recording+'.wav';link.textContent='Download WAV';
@@ -1734,8 +1838,74 @@ function showMeteorConditions(pass){
  list.append(card);}
  }catch(e){document.getElementById('tower-status').textContent='Tower history unavailable; displayed captures may be cached.';}
  finally{clearTimeout(timeout);busy=false;}}
- poll();setInterval(poll,8000);
+ filter.addEventListener('change',()=>{signature='';poll();});poll();setInterval(poll,8000);
 })();
 </script>
 
+<script>
+// Field-level human review; ASR and consensus never approve a reference.
+const validationHost=document.createElement('section');validationHost.className='card section';validationHost.id='atis-validation';
+document.getElementById('atis-status').nextElementSibling.after(validationHost);
+const reviewJump=document.createElement('button');reviewJump.textContent='Review ATIS captures';reviewJump.onclick=()=>{if(validationData&&!validationSelected){validationSelected=validationData.captures.find(x=>['needs_review','in_review'].includes(x.state))?.id||null;renderValidation();}validationHost.scrollIntoView({behavior:'smooth',block:'start'});};document.getElementById('atis-heading').after(reviewJump);
+let validationData=null,validationToken=null,validationSelected=null;
+const directATISReview=new URLSearchParams(location.search).get('atis_review')==='1';
+validationHost.textContent='Loading saved ATIS review queue...';
+async function loadValidation(){
+ try{const r=await fetch('/api/atis/validation',{cache:'no-store'});const d=await r.json();if(!r.ok)throw Error(d.error);validationData=d;validationToken=d.control_token;if(directATISReview&&!validationSelected){validationSelected=d.captures.find(x=>['needs_review','in_review'].includes(x.state))?.id||null;}renderValidation();if(directATISReview){selectSection('airband');requestAnimationFrame(()=>validationHost.scrollIntoView({block:'start'}));}}
+ catch(e){validationHost.textContent='ATIS validation unavailable: '+e.message;}
+}
+function renderValidation(){
+ const d=validationData,s=d.summary;validationHost.replaceChildren(atisNode('h2','ATIS validation · Needs human reference'));
+ validationHost.append(atisNode('p',s.referenced+' referenced · '+s.awaiting_review+' awaiting review · target 5–10 independent recordings. Promotion remains a human decision.'));
+ for(const system of ['production','shadow']){const v=s.systems[system];validationHost.append(atisNode('p',system.toUpperCase()+': '+v.correct+'/'+v.possible+' strict fields · '+v.assessable+' assessable · mean runtime '+(v.runtime_average_seconds===null?'unavailable':v.runtime_average_seconds.toFixed(2)+' s')+' ('+v.runtime_samples+' timed recordings)'));}
+ const stats=document.createElement('details');stats.append(atisNode('summary','Per-field validation accuracy'));
+ const st=document.createElement('table');st.style.width='100%';
+ for(const [k,label] of Object.entries(d.fields)){const tr=document.createElement('tr');tr.append(atisNode('td',label));for(const sys of ['production','shadow']){const a=s.systems[sys].per_field[k];tr.append(atisNode('td',sys+': '+a.correct+'/'+a.possible));}st.append(tr);}stats.append(st);validationHost.append(stats);
+ validationHost.append(atisNode('p',d.scoring_policy));
+ const select=document.createElement('select');select.setAttribute('aria-label','ATIS validation recording');select.append(new Option('Choose recording to review',''));
+ const queue=d.captures.filter(x=>['needs_review','in_review','referenced'].includes(x.state)||x.data.eligible).sort((a,b)=>b.id.localeCompare(a.id));
+ for(const x of queue)select.append(new Option(x.id+' · '+new Date(x.data.capture_timestamp).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' · '+x.state+' · rank '+x.rank,x.id));
+ select.value=validationSelected||'';select.onchange=()=>{validationSelected=select.value;renderValidation();};validationHost.append(select);
+ const refresh=document.createElement('button');refresh.textContent='Refresh queue';refresh.onclick=loadValidation;validationHost.append(refresh);
+ const row=queue.find(x=>x.id===validationSelected);if(!row)return;
+ const x=row.data;const panel=document.createElement('section');panel.className='card';panel.id='atis-selected-review';validationHost.append(panel);
+ panel.append(atisNode('h3','Selected recording: '+row.id),atisNode('p',new Date(x.capture_timestamp).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki / '+x.audio_duration+' s / '+row.state+' / Production '+x.production_status+' / Shadow '+x.processing_status));
+
+ const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src='/api/atis/audio?recording='+encodeURIComponent(row.id);audio.style.width='100%';audio.setAttribute('aria-label','Audio for '+row.id);panel.append(audio);const replay=document.createElement('button');replay.textContent='Replay from start';replay.onclick=()=>{audio.currentTime=0;audio.play();};panel.append(replay);
+ const judgement=document.createElement('select');judgement.setAttribute('aria-label','Transcript judgement for '+row.id);judgement.append(new Option('Choose judgement',''));for(const [v,l] of [['correct','Correct'],['partly_correct','Partly correct'],['wrong','Wrong'],['unintelligible','Unintelligible']])judgement.append(new Option(l,v));judgement.value=row.judgement||'';const judgeSave=document.createElement('button');judgeSave.textContent='Save judgement';const judgeStatus=atisNode('span','');judgeSave.onclick=async()=>{judgeSave.disabled=true;try{const response=await fetch('/api/atis/validation',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':validationToken},body:JSON.stringify({id:row.id,revision:row.revision,action:'judge',judgement:judgement.value})});const result=await response.json();if(!response.ok)throw Error(result.error);row.revision=result.revision;row.judgement=result.judgement;judgeStatus.textContent='Saved '+judgement.options[judgement.selectedIndex].text;}catch(e){judgeStatus.textContent=e.message;}finally{judgeSave.disabled=false;}};panel.append(atisNode('h4','Judge the production transcript for this recording'),judgement,judgeSave,judgeStatus);
+ for(const [key,label] of [['production','PRODUCTION'],['shadow','SHADOW CANDIDATE'],['external','EXTERNAL ASR']]){if(key==='external'&&!x.external_raw_transcript)continue;const detail=document.createElement('details');detail.open=key==='production';detail.append(atisNode('summary',label+' · '+(x[key+'_runtime_seconds']??'unavailable')+' s'),atisNode('p',x[key+'_raw_transcript']||'No transcript'));
+ const normalized=document.createElement('details');normalized.append(atisNode('summary','Normalized interpretation · excluded from strict scoring'),atisNode('pre',JSON.stringify(x[key+'_normalized_transcript'],null,2)));detail.append(normalized);panel.append(detail);}
+ panel.append(atisNode('h3','Expected / human reference for '+row.id),atisNode('p','Listen before confirming. Yellow fields disagree or have incomplete raw evidence. Consensus pre-fills stay UNVERIFIED. Use canonical digits; runway 34, report time 0524, code 666, range 250-320, NATO information ALPHA.'));
+ panel.append(atisNode('p',row.reference?Object.entries(row.reference).filter(([k,v])=>v.value).map(([k,v])=>d.fields[k]+': '+v.value+' ('+v.status+')').join(' / '):'No human reference has been supplied for this recording. Add verified expected values in the reference fields below.'));
+ const fieldDetails=document.createElement('details');fieldDetails.append(atisNode('summary','Detailed reference fields and benchmark scoring'));panel.append(fieldDetails);const wrap=document.createElement('div');wrap.style.overflowX='auto';const table=document.createElement('table');table.style.width='100%';table.style.borderCollapse='collapse';
+ const header=document.createElement('tr');for(const label of ['Field','PRODUCTION','SHADOW CANDIDATE','Expected / human reference for '+row.id,'Human status'])header.append(atisNode('th',label));table.append(header);
+ const controls={},agreedFields=[];
+ for(const [k,label] of Object.entries(d.fields)){
+  const p=x.production_fields[k],q=x.shadow_fields[k];const agreed=p.status==='supported'&&q.status==='supported'&&p.value===q.value;
+  const saved=row.reference?.[k];const tr=document.createElement('tr');if(!agreed)tr.style.background='#fff2cc';tr.append(atisNode('td',label));
+  for(const v of [p,q]){const td=atisNode('td',v.value??v.status);const details=document.createElement('details');details.append(atisNode('summary','Raw evidence'));for(const e of v.evidence)details.append(atisNode('p',e.quote+' → '+(e.value??'unintelligible / invalid')));td.append(details);tr.append(td);}
+  const input=document.createElement('input');input.value=saved?.value??(agreed?p.value:'');input.setAttribute('aria-label',label+' reference');input.style.width='110px';
+  const state=document.createElement('select');state.setAttribute('aria-label',label+' human status');for(const [value,name] of [['unverified','UNVERIFIED'],['confirmed','Confirmed by listening'],['unknown','Unknown'],['uncertain','Uncertain'],['not_present_clipped','Not present / clipped']])state.append(new Option(name,value));state.value=saved?.status??'unverified';
+  const paint=()=>{input.style.border='2px solid '+(state.value==='confirmed'?'#00664d':'#b37800');};input.oninput=()=>{state.value='unverified';paint();};state.onchange=paint;paint();
+  input.disabled=state.disabled=row.state==='referenced';const td=document.createElement('td');td.append(input);tr.append(td);const sd=document.createElement('td');sd.append(state);tr.append(sd);table.append(tr);controls[k]={input,state};if(agreed)agreedFields.push(k);
+ }
+ wrap.append(table);fieldDetails.append(wrap);const message=atisNode('p','');message.setAttribute('role','status');panel.append(message);
+ if(row.scores)panel.append(atisNode('p','Approved strict scores: '+Object.entries(row.scores).map(([sys,v])=>sys+' '+v.correct+'/14 ('+v.assessable+' assessable)').join(' · ')));
+ if(row.state==='referenced')return;
+ const consensusButton=document.createElement('button');consensusButton.textContent='Confirm agreed fields after listening';consensusButton.onclick=()=>{for(const k of agreedFields){const c=controls[k];if(c.state.value==='unverified'&&c.input.value===x.production_fields[k].value){c.state.value='confirmed';c.input.style.border='2px solid #00664d';}}message.textContent='Agreed fields marked confirmed by your action. Resolve disputed fields before approval.';};fieldDetails.append(consensusButton);
+ const buttons=[consensusButton];
+ for(const [action,label] of [['start','Start review'],['draft','Save draft'],['approve','Approve human reference & score'],['reject','Reject as unusable']]){
+  const button=document.createElement('button');buttons.push(button);button.textContent=label;button.onclick=async()=>{
+   const reference={};for(const [k,c] of Object.entries(controls))reference[k]={value:c.input.value,status:c.state.value};
+   if(action==='approve'&&Object.values(reference).some(v=>v.status==='unverified')){message.textContent='Resolve every field before approval. Consensus is not a reference.';return;}
+   buttons.forEach(b=>b.disabled=true);
+   try{const response=await fetch('/api/atis/validation',{method:'POST',headers:{'Content-Type':'application/json','X-Watchkeeper-Token':validationToken},body:JSON.stringify({id:row.id,revision:row.revision,action,reference})});const result=await response.json();if(!response.ok)throw Error(result.error);row.revision=result.revision;message.textContent='Saved: '+result.state;if(action==='start'||action==='draft'){row.state=result.state;row.reference=reference;buttons.forEach(b=>b.disabled=false);}else await loadValidation();}
+   catch(e){message.textContent=e.message;buttons.forEach(b=>b.disabled=false);}
+  };fieldDetails.append(button);
+ }
+}
+loadValidation();
+setInterval(async()=>{try{const r=await fetch('/api/atis/validation',{cache:'no-store'});if(!r.ok)return;const data=await r.json();validationData=data;validationToken=data.control_token;const selector=validationHost.querySelector('select[aria-label="ATIS validation recording"]');if(!selector)return;for(const row of data.captures.filter(x=>x.data.eligible||['needs_review','in_review','referenced'].includes(x.state)).sort((a,b)=>a.id.localeCompare(b.id))){if(!Array.from(selector.options).some(o=>o.value===row.id))selector.add(new Option(row.id+' � '+new Date(row.data.capture_timestamp).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' � '+row.state,row.id),1);}}catch(e){}},60000);
+
+</script>
 </body></html>

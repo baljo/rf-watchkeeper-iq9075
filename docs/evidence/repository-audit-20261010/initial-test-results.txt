@@ -1,0 +1,189 @@
+Existing deployed fixture-suite run, 10 October 2026.
+Command: cd /root/rf-watchkeeper && OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .satellite-venv/bin/python -m unittest -v test_atis_shadow test_tower_retention test_tower_recent test_tower_anomaly test_tower_anomaly_review test_tower_validation test_tower_ad_batch test_tower_failures test_tower_queue test_tower_scored_queue test_tower_threshold_queue
+Ran 58 tests in 11.751s: failures=5, errors=3, skipped=1 (49 passed).
+Findings: stale Tower history expects old no_activity/failed display, superseded acoustic-only queue fixtures expect obsolete eligibility, oversized-audio fixture expects exclusion before new terminal preflight, ATIS-cleanup fixture does not mock newly shared prepare(), and test_tower_failures is public but absent from installed root.
+No live RF, actual model inference, production data changes or service restart occurred. Fixtures use temporary roots/mocks. Full failure traceback tail follows.
++HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Satellite reservation
+HTP lease acquired: shadow:20261007T000000.000000Z pid=219455
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_production_finishes_when_shadow_enqueue_crashes (test_atis_shadow.Safety.test_production_finishes_when_shadow_enqueue_crashes) ... ATIS SHADOW enqueue failure: RuntimeError('Injected shadow database failure')
+ok
+test_production_waiter_priority (test_atis_shadow.Safety.test_production_waiter_priority) ... ok
+test_retention_hold_expires_without_unpinning (test_atis_shadow.Safety.test_retention_hold_expires_without_unpinning) ... ok
+test_retry_then_one_result (test_atis_shadow.Safety.test_retry_then_one_result) ... HTP lease acquired: shadow:20261007T000000.000000Z pid=219455
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmpothx2pd6/data/atis-shadow/runs/20261007T000000.000000Z/1/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=219455
+ATIS SHADOW 20261007T000000.000000Z running:
+ok
+test_timeout (test_atis_shadow.Safety.test_timeout) ... ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+HTP lease acquired: shadow:20261007T000000.000000Z pid=219455
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate timeout
+ok
+test_worker_recovery_and_reboot_identity (test_atis_shadow.Safety.test_worker_recovery_and_reboot_identity) ... ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z deferred: Worker restart; retry original WAV
+HTP lease acquired: shadow:20261007T000000.000000Z pid=219455
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_atis_no_activity_retention_and_clip_cleanup_unchanged (test_tower_retention.TowerRetentionTests.test_atis_no_activity_retention_and_clip_cleanup_unchanged) ... ERROR
+test_atis_scope_excluded (test_tower_retention.TowerRetentionTests.test_atis_scope_excluded) ... ok
+test_boundary_and_incomplete_capture (test_tower_retention.TowerRetentionTests.test_boundary_and_incomplete_capture) ... ok
+test_fm_cleanup_explicitly_excludes_tower_and_reference_audio (test_tower_retention.TowerRetentionTests.test_fm_cleanup_explicitly_excludes_tower_and_reference_audio) ... ok
+test_no_activity_survives_short_term_cleanup (test_tower_retention.TowerRetentionTests.test_no_activity_survives_short_term_cleanup) ... ok
+test_pin_rejects_other_channels_and_missing_audio (test_tower_retention.TowerRetentionTests.test_pin_rejects_other_channels_and_missing_audio) ... ok
+test_pinned_survives_all_normal_cleanup_and_keeps_originals (test_tower_retention.TowerRetentionTests.test_pinned_survives_all_normal_cleanup_and_keeps_originals) ... ok
+test_protected_reference_processing_cannot_modify_or_cleanup (test_tower_retention.TowerRetentionTests.test_protected_reference_processing_cannot_modify_or_cleanup) ... ok
+test_reference_flags_markers_and_symlinks_fail_closed (test_tower_retention.TowerRetentionTests.test_reference_flags_markers_and_symlinks_fail_closed) ... ok
+test_unpinned_eventually_expires_regardless_of_classifier (test_tower_retention.TowerRetentionTests.test_unpinned_eventually_expires_regardless_of_classifier) ... ok
+test_audio_is_pinned_to_selected_capture_and_rejects_escape (test_tower_recent.TowerRecentTests.test_audio_is_pinned_to_selected_capture_and_rejects_escape) ... ok
+test_history_includes_twenty_silent_attempts_and_missing_audio (test_tower_recent.TowerRecentTests.test_history_includes_twenty_silent_attempts_and_missing_audio) ... FAIL
+test_retention_preserves_speech_references_metadata_and_latest_twenty (test_tower_recent.TowerRecentTests.test_retention_preserves_speech_references_metadata_and_latest_twenty) ... ok
+test_speech_and_failure_status (test_tower_recent.TowerRecentTests.test_speech_and_failure_status) ... FAIL
+test_benchmark_content_quarantined_even_under_earlier_alias (test_tower_anomaly.AnomalyTests.test_benchmark_content_quarantined_even_under_earlier_alias) ... ok
+test_gmm_separates_unseen_distribution_and_roundtrips (test_tower_anomaly.AnomalyTests.test_gmm_separates_unseen_distribution_and_roundtrips) ... ok
+test_incomplete_symlink_and_oversized_audio_are_not_queued (test_tower_anomaly.AnomalyTests.test_incomplete_symlink_and_oversized_audio_are_not_queued) ... FAIL
+test_kernel_lock_guard_does_not_use_stale_owner_metadata (test_tower_anomaly.AnomalyTests.test_kernel_lock_guard_does_not_use_stale_owner_metadata) ... ok
+test_metadata_and_audio_activity_are_excluded (test_tower_anomaly.AnomalyTests.test_metadata_and_audio_activity_are_excluded) ... ok
+test_real_manifest_no_content_leak_and_disjoint_splits (test_tower_anomaly.AnomalyTests.test_real_manifest_no_content_leak_and_disjoint_splits) ... skipped 'Set TOWER_ANOMALY_EVIDENCE to generated evaluation'
+test_resampling_mono_dc_and_window_boundaries (test_tower_anomaly.AnomalyTests.test_resampling_mono_dc_and_window_boundaries) ... ok
+test_shadow_defer_does_not_touch_originals (test_tower_anomaly.AnomalyTests.test_shadow_defer_does_not_touch_originals) ... ok
+test_shadow_scoring_is_additive_and_hash_preserving (test_tower_anomaly.AnomalyTests.test_shadow_scoring_is_additive_and_hash_preserving) ... ok
+test_process_identity_guard (test_tower_anomaly.ReviewTests.test_process_identity_guard) ... ok
+test_shadow_threshold_and_production_outcomes (test_tower_anomaly.ReviewTests.test_shadow_threshold_and_production_outcomes) ... ok
+test_bands (test_tower_anomaly_review.HumanReviewTests.test_bands) ... ok
+test_saved_labels_and_history_are_additive (test_tower_anomaly_review.HumanReviewTests.test_saved_labels_and_history_are_additive) ... ok
+test_duration_union_and_gaps (test_tower_validation.ValidationTests.test_duration_union_and_gaps) ... ok
+test_weak_voice_missing_evidence_and_label_updates (test_tower_validation.ValidationTests.test_weak_voice_missing_evidence_and_label_updates) ... ok
+test_continues_and_stops_on_busy (test_tower_ad_batch.BatchTests.test_continues_and_stops_on_busy) ... ok
+test_failure_stops (test_tower_ad_batch.BatchTests.test_failure_stops) ... ok
+test_recording_bound (test_tower_ad_batch.BatchTests.test_recording_bound) ... ok
+test_time_bound_and_child_budget (test_tower_ad_batch.BatchTests.test_time_bound_and_child_budget) ... ok
+test_tower_failures (unittest.loader._FailedTest.test_tower_failures) ... ERROR
+test_http_save_refills_queue (test_tower_queue.QueueTests.test_http_save_refills_queue) ... ERROR
+test_labels_and_candidate_types (test_tower_queue.QueueTests.test_labels_and_candidate_types) ... FAIL
+test_save_refills_twenty_and_preserves_history (test_tower_queue.QueueTests.test_save_refills_twenty_and_preserves_history) ... FAIL
+test_http_save_refills_queue (test_tower_scored_queue.QueueTests.test_http_save_refills_queue) ... ok
+test_invalid_scores_fail_closed (test_tower_scored_queue.QueueTests.test_invalid_scores_fail_closed) ... ok
+test_labels_and_candidate_types (test_tower_scored_queue.QueueTests.test_labels_and_candidate_types) ... ok
+test_missing_scoring_excluded_from_queue_and_kept_in_history (test_tower_scored_queue.QueueTests.test_missing_scoring_excluded_from_queue_and_kept_in_history) ... ok
+test_save_refills_twenty_and_preserves_history (test_tower_scored_queue.QueueTests.test_save_refills_twenty_and_preserves_history) ... ok
+test_completion (test_tower_threshold_queue.ThresholdQueue.test_completion) ... ok
+test_invalid (test_tower_threshold_queue.ThresholdQueue.test_invalid) ... ok
+test_threshold (test_tower_threshold_queue.ThresholdQueue.test_threshold) ... ok
+
+======================================================================
+ERROR: test_atis_no_activity_retention_and_clip_cleanup_unchanged (test_tower_retention.TowerRetentionTests.test_atis_no_activity_retention_and_clip_cleanup_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_retention.py", line 67, in test_atis_no_activity_retention_and_clip_cleanup_unchanged
+    atis_pipeline.process(p,threading.Event())
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rf-watchkeeper/atis_pipeline.py", line 258, in process
+    sh.prepare(folder/'raw.wav',folder)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rf-watchkeeper/atis_shadow.py", line 170, in prepare
+    with wave.open(str(source)) as w:
+         ~~~~~~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/wave.py", line 661, in open
+    return Wave_read(f)
+  File "/usr/lib/python3.14/wave.py", line 286, in __init__
+    self.initfp(f)
+    ~~~~~~~~~~~^^^
+  File "/usr/lib/python3.14/wave.py", line 251, in initfp
+    self._file = _Chunk(file, bigendian = 0)
+                 ~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/wave.py", line 121, in __init__
+    raise EOFError from None
+EOFError
+
+======================================================================
+ERROR: test_tower_failures (unittest.loader._FailedTest.test_tower_failures)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_tower_failures
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test_tower_failures'
+
+
+======================================================================
+ERROR: test_http_save_refills_queue (test_tower_queue.QueueTests.test_http_save_refills_queue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_queue.py", line 71, in test_http_save_refills_queue
+    target = queue[0]['recording']
+             ~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_history_includes_twenty_silent_attempts_and_missing_audio (test_tower_recent.TowerRecentTests.test_history_includes_twenty_silent_attempts_and_missing_audio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_recent.py", line 22, in test_history_includes_twenty_silent_attempts_and_missing_audio
+    self.assertEqual(len(rows),20);self.assertEqual(rows[0]['result'],'no_activity')
+                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'uncertain' != 'no_activity'
+- uncertain
++ no_activity
+
+
+======================================================================
+FAIL: test_speech_and_failure_status (test_tower_recent.TowerRecentTests.test_speech_and_failure_status)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_recent.py", line 42, in test_speech_and_failure_status
+    self.capture(2,'failed');self.assertEqual(atis_view.recent(self.root)[0]['result'],'failed')
+                             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'uncertain' != 'failed'
+- uncertain
++ failed
+
+
+======================================================================
+FAIL: test_incomplete_symlink_and_oversized_audio_are_not_queued (test_tower_anomaly.AnomalyTests.test_incomplete_symlink_and_oversized_audio_are_not_queued)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_anomaly.py", line 156, in test_incomplete_symlink_and_oversized_audio_are_not_queued
+    self.assertEqual(shadow.pending(root,root/'evaluation'),[])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [PosixPath('/tmp/tmpwp4l1k1n/recordings/tower/test')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmpwp4l1k1n/recordings/tower/test')
+
+- [PosixPath('/tmp/tmpwp4l1k1n/recordings/tower/test')]
++ []
+
+======================================================================
+FAIL: test_labels_and_candidate_types (test_tower_queue.QueueTests.test_labels_and_candidate_types)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_queue.py", line 19, in test_labels_and_candidate_types
+    self.assertEqual(bool(atis_view.needs_tower_review(row)), anomaly or status != 'probably_non_voice')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_save_refills_twenty_and_preserves_history (test_tower_queue.QueueTests.test_save_refills_twenty_and_preserves_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_queue.py", line 36, in test_save_refills_twenty_and_preserves_history
+    self.assertEqual(len(queue), 20)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 0 != 20
+
+----------------------------------------------------------------------
+Ran 58 tests in 11.751s
+
+FAILED (failures=5, errors=3, skipped=1)

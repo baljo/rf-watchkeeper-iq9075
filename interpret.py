@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+from inference_resource import run as inference_run
 import re
 import tempfile
 from datetime import datetime, timezone
@@ -58,7 +59,7 @@ def genie_summary(event: dict, config: Path) -> str:
                                          prefix="rf-watchkeeper-prompt-", suffix=".txt", delete=False) as stream:
             stream.write(prompt)
             prompt_path = Path(stream.name)
-        result = subprocess.run(
+        result = inference_run(
             ["genie-t2t-run", "--config", str(config), "--prompt_file", str(prompt_path)],
             capture_output=True, text=True, timeout=120, check=False,
         )

@@ -1,0 +1,55 @@
+Command: cd /root/rf-watchkeeper && OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .satellite-venv/bin/python -m unittest -v test_atis_shadow test_tower_anomaly_review test_tower_validation test_tower_ad_batch test_tower_scored_queue test_tower_threshold_queue
+Result: 29 tests, 10.475 seconds, OK. Isolated fixtures/mock children/temp roots; no receiver or native model invocation. This does not validate newer edited test fixtures or runtime integration. Final output chunk follows.
++HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Satellite reservation
+HTP lease acquired: shadow:20261007T000000.000000Z pid=220646
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_production_finishes_when_shadow_enqueue_crashes (test_atis_shadow.Safety.test_production_finishes_when_shadow_enqueue_crashes) ... ok
+test_production_waiter_priority (test_atis_shadow.Safety.test_production_waiter_priority) ... ATIS SHADOW enqueue failure: RuntimeError('Injected shadow database failure')
+ok
+test_retention_hold_expires_without_unpinning (test_atis_shadow.Safety.test_retention_hold_expires_without_unpinning) ... ok
+test_retry_then_one_result (test_atis_shadow.Safety.test_retry_then_one_result) ... HTP lease acquired: shadow:20261007T000000.000000Z pid=220646
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmpeomsxwjc/data/atis-shadow/runs/20261007T000000.000000Z/1/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=220646
+ATIS SHADOW 20261007T000000.000000Z running:
+ok
+test_timeout (test_atis_shadow.Safety.test_timeout) ... ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+HTP lease acquired: shadow:20261007T000000.000000Z pid=220646
+ATIS SHADOW 20261007T000000.000000Z running:
+ok
+test_worker_recovery_and_reboot_identity (test_atis_shadow.Safety.test_worker_recovery_and_reboot_identity) ... HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate timeout
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z deferred: Worker restart; retry original WAV
+HTP lease acquired: shadow:20261007T000000.000000Z pid=220646
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_bands (test_tower_anomaly_review.HumanReviewTests.test_bands) ... ok
+test_saved_labels_and_history_are_additive (test_tower_anomaly_review.HumanReviewTests.test_saved_labels_and_history_are_additive) ... ok
+test_duration_union_and_gaps (test_tower_validation.ValidationTests.test_duration_union_and_gaps) ... ok
+test_weak_voice_missing_evidence_and_label_updates (test_tower_validation.ValidationTests.test_weak_voice_missing_evidence_and_label_updates) ... ok
+test_continues_and_stops_on_busy (test_tower_ad_batch.BatchTests.test_continues_and_stops_on_busy) ... ok
+test_failure_stops (test_tower_ad_batch.BatchTests.test_failure_stops) ... ok
+test_recording_bound (test_tower_ad_batch.BatchTests.test_recording_bound) ... ok
+test_time_bound_and_child_budget (test_tower_ad_batch.BatchTests.test_time_bound_and_child_budget) ... ok
+test_http_save_refills_queue (test_tower_scored_queue.QueueTests.test_http_save_refills_queue) ... ok
+test_invalid_scores_fail_closed (test_tower_scored_queue.QueueTests.test_invalid_scores_fail_closed) ... ok
+test_labels_and_candidate_types (test_tower_scored_queue.QueueTests.test_labels_and_candidate_types) ... ok
+test_missing_scoring_excluded_from_queue_and_kept_in_history (test_tower_scored_queue.QueueTests.test_missing_scoring_excluded_from_queue_and_kept_in_history) ... ok
+test_save_refills_twenty_and_preserves_history (test_tower_scored_queue.QueueTests.test_save_refills_twenty_and_preserves_history) ... ok
+test_completion (test_tower_threshold_queue.ThresholdQueue.test_completion) ... ok
+test_invalid (test_tower_threshold_queue.ThresholdQueue.test_invalid) ... ok
+test_threshold (test_tower_threshold_queue.ThresholdQueue.test_threshold) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 10.475s
+
+OK

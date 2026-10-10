@@ -15,3 +15,9 @@ The [engineering log](project-log.md) is the detailed chronological record; this
 | 5 October, this publication | Existing implementation/docs reconciled with empty canonical GitHub repo; stable docs/source/service snapshots prepared without RF changes |
 
 Approval is owner-provided rather than checked against private email. Other milestones have dated evidence in the log. Current 256 kS/s policy does not replace historical 1.024 MS/s metadata. Older installation guides remain dated snapshots.
+
+## 7–10 October 2026 — current reconciliation
+
+Tower ASR was deferred in favor of acoustic screening, AD shadow diagnostics and human review; 30-day audio/pins replace rolling silence deletion. Tower currently operates 07:00–23:00 Helsinki. ATIS moved to the second compute DSP with cleanup, isolated validation and separate shadow/reference queues; its completed four-hour integrated observation failed acceptance. AIS maps gained dated reception-history selection. Tower review eligibility was tightened to completed above-threshold AD with no human label, and terminal bad-audio retry handling was added.
+
+The Arduino/Qualcomm showcase has been submitted for review. The 10 October audit reconciles repository source/dependencies, service snapshots and current technical guides against the EVK, retaining privacy and explicitly open runtime/reproduction gates. [Current status](current-status.md), [engineering log](project-log.md).

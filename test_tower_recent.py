@@ -19,7 +19,8 @@ class TowerRecentTests(unittest.TestCase):
         for i in range(25):self.capture(i)
         p=self.base/'20261006T120024.000000Z';(p/'listen.wav').unlink();(p/'raw.wav').unlink()
         rows=atis_view.recent(self.root)
-        self.assertEqual(len(rows),20);self.assertEqual(rows[0]['result'],'no_activity')
+        self.assertEqual(len(rows),20);self.assertEqual(rows[0]['result'],'uncertain')
+        self.assertEqual(rows[0]['classification']['asr_status'],'disabled')
         self.assertEqual(rows[0]['duration_seconds'],29.184);self.assertIsNone(rows[0]['audio_url'])
         self.assertTrue(rows[0]['captured_at'].endswith('+00:00'))
     def test_audio_is_pinned_to_selected_capture_and_rejects_escape(self):
@@ -33,12 +34,12 @@ class TowerRecentTests(unittest.TestCase):
         old=self.capture(0);speech=self.capture(1,'completed');reference=self.capture(2,source='reference')
         for i in range(3,25):self.capture(i)
         atis_pipeline.retain_tower_audio(self.base)
-        self.assertFalse((old/'listen.wav').exists());self.assertTrue((old/'capture.json').exists())
+        self.assertTrue((old/'listen.wav').exists());self.assertTrue((old/'capture.json').exists())
         self.assertTrue((speech/'listen.wav').exists());self.assertTrue((reference/'listen.wav').exists())
         self.assertTrue((self.base/'20261006T120005.000000Z/listen.wav').exists())
     def test_speech_and_failure_status(self):
         p=self.capture(1,'completed');(p/'transcript.json').write_text('{"segments":[{"text":"Tower hello"}]}')
         self.assertEqual(atis_view.recent(self.root)[0]['result'],'speech')
-        self.capture(2,'failed');self.assertEqual(atis_view.recent(self.root)[0]['result'],'failed')
+        self.capture(2,'failed');self.assertEqual(atis_view.recent(self.root)[0]['result'],'uncertain')
 
 if __name__=='__main__':unittest.main()

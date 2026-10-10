@@ -1,56 +1,51 @@
-# RF-Watchkeeper
+# RF-Watchkeeper on Dragonwing IQ-9075
 
-RF-Watchkeeper is a local RF monitoring project running on the **Qualcomm Dragonwing IQ-9075 EVK** with an RTL-SDR Blog V4 (`V4MAIN01`). It combines scheduled aviation audio, dual-channel AIS, experimental METEOR weather-satellite imagery, receiver health monitoring and a browser dashboard.
+RF-Watchkeeper combines scheduled aviation audio, dual-channel AIS, experimental METEOR weather-satellite imagery, RF sample-health monitoring and a local browser dashboard on a **Qualcomm Dragonwing IQ-9075 EVK**. Installation context is the approximate **Vaasa/Korsholm region, Finland**. The Arduino/Qualcomm showcase has been submitted for review; submission is not technical acceptance or an endorsement.
 
-The EVK puts ARM64 Linux, containerized signal processing and Qualcomm ASR/Genie runtimes on one host. Compared with a conventional SBC, its value here is the opportunity to investigate local Qualcomm inference alongside RF processing. HTP/QNN is requested by the speech pipeline; measured accelerator placement, speed and power advantages remain **unverified**.
+## Current status — inspected 10 October 2026
 
-## Current status — 5 October 2026
+One RTL-SDR Blog V4 (`V4MAIN01`) is time-shared. METEOR reservations take priority. ARM64 Linux handles scheduling, demodulation, AIS, image decoding and Tower diagnostics; ATIS uses Qualcomm QNN HTP on the second compute DSP. Accelerator execution is evidenced, but reliable unattended full-pipeline operation is **not achieved**.
 
 | Workload | Deployed behavior |
-| --- | --- |
-| Vaasa Tower | 120.950 MHz AM; 15 s probes about every minute; energy-triggered hold, 10 s quiet tail, 75 s maximum; 05:00–01:30 next day, Europe/Helsinki |
-| Vaasa ATIS | 136.450 MHz AM; approximately 90 s every 10 min, all day; experimental text |
-| AIS | Dual-channel AIS-catcher around 162 MHz; current background slots capped at 30 s |
-| METEOR-M2 LRPT | Planner, V4 capture, SatDump 1.2.2 ARM64 decode and dashboard images; future managed captures **256 kS/s** |
-| 433 MHz | Historical rtl_433 Nexus-TH reception; optional receiver currently disabled |
+|---|---|
+| Tower | 120.950 MHz AM; 15 s energy probes targeting 60 s starts, 10 s quiet tail, 75 s maximum; **07:00–23:00 Europe/Helsinki**. Acoustic screening and human review; **Tower ASR deferred** |
+| ATIS | 136.450 MHz AM; 90 s every at least 600 s, all day. Full-message preparation, device1 HTP ASR, conservative parsing and consecutive-capture consensus; separate shadow/validation queues |
+| AIS | AIS-catcher dual-channel reception; background chunks **up to 45 s**, shortened for due Airband work |
+| METEOR | Autonomous planning/reserved capture, **256 kS/s**, 137.900 MHz, SatDump 1.2.2 ARM64/Docker and retained dashboard products; useful output can coexist with decoder SIGSEGV |
+| 433 MHz | Historical Nexus-TH reception; optional second receiver remains disabled |
 
-One V4 is shared. METEOR reservations take priority and ordinary slots can be delayed/skipped. Periodic FM reference reception is disabled. Current OS: Qualcomm Linux Reference Distro 2.0.
+Periodic FM and the legacy satellite placeholder are disabled. Tower audio has a **30-day policy with permanent pins**; automatic satellite raw deletion remains disabled. Historical sample rates/results remain dated.
 
 ```mermaid
 flowchart LR
-    V4[RTL-SDR V4] --> J[Scheduler: Tower / ATIS / AIS]
-    V4 --> C[Reserved METEOR capture]
-    J --> A[AM audio / ASR / normalization]
-    J --> I[AIS targets and met-hydro]
-    C --> Q[IQ files] --> S[Offline SatDump]
-    A --> D[Dashboard and local APIs]
+    V4[Shared RTL-SDR V4] --> J[Scheduler: Tower / ATIS / AIS]
+    V4 --> C[Priority METEOR capture]
+    J --> T[Tower acoustic screening / AD shadow / human review]
+    J --> A[ATIS full audio / device1 HTP / parsing]
+    A --> S[Separate ATIS shadow and validation]
+    J --> I[AIS targets / met-hydro]
+    C --> Q[Retained IQ] --> M[Offline SatDump]
+    T --> D[Local dashboard and APIs]
+    A --> D
     I --> D
-    S --> D
-    H[RF health monitor] --> J
+    M --> D
+    H[Sample-health and guarded recovery] --> J
     H --> C
 ```
 
-## Representative results
+## Evidence and known limits
 
-- Tower measured 29.184 s with a retained 185.706 s start interval; observed Tower examples were quiet. ATIS measured 89.088 s. [Airband validation](docs/evidence/airband-ops-20261005/report.md).
-- Stored AIS records include Aurora Botnia and local base stations; [AIS Hydro timing](docs/ais-hydro-cadence.md) examines regional met/hydro observations.
-- A weak experimental indoor METEOR capture produced 888/896/888 channel lines even though SatDump subsequently crashed; useful products and crash diagnostics are retained. [METEOR evidence](docs/meteor.md).
+The corrected HTP path passed ten isolated runs and a scoped CPU/HTP/Tower demonstration. Its completed four-hour integrated observation **failed acceptance**: 23/24 verified ASR, 5/24 complete ASR+Genie results, 5.47 GiB retained DMA growth and 435 dashboard state timeouts. This does not support a whole-device utilization, power-efficiency or matched-speedup claim. [Definitive utilization evidence](docs/evk-utilization-status-20261009.md).
+
+During the 10 October audit, the latest 12 retained ATIS outputs were `partial_success` with failed Genie interpretation; `/api/state` timed out once at 10 seconds while other inspected APIs returned 200. Tower backlog capacity, speech/numeric/Finnish accuracy, SatDump's underlying crash, fresh-device installation and real watchdog reboot acceptance remain open. Useful METEOR products and AIS reception are demonstrated observations, not guaranteed coverage. [Current audit and unresolved items](docs/current-status.md).
 
 ## Documentation
 
-- [Architecture](docs/architecture.md), [hardware](docs/hardware.md), [fresh installation and deployment updates](docs/installation.md)
-- [Operation and services](docs/operation.md), [scheduler and RF jobs](docs/rf-jobs.md)
-- [Airband](docs/airband.md), [ATIS](docs/atis.md), [AIS](docs/ais.md), [433 MHz](docs/433mhz.md), [METEOR](docs/meteor.md)
-- [Dashboard/APIs](docs/dashboard.md), [watchdog/recovery](docs/watchdog-and-recovery.md)
-- [Retention](docs/data-retention.md), [testing](docs/testing-and-validation.md), [troubleshooting](docs/troubleshooting.md)
-- [Project history](docs/project-history.md), [engineering log](docs/project-log.md), [workflow](docs/workflow.md), [open experiments](docs/experiments.md)
+- [Current status and audit](docs/current-status.md), [architecture/data flow](docs/architecture.md), [hardware](docs/hardware.md)
+- [Fresh installation and deployment updates](docs/installation.md), [services/operation](docs/operation.md), [SDR scheduling](docs/rf-jobs.md)
+- [Airband/Tower capture](docs/airband.md), [Tower anomaly diagnostics](docs/tower-anomaly.md), [ATIS and shadow ASR](docs/atis.md)
+- [AIS](docs/ais.md), [METEOR](docs/meteor.md), [433 MHz](docs/433mhz.md), [dashboard/APIs](docs/dashboard.md)
+- [Retention](docs/data-retention.md), [recovery](docs/watchdog-and-recovery.md), [troubleshooting](docs/troubleshooting.md), [testing](docs/testing-and-validation.md)
+- [Project history](docs/project-history.md), [engineering log](docs/project-log.md), [workflow](docs/workflow.md), [experiments](docs/experiments.md), [privacy](docs/location-privacy.md)
 
-## Limits and reproducibility
-
-Indoor reception varies. Labelled Tower/ATIS accuracy, dependable numbers, Finnish recognition and accelerator profiling remain open. Optional Genie currently fails on retained runs; valid base transcripts remain available. SatDump's SIGSEGV is unresolved; partial-success classification preserves imagery rather than repairing the decoder. A real reboot acceptance test of the new watchdog remains outstanding.
-
-The repository includes verified application source, a preserved scheduler dependency and installed service snapshots. Models, binaries, databases, recordings and machine-specific prerequisites are excluded. A fresh clone is not a turnkey EVK image; see [installation](docs/installation.md). The detailed chronological engineering log remains preserved.
-
-## Agent and Work sessions
-
-Read [AGENTS.md](AGENTS.md) and [engineering workflow](docs/workflow.md) before changing RF Watchkeeper. Perform the mandatory completion check before declaring work finished.
+The repository exports application source and installed service snapshots, including the later deployed ASR/AD dependencies. It excludes models, native binaries, databases, recordings and private observer settings. A clone is not a turnkey EVK image. Read [AGENTS.md](AGENTS.md) and the workflow before engineering changes.

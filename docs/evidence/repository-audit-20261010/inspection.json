@@ -1,0 +1,620 @@
+{
+  "observed_utc": "2026-10-10T06:51:09.778721+00:00",
+  "baseline": "bf0edb702790a06b9f1923ebc6346d2e9001de60",
+  "sources": {
+    "ais_collector.py": {
+      "live_sha256": "39f465336ce58ee396f00eb0f0894de3ba97f938f9b19b6b8dfb7d1bda98f9e1",
+      "export_sha256": "2d148758398eed7d13b2e437c931d4bf2c6ca6042a278b833cf2a41b9d9f15b1",
+      "privacy_sanitized": false
+    },
+    "tower_retention.py": {
+      "live_sha256": "61a97d332e387ed865a79c2981d7a5949d7cde4ab096c9041c7fce84b4c7b26c",
+      "export_sha256": "61a97d332e387ed865a79c2981d7a5949d7cde4ab096c9041c7fce84b4c7b26c",
+      "privacy_sanitized": false
+    },
+    "atis_consensus.py": {
+      "live_sha256": "01b4d13339dc2188d8f3b23f0cc7076b30bea92d41773f85cda399010adf03dd",
+      "export_sha256": "01b4d13339dc2188d8f3b23f0cc7076b30bea92d41773f85cda399010adf03dd",
+      "privacy_sanitized": false
+    },
+    "watchkeeper.py": {
+      "live_sha256": "6af60da128bcf2a49685396d57452c60c9f90b08bef53fd0804c07d4178cf738",
+      "export_sha256": "a710b46ab2659dd31f2ce8f0cac3e3999355b12d5ace773e91f3346da456bd6f",
+      "privacy_sanitized": false
+    },
+    "probe_genie.py": {
+      "live_sha256": "ef4c95cefb991eeed9e5457aa6f906f09878d99c2ce69867e7c7de8d622c775f",
+      "export_sha256": "487d5a6bc8ac0d070244a4983a930a3d5d3ec564e3acdc78a82d24956c0e8666",
+      "privacy_sanitized": false
+    },
+    "atis_lexicon.py": {
+      "live_sha256": "66b63f6848ef667a4dd9d367f9d71da8e8f549c4cdb600efe030d47997db739f",
+      "export_sha256": "66b63f6848ef667a4dd9d367f9d71da8e8f549c4cdb600efe030d47997db739f",
+      "privacy_sanitized": false
+    },
+    "rf_health.py": {
+      "live_sha256": "196e2d6a7f9f60fd9d36fde92ed4208c0a100b203387a0135768080c7926f6b0",
+      "export_sha256": "a3a874dd085a046ef454af414988435a0fd38e95e07998c2db95103b46e74986",
+      "privacy_sanitized": false
+    },
+    "interpret.py": {
+      "live_sha256": "ec2094a69d18a4510c0bfad6bd6858b9fd27e15803593086c7ce78326c86eee2",
+      "export_sha256": "ba2e9eeed11c201e2f0f2aa19f979a6f85e5a1e49e1c490dddc6c60ae5596fab",
+      "privacy_sanitized": false
+    },
+    "test_meteor_retention.py": {
+      "live_sha256": "14f15c72da067745b4c24e5697d480bd264a05748b2862a78730e2cb3d8102bf",
+      "export_sha256": "be709c5d9d513ce2f7e758314d09b48c65dc2baaa1f2b50ff6716bb89cd42202",
+      "privacy_sanitized": false
+    },
+    "satellite_capture.py": {
+      "live_sha256": "4dd87d43fc144249ddeb8acb140dd4e34db8a8b364df71cd7901a6fcbd254699",
+      "export_sha256": "d6646cc564daf8dfd2240276ae8fc54df305f9639e17d1ef724463d8f9c94cfa",
+      "privacy_sanitized": false
+    },
+    "tower_anomaly_shadow.py": {
+      "live_sha256": "8ffb0361b5fdf68bafbe6c965b2bc4248583ae31f5f33f9983d5c3a11566437e",
+      "export_sha256": "9ee1e71b570524d74696a82cb6aac3075bdffb044fba40d159c7345466ff0094",
+      "privacy_sanitized": false
+    },
+    "atis_runtime_device1.py": {
+      "live_sha256": "fcd815b11f4e305cb30087c2f94a4ce7944753af3de25c38c2a34b40b77ac7e7",
+      "export_sha256": "fcd815b11f4e305cb30087c2f94a4ce7944753af3de25c38c2a34b40b77ac7e7",
+      "privacy_sanitized": false
+    },
+    "test_atis_shadow.py": {
+      "live_sha256": "9cf39cd0d6ba296521623fb2cabf4804ceef79b84a057fe95d042084a6dd44fb",
+      "export_sha256": "52478047f479c96ab293d044faf4d82227c121bbf4874cd70da113281a254fda",
+      "privacy_sanitized": false,
+      "deliberate_fixture_update": "Current contract/portable isolated fixture repair; local Ubuntu tests verified; runtime untouched"
+    },
+    "probe_audioreach_api.py": {
+      "live_sha256": "67fd3c00fac6b82a2f6062504b44317a7832c36f238cd1ee2836809b7cace6f6",
+      "export_sha256": "a276335c76e0b72e882341f2eb21dcd71cba7232749985b1c9b491ecd36967e0",
+      "privacy_sanitized": false
+    },
+    "meteor_frequency.py": {
+      "live_sha256": "ddd587ebb8a16ffad6a72b822014e06dd202b5531db4e05ad0fdd587d9ee3218",
+      "export_sha256": "7674dad7a6856b0b33a00eca618ae14cf7d13fe1207a1735dc1f4973488fbb0e",
+      "privacy_sanitized": false
+    },
+    "rf_sample_relay.py": {
+      "live_sha256": "d95e6822fa676a2024702f6ae9004d31c1e9bf461e1e6a62d22098f1bd89fde1",
+      "export_sha256": "a8ee38b884d96e438ff9a4a20947ddace1f839877c1ebcf93084ac931a605718",
+      "privacy_sanitized": false
+    },
+    "test_satellite_import.py": {
+      "live_sha256": "cc2b0cf51c7f491677cf1d7b9a25f4c7f12ed5adbd1ffb2669143d64d7f3e921",
+      "export_sha256": "2974403da8da172eb63c3ed0dc60ae9fae8454197dd39dcacfe1b122a691addc",
+      "privacy_sanitized": false
+    },
+    "tower_anomaly_review.py": {
+      "live_sha256": "5c8e8198dcd374c37eb49761f972dd0a48409ca5a500d2663b2416de6a85c77b",
+      "export_sha256": "88fa807cddf73ec86a958ec29944c246cb1cefb70357094409b0e9d18f4068b0",
+      "privacy_sanitized": false
+    },
+    "atis_shadow.py": {
+      "live_sha256": "e0ebd40bfe6bdce44fb23f0cd71c2eb2a8833155d575e99993477739f8b9711b",
+      "export_sha256": "e0ebd40bfe6bdce44fb23f0cd71c2eb2a8833155d575e99993477739f8b9711b",
+      "privacy_sanitized": false
+    },
+    "meteor_recovery.py": {
+      "live_sha256": "9d9358a1de9ac9e4786bc22221e6ef2924c86a76d87ff303cc586bf4d27d188a",
+      "export_sha256": "449e60bed1d30ab030d4b9ca3919b88a568287b70b1103e4098fc232426f53c2",
+      "privacy_sanitized": false
+    },
+    "atis_view.py": {
+      "live_sha256": "50e8e6acb3976b1d2010d9851a5cbfa8734d510a8e303bae3b743352ae1f36ce",
+      "export_sha256": "50e8e6acb3976b1d2010d9851a5cbfa8734d510a8e303bae3b743352ae1f36ce",
+      "privacy_sanitized": false
+    },
+    "test_tower_anomaly.py": {
+      "live_sha256": "3e07b6fcf2135988963315a535eb69ababd6bf5f076208a62e7a612beaeefdb3",
+      "export_sha256": "db636d6fa042beaa7371920485b5eb2b9745345442186382c484922e6df3326e",
+      "privacy_sanitized": false,
+      "deliberate_fixture_update": "Current contract/portable isolated fixture repair; local Ubuntu tests verified; runtime untouched"
+    },
+    "test_tower_threshold_queue.py": {
+      "live_sha256": "8ba584d7337bf5be78dca914a6cac050c18649384a00ace7ed5477ee482de110",
+      "export_sha256": "8ba584d7337bf5be78dca914a6cac050c18649384a00ace7ed5477ee482de110",
+      "privacy_sanitized": false
+    },
+    "rf_health_monitor.py": {
+      "live_sha256": "d2108eb884fa09d2aa2f5c9365a3e769dee10df07c4075ce7723d15cc70ec186",
+      "export_sha256": "5cb7ec4673426d07f1dcc3c8e5c69a872135299d07a4dec32146546c0280f547",
+      "privacy_sanitized": false
+    },
+    "recorded.py": {
+      "live_sha256": "4033f7fa0a07bc7ff0af9c9b36372f0144fb2a757649c08c3a2e7267b043907c",
+      "export_sha256": "17f7384a703eec2717149080f20e69d128f0f0be5364bf0469f2ea33587fd02a",
+      "privacy_sanitized": false
+    },
+    "satellite_planner.py": {
+      "live_sha256": "88037ad668563565d5cfe972fff73152d055aaabb06a4e0e4d060cb6ae66e7d1",
+      "export_sha256": "ef0d96d0d1861d40ad3ad51999c6b141beaa9edfb7930680fc0b3dad15db8e9b",
+      "privacy_sanitized": false
+    },
+    "test_tower_ad_batch.py": {
+      "live_sha256": "af2ce298897daeb07a74fb00c8e6931c1f716cbe83ba4e8fea88032321fd4894",
+      "export_sha256": "4497805289c2706ca74464dbc33d0fd0cfd6b15f2bdb07ddd55dfdee3e1f8db1",
+      "privacy_sanitized": false
+    },
+    "profile_encoder.py": {
+      "live_sha256": "9f261a2a0b3e3fafcd9da88140a3a80a3fcdeb4efffef20a95a415db70695516",
+      "export_sha256": "64161d9da7e86ce9b0edb947004a3f1f6d686e7858411ec93e73db28cf257414",
+      "privacy_sanitized": false
+    },
+    "atis_parser.py": {
+      "live_sha256": "1fe2a1f40245d5a65b20eac8ec547fd4d917990e8a3c6389ade7b38001eb4db1",
+      "export_sha256": "1fe2a1f40245d5a65b20eac8ec547fd4d917990e8a3c6389ade7b38001eb4db1",
+      "privacy_sanitized": false
+    },
+    "job_manager.py": {
+      "live_sha256": "15cdc83dd24d861708a48fe91dc5c46dfa835cb3aad822cacd2c53780091e0d0",
+      "export_sha256": "29c53800519f82822fc93830e6ded2ca119e36ed6650fc04fab89c50c8e3e2cb",
+      "privacy_sanitized": false
+    },
+    "aviation_benchmark.py": {
+      "live_sha256": "2de7c3781940b76b90e631b82a10c8d30c80985afd8ee86c338090c464a6e382",
+      "export_sha256": "cebcca1cc15e6c88eb766e7f168cd3d3425ec4dc4f8eb26da87fad71b13cd406",
+      "privacy_sanitized": false
+    },
+    "test_tower_validation.py": {
+      "live_sha256": "c81b76245ad6f6d81fca04ae934f6ae581d51be0318c4cb1fa511b4b898aea27",
+      "export_sha256": "c81b76245ad6f6d81fca04ae934f6ae581d51be0318c4cb1fa511b4b898aea27",
+      "privacy_sanitized": false
+    },
+    "rf_store.py": {
+      "live_sha256": "cf8c57f9ada9f18b62f1d7cfeb107f3d52556eefff417c9a11a743624a7c066b",
+      "export_sha256": "cf8c57f9ada9f18b62f1d7cfeb107f3d52556eefff417c9a11a743624a7c066b",
+      "privacy_sanitized": false
+    },
+    "import_satellite_pass.py": {
+      "live_sha256": "46f2427767985d8aca81c76de6893ce002c1dd34843f5d2379eea11395c4ecfe",
+      "export_sha256": "ec69243c05332a1e86bb80564def7bb10a7debae6c9a19627e268f3212290e60",
+      "privacy_sanitized": false
+    },
+    "probe_audio_dsp.py": {
+      "live_sha256": "485c2bffd288a84ca2f41b808b9e282bfed38e99cc808567b52d88e6c236190b",
+      "export_sha256": "dbe3a7581c4cea14c854d62f073ff6488e4346950c20a7fc8bdc4435b364ee13",
+      "privacy_sanitized": false
+    },
+    "test_tower_retention.py": {
+      "live_sha256": "aba19e3f8504ba2ee450a0d26bcabb36ed7a1ff0a200850f3e546b74ab9883a8",
+      "export_sha256": "02f454c87d23a1163c4822b317f2dd40a20352bb4cde3d9f9033d8e9fc3e6aa3",
+      "privacy_sanitized": false,
+      "deliberate_fixture_update": "Current contract/portable isolated fixture repair; local Ubuntu tests verified; runtime untouched"
+    },
+    "show_events.py": {
+      "live_sha256": "2aee4e54f9e6267e30c3210d4b87c8cf0409b3919fb46466787234476bc95496",
+      "export_sha256": "cbdd4b08fd970b09103439f13c24785aad2749b70b625716e19222b281145061",
+      "privacy_sanitized": false
+    },
+    "airband_text.py": {
+      "live_sha256": "0375583a64e588da0635f180f0858b7bf06d9ad4d43eeaf3f6e228c39c27da4e",
+      "export_sha256": "e5ed26efd5330fb4c7263e0912f6512f89def8809be96257184c412c6019549b",
+      "privacy_sanitized": false
+    },
+    "meteor_store.py": {
+      "live_sha256": "97870ead99ece7564555d33ea9fb5bcdbbb5c8186c28ba9acb716542628aa136",
+      "export_sha256": "97870ead99ece7564555d33ea9fb5bcdbbb5c8186c28ba9acb716542628aa136",
+      "privacy_sanitized": false
+    },
+    "ais_store.py": {
+      "live_sha256": "301124f58a13037fba900e0392647aed7a05cffbada133f030599edcf8aab92a",
+      "export_sha256": "bf70b104817a214759a3bfc77dc516472dcda566eb063779475630399a5d11e0",
+      "privacy_sanitized": false
+    },
+    "test_tower_recent.py": {
+      "live_sha256": "8beec41f6ef2fc6630a31b0db5e33691301e3f9159d8dd5a5a954f99c29c808b",
+      "export_sha256": "79ac5ed91b84633ac0524d1059f690f11de3da210ab321412002630399c09dcb",
+      "privacy_sanitized": false,
+      "deliberate_fixture_update": "Current contract/portable isolated fixture repair; local Ubuntu tests verified; runtime untouched"
+    },
+    "satellite_pass.py": {
+      "live_sha256": "2c614291ef7120d3dc70bb7b3b71d9283b03fb81c385c39e0ee355bf444a09a0",
+      "export_sha256": "a767b93f516b4d610a2f3e70280cbbd01cb7a0a055d1c6c9aac3dca3ab9ad609",
+      "privacy_sanitized": false
+    },
+    "atis_validation.py": {
+      "live_sha256": "7160e12cab7648e04bc55e7393fa1e59dc1235d5a8ee8cd1902bfbe004a05d83",
+      "export_sha256": "37c4dda32392c38952e416c528d13263c7c742e7b107ceafa4ec6a70452153c3",
+      "privacy_sanitized": false
+    },
+    "inference_resource.py": {
+      "live_sha256": "e76a2a270344156326462161bdbe493c7b072d8018e8c9fb97ae18abce9ed38d",
+      "export_sha256": "e76a2a270344156326462161bdbe493c7b072d8018e8c9fb97ae18abce9ed38d",
+      "privacy_sanitized": false
+    },
+    "interpret_stream.py": {
+      "live_sha256": "03dc84aaaae7e8ddfa39b8b961caabb47e43c84f05a56983db87c6e2184bd682",
+      "export_sha256": "04787b8802b61e85d58a569f95f2582c05e84ed4ac8fa68698fee075b1e6e327",
+      "privacy_sanitized": false
+    },
+    "satellite_schedule.py": {
+      "live_sha256": "b56852952934cc710ed5d3ec6ff2b4aa066645f72f9922af08888b2c941c41cc",
+      "export_sha256": "67eb827f69dd992daa9195793cd22a11122fe1047ceb77ef639ebc153efeb3ce",
+      "privacy_sanitized": false
+    },
+    "satdump_evk.py": {
+      "live_sha256": "629152b7a9b3c1486e6668250607435b19e7dc28e05761cd249f6ab6efc5dc1e",
+      "export_sha256": "a4108da2ffeb8636dd9e5f76c31312b44be64c8aab2818808696279aef775253",
+      "privacy_sanitized": false
+    },
+    "meteor_pipeline.py": {
+      "live_sha256": "4d1352f3d03465ad0314989a4e5263075588ba7569827d837ca1478ba43284f4",
+      "export_sha256": "4d1352f3d03465ad0314989a4e5263075588ba7569827d837ca1478ba43284f4",
+      "privacy_sanitized": false
+    },
+    "meteor_retention.py": {
+      "live_sha256": "beb7c80fe684496a57cd506fd7cddb9ed5898dd982fd2392de1710fe23519f54",
+      "export_sha256": "beb7c80fe684496a57cd506fd7cddb9ed5898dd982fd2392de1710fe23519f54",
+      "privacy_sanitized": false
+    },
+    "test_tower_anomaly_review.py": {
+      "live_sha256": "7a86679de9311ff92fa1bda23c5a4721b1a4404409324f492751d27373826b67",
+      "export_sha256": "7a86679de9311ff92fa1bda23c5a4721b1a4404409324f492751d27373826b67",
+      "privacy_sanitized": false
+    },
+    "tower_anomaly.py": {
+      "live_sha256": "4d70dc41d4d4f960ba9426e0005248c47dfe4ade835a1c0694e5e74439d8ea19",
+      "export_sha256": "37f97f79a336042cb6900efd547061bfa54a615d48ba886b3c9c0dafa776bc54",
+      "privacy_sanitized": false
+    },
+    "tower_classification.py": {
+      "live_sha256": "f55b1bbf01e3fc56ee386a042b26bd8fe9bcadb707329d5c886e4aab203ac9f5",
+      "export_sha256": "af8a802b93950e9de440b110eb900e3af0bf985df7d74cd717a50b9468021f5c",
+      "privacy_sanitized": false
+    },
+    "tower_validation.py": {
+      "live_sha256": "b480daac466cdbeb8f6e8bdb0c46fd42996d33e2dc8dac4503e655d2cbf75d63",
+      "export_sha256": "b480daac466cdbeb8f6e8bdb0c46fd42996d33e2dc8dac4503e655d2cbf75d63",
+      "privacy_sanitized": false
+    },
+    "asr_evidence.py": {
+      "live_sha256": "04a2b3d0eb410cc8563498cace18ad2bbd9f3b132872b3a4154d1b9ab0356503",
+      "export_sha256": "4b6059f27323ca658dde5d83b7284bb511f39c1c7434e0ac77eef69a2bd6b2b1",
+      "privacy_sanitized": false
+    },
+    "prepare_asr.py": {
+      "live_sha256": "680c33f5f5033fd2c9a29952c072867e94642e02ceb4e28d79ac205833d78785",
+      "export_sha256": "cea2eff6a1abf62545debf45ca44c22e3f5358f4d4e66a5db4a1dbef83cb8074",
+      "privacy_sanitized": false
+    },
+    "register_legacy_meteor.py": {
+      "live_sha256": "7687c7291736db86ec95b81ce06f10f4ec78cb712e36e49f2adf3f8d02182274",
+      "export_sha256": "a8b984e45a07abd553b38e10547375d99da76ab6176b417e2699ed14aaf319e9",
+      "privacy_sanitized": false
+    },
+    "audio_workflow.py": {
+      "live_sha256": "203c5bf8ab744e07c6dd29de051f9e70a7e6f5e889aeb88d092fd048cf0b31e4",
+      "export_sha256": "203c5bf8ab744e07c6dd29de051f9e70a7e6f5e889aeb88d092fd048cf0b31e4",
+      "privacy_sanitized": false
+    },
+    "adaptive_rf.py": {
+      "live_sha256": "9076092bdb11dedba1f276fe815b13cd356c0b8eeba5cd33ac699d1099a3b87f",
+      "export_sha256": "1b1882548e5c1493366a4f52b54d544f42847e3543b4aec588cb8d48bb070221",
+      "privacy_sanitized": false
+    },
+    "ais_display.py": {
+      "live_sha256": "cc87d8cdab9d1d1fccad05fd98afffe44ce265ea493e893b42fb6954984ffd3f",
+      "export_sha256": "4a90e4b3fc2f8ec000f3df162c13c7abceaa7bb233831f972ad016b3d5e9e7f7",
+      "privacy_sanitized": false
+    },
+    "test_meteor_history.py": {
+      "live_sha256": "4f7f9557efbde10ad569c38556223335aa2f112ee2710189276f0bf05a108154",
+      "export_sha256": "cfbfad24bf3cc1229d7c694c99e3790cfddbc5b6e79e40e0a7bcb10f5a9dc4dd",
+      "privacy_sanitized": false
+    },
+    "test_meteor_recovery.py": {
+      "live_sha256": "5b274986b71084f4627c050fb8477f0f3b23a2752391504a4394e6e593aa94f5",
+      "export_sha256": "487f237724fd6d8812a33d76b0b3634753ccfe7fbfd99b398c4ec4de0e85a0fe",
+      "privacy_sanitized": false
+    },
+    "atis_pipeline.py": {
+      "live_sha256": "c1ba4ab91ced05e7e0dc3d53d5f2eac62eff4258e8012802153b6162c0c73abe",
+      "export_sha256": "2ee439d99feb96ded5675901da8396edc5a262fd114fc9d8bdb2c5838c532f8f",
+      "privacy_sanitized": false
+    },
+    "test_tower_scored_queue.py": {
+      "live_sha256": "a8e0b9840b2d777e95b9d5c8563a031c44302f36524e2c74da65e85ac4d3d3b3",
+      "export_sha256": "a8e0b9840b2d777e95b9d5c8563a031c44302f36524e2c74da65e85ac4d3d3b3",
+      "privacy_sanitized": false
+    },
+    "asr_offline.py": {
+      "live_sha256": "a14ff53c8f3dd81ec590d8cdeb10e34141505343306de2d08864a3e474a2060b",
+      "export_sha256": "dec1db0ae1001f0b9c521bf80bcb0a2d7a8be2ba36f2fee66b7bd9276154cfdb",
+      "privacy_sanitized": false
+    },
+    "dashboard.py": {
+      "live_sha256": "9bc9815ba2f59a4611708f175c45a8ae220ec5d9a8cc64367dc2a68eddd35952",
+      "export_sha256": "9bc9815ba2f59a4611708f175c45a8ae220ec5d9a8cc64367dc2a68eddd35952",
+      "privacy_sanitized": false
+    },
+    "pass_conditions.py": {
+      "live_sha256": "7650a1614c9c686e0e73d17e80671898f83ce1324c8b2b67e46a277c3fb830ac",
+      "export_sha256": "721dc86aa92d1e55364c5469267b78856bbe20db0127d73f258eec8596a76598",
+      "privacy_sanitized": false
+    },
+    "test_rf_health.py": {
+      "live_sha256": "4b5ce329a7a31ac3d64d851cd93e66a461bfed5053e6872822d96a9a5c076640",
+      "export_sha256": "7646f2611a6280efb9490f750cda5406d99d8f67cd54713a88c93136f615c5e3",
+      "privacy_sanitized": false
+    },
+    "test_tower_queue.py": {
+      "live_sha256": "8872aad35a39b0cf37eb3acd3cfc9408cc70d444a25e1df126b601c53cdc1e5e",
+      "export_sha256": "8872aad35a39b0cf37eb3acd3cfc9408cc70d444a25e1df126b601c53cdc1e5e",
+      "privacy_sanitized": false
+    },
+    "test_adaptive_rf.py": {
+      "live_sha256": "e2ade3f1aa6cce8399406f9602c44391aa24716ac83f20d3a43d69e674010407",
+      "export_sha256": "e2ade3f1aa6cce8399406f9602c44391aa24716ac83f20d3a43d69e674010407",
+      "privacy_sanitized": false
+    },
+    "audio_tap.py": {
+      "live_sha256": "452ba3bd84d1804f963a7b4b132ab32ebadeb9ddea0098094d9d3b5675eff0a8",
+      "export_sha256": "6eb9ab5bd94ab2c2555fd9e243676e7d2424c2cb50a2936a9c827aed2fe40eb7",
+      "privacy_sanitized": false
+    },
+    "dashboard.html": {
+      "live_sha256": "748752648b881a5e19b1330622c9124a7c6c5bbe15760f4a022a7c6426b38e6f",
+      "export_sha256": "aca0fc51e20f22e67263887f9ebd14b823defcf6031c06a730be5eca850405c6",
+      "privacy_sanitized": true
+    },
+    "jobs-v4.jsonc": {
+      "live_sha256": "45ddac2a6dbd8208eae8a58a43a2e3b9709e4abbde9a92fafaafbd461999355c",
+      "export_sha256": "40cae769d5b4785c4df68a27620f7bd5beabfc8d7dc7ae7321e5f3c5d142b350",
+      "privacy_sanitized": false
+    },
+    "backends/sdr_demo/scheduler.py": {
+      "live_sha256": "ed542d85cab81a8e676696d6d4ed16c1be7b17c5fa53bb00f9b4b1a86475d291",
+      "export_sha256": "01042e25e44b7944bc0c5c14398d0e25e19db3440410e93e5f50a7e8560b77c0",
+      "privacy_sanitized": false
+    }
+  },
+  "api_checks": {
+    "/api/state": {
+      "error": "timed out",
+      "seconds": 10.016964984999504
+    },
+    "/api/tower": {
+      "http_status": 200,
+      "seconds": 4.0262276899957214
+    },
+    "/api/atis": {
+      "http_status": 200,
+      "seconds": 0.12409260600543348
+    },
+    "/api/meteor": {
+      "http_status": 200,
+      "seconds": 1.9023850270023104
+    },
+    "/api/meteor/schedule": {
+      "http_status": 200,
+      "seconds": 0.0030909769993741065
+    },
+    "/api/audio": {
+      "http_status": 200,
+      "seconds": 0.8712412449967815
+    }
+  },
+  "raw_iq": {
+    "files": 31,
+    "bytes": 18356895744
+  },
+  "unit_states": {
+    "meteor-auto-capture.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-ais.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-atis-process.service": "ActiveState=active\nSubState=running\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-atis-shadow.service": "ActiveState=active\nSubState=running\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-atis-validation.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-dashboard.service": "ActiveState=active\nSubState=running\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-health.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-interpreter.service": "ActiveState=active\nSubState=running\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-meteor-cleanup.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-meteor-dispatch.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-meteor-legacy-register.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-meteor-plan.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-meteor-process.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-meteor-recover.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-scheduler.service": "ActiveState=active\nSubState=running\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-sensors.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-tower-anomaly-shadow.service": "ActiveState=activating\nSubState=start\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "satellite-v4-preflight.service": "ActiveState=inactive\nSubState=dead\nResult=success\nNRestarts=0\nExecMainStatus=0\n",
+    "rf-watchkeeper-atis-validation.timer": "ActiveState=active\nSubState=waiting\nResult=success\n",
+    "rf-watchkeeper-health.timer": "ActiveState=active\nSubState=waiting\nResult=success\n",
+    "rf-watchkeeper-meteor-cleanup.timer": "ActiveState=active\nSubState=waiting\nResult=success\n",
+    "rf-watchkeeper-meteor-dispatch.timer": "ActiveState=active\nSubState=waiting\nResult=success\n",
+    "rf-watchkeeper-meteor-legacy-register.timer": "ActiveState=active\nSubState=waiting\nResult=success\n",
+    "rf-watchkeeper-meteor-plan.timer": "ActiveState=active\nSubState=waiting\nResult=success\n",
+    "rf-watchkeeper-meteor-process.timer": "ActiveState=active\nSubState=waiting\nResult=success\n",
+    "rf-watchkeeper-tower-anomaly-shadow.timer": "ActiveState=active\nSubState=running\nResult=success\n",
+    "satellite-v4-preflight-20261002-0359.timer": "ActiveState=inactive\nSubState=dead\nResult=success\n",
+    "satellite-v4-preflight-20261002-1051.timer": "ActiveState=inactive\nSubState=dead\nResult=success\n",
+    "satellite-v4-preflight-20261002-1353.timer": "ActiveState=inactive\nSubState=dead\nResult=success\n",
+    "satellite-v4-preflight-20261002-1533.timer": "ActiveState=inactive\nSubState=dead\nResult=success\n"
+  },
+  "meteor_settings": {
+    "enabled": true,
+    "hours": 36,
+    "horizon_deg": 10,
+    "min_peak_deg": 25,
+    "south_azimuth_min": 120,
+    "south_azimuth_max": 240,
+    "min_south_seconds": 60,
+    "max_passes_per_day": 4,
+    "pre_margin": 90,
+    "post_margin": 90,
+    "preflight_seconds": 120,
+    "dispatch_lead_seconds": 12,
+    "max_lateness_seconds": 30,
+    "sample_rate": 256000,
+    "frequency": 137900000,
+    "gain": 49.6,
+    "device": "V4MAIN01",
+    "min_free_gib": 10,
+    "max_tle_age_days": 3,
+    "satdump_command": [
+      "/root/rf-watchkeeper/.satellite-venv/bin/python",
+      "/root/rf-watchkeeper/satdump_evk.py"
+    ],
+    "satdump_prefix": [],
+    "satdump_pipeline": "meteor_m2-x_lrpt",
+    "satdump_extra": [
+      "--dc_block",
+      "--satellite_number",
+      "{satellite_number}"
+    ],
+    "decode_timeout_seconds": 1800,
+    "max_decode_attempts": 3,
+    "decode_retry_seconds": 3600,
+    "cleanup_enabled": false,
+    "raw_retention_days": 14,
+    "retention": {
+      "no_signal_hours": 24,
+      "poor_hours": 48,
+      "useful_hours": 168,
+      "normal_free_gib": 20,
+      "critical_free_gib": 10,
+      "useful_min_lines": 128,
+      "excellent_min_lines": 2000,
+      "automatic_deletion_validated": false
+    },
+    "frequency_evaluation": {
+      "span_hz": 60000,
+      "windows": 24,
+      "max_candidates": 2,
+      "budget_seconds": 300
+    }
+  },
+  "recent_atis": [
+    {
+      "capture_id": "20261010T045411.213601Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T050412.229997Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T051413.332628Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T052414.104878Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T053414.842329Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T054415.664801Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T055416.698701Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T060417.538899Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T061418.805130Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T062419.066073Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T063419.742891Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    },
+    {
+      "capture_id": "20261010T064420.039573Z",
+      "status": "partial_success",
+      "runtime_path": "device1-cleanup-full80-v2",
+      "interpretation_status": "failed"
+    }
+  ],
+  "excluded_source_drift": {
+    "test_ais_validation.py": "Public test adds reception-history coverage and sanitized observer fixtures; retained intentionally.",
+    "historical_review_20261005.py": "One-off maintenance/evaluation helper, not an application dependency. Remains EVK-only with private review evidence.",
+    "finalize_historical_review_20261005.py": "One-off reviewed cleanup evidence helper, not an application dependency.",
+    "collect_verification.py": "Historical collection helper, not an application dependency.",
+    "test_tower_queue.py": "Superseded acoustic-candidate queue fixtures fail after completed above-threshold AD decision; current scored/threshold suites exported instead."
+  },
+  "runtime_changed": false,
+  "new_tests_not_evidence_of_new_runtime_fix": true,
+  "followup": {
+    "observed_utc": "2026-10-10T06:55:44.383164+00:00",
+    "tower_label_counts": {
+      "no_voice": 61,
+      "confirmed_voice": 43,
+      "interference": 2,
+      "probable_voice": 3,
+      "carrier_or_squelch": 1,
+      "unclear": 1
+    },
+    "pause_until": "2026-10-08T23:00:00+03:00",
+    "api_checks": {
+      "/api/state": [
+        {
+          "http_status": 200,
+          "seconds": 0.13480986100330483
+        },
+        {
+          "http_status": 200,
+          "seconds": 0.13504653300333302
+        },
+        {
+          "http_status": 200,
+          "seconds": 0.13508757400268223
+        }
+      ],
+      "/api/atis/shadow": [
+        {
+          "http_status": 200,
+          "seconds": 0.01680768399819499
+        }
+      ],
+      "/api/atis/validation": [
+        {
+          "error": "timed out",
+          "seconds": 4.005353713997465
+        }
+      ],
+      "/api/tower/reviews": [
+        {
+          "error": "timed out",
+          "seconds": 4.004352383002697
+        }
+      ]
+    }
+  }
+}

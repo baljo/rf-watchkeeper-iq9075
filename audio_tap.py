@@ -20,6 +20,8 @@ def prune_fm(db, keep=20):
     ).fetchall()
 
     for row_id, file_path in rows:
+        if any(part in Path(file_path).resolve().parts for part in ('tower', 'asr-reference-corpus', 'evaluation', 'aviation-fixtures')):
+            continue  # Tower and permanent references are outside FM cleanup scope.
         try:
             Path(file_path).unlink(missing_ok=True)
         except OSError:

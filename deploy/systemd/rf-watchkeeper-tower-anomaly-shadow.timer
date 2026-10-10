@@ -1,0 +1,11 @@
+[Unit]
+Description=Post-capture Tower shadow diagnostics, idle resources only
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=60s
+AccuracySec=5s
+Unit=rf-watchkeeper-tower-anomaly-shadow.service
+
+[Install]
+WantedBy=timers.target

@@ -42,3 +42,9 @@ Tests below predate this audit. The [original watchdog report](evidence/rf-healt
 ## Adaptive hopping — 6 October 2026
 
 48 native scheduler/Airband tests and 111 existing health/AIS/METEOR regression tests passed. Live roughly one-minute Tower probes, AIS gaps, normal ATIS, unchanged Tower recent history/silent audio, and bounded ownership observation passed. METEOR exclusion/preemption and activity extensions used injected capture-loop tests; no positive live Tower transmission or real satellite interruption was induced. See the [report and evidence](evidence/adaptive-rf-20261006/report.md).
+
+## Current acceptance distinction — 10 October 2026
+
+The corrected device1 path passed ten isolated HTP runs and a scoped CPU/HTP/Tower demonstration; both automatic ATIS workers are deployed/active. The subsequent four-hour observer completed but **FAILED integrated acceptance** (23/24 verified ASR, 5/24 complete ASR+Genie, +5.47 GiB retained DMA and 435 API timeouts). No later passing run was established. [Definitive report](evk-utilization-status-20261009.md).
+
+This audit compares current live source/config/units/APIs with GitHub, exports missing already deployed dependencies, verifies documentation references and runs isolated fixture regressions without RF/inference on production data. Exact checks/results/skips are in [audit completion](evidence/repository-audit-20261010/completion.md). No clean-device, real reboot, long-run capacity, speech accuracy or new live satellite acceptance is claimed.

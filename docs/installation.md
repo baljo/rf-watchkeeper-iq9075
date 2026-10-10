@@ -73,7 +73,7 @@ Review `jobs-v4.jsonc`, `rf-health-config.json`, device serials, paths, ownershi
 
 The speech path uses Qualcomm `asr_native/voice-ai-ref` and libraries in `asr_native/`, plus Whisper small QCS9075 v0.50.2 at `model-trials/whisper-small-v0.50.2/model`. These are excluded. Obtain compatible binaries/libraries/models separately under their applicable access and licensing terms. Review [asr_offline.py](../asr_offline.py) and [ATIS](atis.md), then validate a known local saved-audio control before RF speech processing.
 
-Optional Genie/Qwen3 lives under external `/root/genie/`, with recorded config `/root/genie/qwen3-4b-iq9075/genie_config.absolute.json`. Retained runs fail; optional interpretation failure must remain visible while valid base transcripts survive. Requested HTP/QNN does not prove accelerator placement/performance. Missing speech dependencies prevent full text reproduction even when capture/dashboard work. Public repository visibility establishes neither a project license nor redistribution permission for proprietary dependencies/models.
+Optional Genie/Qwen3 lives under external `/root/genie/`, with recorded config `/root/genie/qwen3-4b-iq9075/genie_config.absolute.json`. Retained runs fail; optional interpretation failure must remain visible while valid base transcripts survive. The corrected device1 ATIS path has measured graph-execution evidence; saved-audio requests alone do not prove acceleration or performance. Missing speech dependencies prevent full text reproduction even when capture/dashboard work. Public repository visibility establishes neither a project license nor redistribution permission for proprietary dependencies/models.
 
 ### 7. Supply SatDump ARM64/Docker runtime
 
@@ -95,7 +95,7 @@ systemctl daemon-reload
 systemctl enable --now rf-watchkeeper-dashboard.service
 ```
 
-Use the same explicit-file review/copy/reload pattern for required units; do not bulk-enable the directory. Start dashboard first, then primary scheduler only after RF/ownership prerequisites pass. Add ATIS processing only after its dependencies are validated. The recorded scheduler has an external drop-in requiring a 30% speaker guard, absent from this export. The legacy interpreter unit listed in [operation](operation.md) is also absent from these snapshots. Reconstruct/review missing dependencies rather than claiming a complete service reproduction.
+Use the same explicit-file review/copy/reload pattern for required units; do not bulk-enable the directory. Start dashboard first, then primary scheduler only after RF/ownership prerequisites pass. Add ATIS processing only after its dependencies are validated. The recorded scheduler has an external drop-in requiring a 30% speaker guard, absent from this export. The legacy interpreter and scheduler speaker-volume drop-in are now exported snapshots; the guard implementation remains external. Reconstruct/review missing dependencies rather than claiming a complete service reproduction.
 
 Review METEOR plan/dispatch/process/cleanup timers, capture and boot recovery together; keep capture disabled while validating. Historical stage installers are not included: do not invoke their paths as fresh-install commands. Health/preflight recovery can affect RF and ultimately request reboot; read [watchdog/recovery](watchdog-and-recovery.md) before enabling. Keep standalone AIS/legacy Watchkeeper and optional sensors disabled: ordinary AIS belongs to the scheduler.
 
@@ -165,7 +165,17 @@ Repeat relevant section A status/API/planner checks. Confirm scheduled work resu
 Preserved [ATIS proof of concept](../ATIS_POC.md) and [audio workflow](../AUDIO_WORKFLOW.md) provide dated installation/rollback context alongside the METEOR guides. Their 30-minute ATIS interval, pre-dashboard defaults and stage-specific installers are historical; current guides and local configuration take precedence.
 
 - Fresh OS provisioning, SDR/AIS-catcher installation and exact versions, and locked Python dependencies lack an end-to-end validated recipe.
-- Docker provisioning, original image build stage/runtime manifest, proprietary ASR/Whisper/Genie artifacts, speaker guard/drop-ins and missing interpreter-unit snapshot require separate acquisition/reconstruction.
+- Docker provisioning, original image build stage/runtime manifest, proprietary ASR/Whisper/Genie artifacts, speaker guard/drop-ins require separate acquisition/reconstruction.
 - No clean-device acceptance run occurred for this revision. Follow-up access resolved the initial SSH authentication gap; only documentation was synchronized to the EVK, with no runtime deployment or restart.
-- ATIS/numeric/Finnish accuracy and QNN performance remain unverified; Tower ASR is deferred. Genie failures and SatDump SIGSEGV remain unresolved. Retained useful crash products do not mean the decoder is repaired.
+- ATIS/numeric/Finnish accuracy, QNN whole-device utilization and comparative performance remain unverified; Tower ASR is deferred. Genie failures and SatDump SIGSEGV remain unresolved. Retained useful crash products do not mean the decoder is repaired.
 - Real reboot recovery and sustained unattended RF reliability remain operational gates. This remains an application export, not a turnkey installation.
+
+## Deployed-source reconciliation — 10 October 2026
+
+This export now includes device1 ASR/resource-lease, ATIS shadow/parser/lexicon/consensus/validation, Tower classification/retention/cumulative-validation dependencies and current speech/diagnostic unit snapshots. Earlier source alone did not reproduce the deployed paths. Prefer `deploy/systemd/` snapshots plus reviewed drop-ins to root historical unit copies. No runtime reinstall or service restart was required: these files already run on the EVK.
+
+The production ATIS worker invokes `evaluation/atis-prompt-small-20261007/python/bin/python3` and `atis_runtime_device1.py`, with QAI AppBuilder, transformers, tokenizer/cache, QNN context binaries and candidate configuration. It also reads `evaluation/atis-model-bakeoff-20261007/inputs.json` and candidate `generation_config.json`; Genie uses `data/atis-genie-device1.json`. These external artifacts remain excluded and must be supplied/reviewed separately. The prior voice-ai-only instructions apply to the preserved saved-audio path, not current production ATIS. [Actual flow and limits](atis.md).
+
+Current installed Tower window is 07:00–23:00 Europe/Helsinki, with an optional local pause-until file. Tower ASR is deferred and audio policy is 30 days/pins; AD shadow requires a separately supplied `evaluation/tower-anomaly/model.json`. Exported scheduler speaker-volume drop-in refers to an external guard; it must be supplied before enabling the scheduler. The new shadow/validation units are snapshots to review individually, not a bulk activation instruction.
+
+Actual HTP execution is evidenced in corrected isolated runs and both ATIS workers are active, but integrated acceptance failed. Do not interpret a fresh import/unit check as native-runtime reliability or accuracy acceptance. [Current status](current-status.md), [utilization evidence](evk-utilization-status-20261009.md).

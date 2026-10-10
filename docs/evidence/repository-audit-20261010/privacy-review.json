@@ -1,0 +1,8 @@
+{
+  "files_checked": 69,
+  "precise_private_coordinates_found": false,
+  "private_endpoint_or_key_found": false,
+  "oversized_files": [],
+  "scope": "All explicit changed/new repo files; private snapshots/access note/synced sources are outside checkout and excluded",
+  "public_location": "approximate Vaasa/Korsholm region; existing map/test templates use coarse example coordinates"
+}

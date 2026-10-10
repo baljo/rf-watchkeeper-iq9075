@@ -13,6 +13,7 @@ import time
 import uuid
 import wave
 
+from inference_resource import LockedPopen
 from recorded import emit, save, sha256
 
 ROOT = Path(__file__).resolve().parent
@@ -85,7 +86,7 @@ def main(argv=None):
             import asr_evidence
         start = time.monotonic()
         with (run / "runtime.log").open("wb") as log:
-            with subprocess.Popen(command, env=env, stdout=log, stderr=subprocess.STDOUT) as process:
+            with LockedPopen(command, env=env, stdout=log, stderr=subprocess.STDOUT) as process:
                 try:
                     code = (asr_evidence.observe(process, args.timeout, samples) if args.inspect_runtime
                             else process.wait(timeout=args.timeout))

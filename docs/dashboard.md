@@ -24,7 +24,7 @@ Read-only checks of state, Tower, ATIS, audio, METEOR and schedule returned HTTP
 
 ## Tower capture visibility — 2026-10-06
 
-Tower displays the latest 20 capture attempts, including no_activity, at the top of Airband. Times use Europe/Helsinki. Available audio has playback/download controls; expired audio retains capture metadata. Silent live Tower WAVs remain within the latest 20 capture folders; older processed silence is pruned without touching speech, reference, ATIS or satellite material. See [project log](project-log.md).
+Tower displays the latest 20 capture attempts, including no_activity, at the top of Airband. Times use Europe/Helsinki. Available audio has playback/download controls; expired audio retains capture metadata. The latest 20 is a display limit. Current Tower audio retention is 30 days with permanent pins protected; older already-missing audio remains missing. This supersedes the October 6 silent-audio rolling window. See [project log](project-log.md).
 
 ## AIS map reception history — verified 8 October 2026
 
@@ -35,3 +35,15 @@ Both the regional and local AIS maps use the shared Recent / 24 hours / 7 days s
 Hover text gives Position received with browser-local timestamp and elapsed reception age. Historical targets outside the live positioned MMSI set are faded to opacity 0.65 and receive name/MMSI plus age labels; other targets older than 30 minutes fade to 0.30. Local map labels are spaced with connector lines where displaced. Reception age describes the last position message, not current vessel freshness.
 
 See [dated validation, tests, restart, rollback and showcase evidence](ais-dashboard-completion-20261008.md). Counts in that report are time-dependent observations, never fixed expected totals.
+
+## Current Airband/review behavior — 10 October 2026
+
+Tower displays acoustic classification, diagnostic score/threshold, review state and playable retained audio; ASR is deferred. The optional queue is newest 20 **unreviewed completed valid AD scores >= recorded threshold**, not all acoustic voice candidates. GET `/api/tower?review=anomaly_candidate` selects it; `candidate_voice` is a compatibility alias. GET `/api/tower/reviews` includes cumulative validation; token-protected POST `/api/tower/review` saves human labels and refreshes the queue. Any saved classification removes the item. Inclusive history remains with the filter off. [Tower details](tower-anomaly.md).
+
+ATIS presents original ASR, normalization, field status/counts, latest individual and consecutive-capture consensus separately. `?recording=<id>` selects individual history/audio. GET `/api/atis/shadow` exposes the separate candidate queue; GET/POST `/api/atis/validation` supports human references and strict raw-field evaluation, with write-token protection. The validation timer discovers candidates without inference. Parser completeness and consensus agreement do not certify accuracy. [ATIS](atis.md).
+
+Times in Airband use Europe/Helsinki; AIS reception-age hover times are browser-local. Missing/expired audio can retain metadata and review evidence. API controls do not expose public authentication; do not publish session tokens or private observer/map coordinates.
+
+The 10 October inspection obtained 200 from Tower, ATIS, METEOR, schedule and saved-audio endpoints; `/api/state` timed out at 10 s. This is current failure evidence, not a blanket healthy-dashboard claim. The completed four-hour observation also recorded state timeouts. [Audit](current-status.md).
+
+Follow-up at 06:55 UTC / 09:55 Helsinki: three `/api/state` requests returned 200 in 0.135 s each; `/api/atis/shadow` returned 200 in 0.017 s. `/api/atis/validation` and `/api/tower/reviews` each exceeded a 4 s timeout. Recovery of state responses does not invalidate the earlier timeout or certify the slower review endpoints.

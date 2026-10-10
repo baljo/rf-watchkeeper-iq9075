@@ -15,3 +15,9 @@ Limits: a real reboot test for the new watchdog is explicitly unperformed in the
 ## Later verified observations — 5 October 2026
 
 The retained 18:46 UTC Airband deployment report observed METEOR-driven scheduler restoration at 18:41:08 UTC after capture. The scheduler/dashboard/Airband worker/health timer were active during the later [publication inspection](evidence/publication-inspection.json). These later observations supersede the earlier inspection's unresolved restoration observation, while the historical text above remains intact. A real new-watchdog reboot acceptance test and long-run reliability remain unverified. See [watchdog and recovery](watchdog-and-recovery.md).
+
+## Current operational limits — 10 October 2026
+
+Health timer and primary services remain active; no new fault injection, forced recovery, USB/DSP reset or reboot was performed. Sample progress still does not imply successful interpretation. Corrected ATIS workers are deployed on device1, but retained DMA growth, Genie failures and dashboard timeouts failed integrated acceptance. Do not reset DSP mappings or restart unrelated services as an undocumented workaround; preserve evidence and protect imminent/active satellite ownership. [Failure details](evk-utilization-status-20261009.md), [current services](operation.md).
+
+Recovery after individual METEOR captures has dated successful observations; full watchdog reboot/end-to-end resume and sustained all-workload reliability remain unverified. Repair/retry Tower failures individually using preserved failure records; never bulk-clear terminal JSON or delete failed/unverified satellite raw IQ. [Tower recovery](tower-failure-fix-20261009.md), [retention](data-retention.md).

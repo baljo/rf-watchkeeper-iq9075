@@ -276,6 +276,33 @@ class Handler(BaseHTTPRequestHandler):
             pass
 
     def do_POST(self):
+        if urlsplit(self.path).path == '/api/tower/review':
+            if not self.control_token or not secrets.compare_digest(self.headers.get('X-Watchkeeper-Token', ''), self.control_token):
+                return self.respond({'error':'Refresh dashboard before saving review.'}, status=403)
+            try:
+                if self.headers.get('Content-Type','').split(';')[0] != 'application/json': raise ValueError('Expected JSON')
+                self.connection.settimeout(5)
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0 < length <= 4096: raise ValueError('Invalid request length')
+                import tower_anomaly_review
+                return self.respond(tower_anomaly_review.save(ROOT, json.loads(self.rfile.read(length))))
+            except (OSError,ValueError,KeyError,TypeError) as error:
+                return self.respond({'error':str(error)},status=400)
+
+        if urlsplit(self.path).path == '/api/atis/validation':
+            if not self.control_token or not secrets.compare_digest(self.headers.get('X-Watchkeeper-Token', ''), self.control_token):
+                return self.respond({'error':'Refresh the dashboard before saving a review.'}, status=403)
+            try:
+                if self.headers.get('Content-Type','').split(';')[0] != 'application/json':
+                    raise ValueError('Expected JSON')
+                self.connection.settimeout(5)
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0 < length <= 16384: raise ValueError('Invalid request length')
+                import atis_validation
+                return self.respond(atis_validation.save(json.loads(self.rfile.read(length)),ROOT))
+            except (OSError,ValueError,KeyError,TypeError,sqlite3.Error) as error:
+                return self.respond({'error':str(error)},status=400)
+
         if urlsplit(self.path).path == '/api/meteor/pin':
             if not self.control_token or not secrets.compare_digest(self.headers.get('X-Watchkeeper-Token', ''), self.control_token):
                 return self.respond({'error': 'Refresh the dashboard before changing Keep protection.'}, status=403)
@@ -337,10 +364,20 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(path.read_bytes(), "image/png")
             except (OSError, ValueError, sqlite3.Error):
                 return self.respond({'error':'Satellite image unavailable'}, status=404)
+        if route == "/api/tower/reviews":
+            try:
+                import tower_anomaly_review
+                from tower_validation import snapshot as tower_validation_snapshot
+                return self.respond({"reviews":tower_anomaly_review.table(ROOT),"validation":tower_validation_snapshot(ROOT)})
+            except (OSError,ValueError) as error:
+                return self.respond({"error":str(error)},status=400)
         if route == "/api/tower":
             try:
                 data=atis_view.snapshot(ROOT, 'tower')
+                data['control_token']=self.control_token
                 data['recent_captures']=atis_view.recent(ROOT)
+                if parse_qs(urlsplit(self.path).query).get('review') in (['anomaly_candidate'], ['candidate_voice']):
+                    data['recent_captures']=atis_view.recent(ROOT, candidates_only=True)
                 return self.respond(data)
             except (OSError, ValueError) as error:
                 return self.respond({'status':'unavailable','message':str(error)}, status=503)
@@ -349,14 +386,29 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(atis_view.audio(ROOT, 'tower', parse_qs(urlsplit(self.path).query).get('recording', [None])[0]), "audio/wav")
             except (OSError, ValueError):
                 return self.respond({'error':'Tower audio unavailable'}, status=404)
+        if route == '/api/atis/validation':
+            try:
+                import atis_validation
+                data=atis_validation.snapshot(ROOT)
+                data['control_token']=self.control_token
+                return self.respond(data)
+            except (OSError,ValueError,sqlite3.Error):
+                return self.respond({'error':'ATIS validation temporarily unavailable'},status=503)
+        if route == "/api/atis/shadow":
+            try:
+                import atis_shadow
+                return self.respond(atis_shadow.snapshot(ROOT))
+            except (OSError, ValueError, sqlite3.Error):
+                return self.respond({'status':'unavailable','message':'ATIS shadow status unavailable'}, status=503)
         if route == "/api/atis":
             try:
-                return self.respond(atis_view.snapshot(ROOT))
+                recording=parse_qs(urlsplit(self.path).query).get('recording',[None])[0]
+                return self.respond(atis_view.atis_response(ROOT,recording=recording))
             except (OSError, ValueError):
                 return self.respond({"status":"unavailable","message":"ATIS results unavailable; retry shortly."}, status=503)
         if route == "/api/atis/audio":
             try:
-                return self.respond(atis_view.audio(ROOT), "audio/wav")
+                return self.respond(atis_view.audio(ROOT,'atis',parse_qs(urlsplit(self.path).query).get('recording',[None])[0]), "audio/wav")
             except (OSError, ValueError):
                 return self.respond({"error":"ATIS audio unavailable"}, status=404)
         if route == "/api/nexus/history":

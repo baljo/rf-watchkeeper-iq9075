@@ -101,8 +101,13 @@ def in_window(job, now=None):
         with (ROOT/'Helsinki.tzif').open('rb') as source:
             zone = ZoneInfo.from_file(source, key='Europe/Helsinki')
     local = (now or datetime.now(timezone.utc)).astimezone(zone)
+    pause_path = ROOT/'tower-recording-pause.json'
+    if pause_path.exists():
+        pause = json.loads(pause_path.read_text())
+        if local < datetime.fromisoformat(pause['until']):
+            return False
     minute = local.hour*60+local.minute
-    return minute >= 300 or minute < 90
+    return 420 <= minute < 1380
 
 def ordered_jobs(config):
     # Every enabled job gets one slot per cycle; priority only changes order.

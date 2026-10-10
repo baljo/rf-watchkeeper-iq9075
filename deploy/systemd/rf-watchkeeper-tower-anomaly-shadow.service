@@ -1,0 +1,19 @@
+[Unit]
+Description=Isolated Tower audio anomaly shadow diagnostics
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/tower_anomaly_shadow.py --root /root/rf-watchkeeper --model /root/rf-watchkeeper/evaluation/tower-anomaly/model.json --output /root/rf-watchkeeper/evaluation/tower-anomaly/shadow
+Nice=19
+IOSchedulingClass=idle
+CPUQuota=10%
+MemoryMax=256M
+TasksMax=8
+TimeoutStartSec=30
+Environment=OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/root/rf-watchkeeper/evaluation/tower-anomaly
+PrivateTmp=yes

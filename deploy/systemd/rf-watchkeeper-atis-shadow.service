@@ -1,0 +1,19 @@
+[Unit]
+Description=Prompt-aware HTP ATIS shadow queue (production unchanged)
+After=rf-watchkeeper-atis-process.service
+
+[Service]
+Type=simple
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/atis_shadow.py
+Restart=on-failure
+RestartSec=15
+Nice=19
+CPUWeight=5
+IOWeight=5
+TimeoutStopSec=15
+KillMode=control-group
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

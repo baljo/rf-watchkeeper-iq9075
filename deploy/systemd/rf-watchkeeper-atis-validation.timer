@@ -1,0 +1,8 @@
+[Unit]
+Description=Refresh human ATIS validation queue
+[Timer]
+OnBootSec=90
+OnUnitActiveSec=60
+Persistent=true
+[Install]
+WantedBy=timers.target

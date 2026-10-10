@@ -17,12 +17,15 @@ import time
 import wave
 import rf_health
 import airband_text
+import atis_parser
+import tower_retention
+from inference_resource import LockedPopen
 from adaptive_rf import TowerHold
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / 'recordings' / 'atis'
 SMALL = ROOT / 'model-trials/whisper-small-v0.50.2/model'
-GENIE = Path('/root/genie/qwen3-4b-iq9075/genie_config.absolute.json')
+GENIE = ROOT / 'data/atis-genie-device1.json'
 FIELDS = ['information_identifier','atis_time_utc','runway','runway_conditions','transition_level',
           'wind','visibility','clouds','temperature','dew_point','qnh','remarks']
 
@@ -181,7 +184,7 @@ def capture(config, job, stop, publisher):
         return 'skipped'
     return completed
 
-def prepare(folder):
+def prepare(folder, full_coverage=False):
     with wave.open(str(folder / 'raw.wav')) as wav:
         if wav.getnchannels() != 1 or wav.getsampwidth() != 2:
             raise ValueError('Expected mono signed 16-bit PCM audio')
@@ -192,7 +195,16 @@ def prepare(folder):
     offset = sum(samples) / len(samples)
     peak = max(abs(x-offset) for x in samples)
     gain = min(50, 29000 / peak) if peak else 1
-    regions, segmentation = airband_text.activity_regions(samples, rate)
+    if full_coverage:
+        regions = [(s, min(s + 28 * rate, len(samples)))
+                   for s in range(0, len(samples), 28 * rate)]
+        segmentation = {'status': 'full_message', 'method': 'atis-full-coverage-v1',
+            'input_seconds': len(samples) / rate, 'retained_seconds': len(samples) / rate,
+            'dropped_seconds': 0.0, 'chunk_seconds': 28,
+            'regions': [{'start_seconds': s / rate, 'end_seconds': e / rate} for s, e in regions],
+            'note': 'ATIS retains every sample; energy gating remains available for Tower.'}
+    else:
+        regions, segmentation = airband_text.activity_regions(samples, rate)
     save(folder / 'segmentation.json', segmentation)
     clean = array.array('h', (int(max(-32768, min(32767, round((x-offset)*gain)))) for x in samples))
     with wave.open(str(folder / 'listen.wav'), 'wb') as wav:
@@ -217,7 +229,7 @@ def guarded_run(argv, log_path, stop, timeout=90, env=None):
     proc = None
     try:
         with log_path.open('wb') as log:
-            proc = subprocess.Popen(argv, stdout=log, stderr=subprocess.STDOUT, env=env)
+            proc = LockedPopen(argv, stdout=log, stderr=subprocess.STDOUT, env=env)
             deadline = time.monotonic()+timeout
             while proc.poll() is None:
                 if stop.wait(1) or satellite_reason(max(0,deadline-time.monotonic())):
@@ -230,18 +242,54 @@ def guarded_run(argv, log_path, stop, timeout=90, env=None):
         stop_child(proc)
 
 def process(folder, stop):
-    clips = prepare(folder)
+    if ('tower' in folder.parts or 'asr-reference-corpus' in folder.parts or 'evaluation' in folder.parts) and tower_retention.protected(folder):
+        return  # Permanent originals/references must never be regenerated or cleaned.
+
+    if folder.parent.name == 'tower':
+        import tower_classification
+        tower_classification.process(folder)
+        return
+
+    asr_seconds = 0.0
+    clips = prepare(folder, full_coverage=folder.parent.name == 'atis')
+    if folder.parent.name == 'atis':
+        import atis_shadow as sh
+        for _,path in clips:path.unlink()
+        sh.prepare(folder/'raw.wav',folder)
+        clips=[(int(p.stem.split('-')[1])/1000,p) for p in sorted(folder.glob('clip-*.wav'))]
     results = []
     env = dict(os.environ, LD_LIBRARY_PATH=str(ROOT/'asr_native/lib')+':/usr/lib:'+os.environ.get('LD_LIBRARY_PATH',''))
+    asr_loop_started = time.monotonic()
     for start, path in clips:
         result = path.with_suffix('.json')
+        raw = None
         try:
             # A deferred/retried clip must not reuse an earlier model result.
             if result.exists():
                 result.unlink()
-            guarded_run([str(ROOT/'asr_native/voice-ai-ref'), '-m', str(SMALL), '-f', str(path),
-                         '-o', str(result), '-l', 'en', '-t', 'transcribe'], path.with_suffix('.log'), stop, env=env)
-            raw = json.loads(result.read_text())
+            clip_started = time.monotonic()
+            if folder.parent.name == 'atis':
+                import tempfile
+                import atis_shadow as sh
+                with tempfile.TemporaryDirectory(prefix='atis-device1-',dir=ROOT/'data') as tmp:
+                    inputs=Path(tmp)/'inputs';inputs.mkdir()
+                    shutil.copyfile(path,inputs/path.name)
+                    output=Path(tmp)/'candidate'
+                    guarded_run([str(sh.CANDIDATE/'python/bin/python3'),str(ROOT/'atis_runtime_device1.py'),
+                        '--prompt','legacy','--beam','1','--input-dir',str(inputs),'--output-name',str(output)],
+                        path.with_suffix('.log'),stop,env=dict(os.environ,LD_LIBRARY_PATH='/usr/lib',
+                        RF_ATIS_PRODUCTION='1',HF_HOME=str(sh.CANDIDATE/'hf-cache'),OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1'))
+                    record=json.loads((output/'record.json').read_text());sh.evidence(record)
+                    assert [r['input_sha256'] for r in record['rows']]==[sh.digest(path)]
+                    evidence=folder/'runtime-device1';evidence.mkdir(exist_ok=True)
+                    save(evidence/(path.stem+'.json'),record)
+                    shutil.copyfile(path.with_suffix('.log'),evidence/(path.stem+'.log'))
+                    raw={'text':record['text'],'language':'en','device_id':1,'execution_evidence':record}
+            else:
+                guarded_run([str(ROOT/'asr_native/voice-ai-ref'), '-m', str(SMALL), '-f', str(path),
+                             '-o', str(result), '-l', 'en', '-t', 'transcribe'], path.with_suffix('.log'), stop, env=env)
+                raw = json.loads(result.read_text())
+            asr_seconds += time.monotonic() - clip_started
             text = re.sub(r'\[\d+ms\s*-\s*\d+ms\]', ' ', raw.get('text','')).strip()
             if not text:
                 results.append({'start_seconds':start, 'status':'no_speech', 'raw':raw})
@@ -254,13 +302,18 @@ def process(folder, stop):
         except InterruptedError:
             raise
         except (OSError, ValueError, RuntimeError, TimeoutError) as error:
-            results.append({'start_seconds':start, 'status':'failed', 'error':str(error)})
+            failed = {'start_seconds':start, 'status':'failed', 'error':str(error)}
+            if raw is not None and folder.parent.name != 'tower':
+                failed['raw'] = raw
+            results.append(failed)
     valid = [r for r in results if r.get('text')]
-    transcript = {'model':'Qualcomm Whisper small QCS9075 v0.50.2', 'accelerator_requested':'HTP/QNN',
-                  'accelerator_verified':False, 'status':'experimental' if valid else ('no_activity' if not clips or all(r['status']=='no_speech' for r in results) else 'failed'),
+    transcript = {'asr_runtime_seconds':time.monotonic()-asr_loop_started, 'model':'Qualcomm Whisper small QCS9075 v0.50.2', 'accelerator_requested':'HTP/QNN',
+                  'accelerator_verified':bool(results) and all(r.get('raw',{}).get('device_id')==1 for r in results), 'runtime_path':'device1-cleanup-full80-v2' if folder.parent.name=='atis' else 'existing-tower', 'status':'experimental' if valid else ('no_activity' if not clips or all(r['status']=='no_speech' for r in results) else 'failed'),
                   'language_requested':'en', 'segmentation':json.loads((folder/'segmentation.json').read_text()),
-                  'segments':results, 'note':'Energy-gated clips may include RF noise; numeric fields require review.'}
+                  'segments':results, 'note':'Preparation coverage is recorded in segmentation; numeric fields require review.'}
     save(folder/'transcript.json', transcript)
+    if folder.parent.name != 'tower':
+        save(folder/'structured-atis.json', atis_parser.parse(transcript))
     interpretation = {'status':'not_run', 'reason':'No valid transcript'}
     if valid and folder.parent.name != 'tower':
         fields = FIELDS
@@ -298,34 +351,30 @@ def process(folder, stop):
          'interpretation_status':interpretation['status'],'transcript_hash':digest,
          'processed_at':datetime.now(timezone.utc).isoformat()})
 
+    # Shadow enqueue is isolated: production publication has already completed.
+    shadow_hold = False
+    if folder.parent.name == 'atis':
+        try:
+            import atis_shadow
+            atis_shadow.enqueue(folder)
+            shadow_hold = atis_shadow.retention_hold(folder)
+        except Exception as error:
+            print('ATIS SHADOW enqueue failure: '+repr(error), flush=True)
+            shadow_hold = True  # Preserve eligible audio for discovery after recovery.
+
     for path in folder.glob('clip-*'):
-        if path.suffix in ('.wav', '.json', '.log'):
+        if path.suffix in ('.wav', '.json', '.log') and not (('tower' in folder.parts or 'asr-reference-corpus' in folder.parts or 'evaluation' in folder.parts) and tower_retention.protected(folder)):
             path.unlink(missing_ok=True)
     if folder.parent.name == 'tower':
         retain_tower_audio(folder.parent)
-    elif outcome == 'no_activity':
+    elif outcome == 'no_activity' and not shadow_hold and not tower_retention.protected(folder):
         for name in ('raw.wav', 'listen.wav'):
             (folder/name).unlink(missing_ok=True)
         save(folder/'audio-retention.json', {'status':'silence_removed', 'metadata_retained':True})
 
 def retain_tower_audio(base, keep=20):
-    """Only prune processed silent live Tower WAVs; preserve metadata and speech."""
-    folders=sorted((p for p in base.iterdir() if p.is_dir() and not p.is_symlink()
-                    and re.fullmatch(r'\d{8}T\d{6}\.\d{6}Z',p.name)
-                    and (p/'capture.json').is_file()),key=lambda p:p.name,reverse=True)
-    for index,p in enumerate(folders):
-        try:
-            capture=json.loads((p/'capture.json').read_text())
-            processed=json.loads((p/'processed.json').read_text())
-            if capture.get('source')!='live' or capture.get('kind')!='tower' or processed.get('status')!='no_activity':continue
-            if index < keep:
-                save(p/'audio-retention.json', {'status':'recent_silence_retained','window_captures':keep,'metadata_retained':True})
-                continue
-            for name in ('raw.wav','listen.wav'):
-                path=p/name
-                if not path.is_symlink():path.unlink(missing_ok=True)
-            save(p/'audio-retention.json', {'status':'silence_removed','window_captures':keep,'metadata_retained':True})
-        except (OSError,ValueError):continue
+    # keep is accepted for compatibility; capture count no longer controls deletion.
+    return tower_retention.cleanup(base)
 
 def validate_interpretation(parsed, segments):
     if not isinstance(parsed,dict) or not isinstance(parsed.get('fields'),dict):
@@ -384,12 +433,17 @@ def worker():
     for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,lambda *_:stop.set())
     OUT.mkdir(parents=True,exist_ok=True)
     while not stop.is_set():
+        # Tower screening is independent of ASR/Genie availability.
+        for tower_folder in sorted((ROOT/'recordings/tower').glob('*')):
+            if tower_folder.is_dir() and (tower_folder/'capture.json').is_file() and not (tower_folder/'tower-classification.json').exists():
+                import tower_classification
+                tower_classification.process(tower_folder)
         if not satellite_reason(180):
             # Avoid overlapping existing dashboard ASR or Genie inference.
             busy=command(['ps','-eo','comm']).splitlines()
             if not any(n in ('voice-ai-ref','genie-t2t-run') for n in busy):
                 pending=[]
-                bases=[OUT, ROOT/'recordings/tower']
+                bases=[OUT]
                 for folder in sorted((p for base in bases if base.exists() for p in base.iterdir()), key=lambda p:p.name):
                     if folder.is_dir() and (folder/'capture.json').exists() and not (folder/'processed.json').exists():
                         if json.loads((folder/'capture.json').read_text())['status']=='ready':pending.append(folder)
@@ -405,4 +459,3 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--process',type=Path);args=parser.parse_args()
     if args.process:process(args.process,threading.Event())
     else:worker()
-
