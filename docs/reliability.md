@@ -1,6 +1,6 @@
 # Reliability and recovery
 
-The detailed implementation guide is [RF_HEALTH.md](../RF_HEALTH.md); preserve and update that guide rather than duplicating its design here. [Project log](project-log.md) records dated implementation evidence and limits.
+The detailed implementation guide is [RF_HEALTH.md](legacy/rf-health.md); preserve and update that guide rather than duplicating its design here. [Project log](project-log.md) records dated implementation evidence and limits.
 
 Current installed components include `rf_health.py`, `rf_health_monitor.py`, sample-reporting integrations, `rf-health-config.json`, health service/timer and dashboard health display. V4MAIN01 is enabled/required; 43300001 is disabled. Health uses sample evidence independently of application output. Its SQLite tables exist alongside existing application tables.
 

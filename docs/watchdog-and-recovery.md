@@ -1,6 +1,6 @@
 # RF health watchdog and recovery
 
-Detailed implementation: [RF_HEALTH.md](../RF_HEALTH.md); dated evidence: [reliability](reliability.md). The watchdog detects silent receiver/pipeline failure using **real sample activity**, independently of decoded AIS, speech or images.
+Detailed implementation: [RF_HEALTH.md](legacy/rf-health.md); dated evidence: [reliability](reliability.md). The watchdog detects silent receiver/pipeline failure using **real sample activity**, independently of decoded AIS, speech or images.
 
 AIS reports native sample-processing evidence; audio reports PCM, ATIS/Tower recorded PCM, METEOR IQ/preflight bytes and exit status. Intentional satellite cancellation is separate from RF failure. V4MAIN01 is enabled/required; disabled 43300001 displays DISABLED.
 

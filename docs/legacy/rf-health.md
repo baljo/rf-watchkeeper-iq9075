@@ -1,4 +1,6 @@
-> Documentation status, 2026-10-05: See [reliability evidence and limits](docs/reliability.md), [hardware status](docs/hardware.md) and the [engineering log](docs/project-log.md). This guide describes installed monitoring; successful checks do not establish real reboot validation or long-run acceptance.
+> Repository layout, 10 October 2026: this preserved guide moved from `RF_HEALTH.md`. Relative code/configuration commands below assume the application root as the working directory. Historical deployment/stage paths remain dated evidence; follow [current installation](../installation.md) and topic guides.
+
+> Documentation status, 2026-10-05: See [reliability evidence and limits](../reliability.md), [hardware status](../hardware.md) and the [engineering log](../project-log.md). This guide describes installed monitoring; successful checks do not establish real reboot validation or long-run acceptance.
 
 # RF receiver watchdog
 

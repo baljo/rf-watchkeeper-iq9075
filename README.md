@@ -49,3 +49,22 @@ During the 10 October audit, the latest 12 retained ATIS outputs were `partial_s
 - [Project history](docs/project-history.md), [engineering log](docs/project-log.md), [workflow](docs/workflow.md), [experiments](docs/experiments.md), [privacy](docs/location-privacy.md)
 
 The repository exports application source and installed service snapshots, including the later deployed ASR/AD dependencies. It excludes models, native binaries, databases, recordings and private observer settings. A clone is not a turnkey EVK image. Read [AGENTS.md](AGENTS.md) and the workflow before engineering changes.
+
+
+## Repository structure
+
+| Location | Purpose |
+| --- | --- |
+| Root | README, agent instructions, Git settings; deployed Python, dashboard HTML, timezone data, job/health configuration and historical service snapshots |
+| `docs/` | Current technical, installation, operations and project guides |
+| `docs/legacy/` | Preserved ATIS/audio/METEOR/RF-health implementation guides; historical defaults do not override current guides |
+| `docs/evidence/` | Dated validation reports and curated patches |
+| `config/examples/` | Public observer configuration templates; copy to ignored root local configurations on a new installation |
+| `scripts/` | Manual ASR audio preparation, saved-event display and Genie inventory helpers |
+| `deploy/systemd/` | Reviewed installed unit/drop-in snapshots; preferred over historical root copies |
+| `backends/` | Bundled scheduler backend |
+| `static/` | Dashboard assets |
+
+Run manual helpers from the application root: `python3 scripts/prepare_asr.py --help`, `python3 scripts/show_events.py --help`. `scripts/probe_genie.py` inventories native tools/models on the EVK; it is not an automatically scheduled workload.
+
+Production files remain at root because effective EVK services, imports, external stages and relative runtime assets rely on that layout. A future `src/rf_watchkeeper/` migration requires an explicit packaging/deployment plan, complete import/path audit, staged Linux/ARM64 tests and affected live-service verification. Helpers with project-root assumptions, receiver benchmarks, migration registrars and runtime-imported modules also remain in place pending that audit. Existing EVK helper copies and runtime configurations are preserved; this cleanup deploys documentation only.

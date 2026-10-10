@@ -1,0 +1,12 @@
+{
+  "ATIS_POC.md": "docs/legacy/atis-poc.md",
+  "AUDIO_WORKFLOW.md": "docs/legacy/audio-workflow.md",
+  "AUTONOMOUS_EVK.md": "docs/legacy/autonomous-evk.md",
+  "METEOR_AUTOMATION.md": "docs/legacy/meteor-automation.md",
+  "RF_HEALTH.md": "docs/legacy/rf-health.md",
+  "ais-config.example.json": "config/examples/ais-config.example.json",
+  "meteor-config.example.json": "config/examples/meteor-config.example.json",
+  "prepare_asr.py": "scripts/prepare_asr.py",
+  "show_events.py": "scripts/show_events.py",
+  "probe_genie.py": "scripts/probe_genie.py"
+}

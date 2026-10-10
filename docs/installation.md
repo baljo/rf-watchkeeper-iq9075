@@ -41,7 +41,7 @@ command -v rtl_sdr rtl_fm
 test -x /root/AIS-catcher
 ```
 
-Before services/reservations exist, use your platform's USB inspection tools and a controlled receiver test to confirm the V4 serial and actual sample progress. Enumeration alone is insufficient. Do not run an unbounded receiver test alongside scheduling/capture. [RF health](../RF_HEALTH.md) separates sample evidence from decoded traffic.
+Before services/reservations exist, use your platform's USB inspection tools and a controlled receiver test to confirm the V4 serial and actual sample progress. Enumeration alone is insufficient. Do not run an unbounded receiver test alongside scheduling/capture. [RF health](legacy/rf-health.md) separates sample evidence from decoded traffic.
 
 ### 4. Supply Python environments
 
@@ -61,8 +61,8 @@ Expected: imports succeed under the interpreters the units actually execute.
 Only on a fresh checkout, after checking neither destination exists:
 
 ```sh
-cp -n ais-config.example.json ais-config.json
-cp -n meteor-config.example.json meteor-config.json
+cp -n config/examples/ais-config.example.json ais-config.json
+cp -n config/examples/meteor-config.example.json meteor-config.json
 ```
 
 Edit the ignored local copies. **The METEOR example has `enabled: true`: set it to `false` before starting automation.** Keep `cleanup_enabled: false` and `retention.automatic_deletion_validated: false`. Enter actual observer coordinates/elevation locally; public examples are not planning/distance calibration. Review the dashboard's example observer/map centres separately. Keep private edits out of Git, patches, screenshots and evidence: ignored JSON does not protect tracked HTML. See [location privacy](location-privacy.md).
@@ -77,7 +77,7 @@ Optional Genie/Qwen3 lives under external `/root/genie/`, with recorded config `
 
 ### 7. Supply SatDump ARM64/Docker runtime
 
-The recorded decoder is **SatDump 1.2.2 ARM64**, isolated in `rf-watchkeeper-satdump:1.2.2-arm64` on Debian `bookworm-slim`, rather than installed on the Qualcomm host. [AUTONOMOUS_EVK.md](../AUTONOMOUS_EVK.md) records the base digest, downloaded package fingerprint and October 3 offline validation. [Current METEOR](meteor.md) documents subsequent useful imagery and unresolved SIGSEGV.
+The recorded decoder is **SatDump 1.2.2 ARM64**, isolated in `rf-watchkeeper-satdump:1.2.2-arm64` on Debian `bookworm-slim`, rather than installed on the Qualcomm host. [AUTONOMOUS_EVK.md](legacy/autonomous-evk.md) records the base digest, downloaded package fingerprint and October 3 offline validation. [Current METEOR](meteor.md) documents subsequent useful imagery and unresolved SIGSEGV.
 
 Docker already existed on the original EVK. The build definition/package/log were retained externally in `/root/rf-watchkeeper/meteor-native-stage-20261003`, absent from Git. Required `data/meteor-native-runtime.json` is also excluded. Recover reviewed artifacts or independently construct and validate an equivalent runtime before claiming decoding available. The package fingerprint is not an upstream signature. A matching tag is insufficient: [satdump_evk.py](../satdump_evk.py) compares Docker's actual image ID with manifest `image_id`. Do not blindly copy another host's identity or bypass this check.
 
@@ -85,7 +85,7 @@ Preserve the wrapper's two-CPU/four-GiB limit, no network/SDR access, read-only 
 
 ### 8. Review and install systemd units in stages
 
-[deploy/systemd](../deploy/systemd/) contains inspected snapshots, not a complete installer. Review every selected unit's `ExecStart`, dependencies, drop-ins, interpreter and writable paths before copying it into `/etc/systemd/system/`. Prefer these snapshots to older duplicate root units. Existing deployments must use section B.
+[deploy/systemd](../deploy/systemd) contains inspected snapshots, not a complete installer. Review every selected unit's `ExecStart`, dependencies, drop-ins, interpreter and writable paths before copying it into `/etc/systemd/system/`. Prefer these snapshots to older duplicate root units. Existing deployments must use section B.
 
 For example, after review on the new host:
 
@@ -134,7 +134,7 @@ Listen to captures and compare known controls before claiming speech accuracy. Q
 
 ### 10. Enable unattended operation after review
 
-After planning, ownership, storage and decoder checks pass, set local METEOR `enabled` true and follow the reviewed EVK timer activation sequence in [METEOR_AUTOMATION.md](../METEOR_AUTOMATION.md). Ignore its obsolete Dell worker, initially disabled deployment and 1.024 MS/s defaults. Keep both deletion gates false; failed/unverified raw captures must not be automatically deleted. [Retention](data-retention.md) governs later review; disk pressure skips capture rather than authorizing deletion.
+After planning, ownership, storage and decoder checks pass, set local METEOR `enabled` true and follow the reviewed EVK timer activation sequence in [METEOR_AUTOMATION.md](legacy/meteor-automation.md). Ignore its obsolete Dell worker, initially disabled deployment and 1.024 MS/s defaults. Keep both deletion gates false; failed/unverified raw captures must not be automatically deleted. [Retention](data-retention.md) governs later review; disk pressure skips capture rather than authorizing deletion.
 
 Keep the EVK powered. Record normal scheduled Tower/ATIS/AIS operation, a managed satellite handoff/capture/process result, scheduler restoration and post-restart persistence. Inspect journals, pass records and free storage without interrupting reservations. Schedule reboot acceptance outside capture windows. Real watchdog reboot/end-to-end resume and sustained unattended reliability remain outstanding in retained evidence; enabled units prove neither. See [operation](operation.md) and [reliability](reliability.md).
 
@@ -162,7 +162,7 @@ Repeat relevant section A status/API/planner checks. Confirm scheduled work resu
 
 ## Remaining reproducibility limitations
 
-Preserved [ATIS proof of concept](../ATIS_POC.md) and [audio workflow](../AUDIO_WORKFLOW.md) provide dated installation/rollback context alongside the METEOR guides. Their 30-minute ATIS interval, pre-dashboard defaults and stage-specific installers are historical; current guides and local configuration take precedence.
+Preserved [ATIS proof of concept](legacy/atis-poc.md) and [audio workflow](legacy/audio-workflow.md) provide dated installation/rollback context alongside the METEOR guides. Their 30-minute ATIS interval, pre-dashboard defaults and stage-specific installers are historical; current guides and local configuration take precedence.
 
 - Fresh OS provisioning, SDR/AIS-catcher installation and exact versions, and locked Python dependencies lack an end-to-end validated recipe.
 - Docker provisioning, original image build stage/runtime manifest, proprietary ASR/Whisper/Genie artifacts, speaker guard/drop-ins require separate acquisition/reconstruction.

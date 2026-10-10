@@ -1,0 +1,34 @@
+{
+  "local_markdown_links_checked": 317,
+  "new_missing_links": [],
+  "existing_historical_missing_links": [
+    {
+      "file": "docs/project-log.md",
+      "target": "../data/meteor-auto-revisions/20261003T171534Z/activation-status.json"
+    },
+    {
+      "file": "docs/project-log.md",
+      "target": "../backups/satellite-import-20261003T183401Z/verification.json"
+    },
+    {
+      "file": "docs/project-log.md",
+      "target": "../data/meteor-auto/passes/m24-20261005T014957Z/pass.json"
+    }
+  ],
+  "json_examples_valid": true,
+  "python_syntax_valid": true,
+  "known_private_coordinates_absent_from_added_lines": true,
+  "moves": {
+    "ATIS_POC.md": "docs/legacy/atis-poc.md",
+    "AUDIO_WORKFLOW.md": "docs/legacy/audio-workflow.md",
+    "AUTONOMOUS_EVK.md": "docs/legacy/autonomous-evk.md",
+    "METEOR_AUTOMATION.md": "docs/legacy/meteor-automation.md",
+    "RF_HEALTH.md": "docs/legacy/rf-health.md",
+    "ais-config.example.json": "config/examples/ais-config.example.json",
+    "meteor-config.example.json": "config/examples/meteor-config.example.json",
+    "prepare_asr.py": "scripts/prepare_asr.py",
+    "show_events.py": "scripts/show_events.py",
+    "probe_genie.py": "scripts/probe_genie.py"
+  },
+  "all_preexisting_non_markdown_bytes_preserved_except_updated_audit_verifier": true
+}

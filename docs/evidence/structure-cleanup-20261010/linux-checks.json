@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "command": "python3 scripts/prepare_asr.py --help",
+      "returncode": 0
+    },
+    {
+      "command": "python3 scripts/show_events.py --help",
+      "returncode": 0
+    },
+    {
+      "check": "48 kHz fixture -> 16 kHz mono PCM16; original preserved",
+      "result": "pass"
+    },
+    {
+      "check": "existing output overwrite refused",
+      "result": "pass"
+    },
+    {
+      "check": "event-display fixture with malformed line",
+      "result": "pass"
+    },
+    {
+      "check": "Genie inventory imports safely; inventory/native tools not executed",
+      "result": "pass"
+    }
+  ],
+  "platform": "live EVK Linux/ARM64, disposable fixture directory",
+  "RF_or_inference_started": false
+}

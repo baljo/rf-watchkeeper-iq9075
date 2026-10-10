@@ -1,4 +1,6 @@
-> Documentation status, 2026-10-05: Historical October 2 proof-of-concept record. See [current Airband/ATIS status](docs/atis.md) for installed routes and remaining validation. The capability remains experimental/incomplete.
+> Repository layout, 10 October 2026: this preserved guide moved from `ATIS_POC.md`. Relative code/configuration commands below assume the application root as the working directory. Historical deployment/stage paths remain dated evidence; follow [current installation](../installation.md) and topic guides.
+
+> Documentation status, 2026-10-05: Historical October 2 proof-of-concept record. See [current Airband/ATIS status](../atis.md) for installed routes and remaining validation. The capability remains experimental/incomplete.
 
 # ATIS development — October 2, 2026
 

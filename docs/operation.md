@@ -22,7 +22,7 @@ Inspected **10 October 2026**. Live project: `/root/rf-watchkeeper`; primary bac
 | `satellite-v4-preflight.service` | Legacy guarded preflight/reboot helper |
 | `rf-watchkeeper-sensors.service`, `rf-watchkeeper-ais.service`, `rf-watchkeeper.service` | Optional/standalone/legacy receiver paths disabled; normal AIS uses the scheduler |
 
-METEOR timers were active; capture/process/health oneshots need not be continuously running. Historical dated satellite/preflight timers are evidence, not a fresh-install activation list. Manual reservations participate in guards. Effective definitions include drop-ins; public snapshots are in [deploy/systemd](../deploy/systemd/). Root duplicate units are older snapshots. The speaker guard executable/unit and external ASR/model environments remain acquisition prerequisites; exported drop-ins alone do not supply them.
+METEOR timers were active; capture/process/health oneshots need not be continuously running. Historical dated satellite/preflight timers are evidence, not a fresh-install activation list. Manual reservations participate in guards. Effective definitions include drop-ins; public snapshots are in [deploy/systemd](../deploy/systemd). Root duplicate units are older snapshots. The speaker guard executable/unit and external ASR/model environments remain acquisition prerequisites; exported drop-ins alone do not supply them.
 
 ```sh
 cd /root/rf-watchkeeper

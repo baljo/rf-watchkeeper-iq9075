@@ -1,4 +1,6 @@
-> Documentation status, 2026-10-05: Historical October 3 native-runtime installation record. Automation is now enabled and live/future managed sample rate is 256000; see [current METEOR behavior](docs/meteor.md). Preserve original offline validation limits below.
+> Repository layout, 10 October 2026: this preserved guide moved from [AUTONOMOUS_EVK.md](autonomous-evk.md). Relative code/configuration commands below assume the application root as the working directory. Historical deployment/stage paths remain dated evidence; follow [current installation](../installation.md) and topic guides.
+
+> Documentation status, 2026-10-05: Historical October 3 native-runtime installation record. Automation is now enabled and live/future managed sample rate is 256000; see [current METEOR behavior](../meteor.md). Preserve original offline validation limits below.
 
 # Autonomous METEOR processing on the EVK
 
@@ -30,8 +32,8 @@ cd /root/rf-watchkeeper
 .satellite-venv/bin/python meteor_pipeline.py plan --dry-run
 ```
 
-Use the existing activation commands in `METEOR_AUTOMATION.md` for the EVK timers only; skip all Dell-task instructions. Automatic retention should remain off until the first automatic pass has been reviewed. The first full live automated capture still needs verification; this update verifies offline decoder operation and reboot configuration without taking the receiver from your existing passes.
+Use the existing activation commands in [METEOR_AUTOMATION.md](meteor-automation.md) for the EVK timers only; skip all Dell-task instructions. Automatic retention should remain off until the first automatic pass has been reviewed. The first full live automated capture still needs verification; this update verifies offline decoder operation and reboot configuration without taking the receiver from your existing passes.
 
-Rollback: the install manifest includes the added wrapper and this guide and hashes the updated pipeline/configuration/process unit. The additive installer removes those owned files as described in `METEOR_AUTOMATION.md`, preserving data and modified config backups. The Docker image and runtime manifest remain as recoverable artifacts; they can be removed separately using the exact recorded image ID after processing is disabled. Do not prune unrelated Docker images or containers.
+Rollback: the install manifest includes the added wrapper and this guide and hashes the updated pipeline/configuration/process unit. The additive installer removes those owned files as described in [METEOR_AUTOMATION.md](meteor-automation.md), preserving data and modified config backups. The Docker image and runtime manifest remain as recoverable artifacts; they can be removed separately using the exact recorded image ID after processing is disabled. Do not prune unrelated Docker images or containers.
 
 SatDump source: [official 1.2.2 release](https://github.com/SatDump/SatDump/releases/tag/1.2.2). Debian base: `debian:bookworm-slim`, digest `sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251`. SatDump package SHA256: `2630490f0673c189383829e5c4c17c44e2f3c2bedb8ee8747af12586ebf6dbb9`; this is the downloaded package fingerprint, not an upstream-published signature.

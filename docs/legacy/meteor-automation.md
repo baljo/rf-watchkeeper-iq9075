@@ -1,8 +1,10 @@
-> Documentation status, 2026-10-05: Historical October 3 installation guide. Current automation is enabled, cleanup disabled, and live/future managed sample rate 256000. Recovery and partial-success handling have evolved; see [METEOR](docs/meteor.md), [reliability](docs/reliability.md) and [project log](docs/project-log.md). Do not apply historical defaults as current configuration.
+> Repository layout, 10 October 2026: this preserved guide moved from [METEOR_AUTOMATION.md](meteor-automation.md). Relative code/configuration commands below assume the application root as the working directory. Historical deployment/stage paths remain dated evidence; follow [current installation](../installation.md) and topic guides.
+
+> Documentation status, 2026-10-05: Historical October 3 installation guide. Current automation is enabled, cleanup disabled, and live/future managed sample rate 256000. Recovery and partial-success handling have evolved; see [METEOR](../meteor.md), [reliability](../reliability.md) and [project log](../project-log.md). Do not apply historical defaults as current configuration.
 
 # RF Watchkeeper METEOR milestone 1
 
-Prepared 2026-10-03 for Thomas Vikström. The current configuration runs the entire workflow on the EVK, including isolated ARM64 SatDump processing; no Dell is needed. See `AUTONOMOUS_EVK.md` for runtime details. Installation is additive and disabled. Existing `satellite_capture.py`, planner, jobs, manual reservations and unrelated services are unchanged. The EVK has no Git checkout or Git executable; the GitHub repository is empty. The local review bundle and install manifest provide review and rollback without publishing a repository.
+Prepared 2026-10-03 for Thomas Vikström. The current configuration runs the entire workflow on the EVK, including isolated ARM64 SatDump processing; no Dell is needed. See [AUTONOMOUS_EVK.md](autonomous-evk.md) for runtime details. Installation is additive and disabled. Existing `satellite_capture.py`, planner, jobs, manual reservations and unrelated services are unchanged. The EVK has no Git checkout or Git executable; the GitHub repository is empty. The local review bundle and install manifest provide review and rollback without publishing a repository.
 
 ## Components
 
@@ -58,7 +60,7 @@ systemctl disable --now rf-watchkeeper-meteor-plan.timer rf-watchkeeper-meteor-d
 python3 /root/rf-watchkeeper/meteor-stage-20261003/install_meteor.py rollback
 ```
 
-The installer validates hashes before removal, preserves modified configuration in a dated backup, and refuses to remove unexpectedly modified code/unit files. It removes only its recorded additions; raw recordings, processed products, attempt metadata, logs and stage are preserved. Installation touched no preexisting recorder/scheduler file, so there is no recorder/scheduler patch to revert. The isolated Docker image/runtime manifest remain recoverable artifacts; see `AUTONOMOUS_EVK.md`.
+The installer validates hashes before removal, preserves modified configuration in a dated backup, and refuses to remove unexpectedly modified code/unit files. It removes only its recorded additions; raw recordings, processed products, attempt metadata, logs and stage are preserved. Installation touched no preexisting recorder/scheduler file, so there is no recorder/scheduler patch to revert. The isolated Docker image/runtime manifest remain recoverable artifacts; see [AUTONOMOUS_EVK.md](autonomous-evk.md).
 
 ## Remaining validation and next milestone
 

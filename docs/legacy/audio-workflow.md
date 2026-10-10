@@ -1,4 +1,6 @@
-> Documentation status, 2026-10-05: Historical September 20 workflow/validation guide. See [current architecture](docs/architecture.md), [ATIS status](docs/atis.md) and the [engineering log](docs/project-log.md) for later verified developments.
+> Repository layout, 10 October 2026: this preserved guide moved from `AUDIO_WORKFLOW.md`. Relative code/configuration commands below assume the application root as the working directory. Historical deployment/stage paths remain dated evidence; follow [current installation](../installation.md) and topic guides.
+
+> Documentation status, 2026-10-05: Historical September 20 workflow/validation guide. See [current architecture](../architecture.md), [ATIS status](../atis.md) and the [engineering log](../project-log.md) for later verified developments.
 
 # Saved speech on the dashboard
 
@@ -15,7 +17,7 @@ The browser plays the recording on the phone/tablet/laptop, independently of the
 ## Files and behavior
 
 - `audio_workflow.py` coordinates one job at a time using `asr_offline.py` and `interpret.py`.
-- Eligible files: WAV under `asr_native/`, `aviation-fixtures/`, or `recordings/`, mono signed PCM16 at 16 kHz, nonempty and at most 30 seconds. Other WAV files appear disabled with a preparation explanation. This release does not trim or resample automatically; use the existing `prepare_asr.py` for supported 16/48 kHz mono files.
+- Eligible files: WAV under `asr_native/`, `aviation-fixtures/`, or `recordings/`, mono signed PCM16 at 16 kHz, nonempty and at most 30 seconds. Other WAV files appear disabled with a preparation explanation. This release does not trim or resample automatically; use the existing `scripts/prepare_asr.py` for supported 16/48 kHz mono files.
 - Language options: English, Finnish, Swedish, or experimental Finnish+English. This passes language codes to the existing native runner; FI/EN detection quality is not verified yet. No confidence values are invented.
 - Results retain `source=replay`. A `workflow_run_id` ties transcript and interpretation to the selected recording.
 - ASR retains its existing `asr-runs/` diagnostics. The coordinator keeps stdout/stderr, paired events and result status under `audio-runs/<run-id>/`, with `audio-runs/latest.json` for progress/restart recovery.

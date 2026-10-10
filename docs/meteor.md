@@ -1,6 +1,6 @@
 # METEOR current behavior
 
-Verified 2026-10-05. Reuse [METEOR_AUTOMATION.md](../METEOR_AUTOMATION.md) for installation, planning and retention details and [AUTONOMOUS_EVK.md](../AUTONOMOUS_EVK.md) for the pinned EVK SatDump runtime. Those guides describe the October 3 installation snapshot: automation was initially disabled and the recorder default was 1.024 MS/s. Current configuration differs.
+Verified 2026-10-05. Reuse [METEOR_AUTOMATION.md](legacy/meteor-automation.md) for installation, planning and retention details and [AUTONOMOUS_EVK.md](legacy/autonomous-evk.md) for the pinned EVK SatDump runtime. Those guides describe the October 3 installation snapshot: automation was initially disabled and the recorder default was 1.024 MS/s. Current configuration differs.
 
 ## Current operation
 

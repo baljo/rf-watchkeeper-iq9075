@@ -16,14 +16,14 @@ for n in CURRENT:
  # Explicit simple application filenames in current guides must exist; external paths are documented separately.
  for name in set(re.findall(r'`([a-z][a-z0-9_]+\.py)`',s)):
   if not (ROOT/name).exists():out['source_reference_misses'].append({'file':n,'source':name})
-for n in ['docs/project-log.md','docs/publication-manifest.md','ATIS_POC.md','AUDIO_WORKFLOW.md','AUTONOMOUS_EVK.md','METEOR_AUTOMATION.md','RF_HEALTH.md']:
+for n in ['docs/project-log.md','docs/publication-manifest.md','docs/legacy/atis-poc.md','docs/legacy/audio-workflow.md','docs/legacy/autonomous-evk.md','docs/legacy/meteor-automation.md','docs/legacy/rf-health.md']:
  p=ROOT/n
  for target in re.findall(r'(?<!!)\[[^\]]*\]\(([^)]+)\)',p.read_text(encoding='utf-8')):
   if urlsplit(target).scheme or target.startswith('#'):continue
   if not (p.parent/unquote(target.split('#')[0])).exists():out['historical_missing_links'].append({'file':n,'target':target,'disposition':'EVK-only chronological/stage evidence; unavailable in clone, explained in current-status and publication manifest'})
-for p in list(ROOT.glob('*.py'))+list((ROOT/'backends').rglob('*.py')):
+for p in list(ROOT.glob('*.py'))+list((ROOT/'backends').rglob('*.py'))+list((ROOT/'scripts').glob('*.py')):
  ast.parse(p.read_text(encoding='utf-8'),filename=p.name);out['python_syntax'].append(str(p.relative_to(ROOT)).replace('\\','/'))
-settings=json.loads((ROOT/'meteor-config.example.json').read_text());jobs=json.loads((ROOT/'jobs-v4.jsonc').read_text())
+settings=json.loads((ROOT/'config/examples/meteor-config.example.json').read_text());jobs=json.loads((ROOT/'jobs-v4.jsonc').read_text())
 assert settings['sample_rate']==256000 and settings['frequency']==137900000 and not settings['cleanup_enabled'] and not settings['retention']['automatic_deletion_validated']
 assert next(j for j in jobs['jobs'] if j['id']=='ais')['dwell_seconds']==45
 assert next(j for j in jobs['jobs'] if j['id']=='vaasa-atis')['interval_seconds']==600
