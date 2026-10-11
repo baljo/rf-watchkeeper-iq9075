@@ -25,3 +25,7 @@ Original ASR, conservative normalization, `atis_lexicon.py` corrections, `atis_p
 `dashboard.py` serves `dashboard.html` on port 8080, reading histories and controlled audio/image routes. Review POSTs use session tokens. It is a trusted-LAN service without public multi-user authentication. Numeric observer/map centres are public approximations in the export and private locally. [Dashboard](dashboard.md), [privacy](location-privacy.md).
 
 `rf_health.py`/`rf_health_monitor.py` distinguish sample progress from useful application results and perform bounded, reservation-aware recovery. Real reboot acceptance remains unverified. Active processes or successful isolated HTP execution do not establish unattended reliability: the completed integrated run failed. [Recovery](watchdog-and-recovery.md), [utilization evidence](evk-utilization-status-20261009.md).
+
+## Dashboard state isolation — 11 October 2026
+
+The threaded HTTP server delegates `/api/state` snapshot generation to `dashboard.py --snapshot-only` in a separate Python subprocess, preserving configured log/database/status paths. Two worker slots and a 12-second subprocess deadline bound load; failure/capacity exhaustion returns 503. This isolates state generation from the GIL used by expensive Tower/ATIS/METEOR review queries. The worker does not create an audio workflow or bind a port. Display audio catalogs cache for 30 seconds; selection validates current files. Existing-page state polls use a 15-second deadline after reload. [Validation and limits](evidence/dashboard-disconnect-20261011.md).

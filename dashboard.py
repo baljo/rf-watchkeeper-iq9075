@@ -17,6 +17,7 @@ import meteor_store
 import meteor_retention
 import sqlite3
 import subprocess
+import sys
 import threading
 import time
 from ais_display import enrich_met_hydro
@@ -26,6 +27,23 @@ ROOT = Path(__file__).resolve().parent
 _schedule_lock = threading.Lock()
 _schedule_cache = None
 _schedule_checked = 0
+_state_workers = threading.BoundedSemaphore(2)
+
+
+def isolated_snapshot(log_path, status_path, transcription_path, db_path, sensor_status_path):
+    """Keep state queries out of the GIL used by expensive review endpoints."""
+    command = [sys.executable, str(ROOT / 'dashboard.py'), '--snapshot-only',
+               '--log', str(log_path), '--status', str(status_path), '--db', str(db_path)]
+    if transcription_path is not None:
+        command += ['--transcription-log', str(transcription_path)]
+    if sensor_status_path is not None:
+        command += ['--sensor-status', str(sensor_status_path)]
+    if not _state_workers.acquire(blocking=False):
+        raise RuntimeError('State request capacity busy; retry shortly')
+    try:
+        return subprocess.run(command, capture_output=True, timeout=12, check=True).stdout
+    finally:
+        _state_workers.release()
 
 
 def satellite_schedule():
@@ -344,6 +362,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond({"error": str(exc)}, status=409)
 
     def do_GET(self):
+        self.request_started = time.monotonic()
         route = urlsplit(self.path).path
         if route == "/api/meteor/schedule":
             try:
@@ -434,16 +453,12 @@ class Handler(BaseHTTPRequestHandler):
             except (OSError, ValueError):
                 return self.respond({"error": "Recording unavailable"}, status=404)
         elif route == "/api/state":
-            data = json.dumps(
-            snapshot(
-                self.log_path,
-                self.status_path,
-                self.transcription_path,
-                self.db_path,
-                sensor_status_path=self.sensor_status_path,
-            ),
-            allow_nan=False,
-        ).encode()
+            try:
+                data = isolated_snapshot(self.log_path, self.status_path,
+                                         self.transcription_path, self.db_path,
+                                         self.sensor_status_path)
+            except (OSError, subprocess.SubprocessError, RuntimeError):
+                return self.respond({'error': 'State temporarily unavailable; retry shortly'}, status=503)
             content_type = "application/json; charset=utf-8"
         elif route == "/static/map/kvarken_land.geojson":
             data = (ROOT / "static" / "map" / "kvarken_land.geojson").read_bytes()
@@ -457,12 +472,18 @@ class Handler(BaseHTTPRequestHandler):
         self.respond(data, content_type)
 
     def log_message(self, *_):
-        pass
+        # Log only route/timing: omit client addresses, queries and payloads.
+        if hasattr(self, 'request_started'):
+            print(json.dumps({'event': 'dashboard_request',
+                              'at': datetime.now(timezone.utc).isoformat(),
+                              'route': urlsplit(self.path).path,
+                              'seconds': round(time.monotonic() - self.request_started, 3)}), flush=True)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", default="0.0.0.0")
+    parser.add_argument("--snapshot-only", action="store_true", help="Emit one state snapshot without starting a server or audio workflow")
     parser.add_argument("--port", type=int, default=8080)
     parser.add_argument("--log", type=Path, default=ROOT / "logs/events.jsonl")
     parser.add_argument("--db", type=Path, default=rf_store.DEFAULT_DB)
@@ -474,6 +495,10 @@ def main():
     parser.add_argument("--genie-config", type=Path, default=Path("/root/genie/qwen3-4b-iq9075/genie_config.absolute.json"))
     args = parser.parse_args()
     transcription_log = args.transcription_log or args.log.with_name("asr-events.jsonl")
+    if args.snapshot_only:
+        print(json.dumps(snapshot(args.log, args.status or args.log.with_name('status.json'),
+                                  transcription_log, args.db, args.sensor_status), allow_nan=False))
+        return
     workflow = AudioWorkflow(ROOT, transcription_log, args.genie_config)
     handler = partial(
         Handler,

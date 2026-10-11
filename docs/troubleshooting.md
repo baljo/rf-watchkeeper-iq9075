@@ -1,5 +1,13 @@
 # Troubleshooting
 
+## Dashboard connection flapping — 11 October 2026
+
+During the 10:55 Helsinki METEOR recording, concurrent dashboard requests reproduced a 5.033 s state response, exceeding the frontend's former 5 s deadline. The audio catalog took 8.803 s; its recursive recording scan ran on every two-second progress poll. The dashboard stayed active with zero automatic restarts. Capture intentionally stopped only the RF scheduler at 10:53:25, then began IQ recording at 10:55:24. This is not an expected dashboard disconnection.
+
+The catalog now caches display rows for 30 s, while playback/run selection rechecks current files. State generation runs in separate Python processes so expensive review work cannot monopolize its interpreter: at most two workers, 12 s worker timeout and 15 s frontend deadline. Request-header timing is recorded as `dashboard_request` in the dashboard journal, without client addresses, queries or response data. Reload an existing page to use the new deadline. A first scan or refresh and heavy review panels can still be slow; this scoped change does not close all historical dashboard timeout issues. Original browser failure timestamps cannot be recovered because request logging was suppressed and browser telemetry was unavailable.
+
+See [incident evidence and rollback](evidence/dashboard-disconnect-20261011.md).
+
 Start with ownership/status checks; do not make AIS and satellite compete for V4.
 
 ```sh

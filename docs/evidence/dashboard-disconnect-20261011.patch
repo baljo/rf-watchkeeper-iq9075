@@ -1,0 +1,88 @@
+diff --git a/audio_workflow.py b/audio_workflow.py
+index 03dca98..6ea9994 100644
+--- a/audio_workflow.py
++++ b/audio_workflow.py
+@@ -12,0 +13 @@ import threading
++import time
+@@ -42,0 +44,3 @@ class AudioWorkflow:
++        self.catalog_lock = threading.Lock()
++        self.catalog_cache = None
++        self.catalog_checked = 0
+@@ -55,0 +60,8 @@ class AudioWorkflow:
++        # Progress polls must not rescan the entire recording tree every 2 s.
++        with self.catalog_lock:
++            if self.catalog_cache is None or time.monotonic() - self.catalog_checked >= 30:
++                self.catalog_cache = self._scan_catalog()
++                self.catalog_checked = time.monotonic()
++            return copy.deepcopy(self.catalog_cache)
++
++    def _scan_catalog(self):
+@@ -79 +91,2 @@ class AudioWorkflow:
+-        item = self.catalog().get(key)
++        # Playback/run selection still validates against the current filesystem.
++        item = self._scan_catalog().get(key)
+diff --git a/dashboard.html b/dashboard.html
+index b1a3a03..fd42b8f 100644
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -1498 +1498 @@ el('chart-sensor').addEventListener('change',()=>pollHistory(true));el('chart-pe
+-async function poll(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);try{const response=await fetch('/api/state',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error(response.status);render(await response.json());online=true;el('cached-notice').hidden=true;put('connection','Dashboard online');el('connection').className='pill ok';}catch(error){online=false;el('cached-notice').hidden=false;put('overview-system','Disconnected');put('connection','Dashboard disconnected');el('connection').className='pill warn';put('state','Connection lost');put('detail','Displayed readings are cached. Retrying…');put('job','Unknown');put('frequency','—');put('sensor-state','Connection lost');put('sensor-detail','Displayed receiver status is cached. Retrying…');}finally{clearTimeout(timer);setTimeout(poll,2000);}}
++async function poll(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const response=await fetch('/api/state',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error(response.status);render(await response.json());online=true;el('cached-notice').hidden=true;put('connection','Dashboard online');el('connection').className='pill ok';}catch(error){online=false;el('cached-notice').hidden=false;put('overview-system','Disconnected');put('connection','Dashboard disconnected');el('connection').className='pill warn';put('state','Connection lost');put('detail','Displayed readings are cached. Retrying…');put('job','Unknown');put('frequency','—');put('sensor-state','Connection lost');put('sensor-detail','Displayed receiver status is cached. Retrying…');}finally{clearTimeout(timer);setTimeout(poll,2000);}}
+diff --git a/dashboard.py b/dashboard.py
+index ad8cc08..3fc2f71 100644
+--- a/dashboard.py
++++ b/dashboard.py
+@@ -19,0 +20 @@ import subprocess
++import sys
+@@ -28,0 +30,17 @@ _schedule_checked = 0
++_state_workers = threading.BoundedSemaphore(2)
++
++
++def isolated_snapshot(log_path, status_path, transcription_path, db_path, sensor_status_path):
++    """Keep state queries out of the GIL used by expensive review endpoints."""
++    command = [sys.executable, str(ROOT / 'dashboard.py'), '--snapshot-only',
++               '--log', str(log_path), '--status', str(status_path), '--db', str(db_path)]
++    if transcription_path is not None:
++        command += ['--transcription-log', str(transcription_path)]
++    if sensor_status_path is not None:
++        command += ['--sensor-status', str(sensor_status_path)]
++    if not _state_workers.acquire(blocking=False):
++        raise RuntimeError('State request capacity busy; retry shortly')
++    try:
++        return subprocess.run(command, capture_output=True, timeout=12, check=True).stdout
++    finally:
++        _state_workers.release()
+@@ -346,0 +365 @@ class Handler(BaseHTTPRequestHandler):
++        self.request_started = time.monotonic()
+@@ -437,10 +456,6 @@ class Handler(BaseHTTPRequestHandler):
+-            data = json.dumps(
+-            snapshot(
+-                self.log_path,
+-                self.status_path,
+-                self.transcription_path,
+-                self.db_path,
+-                sensor_status_path=self.sensor_status_path,
+-            ),
+-            allow_nan=False,
+-        ).encode()
++            try:
++                data = isolated_snapshot(self.log_path, self.status_path,
++                                         self.transcription_path, self.db_path,
++                                         self.sensor_status_path)
++            except (OSError, subprocess.SubprocessError, RuntimeError):
++                return self.respond({'error': 'State temporarily unavailable; retry shortly'}, status=503)
+@@ -460 +475,6 @@ class Handler(BaseHTTPRequestHandler):
+-        pass
++        # Log only route/timing: omit client addresses, queries and payloads.
++        if hasattr(self, 'request_started'):
++            print(json.dumps({'event': 'dashboard_request',
++                              'at': datetime.now(timezone.utc).isoformat(),
++                              'route': urlsplit(self.path).path,
++                              'seconds': round(time.monotonic() - self.request_started, 3)}), flush=True)
+@@ -465,0 +486 @@ def main():
++    parser.add_argument("--snapshot-only", action="store_true", help="Emit one state snapshot without starting a server or audio workflow")
+@@ -476,0 +498,4 @@ def main():
++    if args.snapshot_only:
++        print(json.dumps(snapshot(args.log, args.status or args.log.with_name('status.json'),
++                                  transcription_log, args.db, args.sensor_status), allow_nan=False))
++        return

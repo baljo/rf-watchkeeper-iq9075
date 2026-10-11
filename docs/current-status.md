@@ -1,5 +1,7 @@
 # Current project status — 10 October 2026
 
+11 October follow-up: METEOR-time dashboard flapping reproduced with concurrent API polling. Expensive review/catalog work in the threaded Python server delays state generation beyond the former five-second deadline. The production fix isolates state generation in bounded subprocesses, caches the display audio catalog, extends the state deadline to 15 seconds and records privacy-safe request timing. Four regression tests passed; six concurrent state calls returned 200 in 0.32–0.41 s after dashboard restart. Heavy-panel performance, next-pass/browser confirmation and unattended/reboot acceptance remain open. [Evidence](evidence/dashboard-disconnect-20261011.md).
+
 Live inspection snapshots began 06:49 UTC / 09:49 Europe/Helsinki; detailed follow-up at 06:55 UTC / 09:55 Helsinki. Canonical repository baseline: `bf0edb702790a06b9f1923ebc6346d2e9001de60`. Arduino/Qualcomm showcase **submitted for review**; review submission is distinct from operational acceptance.
 
 ## Verified deployed state

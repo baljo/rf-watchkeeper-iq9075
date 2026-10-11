@@ -10,6 +10,7 @@ import signal
 import subprocess
 import sys
 import threading
+import time
 import uuid
 import wave
 
@@ -40,6 +41,9 @@ class AudioWorkflow:
         self.event_log = Path(event_log)
         self.genie_config = Path(genie_config)
         self.lock = threading.RLock()
+        self.catalog_lock = threading.Lock()
+        self.catalog_cache = None
+        self.catalog_checked = 0
         self.worker = None
         self.state = {"state": "idle", "detail": "Choose a saved recording to begin.", "source": "replay"}
         self.status_file = self.root / "audio-runs" / "latest.json"
@@ -53,6 +57,14 @@ class AudioWorkflow:
             pass
 
     def catalog(self):
+        # Progress polls must not rescan the entire recording tree every 2 s.
+        with self.catalog_lock:
+            if self.catalog_cache is None or time.monotonic() - self.catalog_checked >= 30:
+                self.catalog_cache = self._scan_catalog()
+                self.catalog_checked = time.monotonic()
+            return copy.deepcopy(self.catalog_cache)
+
+    def _scan_catalog(self):
         result = {}
         for folder in ("asr_native", "aviation-fixtures", "recordings"):
             base = self.root / folder
@@ -76,7 +88,8 @@ class AudioWorkflow:
         return result
 
     def recording(self, key):
-        item = self.catalog().get(key)
+        # Playback/run selection still validates against the current filesystem.
+        item = self._scan_catalog().get(key)
         if not item or not item["ready"]:
             raise ValueError("Select an available short 16 kHz speech recording.")
         return (self.root / item["name"]).resolve(), item
