@@ -47,3 +47,8 @@ Times in Airband use Europe/Helsinki; AIS reception-age hover times are browser-
 The 10 October inspection obtained 200 from Tower, ATIS, METEOR, schedule and saved-audio endpoints; `/api/state` timed out at 10 s. This is current failure evidence, not a blanket healthy-dashboard claim. The completed four-hour observation also recorded state timeouts. [Audit](current-status.md).
 
 Follow-up at 06:55 UTC / 09:55 Helsinki: three `/api/state` requests returned 200 in 0.135 s each; `/api/atis/shadow` returned 200 in 0.017 s. `/api/atis/validation` and `/api/tower/reviews` each exceeded a 4 s timeout. Recovery of state responses does not invalidate the earlier timeout or certify the slower review endpoints.
+
+
+## Tower manual review policy — 11 October 2026
+
+Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).

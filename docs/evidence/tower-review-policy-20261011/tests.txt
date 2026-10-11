@@ -1,0 +1,67 @@
+......{"event": "dashboard_request", "at": "2026-10-11T08:30:07.870922+00:00", "route": "/api/tower", "seconds": 0.04}
+{"event": "dashboard_request", "at": "2026-10-11T08:30:07.917155+00:00", "route": "/api/tower", "seconds": 0.038}
+{"event": "dashboard_request", "at": "2026-10-11T08:30:07.950051+00:00", "route": "/api/tower", "seconds": 0.029}
+....................................HTP lease acquired: shadow-test pid=363441
+HTP lease released by supervisor: shadow-test
+HTP lease acquired: production-test pid=363441
+HTP lease released by supervisor: production-test
+.HTP lease acquired: other pid=363441
+ATIS SHADOW 20261007T000000.000000Z deferred: HTP inference lease busy: shadow:20261007T000000.000000Z
+HTP lease released by supervisor: other
+HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+.HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmp5uggl4aw/data/atis-shadow/runs/20261007T000000.000000Z/1/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmp5uggl4aw/data/atis-shadow/runs/20261007T000000.000000Z/2/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z failed: Candidate exit 1; /tmp/tmp5uggl4aw/data/atis-shadow/runs/20261007T000000.000000Z/3/runtime.log
+.HTP lease acquired: recovered pid=363441
+HTP lease released by supervisor: recovered
+.HTP lease acquired: recovered pid=363441
+HTP lease released by supervisor: recovered
+.HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+.HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Satellite reservation
+HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+.ATIS SHADOW enqueue failure: RuntimeError('Injected shadow database failure')
+...HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmpbcopozjr/data/atis-shadow/runs/20261007T000000.000000Z/1/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+.HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate timeout
+.ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z deferred: Worker restart; retry original WAV
+HTP lease acquired: shadow:20261007T000000.000000Z pid=363441
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+...........{"at": "2026-10-11T08:30:18.421658+00:00", "event": "frequency_evaluation_finished", "id": "m24-20261001T010000Z", "completed": false, "best_shift_hz": 0}
+..................................
+----------------------------------------------------------------------
+Ran 99 tests in 10.679s
+
+OK

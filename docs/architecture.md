@@ -29,3 +29,8 @@ Original ASR, conservative normalization, `atis_lexicon.py` corrections, `atis_p
 ## Dashboard state isolation — 11 October 2026
 
 The threaded HTTP server delegates `/api/state` snapshot generation to `dashboard.py --snapshot-only` in a separate Python subprocess, preserving configured log/database/status paths. Two worker slots and a 12-second subprocess deadline bound load; failure/capacity exhaustion returns 503. This isolates state generation from the GIL used by expensive Tower/ATIS/METEOR review queries. The worker does not create an audio workflow or bind a port. Display audio catalogs cache for 30 seconds; selection validates current files. Existing-page state polls use a 15-second deadline after reload. [Validation and limits](evidence/dashboard-disconnect-20261011.md).
+
+
+## Tower manual review policy — 11 October 2026
+
+Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).

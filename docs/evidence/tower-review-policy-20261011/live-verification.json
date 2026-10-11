@@ -1,0 +1,35 @@
+{
+  "observed_utc": "2026-10-11T08:34:19.823885+00:00",
+  "api": {
+    "/api/tower?review=anomaly_candidate": {
+      "status": 200,
+      "displayed": 20,
+      "selection_reasons": {
+        "persistent_ad": 19,
+        "grey_zone_audit": 1
+      },
+      "all_eligible": true
+    },
+    "/api/state": {
+      "status": 200
+    },
+    "/api/atis": {
+      "status": 200
+    },
+    "/api/meteor/schedule": {
+      "status": 200
+    }
+  },
+  "services": [
+    "active",
+    "active",
+    "active",
+    "active",
+    "active"
+  ],
+  "automatic_worker": [
+    "Result=success",
+    "ExecMainStartTimestamp=Sun 2026-10-11 08:33:25 UTC"
+  ],
+  "ui_wording_present": true
+}

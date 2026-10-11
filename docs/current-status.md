@@ -48,3 +48,8 @@ Export privacy changes use approximate map centres/test observer fixtures, omit 
 Historical engineering-log links to excluded data/backups/stages describe retained EVK-only evidence; they are not fresh-clone commands. Historical chronology is preserved and corrected by the new dated entry, rather than silently rewritten. [Publication manifest](publication-manifest.md).
 
 Verification, exact changed-file inventory, skipped checks, rollback and standing-rule completion are recorded in [audit completion](evidence/repository-audit-20261010/completion.md). Runtime reliability/fresh-install/reboot gaps remain explicitly open even when documentation/publication is complete.
+
+
+## Tower manual review policy — 11 October 2026
+
+Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).

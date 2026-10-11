@@ -1,0 +1,259 @@
+diff --git a/atis_view.py b/atis_view.py
+index 3c39ea3..4da8b65 100644
+--- a/atis_view.py
++++ b/atis_view.py
+@@ -73,6 +73,8 @@ def snapshot(root, kind="atis", recording=None):
+             try:
+                 result['anomaly_review'] = dict(review_metadata(evidence, processing or {}),
+                     model_sha256=evidence.get('model_sha256'), scoring_status='scored')
++                from tower_review_policy import metadata
++                result['anomaly_review'].update(metadata(evidence, p.name))
+                 from tower_anomaly_review import load
+                 human = load(root, p.name)
+                 if human: result['anomaly_review']['review_state'] = human['human_review_label']
+@@ -86,6 +88,11 @@ def snapshot(root, kind="atis", recording=None):
+         result.setdefault('anomaly_review', dict(score=None, median_score=None, threshold=None, severity_band='acoustic evidence / no anomaly score', review_state='unreviewed'))
+         result['anomaly_review']['review_state'] = (human or {}).get('human_review_label', 'unreviewed')
+         result['anomaly_review'].setdefault('anomaly_candidate', False)
++        # Explicit permanent pins remain available even below the routine gate.
++        capture_metadata = capture or {}
++        result['explicit_review_override'] = ((p/'tower-pin.json').is_file() or
++            any(capture_metadata.get(key) is True for key in
++                ('pinned', 'reference', 'permanent_reference', 'reference_sample', 'review_override')))
+     return result
+ 
+ def atis_details(transcript, structured, processing_state, recording):
+@@ -169,14 +176,8 @@ def completed_tower_score(evidence):
+ 
+ 
+ def needs_tower_review(row):
+-    human_label = (row.get('human_review') or {}).get('human_review_label')
+-    review = row.get('anomaly_review') or {}
+-    state = human_label or review.get('review_state')
+-    reviewed = bool(state and state != 'unreviewed')
+-    scored = (review.get('scoring_status') == 'scored' and
+-              finite_number(review.get('score')) and finite_number(review.get('threshold')))
+-    # Acoustic classifications must not bypass the AD candidate threshold.
+-    return not reviewed and scored and review['score'] >= review['threshold']
++    from tower_review_policy import selection_reason
++    return selection_reason(row) is not None
+ 
+ 
+ def recent(root, kind='tower', limit=20, end_recording=None, candidates_only=False):
+diff --git a/dashboard.html b/dashboard.html
+index fd42b8f..0ca17d8 100644
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -1793,8 +1793,8 @@ function showMeteorConditions(pass){
+  panel.innerHTML='<h2>Vaasa Tower  /  120.950 MHz AM  -  Recent captures</h2><p>05:00-01:30 Europe/Helsinki  /  15 s probes about every minute / activity hold up to 75 s  /  METEOR takes priority</p><p id="tower-status" role="status">Loading capture history...</p><p>Latest 20 retained captures. Tower ASR is disabled; listen and assign a human label.</p><div id="tower-recent"></div>';
+  document.getElementById('panel-airband').prepend(panel);
+  const filter=document.createElement('input');filter.type='checkbox';filter.id='tower-candidates';filter.checked=true;
+- const label=document.createElement('label');label.append(filter,document.createTextNode(' Show latest 20 unreviewed AD candidates at or above their configured threshold'));panel.insertBefore(label,document.getElementById('tower-recent'));
+- const note=document.createElement('p');note.textContent='Shadow anomaly score measures difference from learned background. Exceeding threshold does not imply voice: squelch, carrier, interference, static, clicks or speech can contribute. Unreviewed means a human has not yet classified the clip. Severity describes anomaly strength, not speech probability or validated voice thresholds. Bands: below 45.6744 background; 45.6744 to below 75 weak; 75 through 200 notable; above 200 strong. Candidates retain the existing 30-day policy; permanent preservation requires the existing explicit Tower pin command.';panel.insertBefore(note,document.getElementById('tower-recent'));
++ const label=document.createElement('label');label.append(filter,document.createTextNode(' Show latest 20 unreviewed clips: AD 55 + persistence, grey-zone audit and explicit references'));panel.insertBefore(label,document.getElementById('tower-recent'));
++ const note=document.createElement('p');note.textContent='Detector threshold: 45.6744 (unchanged). Routine review: two adjacent 1-second windows >=55, starts 0.5 s apart. Grey-zone peaks 45.6744 to <55 receive an 8% reproducible audit sample. Missing scores and unavailable audio are excluded. Shadow anomaly score measures difference from learned background. Exceeding threshold does not imply voice: squelch, carrier, interference, static, clicks or speech can contribute. Unreviewed means a human has not yet classified the clip. Severity describes anomaly strength, not speech probability or validated voice thresholds. Bands: below 45.6744 background; 45.6744 to below 75 weak; 75 through 200 notable; above 200 strong. Candidates retain the existing 30-day policy; permanent preservation requires the existing explicit Tower pin command.';panel.insertBefore(note,document.getElementById('tower-recent'));
+  const comparison=document.createElement('details');const heading=document.createElement('summary');heading.textContent='Reviewed anomaly comparison table';comparison.append(heading);const grid=document.createElement('table');const tableScroll=document.createElement('div');tableScroll.style.overflowX='auto';tableScroll.append(grid);comparison.append(tableScroll);panel.append(comparison);
+  async function loadReviews(){try{const response=await fetch('/api/tower/reviews',{cache:'no-store'});const data=await response.json();grid.replaceChildren();const keys=['capture_id','peak_score','median_score','threshold','severity_band','vad_result','asr_status','asr_result','human_review_label'];const header=document.createElement('tr');for(const key of keys){const cell=document.createElement('th');cell.textContent=key;header.append(cell);}grid.append(header);for(const row of data.reviews||[]){const tr=document.createElement('tr');for(const key of keys){const td=document.createElement('td');const value=row[key];td.textContent=key==='vad_result'&&value&&typeof value==='object'?(value.status||'unavailable')+' / '+(value.method||'') : key==='asr_result'&&value&&typeof value==='object'?(value.segments||[]).map(segment=>segment.text||segment.error||segment.status||'').join('; ')||value.status||'unavailable':String(value??'unavailable');tr.append(td);}grid.append(tr);}}catch(e){grid.textContent='Reviewed comparison unavailable.';}}comparison.addEventListener('toggle',()=>{if(comparison.open)loadReviews();});
+  const validationPanel=document.createElement('details');
+@@ -1818,14 +1818,14 @@ function showMeteorConditions(pass){
+  let busy=false,signature='',towerToken=null;
+  async function poll(){if(busy)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),7000);
+  try{const r=await fetch('/api/tower'+(filter.checked?'?review=anomaly_candidate':''),{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error('unavailable');const d=await r.json(),rows=d.recent_captures||[];towerToken=d.control_token;
+- document.getElementById('tower-status').textContent=rows.length?rows.length+(filter.checked?' unreviewed AD-scored candidates':' recent capture attempts')+'  /  updated '+new Date().toLocaleTimeString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki':(filter.checked?'No unreviewed above-threshold Tower candidates. Background, pending, failed and unscored captures remain in recent history; turn off this filter to see them.':'No Tower captures recorded yet.');
++ document.getElementById('tower-status').textContent=rows.length?rows.length+(filter.checked?' unreviewed AD-scored candidates':' recent capture attempts')+'  /  updated '+new Date().toLocaleTimeString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki':(filter.checked?'No unreviewed Tower clips pass the review gate or audit sample. Background, pending, failed and unscored captures remain in recent history; turn off this filter to see them.':'No Tower captures recorded yet.');
+  const next=JSON.stringify(rows);if(next===signature)return;signature=next;
+  const list=document.getElementById('tower-recent');list.replaceChildren();
+  for(const row of rows){const card=document.createElement('section'),title=document.createElement('h3'),detail=document.createElement('p');
+  title.textContent=new Date(row.captured_at).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki';
+  detail.textContent=(typeof row.duration_seconds==='number'?row.duration_seconds.toFixed(3)+' s':'Duration unavailable')+'  /  '+row.result+'  /  '+row.message;card.append(title,detail);
+  const identity=document.createElement('p');identity.textContent='Recording '+row.recording+' / production: '+(row.processing?.status||row.status);card.append(identity);
+- if(row.anomaly_review){const badge=document.createElement('p');badge.className=row.anomaly_review.anomaly_candidate?'pill':'meta';badge.textContent=(row.anomaly_review.anomaly_candidate?'anomaly_candidate · SHADOW':'Shadow anomaly')+' / '+row.anomaly_review.severity_band+' / '+row.anomaly_review.review_state+' / peak '+(row.anomaly_review.score==null?'unavailable':row.anomaly_review.score.toFixed(3))+' / threshold '+(row.anomaly_review.threshold==null?'unavailable':row.anomaly_review.threshold.toFixed(4));badge.style.whiteSpace='normal';badge.style.overflowWrap='anywhere';card.append(badge);
++ if(row.anomaly_review){const badge=document.createElement('p');badge.className=row.anomaly_review.anomaly_candidate?'pill':'meta';badge.textContent=(row.anomaly_review.anomaly_candidate?'anomaly_candidate · SHADOW':'Shadow anomaly')+' / '+row.anomaly_review.severity_band+' / '+row.anomaly_review.review_state+' / peak '+(row.anomaly_review.score==null?'unavailable':row.anomaly_review.score.toFixed(3))+' / detector threshold '+(row.anomaly_review.threshold==null?'unavailable':row.anomaly_review.threshold.toFixed(4));badge.textContent+=' / review gate 55 + 2 adjacent windows / '+(row.explicit_review_override?'explicit reference':row.anomaly_review.review_selection_reason||'hidden');badge.style.whiteSpace='normal';badge.style.overflowWrap='anywhere';card.append(badge);
+  const select=document.createElement('select');select.setAttribute('aria-label','Human review label for '+row.recording);
+  for(const label of ['unreviewed','confirmed_voice','probable_voice','no_voice','carrier_or_squelch','interference','unclear']){const option=document.createElement('option');option.value=label;option.textContent=label;select.append(option);}select.value=row.anomaly_review.review_state;
+  const save=document.createElement('button'),message=document.createElement('span');save.textContent='Save human review';
+diff --git a/test_tower_review_policy.py b/test_tower_review_policy.py
+new file mode 100644
+index 0000000..c7cd1b1
+--- /dev/null
++++ b/test_tower_review_policy.py
+@@ -0,0 +1,43 @@
++import unittest
++from tower_review_policy import persistent, audit_selected, selection_reason, DETECTOR_THRESHOLD
++
++
++class ReviewPolicyTests(unittest.TestCase):
++    def window(self, start, score):
++        return dict(start_seconds=start, end_seconds=start+1, anomaly_score=score)
++
++    def test_persistence(self):
++        self.assertTrue(persistent([self.window(0,55), self.window(.5,55)]))
++        for windows in ([self.window(0,99)], [self.window(0,55),self.window(1,55)],
++                        [self.window(0,55),self.window(.5,54),self.window(1,55)],
++                        [self.window(0,55),self.window(0,55)],
++                        [self.window(.5,55),self.window(0,55)],
++                        [self.window(0,55),self.window(.5,float('nan'))], None):
++            self.assertFalse(persistent(windows))
++
++    def test_deterministic_audit_and_boundaries(self):
++        selected = [str(i) for i in range(10000) if audit_selected(str(i))]
++        self.assertTrue(500 < len(selected) < 1000)
++        cid = selected[0]
++        row = dict(recording=cid,audio_available=True,anomaly_review=dict(
++            score=DETECTOR_THRESHOLD,threshold=DETECTOR_THRESHOLD,scoring_status='scored'))
++        self.assertEqual(selection_reason(row),'grey_zone_audit')
++        self.assertEqual(selection_reason(row),selection_reason(row))
++        row['anomaly_review']['score']=DETECTOR_THRESHOLD-1e-8
++        self.assertIsNone(selection_reason(row))
++        row['anomaly_review']['score']=55
++        self.assertIsNone(selection_reason(row))
++        row['anomaly_review']['review_persistent']=True
++        self.assertEqual(selection_reason(row),'persistent_ad')
++        row['human_review']={'human_review_label':'no_voice'}
++        self.assertIsNone(selection_reason(row))
++
++    def test_override_still_requires_score_and_audio(self):
++        row=dict(explicit_review_override=True,audio_available=True,
++                 anomaly_review=dict(score=1,threshold=DETECTOR_THRESHOLD,scoring_status='scored'))
++        self.assertEqual(selection_reason(row),'explicit_override')
++        row['audio_available']=False
++        self.assertIsNone(selection_reason(row))
++        row['audio_available']=True
++        row['anomaly_review']['score']=None
++        self.assertIsNone(selection_reason(row))
+diff --git a/test_tower_scored_queue.py b/test_tower_scored_queue.py
+index 39c41e1..5e8f0e0 100644
+--- a/test_tower_scored_queue.py
++++ b/test_tower_scored_queue.py
+@@ -15,9 +15,9 @@ class QueueTests(unittest.TestCase):
+     def test_labels_and_candidate_types(self):
+         for status in ('voice_candidate', 'uncertain', 'probably_non_voice'):
+             for anomaly in (False, True):
+-                row = dict(status=status, anomaly_review=dict(anomaly_candidate=anomaly, scoring_status='scored', score=1.0, threshold=2.0))
++                row = dict(status=status, anomaly_review=dict(anomaly_candidate=anomaly, scoring_status='scored', score=1.0, threshold=45.67438250526811, review_persistent=True))
+                 self.assertFalse(atis_view.needs_tower_review(row))
+-                row['anomaly_review']['score'] = 2.0
++                row['anomaly_review']['score'] = 55.0
+                 self.assertTrue(atis_view.needs_tower_review(row))
+                 for label in (*tower_anomaly_review.LABELS, 'confirmed_non_voice'):
+                     row['human_review'] = dict(human_review_label=label)
+@@ -56,11 +56,12 @@ class QueueTests(unittest.TestCase):
+             for i in range(25):
+                 p = root/'recordings/tower'/('20261009T1200%02d.000000Z' % i)
+                 p.mkdir(parents=True)
++                (p/'raw.wav').write_bytes(b'fixture')
+                 (p/'capture.json').write_text('{"status":"ready"}')
+                 (p/'segmentation.json').write_text('{"status":"activity_detected"}')
+                 scored = root/'evaluation/tower-anomaly/shadow'
+                 scored.mkdir(parents=True, exist_ok=True)
+-                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=1,p100=50.0), threshold=45.0)))
++                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=2,p100=55.0), threshold=45.67438250526811, windows=[dict(start_seconds=0,end_seconds=1,anomaly_score=55),dict(start_seconds=0.5,end_seconds=1.5,anomaly_score=55)])))
+             queue = atis_view.recent(root, candidates_only=True)
+             self.assertEqual(len(queue), 20)
+             self.assertEqual(queue[0]['recording'], '20261009T120024.000000Z')
+@@ -83,11 +84,12 @@ class QueueTests(unittest.TestCase):
+             for i in range(21):
+                 p = root/'recordings/tower'/('20261009T1300%02d.000000Z' % i)
+                 p.mkdir(parents=True)
++                (p/'raw.wav').write_bytes(b'fixture')
+                 (p/'capture.json').write_text('{}')
+                 (p/'segmentation.json').write_text('{"status":"activity_detected"}')
+                 scored = root/'evaluation/tower-anomaly/shadow'
+                 scored.mkdir(parents=True, exist_ok=True)
+-                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=1,p100=50.0), threshold=45.0)))
++                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=2,p100=55.0), threshold=45.67438250526811, windows=[dict(start_seconds=0,end_seconds=1,anomaly_score=55),dict(start_seconds=0.5,end_seconds=1.5,anomaly_score=55)])))
+             handler = partial(dashboard.Handler, log_path=None, status_path=None,
+                 transcription_path=None, db_path=None, sensor_status_path=None,
+                 workflow=None, control_token='fixture-token')
+diff --git a/test_tower_threshold_queue.py b/test_tower_threshold_queue.py
+index 7773e11..0581e5b 100644
+--- a/test_tower_threshold_queue.py
++++ b/test_tower_threshold_queue.py
+@@ -2,14 +2,15 @@ import unittest
+ from atis_view import needs_tower_review, completed_tower_score
+ class ThresholdQueue(unittest.TestCase):
+  def row(self,score=46,threshold=45.67438250526811,**kw):
+-  return dict(status='voice_candidate',anomaly_review=dict(score=score,threshold=threshold,scoring_status='scored',review_state='unreviewed',**kw))
++  return dict(status='voice_candidate',recording='fixture',anomaly_review=dict(score=score,threshold=threshold,scoring_status='scored',review_state='unreviewed',**kw))
+  def test_threshold(self):
+   for score in [36.656,39.476,41.334]:
+    for status in ['voice_candidate','uncertain','no_activity']:
+     r=self.row(score,anomaly_candidate=True);r['status']=status
+     self.assertFalse(needs_tower_review(r))
+-  self.assertTrue(needs_tower_review(self.row()))
+-  self.assertTrue(needs_tower_review(self.row(45.67438250526811)))
++  self.assertFalse(needs_tower_review(self.row()))
++  self.assertFalse(needs_tower_review(self.row(45.67438250526811)))
++  self.assertTrue(needs_tower_review(self.row(55,review_persistent=True)))
+   self.assertFalse(needs_tower_review(self.row(46,50)))
+  def test_invalid(self):
+   for value in [None,True,'50',float('nan'),float('inf')]:
+diff --git a/tower_review_policy.py b/tower_review_policy.py
+new file mode 100644
+index 0000000..d07b4fd
+--- /dev/null
++++ b/tower_review_policy.py
+@@ -0,0 +1,63 @@
++"""Pure human queue selection; never changes model, capture or retention."""
++import hashlib
++import math
++
++DETECTOR_THRESHOLD = 45.67438250526811
++REVIEW_THRESHOLD = 55.0
++AUDIT_PERCENT = 8
++AUDIT_SALT = 'tower-grey-audit-v1:'
++
++
++def finite(value):
++    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
++
++
++def persistent(windows):
++    """Two successive valid 1 s windows >=55 with starts exactly 0.5 s apart."""
++    previous = None
++    for window in windows if isinstance(windows, list) else []:
++        if not isinstance(window, dict):
++            previous = None
++            continue
++        start, end, score = (window.get(k) for k in ('start_seconds', 'end_seconds', 'anomaly_score'))
++        valid = (all(finite(v) for v in (start, end, score)) and start >= 0 and
++                 abs(end-start-1.0) <= 1e-6 and score >= REVIEW_THRESHOLD)
++        if valid and previous is not None and abs(start-previous-0.5) <= 1e-6:
++            return True
++        previous = start if valid else None
++    return False
++
++
++def audit_selected(capture_id):
++    if not isinstance(capture_id, str) or not capture_id:
++        return False
++    digest = hashlib.sha256((AUDIT_SALT+capture_id).encode('utf-8')).digest()
++    return int.from_bytes(digest, 'big') % 100 < AUDIT_PERCENT
++
++
++def metadata(evidence, capture_id):
++    score = evidence['summary']['p100']
++    persistence = persistent(evidence.get('windows'))
++    audit = DETECTOR_THRESHOLD <= score < REVIEW_THRESHOLD and audit_selected(capture_id)
++    return dict(review_threshold=REVIEW_THRESHOLD, review_persistent=persistence,
++                grey_zone_audit=audit, review_policy='tower-review-v1',
++                review_selection_reason=('persistent_ad' if score >= REVIEW_THRESHOLD and persistence
++                                         else 'grey_zone_audit' if audit else 'hidden'))
++
++
++def selection_reason(row):
++    review = row.get('anomaly_review') or {}
++    label = (row.get('human_review') or {}).get('human_review_label') or review.get('review_state')
++    if label and label != 'unreviewed':
++        return None
++    if (review.get('scoring_status') != 'scored' or not finite(review.get('score')) or
++            not finite(review.get('threshold')) or row.get('audio_available') is False):
++        return None
++    if row.get('explicit_review_override') is True:
++        return 'explicit_override'
++    score = review['score']
++    if score < DETECTOR_THRESHOLD:
++        return None
++    if score < REVIEW_THRESHOLD:
++        return 'grey_zone_audit' if audit_selected(row.get('recording')) else None
++    return 'persistent_ad' if review.get('review_persistent') is True else None

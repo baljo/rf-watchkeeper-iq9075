@@ -315,3 +315,9 @@ Live EVK inspected; original observer was interrupted, subsequent corrected four
 - Deployed bounded subprocess state isolation, 30 s display-catalog cache with fresh selection validation, 15 s frontend timeout and privacy-safe route/header timing. Dashboard-only restarts occurred after capture completed at 11:08:47 (391 MiB IQ retained, pending decode). Preserved original files and live HTML configuration/encoding.
 - Four regression tests passed; six final concurrent state requests returned 200 in 0.32–0.41 s. Service-restart persistence checked. Heavy panels still take up to ~13 s in the final check; next-pass/browser, reboot and full unattended acceptance remain unverified.
 - Updated architecture, troubleshooting/current status and [incident evidence/rollback](evidence/dashboard-disconnect-20261011.md). Source patch and tests published with this entry. No RF/retention/inference changes. Historical DMA/Genie/decoder gaps remain open.
+
+### 2026-10-11 08:32 UTC / 11:32 Europe/Helsinki - Tower routine review policy
+- Independent queue gate: two adjacent 1-second windows >=55 at 0.5-second hop; reproducible 8% grey-zone audit. Detector threshold 45.67438250526811 unchanged; no model training.
+- Live queue 447 -> 77: 59 persistent and 18 audit (18/322 grey-zone pool); 129 reviewed at snapshot. Labels, recordings, references, retention and other pipelines preserved.
+- 99 Linux regressions passed; dashboard alone restarted; queue/state/ATIS/METEOR schedule HTTP 200 and natural Tower timer launches verified. Reboot/sustained unattended acceptance unverified.
+- Canonical policy/config/status/architecture/operations/dashboard updated. Backups, rollback, exact failures and Definition of Done: [completion](evidence/tower-review-policy-20261011/completion.md).

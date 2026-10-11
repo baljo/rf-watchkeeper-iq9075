@@ -1,0 +1,14 @@
+{
+  "before_observed_utc": "2026-10-11T08:28:04.207489+00:00",
+  "after_observed_utc": "2026-10-11T08:31:05.342986+00:00",
+  "before_queue": 447,
+  "after_queue": 77,
+  "persistent_ad": 59,
+  "grey_zone_audit": 18,
+  "grey_zone_pool": 322,
+  "audit_fraction": 0.055900621118012424,
+  "reviewed": 129,
+  "before_captures": 4168,
+  "after_captures": 4170,
+  "note": "Two new unscored captures arrived; selected scored population unchanged."
+}

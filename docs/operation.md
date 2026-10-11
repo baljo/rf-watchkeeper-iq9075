@@ -38,3 +38,8 @@ curl --max-time 10 -f http://localhost:8080/api/meteor/schedule
 Commands above are read-only and bounded; state can time out despite an active dashboard. Review journals/retained results rather than restarting everything. Inspect pending inference and METEOR ownership before a necessary component restart; preserve newer records, local observer config and pins. No forced probe/reset/reboot/service restart occurred in this audit. [Recovery](watchdog-and-recovery.md), [troubleshooting](troubleshooting.md), [installation/update procedure](installation.md).
 
 The audit exports already installed source/units to GitHub and synchronizes documentation only to the EVK. It does not redeploy runtime, enable optional units, repair Genie/DMA failures or validate reboot persistence. [Completion evidence](evidence/repository-audit-20261010/completion.md).
+
+
+## Tower manual review policy — 11 October 2026
+
+Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).

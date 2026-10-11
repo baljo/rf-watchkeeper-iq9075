@@ -73,6 +73,8 @@ def snapshot(root, kind="atis", recording=None):
             try:
                 result['anomaly_review'] = dict(review_metadata(evidence, processing or {}),
                     model_sha256=evidence.get('model_sha256'), scoring_status='scored')
+                from tower_review_policy import metadata
+                result['anomaly_review'].update(metadata(evidence, p.name))
                 from tower_anomaly_review import load
                 human = load(root, p.name)
                 if human: result['anomaly_review']['review_state'] = human['human_review_label']
@@ -86,6 +88,11 @@ def snapshot(root, kind="atis", recording=None):
         result.setdefault('anomaly_review', dict(score=None, median_score=None, threshold=None, severity_band='acoustic evidence / no anomaly score', review_state='unreviewed'))
         result['anomaly_review']['review_state'] = (human or {}).get('human_review_label', 'unreviewed')
         result['anomaly_review'].setdefault('anomaly_candidate', False)
+        # Explicit permanent pins remain available even below the routine gate.
+        capture_metadata = capture or {}
+        result['explicit_review_override'] = ((p/'tower-pin.json').is_file() or
+            any(capture_metadata.get(key) is True for key in
+                ('pinned', 'reference', 'permanent_reference', 'reference_sample', 'review_override')))
     return result
 
 def atis_details(transcript, structured, processing_state, recording):
@@ -169,14 +176,8 @@ def completed_tower_score(evidence):
 
 
 def needs_tower_review(row):
-    human_label = (row.get('human_review') or {}).get('human_review_label')
-    review = row.get('anomaly_review') or {}
-    state = human_label or review.get('review_state')
-    reviewed = bool(state and state != 'unreviewed')
-    scored = (review.get('scoring_status') == 'scored' and
-              finite_number(review.get('score')) and finite_number(review.get('threshold')))
-    # Acoustic classifications must not bypass the AD candidate threshold.
-    return not reviewed and scored and review['score'] >= review['threshold']
+    from tower_review_policy import selection_reason
+    return selection_reason(row) is not None
 
 
 def recent(root, kind='tower', limit=20, end_recording=None, candidates_only=False):

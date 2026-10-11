@@ -15,9 +15,9 @@ class QueueTests(unittest.TestCase):
     def test_labels_and_candidate_types(self):
         for status in ('voice_candidate', 'uncertain', 'probably_non_voice'):
             for anomaly in (False, True):
-                row = dict(status=status, anomaly_review=dict(anomaly_candidate=anomaly, scoring_status='scored', score=1.0, threshold=2.0))
+                row = dict(status=status, anomaly_review=dict(anomaly_candidate=anomaly, scoring_status='scored', score=1.0, threshold=45.67438250526811, review_persistent=True))
                 self.assertFalse(atis_view.needs_tower_review(row))
-                row['anomaly_review']['score'] = 2.0
+                row['anomaly_review']['score'] = 55.0
                 self.assertTrue(atis_view.needs_tower_review(row))
                 for label in (*tower_anomaly_review.LABELS, 'confirmed_non_voice'):
                     row['human_review'] = dict(human_review_label=label)
@@ -56,11 +56,12 @@ class QueueTests(unittest.TestCase):
             for i in range(25):
                 p = root/'recordings/tower'/('20261009T1200%02d.000000Z' % i)
                 p.mkdir(parents=True)
+                (p/'raw.wav').write_bytes(b'fixture')
                 (p/'capture.json').write_text('{"status":"ready"}')
                 (p/'segmentation.json').write_text('{"status":"activity_detected"}')
                 scored = root/'evaluation/tower-anomaly/shadow'
                 scored.mkdir(parents=True, exist_ok=True)
-                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=1,p100=50.0), threshold=45.0)))
+                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=2,p100=55.0), threshold=45.67438250526811, windows=[dict(start_seconds=0,end_seconds=1,anomaly_score=55),dict(start_seconds=0.5,end_seconds=1.5,anomaly_score=55)])))
             queue = atis_view.recent(root, candidates_only=True)
             self.assertEqual(len(queue), 20)
             self.assertEqual(queue[0]['recording'], '20261009T120024.000000Z')
@@ -83,11 +84,12 @@ class QueueTests(unittest.TestCase):
             for i in range(21):
                 p = root/'recordings/tower'/('20261009T1300%02d.000000Z' % i)
                 p.mkdir(parents=True)
+                (p/'raw.wav').write_bytes(b'fixture')
                 (p/'capture.json').write_text('{}')
                 (p/'segmentation.json').write_text('{"status":"activity_detected"}')
                 scored = root/'evaluation/tower-anomaly/shadow'
                 scored.mkdir(parents=True, exist_ok=True)
-                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=1,p100=50.0), threshold=45.0)))
+                (scored/(p.name+'.json')).write_text(json.dumps(dict(mode='shadow_only', summary=dict(count=2,p100=55.0), threshold=45.67438250526811, windows=[dict(start_seconds=0,end_seconds=1,anomaly_score=55),dict(start_seconds=0.5,end_seconds=1.5,anomaly_score=55)])))
             handler = partial(dashboard.Handler, log_path=None, status_path=None,
                 transcription_path=None, db_path=None, sensor_status_path=None,
                 workflow=None, control_token='fixture-token')
