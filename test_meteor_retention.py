@@ -145,7 +145,7 @@ class RetentionTests(unittest.TestCase):
     def test_zero_byte_expired_failure(self):
         self.raw.write_bytes(b''); self.r.update(iq_fingerprint=retention.fingerprint(self.raw),captured_iq_bytes=0)
         self.r['capture']['status']='failed_no_iq'
-        self.assertEqual(self.result()['disposition'],'DELETABLE'); self.assertEqual(self.result()['raw_bytes'],0)
+        self.assertEqual(self.result()['disposition'],'REVIEW'); self.assertEqual(self.result()['raw_bytes'],0)
     def test_zero_byte_completed_is_review(self):
         self.raw.write_bytes(b'');self.r.update(iq_fingerprint=retention.fingerprint(self.raw),captured_iq_bytes=0)
         self.assertEqual(self.result()['disposition'],'REVIEW')
@@ -225,4 +225,27 @@ class RetentionTests(unittest.TestCase):
         self.assertFalse(r['frequency_evaluation']['completed'])
         self.assertFalse(r['frequency_evaluation']['negative_result_verified'])
         self.assertEqual(retention.classify(r,c,self.at)['disposition'],'DELETABLE')
+
+    def test_earlier_partial_lines_review(self):
+        self.r['decode_attempts'][1]['metrics']['channel_lines']['1'] = 10
+        self.assertEqual(self.result()['disposition'], 'REVIEW')
+    def test_earlier_small_product_review(self):
+        self.r['decode_attempts'][1]['metrics']['images'] = [dict(product='MSU-MR-1', width=256, height=10)]
+        self.assertEqual(self.result()['disposition'], 'REVIEW')
+    def test_earlier_error_review(self):
+        self.r['decode_attempts'][1]['returncode'] = 1
+        self.assertEqual(self.result()['disposition'], 'REVIEW')
+    def test_top_level_imported_protected(self):
+        self.r['source'] = 'imported_reference'
+        self.assertEqual(self.result()['disposition'], 'PROTECTED')
+    def test_earlier_small_product_has_48_hour_grace(self):
+        self.r['pass']['record_stop'] = (self.at - timedelta(hours=30)).isoformat()
+        self.r['decode_attempts'][1]['metrics']['images'] = [dict(product='MSU-MR-1',width=256,height=10)]
+        self.assertEqual(self.result()['disposition'], 'GRACE')
+    def test_original_reference_honored_after_review(self):
+        review=self.root/'data/meteor-auto/retention-review'/self.raw.stem/'pass.json'
+        review.parent.mkdir(parents=True); retention.atomic(review,self.r)
+        self.r['reference']=True; self.save()
+        r=retention.inventory_records(self.root,self.c)[0][1]
+        self.assertEqual(retention.classify(r,self.c,self.at)['disposition'],'PROTECTED')
 if __name__=='__main__': unittest.main()

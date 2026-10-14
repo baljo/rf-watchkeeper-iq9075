@@ -1,5 +1,11 @@
 # Current project status — 10 October 2026
 
+## Automatic deletion enabled — 14 October 2026
+
+Both deployed gates are **true** (`cleanup_enabled`, `retention.automatic_deletion_validated`). Existing cleanup timer enabled/active: daily 02:00 UTC plus every 15 minutes. Controlled maintenance deleted exactly 25 eligible no-signal `.cu8` raws / 10,417,864,704 bytes; 24 raws / 15,415,640,064 bytes remained at 17:37 UTC. Metadata, images and history retained. Minimum grace remains 24 h no-signal / 48 h partial; useful/reference/regression/imported captures protected; failures/errors/incomplete/partial evidence REVIEW. Zero-byte failures also require REVIEW. Earlier-attempt partial/error evidence is now checked. Disk pressure cannot override protection. The same policy applies to existing pre-capture low-disk cleanup.
+
+[Exact counts, eligible/deleted filenames, tests, service verification, rollback and completion limits](evidence/meteor-deletion-20261014/completion.md). One controlled production run verified; later unattended execution and reboot remain unverified. This supersedes older disabled-gate snapshots below.
+
 11 October follow-up: METEOR-time dashboard flapping reproduced with concurrent API polling. Expensive review/catalog work in the threaded Python server delays state generation beyond the former five-second deadline. The production fix isolates state generation in bounded subprocesses, caches the display audio catalog, extends the state deadline to 15 seconds and records privacy-safe request timing. Four regression tests passed; six concurrent state calls returned 200 in 0.32–0.41 s after dashboard restart. Heavy-panel performance, next-pass/browser confirmation and unattended/reboot acceptance remain open. [Evidence](evidence/dashboard-disconnect-20261011.md).
 
 Live inspection snapshots began 06:49 UTC / 09:49 Europe/Helsinki; detailed follow-up at 06:55 UTC / 09:55 Helsinki. Canonical repository baseline: `bf0edb702790a06b9f1923ebc6346d2e9001de60`. Arduino/Qualcomm showcase **submitted for review**; review submission is distinct from operational acceptance.

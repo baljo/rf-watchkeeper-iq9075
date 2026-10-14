@@ -1,0 +1,318 @@
+{
+  "timestamp": "2026-10-14T17:37:37.547761+00:00",
+  "gates": {
+    "cleanup_enabled": true,
+    "automatic_deletion_validated": true
+  },
+  "dry_run_summary": {
+    "PROTECTED": {
+      "count": 18,
+      "bytes": 11703156736
+    },
+    "GRACE": {
+      "count": 1,
+      "bytes": 419430400
+    },
+    "DELETABLE": {
+      "count": 25,
+      "bytes": 10417864704
+    },
+    "REVIEW": {
+      "count": 5,
+      "bytes": 3293052928
+    }
+  },
+  "after_summary": {
+    "PROTECTED": {
+      "count": 18,
+      "bytes": 11703156736
+    },
+    "GRACE": {
+      "count": 1,
+      "bytes": 419430400
+    },
+    "DELETABLE": {
+      "count": 0,
+      "bytes": 0
+    },
+    "REVIEW": {
+      "count": 5,
+      "bytes": 3293052928
+    }
+  },
+  "eligible": [
+    {
+      "filename": "M2-3_20261005_182723_137900000.cu8",
+      "bytes": 421265408,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261006_012650_137900000.cu8",
+      "bytes": 405536768,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261006_081137_137900000.cu8",
+      "bytes": 416284672,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261006_130029_137900000.cu8",
+      "bytes": 409468928,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261006_180412_137900000.cu8",
+      "bytes": 418119680,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261007_024516_137900000.cu8",
+      "bytes": 419954688,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261007_074824_137900000.cu8",
+      "bytes": 406061056,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261007_123833_137900000.cu8",
+      "bytes": 418906112,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261008_022335_137900000.cu8",
+      "bytes": 422051840,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261008_090509_137900000.cu8",
+      "bytes": 417333248,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261008_121646_137900000.cu8",
+      "bytes": 422838272,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261008_185748_137900000.cu8",
+      "bytes": 416808960,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261009_084153_137900000.cu8",
+      "bytes": 420216832,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261009_115507_137900000.cu8",
+      "bytes": 422313984,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261009_183425_137900000.cu8",
+      "bytes": 420741120,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261010_014017_137900000.cu8",
+      "bytes": 412614656,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261010_081838_137900000.cu8",
+      "bytes": 418381824,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261010_181111_137900000.cu8",
+      "bytes": 419954688,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261011_011841_137900000.cu8",
+      "bytes": 399245312,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261011_075524_137900000.cu8",
+      "bytes": 409993216,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261012_023704_137900000.cu8",
+      "bytes": 421003264,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261012_091211_137900000.cu8",
+      "bytes": 415236096,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261012_123019_137900000.cu8",
+      "bytes": 420741120,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-3_20261013_084854_137900000.cu8",
+      "bytes": 419954688,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    },
+    {
+      "filename": "M2-4_20261013_120835_137900000.cu8",
+      "bytes": 422838272,
+      "reason": "Capture grace expired; supported current nominal and offset procedure produced no useful images"
+    }
+  ],
+  "deleted": [
+    {
+      "filename": "M2-3_20261005_182723_137900000.cu8",
+      "bytes": 421265408
+    },
+    {
+      "filename": "M2-3_20261006_081137_137900000.cu8",
+      "bytes": 416284672
+    },
+    {
+      "filename": "M2-3_20261006_180412_137900000.cu8",
+      "bytes": 418119680
+    },
+    {
+      "filename": "M2-3_20261007_074824_137900000.cu8",
+      "bytes": 406061056
+    },
+    {
+      "filename": "M2-3_20261008_090509_137900000.cu8",
+      "bytes": 417333248
+    },
+    {
+      "filename": "M2-3_20261008_185748_137900000.cu8",
+      "bytes": 416808960
+    },
+    {
+      "filename": "M2-3_20261009_084153_137900000.cu8",
+      "bytes": 420216832
+    },
+    {
+      "filename": "M2-3_20261009_183425_137900000.cu8",
+      "bytes": 420741120
+    },
+    {
+      "filename": "M2-3_20261010_081838_137900000.cu8",
+      "bytes": 418381824
+    },
+    {
+      "filename": "M2-3_20261010_181111_137900000.cu8",
+      "bytes": 419954688
+    },
+    {
+      "filename": "M2-3_20261011_075524_137900000.cu8",
+      "bytes": 409993216
+    },
+    {
+      "filename": "M2-3_20261012_091211_137900000.cu8",
+      "bytes": 415236096
+    },
+    {
+      "filename": "M2-3_20261013_084854_137900000.cu8",
+      "bytes": 419954688
+    },
+    {
+      "filename": "M2-4_20261006_012650_137900000.cu8",
+      "bytes": 405536768
+    },
+    {
+      "filename": "M2-4_20261006_130029_137900000.cu8",
+      "bytes": 409468928
+    },
+    {
+      "filename": "M2-4_20261007_024516_137900000.cu8",
+      "bytes": 419954688
+    },
+    {
+      "filename": "M2-4_20261007_123833_137900000.cu8",
+      "bytes": 418906112
+    },
+    {
+      "filename": "M2-4_20261008_022335_137900000.cu8",
+      "bytes": 422051840
+    },
+    {
+      "filename": "M2-4_20261008_121646_137900000.cu8",
+      "bytes": 422838272
+    },
+    {
+      "filename": "M2-4_20261009_115507_137900000.cu8",
+      "bytes": 422313984
+    },
+    {
+      "filename": "M2-4_20261010_014017_137900000.cu8",
+      "bytes": 412614656
+    },
+    {
+      "filename": "M2-4_20261011_011841_137900000.cu8",
+      "bytes": 399245312
+    },
+    {
+      "filename": "M2-4_20261012_023704_137900000.cu8",
+      "bytes": 421003264
+    },
+    {
+      "filename": "M2-4_20261012_123019_137900000.cu8",
+      "bytes": 420741120
+    },
+    {
+      "filename": "M2-4_20261013_120835_137900000.cu8",
+      "bytes": 422838272
+    }
+  ],
+  "bytes_freed": 10417864704,
+  "remaining_raw_count": 24,
+  "remaining_raw_bytes": 15415640064,
+  "missing_nonraw": [],
+  "changed_nonraw": [
+    "data/meteor-auto/retention-events.jsonl"
+  ],
+  "history_changed": [],
+  "images_unchanged": true,
+  "health": {
+    "args": [
+      "systemctl",
+      "show",
+      "rf-watchkeeper-meteor-plan.timer",
+      "rf-watchkeeper-meteor-plan.service",
+      "rf-watchkeeper-meteor-dispatch.timer",
+      "rf-watchkeeper-meteor-dispatch.service",
+      "rf-watchkeeper-meteor-process.timer",
+      "rf-watchkeeper-meteor-process.service",
+      "rf-watchkeeper-meteor-cleanup.timer",
+      "rf-watchkeeper-meteor-cleanup.service",
+      "rf-watchkeeper-meteor-legacy-register.timer",
+      "rf-watchkeeper-meteor-legacy-register.service",
+      "meteor-auto-capture.service",
+      "rf-watchkeeper-scheduler.service",
+      "rf-watchkeeper-dashboard.service",
+      "-p",
+      "Id",
+      "-p",
+      "ActiveState",
+      "-p",
+      "SubState",
+      "-p",
+      "Result",
+      "-p",
+      "ExecMainStatus",
+      "-p",
+      "UnitFileState",
+      "-p",
+      "NextElapseUSecRealtime",
+      "-p",
+      "NextElapseUSecMonotonic"
+    ],
+    "code": 0,
+    "output": "Id=rf-watchkeeper-meteor-plan.timer\nActiveState=active\nSubState=waiting\nUnitFileState=enabled\nNextElapseUSecRealtime=Wed 2026-10-14 18:00:00 UTC\nNextElapseUSecMonotonic=0\nResult=success\n\nId=rf-watchkeeper-meteor-plan.service\nActiveState=inactive\nSubState=dead\nUnitFileState=static\nResult=success\nExecMainStatus=0\n\nId=rf-watchkeeper-meteor-dispatch.timer\nActiveState=active\nSubState=waiting\nUnitFileState=enabled\nNextElapseUSecRealtime=\nNextElapseUSecMonotonic=4d 4h 1min 23.212267s\nResult=success\n\nId=rf-watchkeeper-meteor-dispatch.service\nActiveState=inactive\nSubState=dead\nUnitFileState=static\nResult=success\nExecMainStatus=0\n\nId=rf-watchkeeper-meteor-process.timer\nActiveState=active\nSubState=waiting\nUnitFileState=enabled\nNextElapseUSecRealtime=\nNextElapseUSecMonotonic=4d 4h 4min 6.947623s\nResult=success\n\nId=rf-watchkeeper-meteor-process.service\nActiveState=inactive\nSubState=dead\nUnitFileState=static\nResult=success\nExecMainStatus=0\n\nId=rf-watchkeeper-meteor-cleanup.timer\nActiveState=active\nSubState=waiting\nUnitFileState=enabled\nNextElapseUSecRealtime=Thu 2026-10-15 02:00:00 UTC\nNextElapseUSecMonotonic=4d 4h 15min 45.664231s\nResult=success\n\nId=rf-watchkeeper-meteor-cleanup.service\nActiveState=inactive\nSubState=dead\nUnitFileState=static\nResult=success\nExecMainStatus=0\n\nId=rf-watchkeeper-meteor-legacy-register.timer\nActiveState=active\nSubState=waiting\nUnitFileState=enabled\nNextElapseUSecRealtime=\nNextElapseUSecMonotonic=4d 4h 1min 41.922542s\nResult=success\n\nId=rf-watchkeeper-meteor-legacy-register.service\nActiveState=inactive\nSubState=dead\nUnitFileState=static\nResult=success\nExecMainStatus=0\n\nId=meteor-auto-capture.service\nActiveState=inactive\nSubState=dead\nUnitFileState=static\nResult=success\nExecMainStatus=0\n\nId=rf-watchkeeper-scheduler.service\nActiveState=active\nSubState=running\nUnitFileState=enabled\nResult=success\nExecMainStatus=0\n\nId=rf-watchkeeper-dashboard.service\nActiveState=active\nSubState=running\nUnitFileState=enabled\nResult=success\nExecMainStatus=0\n"
+  }
+}

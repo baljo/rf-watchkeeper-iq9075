@@ -35,7 +35,7 @@
   "decode_timeout_seconds": 1800,
   "max_decode_attempts": 3,
   "decode_retry_seconds": 3600,
-  "cleanup_enabled": false,
+  "cleanup_enabled": true,
   "raw_retention_days": 14,
   "retention": {
     "no_signal_hours": 24,
@@ -45,7 +45,7 @@
     "critical_free_gib": 10,
     "useful_min_lines": 128,
     "excellent_min_lines": 2000,
-    "automatic_deletion_validated": false
+    "automatic_deletion_validated": true
   },
   "frequency_evaluation": {
     "span_hz": 60000,
@@ -53,5 +53,6 @@
     "max_candidates": 2,
     "budget_seconds": 300
   },
-  "_coordinate_notice": "Example approximate Vaasa city-centre coordinates, several kilometres from the installation; supply private observer coordinates locally."
+  "_coordinate_notice": "Example approximate Vaasa city-centre coordinates, several kilometres from the installation; supply private observer coordinates locally.",
+  "_retention_notice": "Mirrors authorized production policy as of 2026-10-14. Before enabling on another installation, validate classifier evidence and dry-run; both gates must be true for deletion."
 }

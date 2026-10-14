@@ -82,7 +82,7 @@ def classify(r, c, at=None):
     useful = [im for im in images if re.fullmatch(r'MSU-MR-[1-6]', im.get('product', ''))
               and im.get('width', 0) >= 256 and im.get('height', 0) >= v['useful_min_lines']]
     useful_count = len({im.get('path', im.get('product')) for im in useful})
-    lines = max(metrics.get('channel_lines', {}).values(), default=0)
+    lines = max((n for t in attempts for n in t.get('metrics', {}).get('channel_lines', {}).values()), default=0)
     # SIGNAL/UNUSABLE can mean only positive noise SNR with NOSYNC. Actual
     # synchronization/partial products are ambiguous; the label alone is not.
     ambiguous_signal = any(re.search(r'(?:Viterbi|Deframer)\s*:\s*(?:SYNC|SYNCED|LOCKED)\b', status, re.I)
@@ -103,11 +103,11 @@ def classify(r, c, at=None):
                 and evaluation.get('best_output') == a.get('output') and not evaluation.get('error')
                 and evaluation.get('verification') in ('validated_channel_product', 'exhaustive_verified_search'))
     searched = procedure_complete(r, c)
-    retention_class = 'useful' if useful else 'poor' if lines or metrics.get('images') or ambiguous_signal else 'no_signal'
+    retention_class = 'useful' if useful else 'poor' if lines or images or ambiguous_signal else 'no_signal'
     deadline = (captured_at + timedelta(hours=v['poor_hours'] if retention_class == 'poor' else v['no_signal_hours'])).isoformat() if captured_at else None
     disposition, reason = 'REVIEW', 'Supported current frequency-offset procedure has not completed'
     explicit = bool(r.get('pinned') is True or r.get('explicit_protection') or r.get('reference') or r.get('regression')
-                    or m.get('reference') is True or m.get('regression') is True or str(m.get('source', '')).startswith('imported'))
+                    or m.get('reference') is True or m.get('regression') is True or str(m.get('source', '')).startswith('imported') or str(r.get('source', '')).startswith('imported'))
     if explicit or useful or r.get('historical_useful_images'):
         disposition = 'PROTECTED'
         retention_class = 'pinned' if explicit else 'excellent' if lines >= v['excellent_min_lines'] else 'useful'
@@ -130,7 +130,7 @@ def classify(r, c, at=None):
     elif c.get('frequency') is not None and abs(recorded_frequency - c['frequency']) > c.get('frequency_evaluation', {}).get('span_hz', 60000):
         reason = 'Recorded center frequency is outside the supported offset-search span; unusual frequency needs review'
     elif size == 0 and m.get('status') == 'failed_no_iq':
-        disposition, reason = 'DELETABLE', 'Expired failed capture contains zero IQ samples; history retained'
+        reason = 'Failed zero-sample capture needs review; history retained'
         retention_class = 'processing_failed'
     elif size == 0:
         reason = 'Zero-byte IQ lacks explicit failed_no_iq capture evidence'
@@ -138,7 +138,7 @@ def classify(r, c, at=None):
         retention_class, reason = 'processing_failed', 'Capture error or incomplete capture needs review'
     elif not attempts:
         reason = 'No current decoding/frequency-offset evaluation evidence'
-    elif not clean or evaluation.get('error') or any(t.get('returncode') != 0 or t.get('error') for t in evaluation.get('trials', [])):
+    elif not clean or any(not trial_clean(t) for t in attempts) or evaluation.get('error') or any(t.get('returncode') != 0 or t.get('error') for t in evaluation.get('trials', [])):
         details = '; '.join(str(x) for x in (
             'selected returncode=' + str(a.get('returncode')) if a.get('returncode') != 0 else None,
             a.get('error'), metrics.get('error'), evaluation.get('error'),
@@ -146,7 +146,7 @@ def classify(r, c, at=None):
         retention_class, reason = 'processing_failed', 'Decoder error or interrupted offset search needs review' + (': ' + details if details else '')
     elif not searched:
         reason = 'Supported current frequency-offset procedure has not completed'
-    elif lines or metrics.get('images') or ambiguous_signal:
+    elif lines or images or ambiguous_signal:
         reason = 'Partial channel/image or synchronized decoder evidence below useful threshold needs review'
     else:
         disposition, reason = 'DELETABLE', 'Capture grace expired; supported current nominal and offset procedure produced no useful images'
@@ -185,7 +185,12 @@ def inventory_records(root, c):
         if reviewed.exists() and r.get('state') not in ACTIVE:
             evidence = json.loads(reviewed.read_text())
             evidence['decode_attempts'] = r.get('decode_attempts', []) + [a for a in evidence.get('decode_attempts', []) if a.get('output') not in {t.get('output') for t in r.get('decode_attempts', [])}]
-            evidence['pinned'] = r.get('pinned', False)
+            evidence['pinned'] = r.get('pinned', False) or evidence.get('pinned', False)
+            for key in ('reference', 'regression', 'explicit_protection'):
+                if r.get(key):
+                    evidence[key] = r[key]
+            if str(r.get('source', '')).startswith('imported') or str(r.get('capture', {}).get('source', '')).startswith('imported'):
+                evidence.setdefault('explicit_protection', 'Imported provenance in original managed record')
             evidence['original_managed_record'] = str(path)
             r, path = evidence, reviewed
         records.append((path, r))
@@ -217,7 +222,7 @@ def inventory_records(root, c):
         if name in protected:
             r['explicit_protection'] = protected[name]
         matches = [meta for _, meta in history if r['iq'] in json.dumps(meta)]
-        if any(meta.get('reference') is True or str(meta.get('source', '')).startswith('imported') for meta in matches):
+        if any(meta.get('reference') is True or meta.get('regression') is True or meta.get('pinned') is True or meta.get('explicit_protection') or str(meta.get('source', '')).startswith('imported') for meta in matches):
             r.setdefault('explicit_protection', 'Imported/reference provenance in preserved database history')
         r['historical_useful_images'] = any(pid in useful_ids for pid, meta in history if r['iq'] in json.dumps(meta))
         r['historical_useful_images'] = bool(r.get('historical_useful_images')) or any(any(re.fullmatch(r'MSU-MR-[1-6]', im.get('product', '')) and im.get('width', 0) >= 256 and im.get('height', 0) >= settings(c)['useful_min_lines'] for im in meta.get('images', [])) for meta in matches)

@@ -14,7 +14,7 @@ One RTL-SDR Blog V4 (`V4MAIN01`) is time-shared. METEOR reservations take priori
 | METEOR | Autonomous planning/reserved capture, **256 kS/s**, 137.900 MHz, SatDump 1.2.2 ARM64/Docker and retained dashboard products; useful output can coexist with decoder SIGSEGV |
 | 433 MHz | Historical Nexus-TH reception; optional second receiver remains disabled |
 
-Periodic FM and the legacy satellite placeholder are disabled. Tower audio has a **30-day policy with permanent pins**; automatic satellite raw deletion remains disabled. Historical sample rates/results remain dated.
+Periodic FM and the legacy satellite placeholder are disabled. Tower audio has a **30-day policy with permanent pins**; automatic METEOR raw deletion is enabled with conservative protection and grace rules; see [verification](docs/evidence/meteor-deletion-20261014/completion.md). Historical sample rates/results remain dated.
 
 ```mermaid
 flowchart LR

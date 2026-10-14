@@ -1,0 +1,39 @@
+{
+  "config_only_two_gates_changed": true,
+  "exact_candidate_deletion_audit_match": true,
+  "final_dry_run_summary": {
+    "PROTECTED": {
+      "count": 18,
+      "bytes": 11703156736
+    },
+    "GRACE": {
+      "count": 1,
+      "bytes": 419430400
+    },
+    "DELETABLE": {
+      "count": 0,
+      "bytes": 0
+    },
+    "REVIEW": {
+      "count": 5,
+      "bytes": 3293052928
+    }
+  },
+  "database_counts": {
+    "meteor_passes": 46,
+    "meteor_images": 254
+  },
+  "image_columns": [
+    "id",
+    "pass_id",
+    "product",
+    "path",
+    "width",
+    "height",
+    "rank",
+    "created_at"
+  ],
+  "missing_indexed_image_count": 0,
+  "audit_deleted_count": 25,
+  "audit_deleted_bytes": 10417864704
+}

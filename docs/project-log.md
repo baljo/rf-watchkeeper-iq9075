@@ -321,3 +321,9 @@ Live EVK inspected; original observer was interrupted, subsequent corrected four
 - Live queue 447 -> 77: 59 persistent and 18 audit (18/322 grey-zone pool); 129 reviewed at snapshot. Labels, recordings, references, retention and other pipelines preserved.
 - 99 Linux regressions passed; dashboard alone restarted; queue/state/ATIS/METEOR schedule HTTP 200 and natural Tower timer launches verified. Reboot/sustained unattended acceptance unverified.
 - Canonical policy/config/status/architecture/operations/dashboard updated. Backups, rollback, exact failures and Definition of Done: [completion](evidence/tower-review-policy-20261011/completion.md).
+
+### 2026-10-14 17:38 UTC / 20:38 EEST — enable conservative automatic METEOR raw deletion
+
+Both deployed gates are **true** (`cleanup_enabled`, `retention.automatic_deletion_validated`). Existing cleanup timer enabled/active: daily 02:00 UTC plus every 15 minutes. Controlled maintenance deleted exactly 25 eligible no-signal `.cu8` raws / 10,417,864,704 bytes; 24 raws / 15,415,640,064 bytes remained at 17:37 UTC. Metadata, images and history retained. Minimum grace remains 24 h no-signal / 48 h partial; useful/reference/regression/imported captures protected; failures/errors/incomplete/partial evidence REVIEW. Zero-byte failures also require REVIEW. Earlier-attempt partial/error evidence is now checked. Disk pressure cannot override protection. The same policy applies to existing pre-capture low-disk cleanup.
+
+[Exact counts, eligible/deleted filenames, tests, service verification, rollback and completion limits](evidence/meteor-deletion-20261014/completion.md). One controlled production run verified; later unattended execution and reboot remain unverified. This supersedes older disabled-gate snapshots below.

@@ -1,0 +1,8 @@
+--- a/meteor-config.json (only changed keys; private observer settings omitted)
++++ b/meteor-config.json
+@@ gates @@
+-  "cleanup_enabled": false,
++  "cleanup_enabled": true,
+@@ retention @@
+-    "automatic_deletion_validated": false
++    "automatic_deletion_validated": true

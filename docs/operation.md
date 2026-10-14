@@ -1,5 +1,11 @@
 # Operation and service layout
 
+## Automatic deletion enabled — 14 October 2026
+
+Both deployed gates are **true** (`cleanup_enabled`, `retention.automatic_deletion_validated`). Existing cleanup timer enabled/active: daily 02:00 UTC plus every 15 minutes. Controlled maintenance deleted exactly 25 eligible no-signal `.cu8` raws / 10,417,864,704 bytes; 24 raws / 15,415,640,064 bytes remained at 17:37 UTC. Metadata, images and history retained. Minimum grace remains 24 h no-signal / 48 h partial; useful/reference/regression/imported captures protected; failures/errors/incomplete/partial evidence REVIEW. Zero-byte failures also require REVIEW. Earlier-attempt partial/error evidence is now checked. Disk pressure cannot override protection. The same policy applies to existing pre-capture low-disk cleanup.
+
+[Exact counts, eligible/deleted filenames, tests, service verification, rollback and completion limits](evidence/meteor-deletion-20261014/completion.md). One controlled production run verified; later unattended execution and reboot remain unverified. This supersedes older disabled-gate snapshots below.
+
 Inspected **10 October 2026**. Live project: `/root/rf-watchkeeper`; primary backend: `/root/sdr_demo/scheduler.py`. Inspect ownership/reservations before intervention. Ordinary scheduling intentionally stops during managed METEOR capture; an inactive successful oneshot is normal between timer activations.
 
 | Unit | Role / observed scheduling |
