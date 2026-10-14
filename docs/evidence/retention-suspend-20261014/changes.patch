@@ -1,0 +1,478 @@
+diff --git a/acquisition_control.py b/acquisition_control.py
+new file mode 100644
+index 0000000..d8ab872
+--- /dev/null
++++ b/acquisition_control.py
+@@ -0,0 +1,107 @@
++"""Persistent RF acquisition suspend/status/resume; preserves retention and dashboard."""
++import argparse
++from contextlib import contextmanager
++import fcntl
++import json
++from pathlib import Path
++import subprocess
++import time
++
++ROOT=Path(__file__).resolve().parent
++KEEP={'rf-watchkeeper-dashboard.service','rf-watchkeeper-meteor-cleanup.service',
++      'rf-watchkeeper-meteor-cleanup.timer','rf-watchkeeper-audio-retention.service',
++      'rf-watchkeeper-audio-retention.timer'}
++MARKER=ROOT/'data/acquisition-suspended.json'
++
++def run(*args,check=True):
++    return subprocess.run(['systemctl',*args],check=check,text=True,
++                          stdout=subprocess.PIPE,stderr=subprocess.PIPE).stdout.strip()
++
++def discover():
++    lines=run('list-unit-files','--no-legend','--no-pager').splitlines()
++    lines+=run('list-units','--all','--plain','--no-legend','--no-pager').splitlines()
++    return sorted({line.split()[0] for line in lines if line.split() and
++                   line.split()[0].startswith(('rf-watchkeeper','meteor-','satellite-')) and
++                   line.split()[0].endswith(('.service','.timer'))}-KEEP)
++
++def properties(unit):
++    return dict(line.split('=',1) for line in run('show',unit,'-p','ActiveState','-p','UnitFileState').splitlines() if '=' in line)
++
++def atomic(path,value):
++    path.parent.mkdir(parents=True,exist_ok=True)
++    tmp=path.with_suffix('.tmp');tmp.write_text(json.dumps(value,indent=2)+'\n');tmp.replace(path)
++
++@contextmanager
++def mutex():
++    (ROOT/'data').mkdir(exist_ok=True)
++    with (ROOT/'data/acquisition-control.lock').open('a') as fd:
++        fcntl.flock(fd,fcntl.LOCK_EX);yield
++
++def status():
++    units=discover()
++    active={u:properties(u)['ActiveState'] for u in units}
++    running=[u for u,s in active.items() if s in ('active','activating','deactivating')]
++    return dict(suspended=MARKER.exists(),message='RF Watchkeeper suspended' if MARKER.exists() else 'RF Watchkeeper acquisition enabled',
++                active_acquisition_units=running,
++                retention={u:properties(u) for u in sorted(KEEP) if 'cleanup' in u or 'retention' in u},
++                dashboard=properties('rf-watchkeeper-dashboard.service'))
++
++def suspend():
++    with mutex():
++        units=discover()
++        if MARKER.exists():
++            saved=json.loads(MARKER.read_text())
++        else:
++            saved=dict(created_at=time.time(),units={u:properties(u) for u in units})
++            atomic(MARKER,saved)
++        # Marker exists before guard installation/stopping. Interrupted operations
++        # can be completed by another suspend or resume invocation.
++        for unit in units:
++            if unit not in saved['units']:
++                saved['units'][unit]=properties(unit);atomic(MARKER,saved)
++            drop=Path('/etc/systemd/system')/(unit+'.d')/'90-acquisition-suspend.conf'
++            drop.parent.mkdir(parents=True,exist_ok=True)
++            drop.write_text('[Unit]\nConditionPathExists=!'+str(MARKER)+'\n')
++        run('daemon-reload')
++        timers=[u for u in units if u.endswith('.timer')]
++        services=[u for u in units if u.endswith('.service')]
++        # Disable starts after reboot; guards also reject manual/dependency starts.
++        for u in units:
++            if properties(u).get('UnitFileState') in ('enabled','enabled-runtime'):run('disable',u)
++        if timers:run('stop',*timers)
++        if services:run('stop',*services)
++        result=status()
++        if result['active_acquisition_units']:raise RuntimeError('Acquisition units did not stop: '+str(result['active_acquisition_units']))
++        return result
++
++def resume():
++    with mutex():
++        pending=ROOT/'data/acquisition-resume-pending.json'
++        if not MARKER.exists() and not pending.exists():return status()
++        saved=json.loads((MARKER if MARKER.exists() else pending).read_text())
++        for unit,old in saved['units'].items():
++            if old.get('UnitFileState') in ('enabled','enabled-runtime'):
++                args=['enable']
++                if old['UnitFileState']=='enabled-runtime':args.append('--runtime')
++                run(*args,unit)
++        atomic(pending,saved)
++        MARKER.unlink(missing_ok=True)
++        try:
++            # Restore only intended running units, never replay idle one-shot jobs.
++            services=[u for u,s in saved['units'].items() if u.endswith('.service') and s['ActiveState']=='active']
++            timers=[u for u,s in saved['units'].items() if u.endswith('.timer') and s['ActiveState'] in ('active','activating')]
++            if services:run('start',*services)
++            if timers:run('start',*timers)
++        except Exception:
++            atomic(MARKER,saved)
++            run('stop',*services,*timers,check=False)
++            raise  # Caller can retry; guards remain installed permanently.
++        atomic(ROOT/'data/acquisition-last-resume.json',saved)
++        pending.unlink(missing_ok=True)
++        return status()
++
++if __name__=='__main__':
++    parser=argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('action',choices=('suspend','status','resume'))
++    args=parser.parse_args()
++    print(json.dumps(globals()[args.action](),indent=2))
+diff --git a/atis_pipeline.py b/atis_pipeline.py
+index bb40702..6df39d4 100644
+--- a/atis_pipeline.py
++++ b/atis_pipeline.py
+@@ -243,0 +244 @@ def guarded_run(argv, log_path, stop, timeout=90, env=None):
++@tower_retention.audio_job
+@@ -366 +367 @@ def process(folder, stop):
+-        if path.suffix in ('.wav', '.json', '.log') and not (('tower' in folder.parts or 'asr-reference-corpus' in folder.parts or 'evaluation' in folder.parts) and tower_retention.protected(folder)):
++        if path.suffix == '.wav' and not (('tower' in folder.parts or 'asr-reference-corpus' in folder.parts or 'evaluation' in folder.parts) and tower_retention.protected(folder)):
+@@ -370,4 +370,0 @@ def process(folder, stop):
+-    elif outcome == 'no_activity' and not shadow_hold and not tower_retention.protected(folder):
+-        for name in ('raw.wav', 'listen.wav'):
+-            (folder/name).unlink(missing_ok=True)
+-        save(folder/'audio-retention.json', {'status':'silence_removed', 'metadata_retained':True})
+@@ -377 +374 @@ def retain_tower_audio(base, keep=20):
+-    return tower_retention.cleanup(base)
++    return []  # Daily retention owns age expiration; processing never shortens it.
+@@ -449 +446 @@ def worker():
+-                        if json.loads((folder/'capture.json').read_text())['status']=='ready':pending.append(folder)
++                        if (folder/'raw.wav').is_file() and json.loads((folder/'capture.json').read_text())['status']=='ready':pending.append(folder)
+diff --git a/atis_shadow.py b/atis_shadow.py
+index ee508a3..c844a26 100644
+--- a/atis_shadow.py
++++ b/atis_shadow.py
+@@ -108 +108,2 @@ def release_silence_retention(root=ROOT):
+-    """Finish the existing no-activity rule only after shadow is terminal.
++    """Compatibility hook: daily age retention now owns original audio expiry."""
++    return
+@@ -110,11 +110,0 @@ def release_silence_retention(root=ROOT):
+-    No general ATIS expiry is invented. Pinned captures are always protected.
+-    """
+-    import tower_retention
+-    with database(root) as db:rows=list(db.execute("SELECT folder FROM jobs WHERE state IN ('completed','failed','skipped')"))
+-    for row in rows:
+-        folder=Path(row['folder'])
+-        if folder.parent!=Path(root)/'recordings/atis' or tower_retention.protected(folder):continue
+-        if read(folder/'processed.json',{}).get('status')!='no_activity':continue
+-        if read(folder/'audio-retention.json',{}).get('status')=='silence_removed':continue
+-        for name in ('raw.wav','listen.wav'):(folder/name).unlink(missing_ok=True)
+-        ir.atomic(folder/'audio-retention.json',{'status':'silence_removed','metadata_retained':True,'shadow_terminal':True})
+@@ -196,0 +187,5 @@ def attempt(row, stop, root=ROOT, guard=None, command_factory=None):
++    import tower_retention
++    with tower_retention.folder_lock(Path(row['folder']),blocking=True):
++        return _attempt(row,stop,root,guard,command_factory)
++
++def _attempt(row, stop, root=ROOT, guard=None, command_factory=None):
+diff --git a/atis_validation.py b/atis_validation.py
+index 439e702..53f1ccc 100644
+--- a/atis_validation.py
++++ b/atis_validation.py
+@@ -188,0 +189,5 @@ def save(request,root=ROOT):
++ import tower_retention
++ with tower_retention.lock(root):
++  return _save(request,root)
++
++def _save(request,root=ROOT):
+diff --git a/dashboard.html b/dashboard.html
+index 0ca17d8..40b09c2 100644
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -29,0 +30 @@ th{color:var(--muted);font-size:13px;font-weight:650}
++<div id="acquisition-mode" role="status" hidden style="padding:16px;background:#664600;color:#fff;font-weight:bold">RF Watchkeeper suspended - acquisition paused; dashboard and retention remain available.</div>
+@@ -1574,0 +1576 @@ if(aisLocalRange){
++async function pollAcquisition(){try{const r=await fetch("/api/acquisition",{cache:"no-store"});if(r.ok)document.getElementById("acquisition-mode").hidden=!(await r.json()).suspended;}catch(e){}setTimeout(pollAcquisition,5000);}pollAcquisition();
+diff --git a/dashboard.py b/dashboard.py
+index 3fc2f71..cbde292 100644
+--- a/dashboard.py
++++ b/dashboard.py
+@@ -366,0 +367,3 @@ class Handler(BaseHTTPRequestHandler):
++        if route == "/api/acquisition":
++            return self.respond({"suspended": (ROOT/"data/acquisition-suspended.json").exists(),
++                                 "message": "RF Watchkeeper suspended" if (ROOT/"data/acquisition-suspended.json").exists() else "RF Watchkeeper acquisition enabled"})
+diff --git a/deploy/systemd/rf-watchkeeper-audio-retention.service b/deploy/systemd/rf-watchkeeper-audio-retention.service
+new file mode 100644
+index 0000000..7e50e20
+--- /dev/null
++++ b/deploy/systemd/rf-watchkeeper-audio-retention.service
+@@ -0,0 +1,10 @@
++[Unit]
++Description=RF Watchkeeper daily Tower/ATIS audio retention (metadata preserved)
++After=local-fs.target
++
++[Service]
++Type=oneshot
++WorkingDirectory=/root/rf-watchkeeper
++ExecStart=/usr/bin/python3 /root/rf-watchkeeper/tower_retention.py daily
++TimeoutStartSec=600
++UMask=0077
+diff --git a/deploy/systemd/rf-watchkeeper-audio-retention.timer b/deploy/systemd/rf-watchkeeper-audio-retention.timer
+new file mode 100644
+index 0000000..3684380
+--- /dev/null
++++ b/deploy/systemd/rf-watchkeeper-audio-retention.timer
+@@ -0,0 +1,10 @@
++[Unit]
++Description=Daily RF Watchkeeper audio retention, including while acquisition suspended
++
++[Timer]
++OnCalendar=*-*-* 02:30:00 UTC
++Persistent=true
++Unit=rf-watchkeeper-audio-retention.service
++
++[Install]
++WantedBy=timers.target
+diff --git a/test_acquisition_control.py b/test_acquisition_control.py
+new file mode 100644
+index 0000000..8caa1a7
+--- /dev/null
++++ b/test_acquisition_control.py
+@@ -0,0 +1,11 @@
++from unittest.mock import patch
++import unittest
++import acquisition_control as c
++
++class DiscoveryTests(unittest.TestCase):
++    def test_discovery_covers_legacy_and_excludes_retention_dashboard(self):
++        lines='\n'.join(u+' enabled -' for u in ('rf-watchkeeper-scheduler.service','rf-watchkeeper-sensors.service','meteor-old.timer','satellite-preflight.service',*c.KEEP,'other.service'))
++        with patch.object(c,'run',return_value=lines):
++            self.assertEqual(c.discover(),['meteor-old.timer','rf-watchkeeper-scheduler.service','rf-watchkeeper-sensors.service','satellite-preflight.service'])
++
++if __name__=='__main__':unittest.main()
+diff --git a/test_audio_retention_policy.py b/test_audio_retention_policy.py
+new file mode 100644
+index 0000000..7949bf7
+--- /dev/null
++++ b/test_audio_retention_policy.py
+@@ -0,0 +1,62 @@
++import json
++import os
++from pathlib import Path
++import tempfile
++import unittest
++from datetime import datetime,timezone
++from unittest.mock import patch
++import tower_retention as r
++
++class AudioPolicyTests(unittest.TestCase):
++    def setUp(self):
++        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
++        self.root=Path(self.tmp.name);self.now=datetime(2026,10,14,tzinfo=timezone.utc).timestamp()
++    def capture(self,kind,age,**metadata):
++        stamp=datetime.fromtimestamp(self.now-age*86400,timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
++        folder=self.root/'recordings'/kind/stamp;folder.mkdir(parents=True)
++        (folder/'capture.json').write_text(json.dumps(dict(kind=kind,source='live',**metadata)))
++        (folder/'raw.wav').write_bytes(b'audio');(folder/'listen.wav').write_bytes(b'listen')
++        return folder
++    def expire(self,p,apply=True,now=None):
++        with patch.object(r,'active_paths',return_value=[]):return r.expire(p.parent,now=self.now if now is None else now,apply=apply)
++    def test_original_timestamp_boundary_mtime_and_pending_review(self):
++        for kind,days in [('tower',14),('atis',7)]:
++            p=self.capture(kind,days,manual_review_required=True)
++            os.utime(str(p/'raw.wav'),(self.now,self.now))
++            self.assertEqual(self.expire(p,now=self.now-1)['deleted'],0)
++            self.assertEqual(self.expire(p)['deleted'],2)
++            self.assertTrue((p/'capture.json').exists())
++    def test_terminal_failure_and_no_processed_file_expire(self):
++        for kind in ('tower','atis'):
++            p=self.capture(kind,20)
++            metadata={'transcript.json':b'{"text":"kept"}','processed.json':b'{"status":"failed"}', 'review.json':b'{"label":"pending"}','tower-classification.json':b'{"status":"uncertain"}'}
++            for name,data in metadata.items():(p/name).write_bytes(data)
++            self.assertEqual(self.expire(p)['deleted'],2)
++            for name,data in metadata.items():self.assertEqual((p/name).read_bytes(),data)
++        p=self.capture('tower',21);self.assertEqual(self.expire(p)['deleted'],2)
++    def test_reference_pins_hold_indefinitely_but_validation_does_not(self):
++        for i,flag in enumerate(('pinned','reference','permanent_reference','protected')):
++            p=self.capture('atis',30+i,**{flag:True});self.assertEqual(self.expire(p)['deleted'],0)
++        p=self.capture('atis',40);(p/'atis-validation-hold.json').write_text('{"until":9999999999}')
++        self.assertEqual(self.expire(p)['deleted'],2)
++    def test_lock_only_protects_while_processing_alive(self):
++        p=self.capture('tower',30)
++        with r.folder_lock(p):self.assertEqual(self.expire(p)['protected'],1)
++        self.assertEqual(self.expire(p)['deleted'],2)
++    def test_open_reader_and_inspection_error_fail_closed(self):
++        p=self.capture('tower',30)
++        with patch.object(r,'active_paths',return_value=[str(p/'raw.wav')]):
++            self.assertEqual(r.expire(p.parent,now=self.now,apply=True)['deleted'],0)
++        with patch.object(r,'active_paths',side_effect=PermissionError()):
++            result=r.expire(p.parent,now=self.now,apply=True)
++            self.assertEqual(result['errors'],1);self.assertTrue((p/'raw.wav').exists())
++    def test_malformed_metadata_symlink_and_dry_run(self):
++        p=self.capture('atis',30);before=(p/'capture.json').read_bytes()
++        self.assertEqual(self.expire(p,apply=False)['eligible'],2);self.assertTrue((p/'raw.wav').exists())
++        (p/'capture.json').write_text('{');self.assertEqual(self.expire(p)['errors'],1)
++        (p/'capture.json').write_text('[]');self.assertEqual(self.expire(p)['errors'],1)
++        (p/'capture.json').write_bytes(before);outside=self.root/'outside.wav';outside.write_bytes(b'keep')
++        (p/'listen.wav').unlink();(p/'listen.wav').symlink_to(outside)
++        self.assertEqual(self.expire(p)['deleted'],0);self.assertEqual(outside.read_bytes(),b'keep')
++
++if __name__=='__main__':unittest.main()
+diff --git a/test_tower_retention.py b/test_tower_retention.py
+index aebeac9..0e82e62 100644
+--- a/test_tower_retention.py
++++ b/test_tower_retention.py
+@@ -47 +47 @@ class TowerRetentionTests(unittest.TestCase):
+-        p=self.capture(30)
++        p=self.capture(14)
+@@ -49 +49 @@ class TowerRetentionTests(unittest.TestCase):
+-        (p/'processed.json').unlink();retention.cleanup(self.base,now=self.now+1000);self.assertTrue((p/'raw.wav').exists())
++        (p/'processed.json').unlink();retention.cleanup(self.base,now=self.now+1000);self.assertFalse((p/'raw.wav').exists())
+@@ -60 +60 @@ class TowerRetentionTests(unittest.TestCase):
+-    def test_atis_no_activity_retention_and_clip_cleanup_unchanged(self):
++    def test_atis_no_activity_originals_wait_for_age_retention(self):
+@@ -68 +68 @@ class TowerRetentionTests(unittest.TestCase):
+-        self.assertFalse((p/'raw.wav').exists());self.assertFalse((p/'listen.wav').exists())
++        self.assertTrue((p/'raw.wav').exists());self.assertTrue((p/'listen.wav').exists())
+@@ -70 +69,0 @@ class TowerRetentionTests(unittest.TestCase):
+-        self.assertEqual(json.loads((p/'audio-retention.json').read_text())['status'],'silence_removed')
+diff --git a/tower_classification.py b/tower_classification.py
+index 84eddfc..8003531 100644
+--- a/tower_classification.py
++++ b/tower_classification.py
+@@ -2,0 +3 @@ import json
++import tower_retention
+@@ -23,0 +25 @@ def classify(folder):
++@tower_retention.audio_job
+diff --git a/tower_retention.py b/tower_retention.py
+index 1cd9bda..48b0f09 100644
+--- a/tower_retention.py
++++ b/tower_retention.py
+@@ -1 +1 @@
+-"""Tower development retention and permanent reference pinning."""
++"""Daily Tower/ATIS audio expiry with permanent references and metadata preserved."""
+@@ -10,0 +11,2 @@ import time
++import os
++from functools import wraps
+@@ -12 +14,2 @@ import time
+-DAYS = 30
++RETENTION_DAYS = {'tower': 14, 'atis': 7}
++DAYS = RETENTION_DAYS['tower']
+@@ -29 +32 @@ def protected(folder):
+-        except (OSError,ValueError): pass
++        except (OSError,ValueError,AttributeError,TypeError): pass
+@@ -37 +40 @@ def protected(folder):
+-    except (OSError, ValueError):
++    except (OSError, ValueError, AttributeError, TypeError):
+@@ -40,7 +43,38 @@ def protected(folder):
+-def cleanup(base, now=None):
+-    base = Path(base)
+-    # This cleanup never accepts another channel or a reference tree.
+-    if base.name != 'tower' or base.parent.name != 'recordings' or base.is_symlink():
+-        return []
+-    root = base.parent.parent
+-    removed=[]
++def audio_job(function):
++    """Serialize a real processing call with expiration, without persistent holds."""
++    @wraps(function)
++    def wrapped(folder, *args, **kwargs):
++        if Path(folder).parent.name != 'atis' and protected(folder):
++            return function(folder, *args, **kwargs)
++        with folder_lock(Path(folder), blocking=True):
++            return function(folder, *args, **kwargs)
++    return wrapped
++
++@contextmanager
++def folder_lock(folder, blocking=False):
++    with (folder/'.audio-processing.lock').open('a') as handle:
++        fcntl.flock(handle, fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB))
++        yield
++
++def active_paths():
++    """Take a fail-closed snapshot of open files and command arguments."""
++    found=[]
++    for proc in Path('/proc').iterdir():
++        if not proc.name.isdigit() or int(proc.name)==os.getpid(): continue
++        try:
++            found.append((proc/'cmdline').read_bytes().replace(b'\0',b' ').decode(errors='replace'))
++            for fd in (proc/'fd').iterdir():
++                try: found.append(os.readlink(str(fd)))
++                except FileNotFoundError: pass
++        except FileNotFoundError: pass  # Process exited during snapshot.
++    return found
++
++def expire(base, now=None, apply=False):
++    base=Path(base)
++    category=base.name
++    days=RETENTION_DAYS.get(category)
++    result=dict(category=category,retention_days=days,eligible=0,protected=0,
++                deleted=0,errors=0,bytes_freed=0,would_free_bytes=0,removed=[],error_details=[],fatal=False)
++    if not days or base.parent.name!='recordings' or base.is_symlink():
++        result['errors']+=1;result['fatal']=True;return result
++    if not base.exists(): return result
+@@ -48,22 +82,49 @@ def cleanup(base, now=None):
+-    with lock(root):
+-        for folder in sorted(base.iterdir()):
+-            if not folder.is_dir() or not CAPTURE_ID.fullmatch(folder.name) or protected(folder):
+-                continue
+-            try:
+-                capture=json.loads((folder/'capture.json').read_text())
+-                processed=json.loads((folder/'processed.json').read_text())
+-                if capture.get('kind') != 'tower' or not processed.get('status'):
+-                    continue
+-                captured=datetime.strptime(folder.name,'%Y%m%dT%H%M%S.%fZ').replace(tzinfo=timezone.utc).timestamp()
+-                if now-captured < SECONDS:
+-                    continue
+-                for name in ('raw.wav','listen.wav'):
+-                    path=folder/name
+-                    if path.is_file() and not path.is_symlink():
+-                        path.unlink()
+-                        removed.append(str(path))
+-                # Separate policy audit: preserve all existing classifier/retention metadata.
+-                (folder/'tower-retention-policy.json').write_text(json.dumps({'status':'development_retention_expired','retention_days':DAYS,'metadata_retained':True},indent=2)+'\n')
+-            except (OSError, ValueError):
+-                continue
+-    return removed
++    root=base.parent.parent
++    try:
++        with lock(root):
++            users=active_paths()
++            for folder in sorted(base.iterdir()):
++                if not folder.is_dir(): continue
++                try:
++                    if folder.is_symlink() or not CAPTURE_ID.fullmatch(folder.name):
++                        result['protected']+=1;continue
++                    if not any(folder.glob('*.wav')): continue
++                    capture=json.loads((folder/'capture.json').read_text())
++                    if not isinstance(capture,dict):raise ValueError('Capture metadata must be an object')
++                    # Timestamped UTC capture ID is the original recording clock.
++                    captured=datetime.strptime(folder.name,'%Y%m%dT%H%M%S.%fZ').replace(tzinfo=timezone.utc).timestamp()
++                    if capture.get('kind')!=category or capture.get('source')!='live':
++                        result['protected']+=1;continue
++                    # Review/validation queue state and terminal failures are not holds.
++                    permanent=any((folder/n).exists() for n in ('tower-pin.json','keep','KEEP','.keep','protected.json','reference.json','atis-human-reference.json')) or any(capture.get(k) for k in ('pinned','keep','protected','reference','permanent_reference','reference_sample'))
++                    if permanent or any(str(folder) in item for item in users):
++                        result['protected']+=1;continue
++                    if now-captured < days*86400: continue
++                    with folder_lock(folder):
++                        # Recheck readers after taking the processing exclusion lock.
++                        if any(str(folder) in item for item in active_paths()):
++                            result['protected']+=1;continue
++                        paths=list(folder.glob('*.wav'))
++                        if any(p.is_symlink() or not p.is_file() for p in paths):
++                            result['errors']+=1;continue
++                        sizes={p:p.stat().st_size for p in paths}
++                        result['eligible']+=len(paths)
++                        result['would_free_bytes']+=sum(sizes.values())
++                        if apply:
++                            for path,size in sizes.items():
++                                path.unlink();result['removed'].append(str(path))
++                                result['deleted']+=1;result['bytes_freed']+=size
++                            if paths:
++                                (folder/'tower-retention-policy.json').write_text(json.dumps(dict(status='audio_retention_expired',retention_days=days,metadata_retained=True,expired_at=now),indent=2)+'\n')
++                except BlockingIOError: result['protected']+=1
++                except (OSError,ValueError,TypeError) as error:
++                    result['errors']+=1
++                    result['error_details'].append(dict(capture_id=folder.name,error=type(error).__name__,retained=True))
++    except (OSError,ValueError) as error:
++        result['errors']+=1;result['fatal']=True
++        result['error_details'].append(dict(error=type(error).__name__,retained=True))
++    return result
++
++def cleanup(base, now=None):
++    # Compatibility API; daily service owns production scheduling.
++    return expire(base,now=now,apply=True)['removed'] if Path(base).name=='tower' else []
+@@ -101 +162 @@ if __name__=='__main__':
+-    parser.add_argument('action',choices=['pin','cleanup'])
++    parser.add_argument('action',choices=['pin','cleanup','daily'])
+@@ -102,0 +164 @@ if __name__=='__main__':
++    parser.add_argument('--dry-run',action='store_true')
+@@ -108 +170,5 @@ if __name__=='__main__':
+-    else: print(json.dumps(cleanup(root/'recordings/tower')))
++    else:
++        categories=('tower','atis') if args.action=='daily' else ('tower',)
++        results=[expire(root/'recordings'/c,apply=not args.dry_run) for c in categories]
++        print(json.dumps(results,indent=2))
++        raise SystemExit(1 if any(r['fatal'] for r in results) else 0)

@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily RF Watchkeeper audio retention, including while acquisition suspended
+
+[Timer]
+OnCalendar=*-*-* 02:30:00 UTC
+Persistent=true
+Unit=rf-watchkeeper-audio-retention.service
+
+[Install]
+WantedBy=timers.target

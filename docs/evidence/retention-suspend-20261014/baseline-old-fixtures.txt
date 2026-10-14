@@ -1,0 +1,64 @@
+test_audio_is_pinned_to_selected_capture_and_rejects_escape (test_tower_recent.TowerRecentTests.test_audio_is_pinned_to_selected_capture_and_rejects_escape) ... ok
+test_history_includes_twenty_silent_attempts_and_missing_audio (test_tower_recent.TowerRecentTests.test_history_includes_twenty_silent_attempts_and_missing_audio) ... FAIL
+test_retention_preserves_speech_references_metadata_and_latest_twenty (test_tower_recent.TowerRecentTests.test_retention_preserves_speech_references_metadata_and_latest_twenty) ... ok
+test_speech_and_failure_status (test_tower_recent.TowerRecentTests.test_speech_and_failure_status) ... FAIL
+test_http_save_refills_queue (test_tower_queue.QueueTests.test_http_save_refills_queue) ... {"event": "dashboard_request", "at": "2026-10-14T18:09:07.417196+00:00", "route": "/api/tower", "seconds": 0.025}
+ERROR
+test_labels_and_candidate_types (test_tower_queue.QueueTests.test_labels_and_candidate_types) ... FAIL
+test_save_refills_twenty_and_preserves_history (test_tower_queue.QueueTests.test_save_refills_twenty_and_preserves_history) ... FAIL
+
+======================================================================
+ERROR: test_http_save_refills_queue (test_tower_queue.QueueTests.test_http_save_refills_queue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_queue.py", line 71, in test_http_save_refills_queue
+    target = queue[0]['recording']
+             ~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_history_includes_twenty_silent_attempts_and_missing_audio (test_tower_recent.TowerRecentTests.test_history_includes_twenty_silent_attempts_and_missing_audio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_recent.py", line 22, in test_history_includes_twenty_silent_attempts_and_missing_audio
+    self.assertEqual(len(rows),20);self.assertEqual(rows[0]['result'],'no_activity')
+                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'uncertain' != 'no_activity'
+- uncertain
++ no_activity
+
+
+======================================================================
+FAIL: test_speech_and_failure_status (test_tower_recent.TowerRecentTests.test_speech_and_failure_status)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_recent.py", line 42, in test_speech_and_failure_status
+    self.capture(2,'failed');self.assertEqual(atis_view.recent(self.root)[0]['result'],'failed')
+                             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'uncertain' != 'failed'
+- uncertain
++ failed
+
+
+======================================================================
+FAIL: test_labels_and_candidate_types (test_tower_queue.QueueTests.test_labels_and_candidate_types)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_queue.py", line 19, in test_labels_and_candidate_types
+    self.assertEqual(bool(atis_view.needs_tower_review(row)), anomaly or status != 'probably_non_voice')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False != True
+
+======================================================================
+FAIL: test_save_refills_twenty_and_preserves_history (test_tower_queue.QueueTests.test_save_refills_twenty_and_preserves_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/rf-watchkeeper/test_tower_queue.py", line 36, in test_save_refills_twenty_and_preserves_history
+    self.assertEqual(len(queue), 20)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 0 != 20
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.590s
+
+FAILED (failures=4, errors=1)

@@ -1,5 +1,13 @@
 # Data retention and repository hygiene
 
+## Tower/ATIS retention and Rally suspension — 14 October 2026
+
+Ordinary Tower audio now expires after **14 days**, ATIS after **7 days**, from the original UTC recording ID. Review queues and terminal processing failures do not prevent expiry; permanent pins/references and genuine running jobs remain protected. Metadata/databases and ASR outputs remain. The daily `rf-watchkeeper-audio-retention.timer` runs at 02:30 UTC and stays operational when acquisition is suspended. This supersedes older 30-day Tower and unbounded ATIS statements below; satellite cleanup policy remains unchanged.
+
+`python3 acquisition_control.py suspend|status|resume` in `/root/rf-watchkeeper` manages acquisition and processing services/timers, including legacy satellite schedules, with persistent start guards and restoration of their saved state. Dashboard and both retention timers remain available; dashboard shows **RF Watchkeeper suspended**. Implemented, deployed and controlled live verification passed; acquisition was restored to enabled. Controlled deletion removed exactly 521 expired ATIS WAVs / 733,579,616 bytes, with Tower/ATIS metadata and databases unchanged. 37 focused regression tests and 101 satellite tests passed. Old Tower display/queue fixture failures reproduce with the previous implementation. Reboot and later unattended daily cleanup remain unverified. Three historical damaged-metadata Tower folders remain fail-closed (225,324 audio bytes).
+
+See [operator commands and rollback](acquisition-mode.md), [configuration and retention details](../config/examples/audio-retention-policy.md), and [completion evidence](evidence/retention-suspend-20261014/completion.md).
+
 ## Automatic deletion enabled — 14 October 2026
 
 Both deployed gates are **true** (`cleanup_enabled`, `retention.automatic_deletion_validated`). Existing cleanup timer enabled/active: daily 02:00 UTC plus every 15 minutes. Controlled maintenance deleted exactly 25 eligible no-signal `.cu8` raws / 10,417,864,704 bytes; 24 raws / 15,415,640,064 bytes remained at 17:37 UTC. Metadata, images and history retained. Minimum grace remains 24 h no-signal / 48 h partial; useful/reference/regression/imported captures protected; failures/errors/incomplete/partial evidence REVIEW. Zero-byte failures also require REVIEW. Earlier-attempt partial/error evidence is now checked. Disk pressure cannot override protection. The same policy applies to existing pre-capture low-disk cleanup.

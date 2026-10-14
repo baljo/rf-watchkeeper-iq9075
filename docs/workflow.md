@@ -40,7 +40,7 @@ Applies to EVERY RF Watchkeeper engineering task. Documentation and evidence are
 8. Verify persistence across service restart/reboot, or explicitly state which persistence checks remain unverified. Do not disrupt an active reservation merely to close a gate.
 9. Read live datasets and shared records for current counts/statistics. Date frozen evidence; never reuse historical counts as current.
 10. Never publish precise home coordinates or private location information in GitHub/project documentation; use only the approximate Vaasa/Korsholm region in public material.
-11. Preserve current decisions unless Thomas explicitly changes them: Tower ASR deferred because current audio is too poor for useful transcription; Tower recordings retained 30 days with pinned references protected; METEOR failed/unverified raw captures not automatically deleted; production and shadow/candidate paths clearly identified.
+11. Preserve current decisions unless Thomas explicitly changes them: Tower ASR deferred because current audio is too poor for useful transcription; Tower ordinary audio retained 14 days and ATIS 7 days without manual-review holds, permanent references protected (authorized 14 October 2026); METEOR conservative automatic deletion enabled with its existing gates/protections (14 October 2026); production and shadow/candidate paths clearly identified.
 
 An explicitly documented unverified persistence check is permitted by item 8, but it is not a passing restart/reboot test. Report outstanding operational validation separately from completed documentation repair.
 

@@ -364,6 +364,9 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.request_started = time.monotonic()
         route = urlsplit(self.path).path
+        if route == "/api/acquisition":
+            return self.respond({"suspended": (ROOT/"data/acquisition-suspended.json").exists(),
+                                 "message": "RF Watchkeeper suspended" if (ROOT/"data/acquisition-suspended.json").exists() else "RF Watchkeeper acquisition enabled"})
         if route == "/api/meteor/schedule":
             try:
                 return self.respond(satellite_schedule())

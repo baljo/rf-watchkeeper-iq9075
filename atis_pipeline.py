@@ -241,6 +241,7 @@ def guarded_run(argv, log_path, stop, timeout=90, env=None):
     finally:
         stop_child(proc)
 
+@tower_retention.audio_job
 def process(folder, stop):
     if ('tower' in folder.parts or 'asr-reference-corpus' in folder.parts or 'evaluation' in folder.parts) and tower_retention.protected(folder):
         return  # Permanent originals/references must never be regenerated or cleaned.
@@ -363,18 +364,14 @@ def process(folder, stop):
             shadow_hold = True  # Preserve eligible audio for discovery after recovery.
 
     for path in folder.glob('clip-*'):
-        if path.suffix in ('.wav', '.json', '.log') and not (('tower' in folder.parts or 'asr-reference-corpus' in folder.parts or 'evaluation' in folder.parts) and tower_retention.protected(folder)):
+        if path.suffix == '.wav' and not (('tower' in folder.parts or 'asr-reference-corpus' in folder.parts or 'evaluation' in folder.parts) and tower_retention.protected(folder)):
             path.unlink(missing_ok=True)
     if folder.parent.name == 'tower':
         retain_tower_audio(folder.parent)
-    elif outcome == 'no_activity' and not shadow_hold and not tower_retention.protected(folder):
-        for name in ('raw.wav', 'listen.wav'):
-            (folder/name).unlink(missing_ok=True)
-        save(folder/'audio-retention.json', {'status':'silence_removed', 'metadata_retained':True})
 
 def retain_tower_audio(base, keep=20):
     # keep is accepted for compatibility; capture count no longer controls deletion.
-    return tower_retention.cleanup(base)
+    return []  # Daily retention owns age expiration; processing never shortens it.
 
 def validate_interpretation(parsed, segments):
     if not isinstance(parsed,dict) or not isinstance(parsed.get('fields'),dict):
@@ -446,7 +443,7 @@ def worker():
                 bases=[OUT]
                 for folder in sorted((p for base in bases if base.exists() for p in base.iterdir()), key=lambda p:p.name):
                     if folder.is_dir() and (folder/'capture.json').exists() and not (folder/'processed.json').exists():
-                        if json.loads((folder/'capture.json').read_text())['status']=='ready':pending.append(folder)
+                        if (folder/'raw.wav').is_file() and json.loads((folder/'capture.json').read_text())['status']=='ready':pending.append(folder)
                 if pending:
                     try:
                         process(pending[0],stop)

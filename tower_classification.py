@@ -1,5 +1,6 @@
 """ASR-independent, conservative Tower screening from saved acoustic evidence."""
 import json
+import tower_retention
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -21,6 +22,7 @@ def classify(folder):
                 method='saved-acoustic-evidence-v1',evidence={'activity_hold':hold,'segmentation':segmentation},
                 asr_status='disabled',asr_required=False)
 
+@tower_retention.audio_job
 def process(folder):
     import os,tempfile
     folder=Path(folder)

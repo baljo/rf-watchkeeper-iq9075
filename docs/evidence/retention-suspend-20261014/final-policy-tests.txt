@@ -1,0 +1,12 @@
+test_lock_only_protects_while_processing_alive (test_audio_retention_policy.AudioPolicyTests.test_lock_only_protects_while_processing_alive) ... ok
+test_malformed_metadata_symlink_and_dry_run (test_audio_retention_policy.AudioPolicyTests.test_malformed_metadata_symlink_and_dry_run) ... ok
+test_open_reader_and_inspection_error_fail_closed (test_audio_retention_policy.AudioPolicyTests.test_open_reader_and_inspection_error_fail_closed) ... ok
+test_original_timestamp_boundary_mtime_and_pending_review (test_audio_retention_policy.AudioPolicyTests.test_original_timestamp_boundary_mtime_and_pending_review) ... ok
+test_reference_pins_hold_indefinitely_but_validation_does_not (test_audio_retention_policy.AudioPolicyTests.test_reference_pins_hold_indefinitely_but_validation_does_not) ... ok
+test_terminal_failure_and_no_processed_file_expire (test_audio_retention_policy.AudioPolicyTests.test_terminal_failure_and_no_processed_file_expire) ... ok
+test_discovery_covers_legacy_and_excludes_retention_dashboard (test_acquisition_control.DiscoveryTests.test_discovery_covers_legacy_and_excludes_retention_dashboard) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.028s
+
+OK

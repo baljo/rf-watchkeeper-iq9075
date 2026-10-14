@@ -186,6 +186,11 @@ def snapshot(root=ROOT):
  return {'fields':dict(zip(FIELDS,LABELS)),'summary':summary,'captures':rows,'scoring_policy':'Strict raw associations only; no label repair; contradictions get no credit. Uncertain/unknown/clipped fields earn no credit in /14, and are excluded from assessable accuracy.'}
 
 def save(request,root=ROOT):
+ import tower_retention
+ with tower_retention.lock(root):
+  return _save(request,root)
+
+def _save(request,root=ROOT):
  cid=request['id'];folder=folder_for(root,cid);action=request['action']
  if action not in ('draft','approve','reject','start','judge'):raise ValueError('Unknown review action')
  with db(root) as c:

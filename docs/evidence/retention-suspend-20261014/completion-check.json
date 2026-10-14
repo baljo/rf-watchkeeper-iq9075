@@ -1,0 +1,22 @@
+{
+  "live_inspected": true,
+  "source_backups_and_exact_changes": true,
+  "retention_actual_verified": true,
+  "metadata_preserved": true,
+  "suspend_resume_idempotent_verified": true,
+  "systemd_guards_verified": true,
+  "retention_while_suspended_verified": true,
+  "prior_enablement_restored": true,
+  "acquisition_left_enabled": true,
+  "focused_tests_passed": 37,
+  "satellite_tests_passed": 101,
+  "final_policy_tests_passed": 7,
+  "dashboard_javascript_syntax_passed": true,
+  "docs_and_shared_evk_records_updated": true,
+  "privacy_checked": true,
+  "rollback_documented": true,
+  "reboot_verified": false,
+  "unattended_daily_cycle_verified": false,
+  "preexisting_old_fixture_failures": 5,
+  "damaged_metadata_audio_retained_bytes": 225324
+}

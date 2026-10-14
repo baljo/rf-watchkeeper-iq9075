@@ -1,0 +1,10 @@
+[Unit]
+Description=RF Watchkeeper daily Tower/ATIS audio retention (metadata preserved)
+After=local-fs.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/rf-watchkeeper
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/tower_retention.py daily
+TimeoutStartSec=600
+UMask=0077

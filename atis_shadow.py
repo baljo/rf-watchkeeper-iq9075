@@ -105,19 +105,9 @@ def update(cid,state,reason=None,result=None,root=ROOT,next_try=0,child=None):
     print('ATIS SHADOW '+cid+' '+state+': '+str(reason or ''),flush=True)
 
 def release_silence_retention(root=ROOT):
-    """Finish the existing no-activity rule only after shadow is terminal.
+    """Compatibility hook: daily age retention now owns original audio expiry."""
+    return
 
-    No general ATIS expiry is invented. Pinned captures are always protected.
-    """
-    import tower_retention
-    with database(root) as db:rows=list(db.execute("SELECT folder FROM jobs WHERE state IN ('completed','failed','skipped')"))
-    for row in rows:
-        folder=Path(row['folder'])
-        if folder.parent!=Path(root)/'recordings/atis' or tower_retention.protected(folder):continue
-        if read(folder/'processed.json',{}).get('status')!='no_activity':continue
-        if read(folder/'audio-retention.json',{}).get('status')=='silence_removed':continue
-        for name in ('raw.wav','listen.wav'):(folder/name).unlink(missing_ok=True)
-        ir.atomic(folder/'audio-retention.json',{'status':'silence_removed','metadata_retained':True,'shadow_terminal':True})
 
 def stop_child(proc):
     if proc.poll() is not None:return
@@ -194,6 +184,11 @@ def evidence(record):
         raise RuntimeError('Unexpected HTP runtime identity')
 
 def attempt(row, stop, root=ROOT, guard=None, command_factory=None):
+    import tower_retention
+    with tower_retention.folder_lock(Path(row['folder']),blocking=True):
+        return _attempt(row,stop,root,guard,command_factory)
+
+def _attempt(row, stop, root=ROOT, guard=None, command_factory=None):
     cid=row['capture_id'];folder=Path(row['folder']);source=folder/('audio.wav' if cid=='ATIS-REF-001' else 'raw.wav')
     guard=guard or (lambda:priority_reason(root))
     reason=guard()

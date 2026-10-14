@@ -44,9 +44,9 @@ class TowerRetentionTests(unittest.TestCase):
             self.assertEqual((p/'audio-retention.json').read_bytes(),metadata)
             self.assertTrue((p/'capture.json').exists())
     def test_boundary_and_incomplete_capture(self):
-        p=self.capture(30)
+        p=self.capture(14)
         retention.cleanup(self.base,now=self.now-1);self.assertTrue((p/'raw.wav').exists())
-        (p/'processed.json').unlink();retention.cleanup(self.base,now=self.now+1000);self.assertTrue((p/'raw.wav').exists())
+        (p/'processed.json').unlink();retention.cleanup(self.base,now=self.now+1000);self.assertFalse((p/'raw.wav').exists())
     def test_reference_flags_markers_and_symlinks_fail_closed(self):
         for age,flag in enumerate(('pinned','protected','reference','keep','reference_sample'),40):
             p=self.capture(age);(p/'capture.json').write_text(json.dumps({'source':'live','kind':'tower',flag:True}))
@@ -57,7 +57,7 @@ class TowerRetentionTests(unittest.TestCase):
         before={f.name:f.read_bytes() for f in target.iterdir()}
         atis_pipeline.process(target,threading.Event())
         self.assertEqual(before,{f.name:f.read_bytes() for f in target.iterdir()})
-    def test_atis_no_activity_retention_and_clip_cleanup_unchanged(self):
+    def test_atis_no_activity_originals_wait_for_age_retention(self):
         p=self.root/'recordings/atis/test';p.mkdir(parents=True)
         for name in ('raw.wav','listen.wav','clip-000000.wav'):(p/name).write_bytes(b'audio')
         (p/'capture.json').write_text(json.dumps({'source':'live','kind':'atis'}))
@@ -65,9 +65,8 @@ class TowerRetentionTests(unittest.TestCase):
         # Isolate this ordinary-cleanup fixture from the independently tested shadow queue.
         with patch.object(atis_pipeline,'prepare',return_value=[]), patch('atis_shadow.prepare',side_effect=lambda source,target: [f.unlink() for f in target.glob('clip-*.wav')]), patch('atis_shadow.enqueue'), patch('atis_shadow.retention_hold',return_value=False):
             atis_pipeline.process(p,threading.Event())
-        self.assertFalse((p/'raw.wav').exists());self.assertFalse((p/'listen.wav').exists())
+        self.assertTrue((p/'raw.wav').exists());self.assertTrue((p/'listen.wav').exists())
         self.assertFalse((p/'clip-000000.wav').exists())
-        self.assertEqual(json.loads((p/'audio-retention.json').read_text())['status'],'silence_removed')
     def test_fm_cleanup_explicitly_excludes_tower_and_reference_audio(self):
         p=self.capture(60);target=retention.pin(self.root,p)
         ordinary=self.root/'fm.wav';ordinary.write_bytes(b'fm')

@@ -1,0 +1,53 @@
+{
+  "status": {
+    "suspended": false,
+    "message": "RF Watchkeeper acquisition enabled",
+    "active_acquisition_units": [
+      "rf-watchkeeper-atis-process.service",
+      "rf-watchkeeper-atis-shadow.service",
+      "rf-watchkeeper-atis-validation.timer",
+      "rf-watchkeeper-health.timer",
+      "rf-watchkeeper-interpreter.service",
+      "rf-watchkeeper-meteor-dispatch.timer",
+      "rf-watchkeeper-meteor-legacy-register.timer",
+      "rf-watchkeeper-meteor-plan.timer",
+      "rf-watchkeeper-meteor-process.timer",
+      "rf-watchkeeper-scheduler.service",
+      "rf-watchkeeper-tower-anomaly-shadow.service",
+      "rf-watchkeeper-tower-anomaly-shadow.timer"
+    ],
+    "retention": {
+      "rf-watchkeeper-audio-retention.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "static"
+      },
+      "rf-watchkeeper-audio-retention.timer": {
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "rf-watchkeeper-meteor-cleanup.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "static"
+      },
+      "rf-watchkeeper-meteor-cleanup.timer": {
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      }
+    },
+    "dashboard": {
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    }
+  },
+  "unit_enablement_restored": true,
+  "continuous_units_restored": true,
+  "dashboard_api": {
+    "command": [
+      "curl",
+      "-fsS",
+      "http://127.0.0.1:8080/api/acquisition"
+    ],
+    "code": 0,
+    "output": "{\"suspended\": false, \"message\": \"RF Watchkeeper acquisition enabled\"}"
+  }
+}

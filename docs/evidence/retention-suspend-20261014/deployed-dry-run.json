@@ -1,0 +1,44 @@
+[
+  {
+    "category": "tower",
+    "retention_days": 14,
+    "eligible": 0,
+    "protected": 3,
+    "deleted": 0,
+    "errors": 3,
+    "bytes_freed": 0,
+    "would_free_bytes": 0,
+    "removed": [],
+    "error_details": [
+      {
+        "capture_id": "20261007T133355.726535Z",
+        "error": "JSONDecodeError",
+        "retained": true
+      },
+      {
+        "capture_id": "20261007T133457.086324Z",
+        "error": "FileNotFoundError",
+        "retained": true
+      },
+      {
+        "capture_id": "20261007T133623.531117Z",
+        "error": "FileNotFoundError",
+        "retained": true
+      }
+    ],
+    "fatal": false
+  },
+  {
+    "category": "atis",
+    "retention_days": 7,
+    "eligible": 521,
+    "protected": 139,
+    "deleted": 0,
+    "errors": 0,
+    "bytes_freed": 0,
+    "would_free_bytes": 733579616,
+    "removed": [],
+    "error_details": [],
+    "fatal": false
+  }
+]

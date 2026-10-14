@@ -1,5 +1,13 @@
 # Airband capture and Tower screening
 
+## Tower/ATIS retention and Rally suspension — 14 October 2026
+
+Ordinary Tower audio now expires after **14 days**, ATIS after **7 days**, from the original UTC recording ID. Review queues and terminal processing failures do not prevent expiry; permanent pins/references and genuine running jobs remain protected. Metadata/databases and ASR outputs remain. The daily `rf-watchkeeper-audio-retention.timer` runs at 02:30 UTC and stays operational when acquisition is suspended. This supersedes older 30-day Tower and unbounded ATIS statements below; satellite cleanup policy remains unchanged.
+
+`python3 acquisition_control.py suspend|status|resume` in `/root/rf-watchkeeper` manages acquisition and processing services/timers, including legacy satellite schedules, with persistent start guards and restoration of their saved state. Dashboard and both retention timers remain available; dashboard shows **RF Watchkeeper suspended**. Implemented, deployed and controlled live verification passed; acquisition was restored to enabled. Controlled deletion removed exactly 521 expired ATIS WAVs / 733,579,616 bytes, with Tower/ATIS metadata and databases unchanged. 37 focused regression tests and 101 satellite tests passed. Old Tower display/queue fixture failures reproduce with the previous implementation. Reboot and later unattended daily cleanup remain unverified. Three historical damaged-metadata Tower folders remain fail-closed (225,324 audio bytes).
+
+See [operator commands and rollback](acquisition-mode.md), [configuration and retention details](../config/examples/audio-retention-policy.md), and [completion evidence](evidence/retention-suspend-20261014/completion.md).
+
 Inspected 10 October 2026. [RF jobs](rf-jobs.md) is the scheduling reference: Tower **120.950 MHz AM**, 15 s probes targeting 60 s starts, 10 s quiet tail, 75 s limit, **07:00–23:00 Europe/Helsinki**; ATIS **136.450 MHz AM**, 90 s every at least 600 s all day. METEOR ownership can delay/skip either. FM reference is disabled.
 
 `atis_pipeline.capture()` takes the serial-selected receiver lock and runs `rtl_fm` into 8 kHz mono signed 16-bit WAV. Capture/sample status and application outcome remain distinct. Capture skips below 512 MiB free. Tower's `TowerHold` examines DC-free 20 ms RMS frames with 240 ms sustained activity over RMS 40; noise can extend a hold, so energy is not proof of speech.

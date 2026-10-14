@@ -1,0 +1,19 @@
+{
+  "deleted": 521,
+  "bytes_freed": 733579616,
+  "metadata_missing": [],
+  "metadata_changed": [],
+  "databases_changed": [
+    "data/watchkeeper-meteor.db"
+  ],
+  "categories": {
+    "tower": {
+      "deleted": 0,
+      "bytes_freed": 0
+    },
+    "atis": {
+      "deleted": 521,
+      "bytes_freed": 733579616
+    }
+  }
+}

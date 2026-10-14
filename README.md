@@ -1,5 +1,7 @@
 # RF-Watchkeeper on Dragonwing IQ-9075
 
+Tower/ATIS audio retention: 14/7 days with references/metadata preserved. [Suspend/status/resume for Rally](docs/acquisition-mode.md); [live verification and remaining limits](docs/evidence/retention-suspend-20261014/completion.md).
+
 RF-Watchkeeper combines scheduled aviation audio, dual-channel AIS, experimental METEOR weather-satellite imagery, RF sample-health monitoring and a local browser dashboard on a **Qualcomm Dragonwing IQ-9075 EVK**. Installation context is the approximate **Vaasa/Korsholm region, Finland**. The Arduino/Qualcomm showcase has been submitted for review; submission is not technical acceptance or an endorsement.
 
 ## Current status — inspected 10 October 2026

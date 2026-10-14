@@ -1,0 +1,42 @@
+{
+  "status": {
+    "suspended": true,
+    "message": "RF Watchkeeper suspended",
+    "active_acquisition_units": [],
+    "retention": {
+      "rf-watchkeeper-audio-retention.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "static"
+      },
+      "rf-watchkeeper-audio-retention.timer": {
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "rf-watchkeeper-meteor-cleanup.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "static"
+      },
+      "rf-watchkeeper-meteor-cleanup.timer": {
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      }
+    },
+    "dashboard": {
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    }
+  },
+  "device_processes": [],
+  "dependency_starts_blocked": true,
+  "daemon_reload_guard_verified": true,
+  "audio_timer_restart_verified": true,
+  "dashboard_api": {
+    "command": [
+      "curl",
+      "-fsS",
+      "http://127.0.0.1:8080/api/acquisition"
+    ],
+    "code": 0,
+    "output": "{\"suspended\": true, \"message\": \"RF Watchkeeper suspended\"}"
+  }
+}

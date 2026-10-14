@@ -1,0 +1,103 @@
+test_lock_only_protects_while_processing_alive (test_audio_retention_policy.AudioPolicyTests.test_lock_only_protects_while_processing_alive) ... ok
+test_malformed_metadata_symlink_and_dry_run (test_audio_retention_policy.AudioPolicyTests.test_malformed_metadata_symlink_and_dry_run) ... ok
+test_open_reader_and_inspection_error_fail_closed (test_audio_retention_policy.AudioPolicyTests.test_open_reader_and_inspection_error_fail_closed) ... ok
+test_original_timestamp_boundary_mtime_and_pending_review (test_audio_retention_policy.AudioPolicyTests.test_original_timestamp_boundary_mtime_and_pending_review) ... ok
+test_reference_pins_hold_indefinitely_but_validation_does_not (test_audio_retention_policy.AudioPolicyTests.test_reference_pins_hold_indefinitely_but_validation_does_not) ... ok
+test_terminal_failure_and_no_processed_file_expire (test_audio_retention_policy.AudioPolicyTests.test_terminal_failure_and_no_processed_file_expire) ... ok
+test_discovery_covers_legacy_and_excludes_retention_dashboard (test_acquisition_control.DiscoveryTests.test_discovery_covers_legacy_and_excludes_retention_dashboard) ... ok
+test_atis_no_activity_originals_wait_for_age_retention (test_tower_retention.TowerRetentionTests.test_atis_no_activity_originals_wait_for_age_retention) ... ok
+test_atis_scope_excluded (test_tower_retention.TowerRetentionTests.test_atis_scope_excluded) ... ok
+test_boundary_and_incomplete_capture (test_tower_retention.TowerRetentionTests.test_boundary_and_incomplete_capture) ... ok
+test_fm_cleanup_explicitly_excludes_tower_and_reference_audio (test_tower_retention.TowerRetentionTests.test_fm_cleanup_explicitly_excludes_tower_and_reference_audio) ... ok
+test_no_activity_survives_short_term_cleanup (test_tower_retention.TowerRetentionTests.test_no_activity_survives_short_term_cleanup) ... ok
+test_pin_rejects_other_channels_and_missing_audio (test_tower_retention.TowerRetentionTests.test_pin_rejects_other_channels_and_missing_audio) ... ok
+test_pinned_survives_all_normal_cleanup_and_keeps_originals (test_tower_retention.TowerRetentionTests.test_pinned_survives_all_normal_cleanup_and_keeps_originals) ... ok
+test_protected_reference_processing_cannot_modify_or_cleanup (test_tower_retention.TowerRetentionTests.test_protected_reference_processing_cannot_modify_or_cleanup) ... ok
+test_reference_flags_markers_and_symlinks_fail_closed (test_tower_retention.TowerRetentionTests.test_reference_flags_markers_and_symlinks_fail_closed) ... ok
+test_unpinned_eventually_expires_regardless_of_classifier (test_tower_retention.TowerRetentionTests.test_unpinned_eventually_expires_regardless_of_classifier) ... ok
+test_actual_production_waiter_acquires_after_preempt (test_atis_shadow.Safety.test_actual_production_waiter_acquires_after_preempt) ... HTP lease acquired: shadow-test pid=2004303
+HTP lease released by supervisor: shadow-test
+HTP lease acquired: production-test pid=2004303
+HTP lease released by supervisor: production-test
+ok
+test_contention_and_stale_metadata (test_atis_shadow.Safety.test_contention_and_stale_metadata) ... HTP lease acquired: other pid=2004303
+ATIS SHADOW 20261007T000000.000000Z deferred: HTP inference lease busy: shadow:20261007T000000.000000Z
+HTP lease released by supervisor: other
+HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_crash_bounded_and_production_preserved (test_atis_shadow.Safety.test_crash_bounded_and_production_preserved) ... HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmpb85ssr_x/data/atis-shadow/runs/20261007T000000.000000Z/1/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmpb85ssr_x/data/atis-shadow/runs/20261007T000000.000000Z/2/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z failed: Candidate exit 1; /tmp/tmpb85ssr_x/data/atis-shadow/runs/20261007T000000.000000Z/3/runtime.log
+ok
+test_inherited_fd_stays_locked_after_supervisor_crash (test_atis_shadow.Safety.test_inherited_fd_stays_locked_after_supervisor_crash) ... HTP lease acquired: recovered pid=2004303
+HTP lease released by supervisor: recovered
+ok
+test_lock_released_after_crash_child_exit (test_atis_shadow.Safety.test_lock_released_after_crash_child_exit) ... HTP lease acquired: recovered pid=2004303
+HTP lease released by supervisor: recovered
+ok
+test_normal_separate_and_unique (test_atis_shadow.Safety.test_normal_separate_and_unique) ... /usr/lib/python3.14/json/encoder.py:265: ResourceWarning: unclosed database in <sqlite3.Connection object at 0xffffb7d83880>
+  def _make_iterencode(markers, _default, _encoder, _indent, _floatstr,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_preemption_restart (test_atis_shadow.Safety.test_preemption_restart) ... HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Satellite reservation
+HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_production_finishes_when_shadow_enqueue_crashes (test_atis_shadow.Safety.test_production_finishes_when_shadow_enqueue_crashes) ... ATIS SHADOW enqueue failure: RuntimeError('Injected shadow database failure')
+ok
+test_production_waiter_priority (test_atis_shadow.Safety.test_production_waiter_priority) ... ok
+test_retention_hold_expires_without_unpinning (test_atis_shadow.Safety.test_retention_hold_expires_without_unpinning) ... ok
+test_retry_then_one_result (test_atis_shadow.Safety.test_retry_then_one_result) ... HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate exit 1; /tmp/tmp_so3b8ob/data/atis-shadow/runs/20261007T000000.000000Z/1/runtime.log
+HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_timeout (test_atis_shadow.Safety.test_timeout) ... HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ATIS SHADOW 20261007T000000.000000Z deferred: Candidate timeout
+ok
+test_worker_recovery_and_reboot_identity (test_atis_shadow.Safety.test_worker_recovery_and_reboot_identity) ... ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z deferred: Worker restart; retry original WAV
+HTP lease acquired: shadow:20261007T000000.000000Z pid=2004303
+ATIS SHADOW 20261007T000000.000000Z running:
+ATIS SHADOW 20261007T000000.000000Z completed:
+HTP lease released by supervisor: shadow:20261007T000000.000000Z
+ok
+test_bands (test_tower_anomaly_review.HumanReviewTests.test_bands) ... ok
+test_saved_labels_and_history_are_additive (test_tower_anomaly_review.HumanReviewTests.test_saved_labels_and_history_are_additive) ... ok
+test_completion (test_tower_threshold_queue.ThresholdQueue.test_completion) ... ok
+test_invalid (test_tower_threshold_queue.ThresholdQueue.test_invalid) ... ok
+test_threshold (test_tower_threshold_queue.ThresholdQueue.test_threshold) ... ok
+test_duration_union_and_gaps (test_tower_validation.ValidationTests.test_duration_union_and_gaps) ... ok
+test_weak_voice_missing_evidence_and_label_updates (test_tower_validation.ValidationTests.test_weak_voice_missing_evidence_and_label_updates) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 10.345s
+
+OK
