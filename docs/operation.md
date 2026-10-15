@@ -57,3 +57,7 @@ The audit exports already installed source/units to GitHub and synchronizes docu
 ## Tower manual review policy — 11 October 2026
 
 Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).
+
+## Dashboard validation overload fix — 15 October 2026
+
+The dashboard service was restarted to load bounded queue selection and shared validation responses. Reload existing browser tabs for the pending-request guard. GET validation data can be up to ten seconds old; successful review saves invalidate immediately. Do not restart RF collection to recover dashboard polling. [Results and rollback](evidence/dashboard-performance-20261015/completion.md).

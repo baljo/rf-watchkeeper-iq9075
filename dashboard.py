@@ -411,9 +411,7 @@ class Handler(BaseHTTPRequestHandler):
         if route == '/api/atis/validation':
             try:
                 import atis_validation
-                data=atis_validation.snapshot(ROOT)
-                data['control_token']=self.control_token
-                return self.respond(data)
+                return self.respond(atis_validation.dashboard_response(ROOT,self.control_token))
             except (OSError,ValueError,sqlite3.Error):
                 return self.respond({'error':'ATIS validation temporarily unavailable'},status=503)
         if route == "/api/atis/shadow":

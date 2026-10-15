@@ -1,0 +1,32 @@
+[
+  {
+    "route": "/api/atis/validation",
+    "status": 200,
+    "seconds": 4.902
+  },
+  {
+    "route": "/api/atis/validation",
+    "status": 200,
+    "seconds": 4.898
+  },
+  {
+    "route": "/api/atis/validation",
+    "status": 200,
+    "seconds": 4.89
+  },
+  {
+    "route": "/api/state",
+    "status": 200,
+    "seconds": 0.435
+  },
+  {
+    "route": "/api/tower?review=anomaly_candidate",
+    "status": 200,
+    "seconds": 5.88
+  },
+  {
+    "route": "/api/meteor",
+    "status": 200,
+    "seconds": 2.624
+  }
+]

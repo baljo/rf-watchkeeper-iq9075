@@ -52,3 +52,7 @@ Follow-up at 06:55 UTC / 09:55 Helsinki: three `/api/state` requests returned 20
 ## Tower manual review policy — 11 October 2026
 
 Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).
+
+## ATIS validation request bounds — 15 October 2026
+
+Full ten-item human-review queues stop candidate duplicate comparisons before the scan. HTTP validation snapshots are serialized once and shared for ten seconds across clients, with a lock preventing simultaneous rebuilds. Successful review saves immediately invalidate the cache. Background candidate discovery remains active; new completions are still indexed. The browser shares a single pending validation GET, bounds it to 15 seconds, and releases its guard on success/failure. Full historical API data and review/retention policy are preserved. Existing tabs must reload to use the browser guard. [Verification and rollback](evidence/dashboard-performance-20261015/completion.md).

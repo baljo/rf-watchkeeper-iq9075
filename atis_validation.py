@@ -1,5 +1,6 @@
 """ATIS validation only: durable human labels, raw evidence, no inference."""
 import contextlib, datetime, difflib, hashlib, json, re, sqlite3, time, wave
+import threading
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 FIELDS=['approach','runway','report_time','condition_code','surface','transition_level','wind_direction','wind_speed','variable_wind','visibility_weather','temperature','dew_point','qnh','information']
@@ -10,6 +11,26 @@ ATOM=r'(?:\d+|'+ '|'.join(DIGITS)+r')\b'
 NUM=ATOM+r'(?:[\s,.-]+'+ATOM+r')*'
 SEP=r'[\s,:.\-]*(?:is\s+)?'
 VERSION='strict-raw-v1'
+_dashboard_lock=threading.Lock()
+_dashboard_cache=None
+
+def dashboard_response(root, token):
+ """Share one serialized review snapshot across concurrent polls for ten seconds."""
+ global _dashboard_cache
+ key=(str(Path(root).resolve()),token)
+ with _dashboard_lock:
+  if _dashboard_cache and _dashboard_cache[0]==key and time.monotonic()<_dashboard_cache[1]:
+   return _dashboard_cache[2]
+  data=snapshot(root)
+  data['control_token']=token
+  body=json.dumps(data,allow_nan=False).encode()
+  _dashboard_cache=(key,time.monotonic()+10,body)
+  return body
+
+def invalidate_dashboard():
+ global _dashboard_cache
+ with _dashboard_lock:
+  _dashboard_cache=None
 def read(p,default=None):
  try:return json.loads(Path(p).read_text())
  except (OSError,ValueError):return default
@@ -137,6 +158,9 @@ def sync(root=ROOT):
    c.execute('INSERT INTO captures(id,state,rank,data,updated) VALUES (?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET rank=excluded.rank,data=excluded.data,updated=excluded.updated',(cid,'candidate',rank,json.dumps(d),time.time()))
   rows=list(c.execute('SELECT * FROM captures ORDER BY rank DESC,id DESC'));selected=[r for r in rows if r['state'] in ('needs_review','in_review','referenced')]
   for row in rows:
+   # Selection cannot change while all ten human-review slots are occupied.
+   # Do not compare every historical candidate on every dashboard refresh.
+   if len(selected)>=10:break
    if row['state']!='candidate':continue
    d=json.loads(row['data'])
    if not d['eligible']:continue
@@ -161,7 +185,6 @@ def sync(root=ROOT):
     if samehash or similarity>.80 or same_message:duplicate=prev['id'];break
    if duplicate:
     d['duplicate_of']=duplicate;c.execute('UPDATE captures SET data=? WHERE id=?',(json.dumps(d),row['id']));continue
-   if len(selected)>=10:continue
    if hold_marker(folder_for(root,row['id']),time.time()+30*86400):
     c.execute("UPDATE captures SET state='needs_review',hold_until=?,updated=? WHERE id=?",(time.time()+30*86400,time.time(),row['id']));selected.append(row)
 
@@ -188,7 +211,9 @@ def snapshot(root=ROOT):
 def save(request,root=ROOT):
  import tower_retention
  with tower_retention.lock(root):
-  return _save(request,root)
+  result=_save(request,root)
+ invalidate_dashboard()
+ return result
 
 def _save(request,root=ROOT):
  cid=request['id'];folder=folder_for(root,cid);action=request['action']

@@ -48,3 +48,7 @@ The threaded HTTP server delegates `/api/state` snapshot generation to `dashboar
 ## Tower manual review policy — 11 October 2026
 
 Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).
+
+## Validation request isolation — 15 October 2026
+
+Validation queue selection stops when ten review slots are occupied. Dashboard validation GETs share a serialized ten-second cache with one builder; successful review saves invalidate it. Background discovery and RF scheduling are unchanged. [Evidence](evidence/dashboard-performance-20261015/completion.md).

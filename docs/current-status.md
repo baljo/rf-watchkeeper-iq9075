@@ -67,3 +67,7 @@ Verification, exact changed-file inventory, skipped checks, rollback and standin
 ## Tower manual review policy — 11 October 2026
 
 Routine review uses the independent [Tower review policy](tower-anomaly.md): two adjacent 1-second windows >=55 at 0.5-second hops, plus reproducible 8% sampling of grey-zone peaks 45.6744 to <55. Detector threshold remains 45.67438250526811. Unscored/reviewed/unavailable-audio clips are excluded; explicit references remain accessible. No worker, scheduling or retention change. Reload the dashboard for the new wording. [Evidence and rollback](evidence/tower-review-policy-20261011/completion.md).
+
+## Dashboard validation overload resolved in controlled checks — 15 October 2026
+
+Deployed at 20:09:48 UTC (23:09:48 Helsinki). Full-queue repeated duplicate comparisons and overlapping validation work were removed. Post-restart status responses ~0.30 s; validation 1.86 s cold / 0.009–0.011 s cached; Tower 1.32–1.33 s. Six simultaneous cold requests all returned 200: status 0.435 s, validation 4.89–4.90 s, Tower 5.88 s, METEOR 2.624 s. Review-record digest unchanged; scheduler remained active. Four queue/cache regressions, 16 existing ATIS shadow/Tower policy tests, and frontend guard/syntax checks passed. Service restart verified; reboot, browser-rendered verification and long unattended operation remain unverified. [Completion evidence](evidence/dashboard-performance-20261015/completion.md).

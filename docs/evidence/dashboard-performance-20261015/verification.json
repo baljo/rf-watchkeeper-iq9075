@@ -1,0 +1,98 @@
+{
+  "sequential": [
+    {
+      "route": "/api/state",
+      "status": 200,
+      "seconds": 0.303,
+      "bytes": 403039
+    },
+    {
+      "route": "/api/atis/validation",
+      "status": 200,
+      "seconds": 1.864,
+      "bytes": 11993284
+    },
+    {
+      "route": "/api/tower?review=anomaly_candidate",
+      "status": 200,
+      "seconds": 1.322,
+      "bytes": 59564
+    },
+    {
+      "route": "/api/state",
+      "status": 200,
+      "seconds": 0.302,
+      "bytes": 403039
+    },
+    {
+      "route": "/api/atis/validation",
+      "status": 200,
+      "seconds": 0.009,
+      "bytes": 11993284
+    },
+    {
+      "route": "/api/tower?review=anomaly_candidate",
+      "status": 200,
+      "seconds": 1.331,
+      "bytes": 59564
+    },
+    {
+      "route": "/api/state",
+      "status": 200,
+      "seconds": 0.301,
+      "bytes": 403039
+    },
+    {
+      "route": "/api/atis/validation",
+      "status": 200,
+      "seconds": 0.011,
+      "bytes": 11993284
+    },
+    {
+      "route": "/api/tower?review=anomaly_candidate",
+      "status": 200,
+      "seconds": 1.325,
+      "bytes": 59564
+    }
+  ],
+  "concurrent": [
+    {
+      "route": "/api/atis/validation",
+      "status": 200,
+      "seconds": 0.024,
+      "bytes": 11993284
+    },
+    {
+      "route": "/api/atis/validation",
+      "status": 200,
+      "seconds": 0.023,
+      "bytes": 11993284
+    },
+    {
+      "route": "/api/atis/validation",
+      "status": 200,
+      "seconds": 0.025,
+      "bytes": 11993284
+    },
+    {
+      "route": "/api/state",
+      "status": 200,
+      "seconds": 0.407,
+      "bytes": 403039
+    },
+    {
+      "route": "/api/tower?review=anomaly_candidate",
+      "status": 200,
+      "seconds": 3.951,
+      "bytes": 59564
+    },
+    {
+      "route": "/api/meteor",
+      "status": 200,
+      "seconds": 2.697,
+      "bytes": 529921
+    }
+  ],
+  "review_records_unchanged": true,
+  "services": "active\nactive\n"
+}

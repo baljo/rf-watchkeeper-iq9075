@@ -1852,8 +1852,19 @@ const reviewJump=document.createElement('button');reviewJump.textContent='Review
 let validationData=null,validationToken=null,validationSelected=null;
 const directATISReview=new URLSearchParams(location.search).get('atis_review')==='1';
 validationHost.textContent='Loading saved ATIS review queue...';
+let validationRequestActive=false;
+async function fetchValidation(){
+ if(validationRequestActive)return null;
+ validationRequestActive=true;
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+ try{
+  const response=await fetch('/api/atis/validation',{cache:'no-store',signal:controller.signal});
+  const data=await response.json();if(!response.ok)throw Error(data.error||'Validation unavailable');
+  return data;
+ }finally{clearTimeout(timer);validationRequestActive=false;}
+}
 async function loadValidation(){
- try{const r=await fetch('/api/atis/validation',{cache:'no-store'});const d=await r.json();if(!r.ok)throw Error(d.error);validationData=d;validationToken=d.control_token;if(directATISReview&&!validationSelected){validationSelected=d.captures.find(x=>['needs_review','in_review'].includes(x.state))?.id||null;}renderValidation();if(directATISReview){selectSection('airband');requestAnimationFrame(()=>validationHost.scrollIntoView({block:'start'}));}}
+ try{const d=await fetchValidation();if(!d)return;validationData=d;validationToken=d.control_token;if(directATISReview&&!validationSelected){validationSelected=d.captures.find(x=>['needs_review','in_review'].includes(x.state))?.id||null;}renderValidation();if(directATISReview){selectSection('airband');requestAnimationFrame(()=>validationHost.scrollIntoView({block:'start'}));}}
  catch(e){validationHost.textContent='ATIS validation unavailable: '+e.message;}
 }
 function renderValidation(){
@@ -1907,7 +1918,7 @@ function renderValidation(){
  }
 }
 loadValidation();
-setInterval(async()=>{try{const r=await fetch('/api/atis/validation',{cache:'no-store'});if(!r.ok)return;const data=await r.json();validationData=data;validationToken=data.control_token;const selector=validationHost.querySelector('select[aria-label="ATIS validation recording"]');if(!selector)return;for(const row of data.captures.filter(x=>x.data.eligible||['needs_review','in_review','referenced'].includes(x.state)).sort((a,b)=>a.id.localeCompare(b.id))){if(!Array.from(selector.options).some(o=>o.value===row.id))selector.add(new Option(row.id+' ï¿½ '+new Date(row.data.capture_timestamp).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' ï¿½ '+row.state,row.id),1);}}catch(e){}},60000);
+setInterval(async()=>{try{const data=await fetchValidation();if(!data)return;validationData=data;validationToken=data.control_token;const selector=validationHost.querySelector('select[aria-label="ATIS validation recording"]');if(!selector)return;for(const row of data.captures.filter(x=>x.data.eligible||['needs_review','in_review','referenced'].includes(x.state)).sort((a,b)=>a.id.localeCompare(b.id))){if(!Array.from(selector.options).some(o=>o.value===row.id))selector.add(new Option(row.id+' · '+new Date(row.data.capture_timestamp).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' · '+row.state,row.id),1);}}catch(e){}},60000);
 
 </script>
 </body></html>
