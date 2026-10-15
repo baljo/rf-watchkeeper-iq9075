@@ -343,3 +343,7 @@ See [operator commands and rollback](acquisition-mode.md), [configuration and re
 - Validation: four focused regressions and 16 existing ATIS shadow/Tower policy tests passed; all inline JavaScript parsed and guard success/failure behavior passed. HTTP sequential and six-request cold/warm checks passed. Human review digest unchanged.
 - Result: deployed and production-active; dashboard restarted and scheduler remained active. Status ~0.30 s, cold validation 1.86 s, cached ~0.01 s, Tower ~1.33 s; cold concurrent Tower 5.88 s. Reboot, rendered-browser confirmation and long unattended verification remain unverified.
 - Evidence/rollback: [completion](evidence/dashboard-performance-20261015/completion.md); exact patches/tests retained with evidence and live backup at /root/rf-watchkeeper/backups/dashboard-performance-20261015. Restore three backed-up source files and restart dashboard only.
+
+### 2026-10-15 — standing repository authorization reaffirmed
+
+Thomas explicitly approved publishing the dashboard performance fix and reaffirmed persistent authorization to keep the canonical repository updated, including source, tests, documentation and sanitized evidence. Recorded in workflow.md; the earlier publication-approval block is resolved. This documentation update does not change deployed runtime behavior.
