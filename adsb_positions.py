@@ -3,6 +3,9 @@ import json
 import math
 import re
 import sqlite3
+import subprocess
+import sys
+from pathlib import Path
 import threading
 import time
 
@@ -12,7 +15,7 @@ _cache = (0, None)
 def finite(v, lo, hi):
     return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and lo <= v <= hi
 
-def positions(private):
+def collect_positions(private):
     global _cache
     with _lock:
         now = time.time()
@@ -68,3 +71,25 @@ def positions(private):
         payload=dict(observed_at=now,session=sid,aircraft=list(result.values()),scan_limit=5000,position_fresh_seconds=60,history='Last decoded positions within the latest 5000 snapshots only; incomplete history')
         _cache=(now,payload)
         return payload
+
+
+def positions(private):
+    """Keep SQLite/JSON work outside the busy dashboard interpreter."""
+    global _cache
+    with _lock:
+        if time.time() - _cache[0] < 10:
+            return _cache[1]
+        try:
+            raw = subprocess.run([sys.executable, str(Path(__file__).resolve()), str(private)],
+                                 capture_output=True, timeout=2, check=True).stdout
+            if len(raw) > 65536:
+                raise ValueError('Position response too large')
+            payload = json.loads(raw)
+        except (subprocess.SubprocessError, ValueError) as error:
+            raise ValueError('Bounded position worker unavailable') from error
+        _cache = (time.time(), payload)
+        return payload
+
+
+if __name__ == '__main__':
+    print(json.dumps(collect_positions(Path(sys.argv[1])), allow_nan=False))

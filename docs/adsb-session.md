@@ -280,3 +280,7 @@ The additional module/assets may remain unused; retain aircraft records and
 monitor reports. Never restart capture/watchdog or invoke RF restoration for UI
 rollback. Dashboard restart persistence is verified; full EVK reboot and actual
 unattended session expiry/restoration remain unverified during capture.
+
+Position projection runs in an isolated Python worker (two-second parent timeout),
+cached for ten seconds, so busy dashboard threads cannot consume its SQLite
+execution budget. This corrected a final-check contention timeout.

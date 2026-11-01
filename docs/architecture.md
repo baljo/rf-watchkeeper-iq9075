@@ -80,3 +80,7 @@ served. See [bounds, lifecycle and rollback](adsb-session.md#ads-b-live-and-auto
 Dashboard → `adsb_positions.py` → read-only private SQLite snapshots and monitor
 status → sanitized bounded aircraft-only map projection. No RF/service-control
 path. Leaflet served locally; OSM background optional. [Details](adsb-session.md).
+
+Position projection runs in an isolated Python worker (two-second parent timeout),
+cached for ten seconds, so busy dashboard threads cannot consume its SQLite
+execution budget. This corrected a final-check contention timeout.

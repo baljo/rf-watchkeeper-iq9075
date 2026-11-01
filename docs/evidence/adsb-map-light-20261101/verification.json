@@ -1,11 +1,11 @@
 {
-  "verified_at": 1793561705.5121415,
+  "verified_at": 1793562006.7341735,
   "capture_identity_unchanged": true,
   "attempts": 3,
   "expiry": 1793602845.977125,
   "valid_frames": 296,
   "session_aircraft": 2,
-  "samples_processed": 3936223232,
+  "samples_processed": 4656201728,
   "drops": 0,
   "fresh_positions": 0,
   "historical_positions": 2,
@@ -16,6 +16,6 @@
     "/adsb-session/private/20261101T190045Z/decoder.log": 404,
     "/api/adsb/positions?limit=999999": 400
   },
-  "five_cached_requests_seconds": 0.009,
+  "five_cached_requests_seconds": 0.005,
   "watchdog": "active"
 }

@@ -402,3 +402,12 @@ Thomas explicitly approved publishing the dashboard performance fix and reaffirm
   regression tests verified; capture identity/attempts/watchdog/expiry unchanged.
 - Dashboard-only restart verified. Full EVK reboot/unattended expiry unverified.
 - [Exact behavior, tests, evidence and rollback](adsb-session.md).
+
+
+### 2026-11-01 19:40 UTC — isolate ADS-B position queries
+- Busy dashboard threads could consume the read budget and return 503; moved
+  reads into a bounded subprocess, preserving read-only limits and cache.
+- Six position tests passed again on EVK; final HTTP/browser checks passed,
+  two historical/zero fresh positions, 296 frames, zero drops. Five cached
+  requests: 0.005 seconds. Capture identity/attempts/expiry unchanged.
+- Same UI rollback and reboot/unattended limits as the map deployment.

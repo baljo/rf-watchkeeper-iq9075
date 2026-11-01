@@ -60,3 +60,7 @@ not complete flight history. Optional map tiles need external network access;
 the map controls/markers remain locally served. LAN access scope unchanged; no
 public exposure or external notifications added. Full unattended expiry and
 reboot verification remain outstanding.
+
+Final-check correction: busy dashboard thread contention could exhaust the
+500 ms SQLite budget and return 503. Position reads now use an isolated Python
+worker with a two-second parent timeout and the same query/response bounds.
