@@ -56,3 +56,10 @@ Routine review uses the independent [Tower review policy](tower-anomaly.md): two
 ## ATIS validation request bounds — 15 October 2026
 
 Full ten-item human-review queues stop candidate duplicate comparisons before the scan. HTTP validation snapshots are serialized once and shared for ten seconds across clients, with a lock preventing simultaneous rebuilds. Successful review saves immediately invalidate the cache. Background candidate discovery remains active; new completions are still indexed. The browser shares a single pending validation GET, bounds it to 15 seconds, and releases its guard on success/failure. Full historical API data and review/retention policy are preserved. Existing tabs must reload to use the browser guard. [Verification and rollback](evidence/dashboard-performance-20261015/completion.md).
+
+
+## ADS-B map, 1 November 2026
+
+`/adsb` and `/api/adsb/positions` add a bounded read-only decoded-aircraft map.
+ADS-B is fixed light, with opt-in historical positions and external background
+tiles. No receiver position is exposed. See [operation, bounds and rollback](adsb-session.md#ads-b-aircraft-map-and-fixed-light-theme--1-november-2026).

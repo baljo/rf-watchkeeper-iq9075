@@ -392,3 +392,13 @@ Thomas explicitly approved publishing the dashboard performance fix and reaffirm
 - Validation: seven ADS-B tests and 25 existing regressions passed; browser render/refresh, private path 404s, observer restart and unchanged capture/container/deadline verified.
 - Result: implemented, tested, deployed and production-active. Actual unattended expiry/report generation and EVK reboot remain unverified. Private backups, rollback and sanitized evidence linked below.
 - Evidence: [completion check](evidence/adsb-live-20261101/completion.md); [operations and rollback](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).
+
+
+### 2026-11-01 19:35 UTC — ADS-B aircraft map and light theme
+- Added bounded read-only aircraft-position projection and local Leaflet map;
+  optional grey historical positions and external tiles, no receiver metadata.
+- Replaced ADS-B dark colors and remaining dashboard dark header/banner.
+- Browser desktop/mobile, marker popups, stale/empty states, privacy routes and
+  regression tests verified; capture identity/attempts/watchdog/expiry unchanged.
+- Dashboard-only restart verified. Full EVK reboot/unattended expiry unverified.
+- [Exact behavior, tests, evidence and rollback](adsb-session.md).

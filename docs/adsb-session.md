@@ -216,3 +216,67 @@ showed advancing samples, zero reported drops, two aircraft and decoded position
 presence; no aircraft identities/positions are published in evidence. Four
 private database/state/log paths returned 404. Full unattended completion and
 boot persistence are outstanding observations, not passed tests.
+
+
+## ADS-B aircraft map and fixed light theme — 1 November 2026
+
+Supersedes the earlier coordinate-omission statement for the new map endpoint.
+`/adsb` now has a locally served Leaflet 1.9.4 interactive map, fixed light
+colors, keyboard zoom/pan, fit-aircraft control and sanitized aircraft popups.
+The linked dashboard's remaining dark schedule header and suspension banner
+are light too; browser/system dark preferences are not adopted.
+
+`/api/adsb/positions` projects only decoded public aircraft fields from the
+selected session. SQLite is read-only/query-only with 100 ms busy timeout and
+500 ms execution budget. It examines at most the latest 5000 stored rows,
+2 MB of JSON, 500 aircraft per snapshot and returns at most 100 positions;
+results are cached for 10 seconds. Query parameters are rejected (400), so no
+unbounded history request or pagination bypass is available. No database/schema,
+observer, capture, watchdog, expiry or RF configuration changes were made.
+
+Fresh positions require a decoder `seen_pos` age, at most 60 seconds since the
+actual position report, active receiver, fresh monitor and health, and an
+unfinished session. Unknown-age positions are historical. Grey historical last
+known positions are optional/off by default and limited to that bounded scan;
+this is incomplete history, not replay/tracks or a coverage claim. No movement
+is invented. Last-seen time and position time are separate; missing altitude,
+speed or heading remains unavailable. Callsign can come from the same session's
+identity projection. CPR decoding remains dump1090's responsibility with no
+receiver reference supplied. No receiver pin, receiver coordinates, private
+metadata, automatic geolocation, raw snapshots or external feeder is exposed.
+
+The 12-second refresh remains; fetches time out after five seconds. Browser
+freshness checks demote cached positions when disconnected. Empty maps never
+center on a receiver. Optional OpenStreetMap tiles require a click after a
+visible privacy explanation (viewer IP and visible aircraft area reach the tile
+provider); attribution stays visible. Leaflet and its BSD-2-Clause license are
+vendored locally; tiles use normal browser caching and no prefetch/offline bulk
+download. [Leaflet source](https://leafletjs.com/download.html) and
+[OSM tile policy](https://operations.osmfoundation.org/policies/tiles/).
+
+Validation at 19:35 UTC / 21:35 Helsinki: 296 valid frames, two session aircraft,
+zero fresh positions, two genuine historical markers, advancing samples and
+zero reported drops. Desktop 1280x1000 and mobile 390x844 browser checks verified
+light appearance, both historical markers, fit control, popup identity/times,
+attribution and no mobile page overflow. Live unavailable state was observed
+during the isolated dashboard restart and recovered on refresh. Fresh/empty,
+unknown-age, invalid coordinates, completed session, stale monitor, session
+isolation and scan bounds are fixture-tested; no fresh live aircraft happened
+to be present during browser verification. Private DB/state/log routes return
+404; arbitrary position-query parameters return 400. Five cached position
+requests took 0.009 seconds. See [verification](evidence/adsb-map-light-20261101/verification.json)
+and [completion](evidence/adsb-map-light-20261101/completion.md).
+
+Only the dashboard service was restarted after checking its independent cgroup,
+empty PartOf/BindsTo/PropagatesStopTo relationships. Capture PID/start ticks,
+container ID/start time, attempt count (3), deadline and watchdog activation
+were unchanged. Final capture identity also matched the earlier 19:18 dashboard
+deployment evidence. The end remains 2 November 09:00:45 Helsinki.
+
+Rollback: private originals are in
+`adsb-session/private/map-light-deployment-20261101/`. Restore dashboard.py,
+dashboard.html and adsb.html from there, then restart only the isolated dashboard.
+The additional module/assets may remain unused; retain aircraft records and
+monitor reports. Never restart capture/watchdog or invoke RF restoration for UI
+rollback. Dashboard restart persistence is verified; full EVK reboot and actual
+unattended session expiry/restoration remain unverified during capture.

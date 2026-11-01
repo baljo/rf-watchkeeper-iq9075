@@ -73,3 +73,10 @@ and service state, persists private aggregates/reports, and supplies a limited
 status projection to `/api/adsb`; `/adsb` renders it every 12 seconds. Capture,
 watchdog and restoration code are unchanged. No positions or raw records are
 served. See [bounds, lifecycle and rollback](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).
+
+
+## ADS-B map projection — 1 November 2026
+
+Dashboard → `adsb_positions.py` → read-only private SQLite snapshots and monitor
+status → sanitized bounded aircraft-only map projection. No RF/service-control
+path. Leaflet served locally; OSM background optional. [Details](adsb-session.md).

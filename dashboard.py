@@ -1,5 +1,6 @@
 # Serve RF, AIS and historical METEOR imagery through explicit controlled image routes; 2026-10-03 EEST, Thomas Vikström.
 """Standard-library LAN dashboard with one saved-audio job at a time."""
+import adsb_positions
 import argparse
 from datetime import datetime, timezone
 from functools import partial
@@ -364,6 +365,16 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.request_started = time.monotonic()
         route = urlsplit(self.path).path
+        if route == "/api/adsb/positions":
+            if urlsplit(self.path).query:
+                return self.respond({'error': 'This bounded endpoint accepts no parameters'}, status=400)
+            try:
+                return self.respond(adsb_positions.positions(ROOT / 'adsb-session/private'))
+            except (OSError, ValueError, sqlite3.Error):
+                return self.respond({'error': 'Position data unavailable'}, status=503)
+        if route in ("/adsb-assets/leaflet.js", "/adsb-assets/leaflet.css"):
+            name = route.rsplit('/', 1)[-1]
+            return self.respond((ROOT / 'adsb-session' / name).read_bytes(), 'text/javascript' if name.endswith('.js') else 'text/css')
         if route == "/api/adsb":
             try:
                 path = ROOT / 'adsb-session/private/live-status.json'

@@ -94,3 +94,11 @@ receiver/aircraft/deadline/restoration state. Independent observer writes privat
 completion reports automatically. Capture identity and 09:00:45 Helsinki expiry
 were preserved; no RF service was changed. Two aircraft and zero drops observed
 at 19:19 UTC. Full expiry/reboot unverified. See [operations](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).
+
+
+## ADS-B map and light theme — 1 November 2026, 19:35 UTC
+
+Production-active `/adsb`: fixed light theme, interactive decoded-aircraft map;
+two historical markers and zero fresh positions at verification. Capture and
+expiry unchanged. [Evidence, limits and rollback](adsb-session.md). Full reboot
+and unattended expiry remain unverified.
