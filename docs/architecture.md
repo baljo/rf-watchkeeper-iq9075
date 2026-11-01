@@ -65,3 +65,11 @@ and a separate persistent expiry/restoration timer. Only conflicting RF units
 receive temporary start guards; unrelated processing and dashboard continue.
 No precise receiver location is supplied or exported. [Runtime, state machine,
 storage, failure limits and rollback](adsb-session.md).
+
+## ADS-B Live observer — 1 November 2026
+
+An independent, device-isolated systemd observer reads bounded SQLite snapshots
+and service state, persists private aggregates/reports, and supplies a limited
+status projection to `/api/adsb`; `/adsb` renders it every 12 seconds. Capture,
+watchdog and restoration code are unchanged. No positions or raw records are
+served. See [bounds, lifecycle and rollback](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).

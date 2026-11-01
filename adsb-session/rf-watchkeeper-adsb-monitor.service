@@ -1,0 +1,20 @@
+[Unit]
+Description=Read-only ADS-B dashboard observer and private completion report
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /root/rf-watchkeeper/adsb-session/monitor.py
+Restart=on-failure
+RestartSec=10
+UMask=0077
+Nice=10
+CPUQuota=20%
+MemoryMax=128M
+NoNewPrivileges=true
+PrivateDevices=true
+ProtectSystem=strict
+ReadWritePaths=/root/rf-watchkeeper/adsb-session/private
+
+[Install]
+WantedBy=multi-user.target

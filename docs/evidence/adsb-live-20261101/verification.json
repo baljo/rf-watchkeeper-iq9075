@@ -1,0 +1,17 @@
+{
+  "session": "20261101T190045Z",
+  "observed_at": 1793561000.5908904,
+  "status": "Receiving valid aircraft messages",
+  "valid_frames": 296,
+  "unique_aircraft": 2,
+  "samples_processed": 2256273408,
+  "samples_dropped": 0,
+  "sample_progress": true,
+  "expiry": 1793602845.977125,
+  "rf_state": "Conflicting RF activity paused",
+  "aggregation_caught_up": true,
+  "capture_identity_unchanged": true,
+  "watchdog_active": true,
+  "source_hashes_verified": true,
+  "observer_enabled": "enabled"
+}

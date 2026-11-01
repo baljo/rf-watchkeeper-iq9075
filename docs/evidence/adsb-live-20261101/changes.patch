@@ -1,0 +1,566 @@
+diff --git a/adsb-session/adsb.html b/adsb-session/adsb.html
+new file mode 100644
+index 0000000..8079f0d
+--- /dev/null
++++ b/adsb-session/adsb.html
+@@ -0,0 +1,19 @@
++<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADS-B Live · RF Watchkeeper</title>
++<style>body{font:16px system-ui;background:#101923;color:#e4edf5;margin:2rem;max-width:1100px}a{color:#88caff}section{background:#1b2937;padding:1rem;margin:1rem 0;border-radius:8px}h1{margin-bottom:.4rem}table{width:100%;text-align:left;border-collapse:collapse}td,th{padding:.5rem;border-bottom:1px solid #405064}dt{color:#a5bbcc}dd{margin:0 0 .8rem}#status{font-size:1.4rem}#error{color:#ffba85}small{color:#a5bbcc}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}</style>
++<a href="/">← RF Watchkeeper</a><h1>ADS-B Live</h1><small>Read-only · refreshes every 12 seconds · this session only · no receiver location or trails</small>
++<section><div id="status">Loading…</div><p id="error" role="alert"></p><div id="updated"></div></section>
++<section class="grid" id="metrics"></section><section><h2>Recent aircraft</h2><small>Decoded values only. Altitude in feet; speed in knots. “—” means unavailable.</small><table><thead><tr><th>ICAO / decoder address</th><th>Callsign</th><th>Altitude</th><th>Speed</th><th>Last seen</th></tr></thead><tbody id="aircraft"></tbody></table></section>
++<section><h2>Completion report</h2><div id="report">Awaiting session completion.</div></section>
++<script>
++const el=id=>document.getElementById(id), text=(id,v)=>el(id).textContent=v;
++const when=v=>v==null?'—':new Date(typeof v==='number'?v*1000:v).toLocaleString('en-GB',{timeZone:'Europe/Helsinki'})+' Helsinki';
++let busy=false;
++async function refresh(){if(busy)return;busy=true;try{const r=await fetch('/api/adsb',{cache:'no-store'});if(!r.ok)throw Error('Monitor unavailable');const s=await r.json();
++text('status',s.status);text('error',[(Date.now()/1000-s.observed_at>40?'Monitor data is stale.':''),...(s.alerts||[])].filter(Boolean).join(' '));text('updated','Monitor: '+when(s.observed_at)+' · health: '+when(s.health_updated));
++const pairs=[['Session',s.session],['Stop time',when(s.expiry)],['Time remaining',s.remaining_seconds==null?'—':Math.floor(s.remaining_seconds/3600)+'h '+Math.floor(s.remaining_seconds%3600/60)+'m '+Math.floor(s.remaining_seconds%60)+'s'],['Receiver / supervisor',s.receiver?.ActiveState],['Attempt',s.attempt+' / '+s.attempts+' total'],['Samples processed (attempt)',s.samples_processed],['Sample progress',s.sample_progress==null?'Awaiting next comparison':s.sample_progress?'Advancing':'No increase'],['Dropped samples (attempt)',s.samples_dropped],['Valid frames (session)',s.valid_frames],['Unique aircraft (session)',s.unique_aircraft],['First valid message',when(s.first_valid_message)],['Last valid message',when(s.last_valid_message)],['Watchdog',s.watchdog?.ActiveState],['RF Watchkeeper',s.rf_state],['Aircraft with decoded positions',s.aircraft_with_decoded_positions],['Aggregation',s.aggregation_caught_up?'Current':'Catching up — counts provisional']];
++el('metrics').replaceChildren(...pairs.map(([k,v])=>{const d=document.createElement('dl'),a=document.createElement('dt'),b=document.createElement('dd');a.textContent=k;b.textContent=v??'—';d.append(a,b);return d}));
++el('aircraft').replaceChildren(...(s.recent_aircraft||[]).map(a=>{const tr=document.createElement('tr');for(const v of [a.icao,a.callsign||'—',a.altitude??'—',a.speed??'—',when(a.last_seen)]){const td=document.createElement('td');td.textContent=v;tr.append(td)}return tr}));if(!(s.recent_aircraft||[]).length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='No decoded aircraft recorded for this session.';tr.append(td);el('aircraft').append(tr)}
++text('report',s.report?.ready?'Saved privately. Stop reason: '+s.stop_reason+'. Database integrity: '+s.report.database_integrity+'. Observed receiver uptime: '+Math.round(s.report.receiver_uptime_seconds)+' seconds; samples: '+s.report.samples+'; drops: '+s.report.drops+'. '+s.rf_state:s.completed?'Completed; report aggregation pending.':'Awaiting completion. Reports and restoration alerts are saved locally in the private ADS-B area.');
++}catch(e){text('error','Live monitor unavailable; displayed values may be stale. '+e.message)}finally{busy=false}}
++refresh();setInterval(refresh,12000);
++</script></html>
+diff --git a/adsb-session/monitor.py b/adsb-session/monitor.py
+new file mode 100644
+index 0000000..254e925
+--- /dev/null
++++ b/adsb-session/monitor.py
+@@ -0,0 +1,215 @@
++#!/usr/bin/env python3
++"""Independent read-only ADS-B observer. Never controls RF services or USB."""
++import datetime as dt
++from contextlib import contextmanager
++import json
++import os
++from pathlib import Path
++import re
++import sqlite3
++import subprocess
++import time
++
++ROOT = Path(__file__).resolve().parent
++PRIVATE = ROOT / 'private'
++
++def read(path):
++    try:
++        if path.stat().st_size > 4*1024*1024:
++            raise ValueError('state file too large')
++        return json.loads(path.read_text())
++    except FileNotFoundError:
++        return {}
++
++def atomic(path, data):
++    tmp = path.with_suffix('.monitor-tmp')
++    tmp.write_text(json.dumps(data, allow_nan=False, indent=2)+'\n')
++    tmp.replace(path)
++
++def stamp(value):
++    return dt.datetime.fromisoformat(value.replace('Z', '+00:00')).timestamp()
++
++def service(unit):
++    result = subprocess.run(['systemctl', 'show', unit, '-p', 'ActiveState', '-p', 'SubState',
++                             '-p', 'UnitFileState', '-p', 'MainPID'],
++                            capture_output=True, text=True, timeout=3, check=True)
++    return dict(line.split('=', 1) for line in result.stdout.splitlines() if '=' in line)
++
++@contextmanager
++def connect(path):
++    db = sqlite3.connect(path.resolve().as_uri()+'?mode=ro', uri=True, timeout=.1)
++    db.execute('PRAGMA query_only=ON')
++    deadline = time.monotonic()+2
++    db.set_progress_handler(lambda: int(time.monotonic()>deadline), 10000)
++    try:
++        yield db
++    finally:
++        db.close()
++
++def collect(private, lease, state):
++    """Consume bounded snapshot batches; cursor and aggregates survive observer restart."""
++    sid = lease['session']
++    state.setdefault('cursor', 0)
++    state.setdefault('aircraft', {})
++    state.setdefault('sample_segments', [])
++    if not (private/'aircraft.sqlite').exists():
++        state.update(caught_up=True, frames=0, first_frame_utc=None,
++                     last_frame_utc=None, unique_aircraft=0)
++        return state
++    with connect(private/'aircraft.sqlite') as db:
++        rows = db.execute('SELECT rowid,utc,kind,json FROM snapshots WHERE rowid>? AND session=? ORDER BY rowid LIMIT 500',
++                          (state['cursor'], sid)).fetchall()
++        for rowid, utc, kind, raw in rows:
++            data = json.loads(raw)
++            if kind == 'stats':
++                local = data.get('total', {}).get('local', {})
++                samples = local.get('samples_processed', 0)
++                source_start = data.get('total', {}).get('start')
++                segments = state['sample_segments']
++                if (not segments or samples < segments[-1]['samples'] or
++                    (source_start is not None and segments[-1].get('source_start') is not None and
++                     source_start != segments[-1]['source_start'])):
++                    segments.append(dict(first=utc, last=utc, samples=0, drops=0))
++                segments[-1].update(last=utc, samples=samples, drops=local.get('samples_dropped', 0),
++                                    source_start=source_start)
++            elif kind == 'aircraft':
++                now = data.get('now', stamp(utc))
++                for ac in data.get('aircraft', []):
++                    if ac.get('seen', 999) > 2:
++                        continue
++                    icao = ac.get('hex', '')
++                    if not re.fullmatch(r'~?[0-9a-fA-F]{6}', icao):
++                        continue
++                    seen = now-ac.get('seen', 0)
++                    old = state['aircraft'].get(icao, {})
++                    item = dict(icao=icao, callsign=str(ac.get('flight', '')).strip()[:16],
++                                altitude=ac.get('alt_baro', ac.get('altitude')),
++                                speed=ac.get('gs', ac.get('speed')), last_seen=seen,
++                                first_seen=old.get('first_seen', seen),
++                                position_decoded=old.get('position_decoded', False) or
++                                (isinstance(ac.get('lat'), (int, float)) and isinstance(ac.get('lon'), (int, float))))
++                    state['aircraft'][icao] = item
++            state['cursor'] = rowid
++        state['caught_up'] = len(rows)<500
++        frames, first, last = db.execute('SELECT count(*),min(utc),max(utc) FROM frames WHERE session=?', (sid,)).fetchone()
++        direct = [r[0] for r in db.execute('SELECT DISTINCT icao FROM frames WHERE session=? AND icao IS NOT NULL LIMIT 20000', (sid,))]
++        state.update(frames=frames, first_frame_utc=first, last_frame_utc=last,
++                     unique_aircraft=len(set(direct)|set(state['aircraft'])))
++    return state
++
++def observe(private=PRIVATE, services=service):
++    now = time.time()
++    lease = read(private/'lease.json')
++    restored = {}
++    if not lease:
++        # Session identifiers are UTC-sortable; ignore unrelated filenames.
++        files = sorted(p for p in private.glob('*-restored.json') if re.fullmatch(r'\d{8}T\d{6}Z-restored.json', p.name))
++        if not files:
++            return dict(status='No ADS-B session', observed_at=now)
++        restored = read(files[-1])
++        lease = restored
++    sid = lease['session']
++    if not re.fullmatch(r'\d{8}T\d{6}Z', sid):
++        raise ValueError('invalid session identifier')
++    statepath = private/(sid+'-monitor-state.json')
++    state = collect(private, lease, read(statepath))
++    atomic(statepath, state)
++    health = read(private/sid/'health.json')
++    age = now-stamp(health['utc']) if health.get('utc') else None
++    receiver = services('rf-watchkeeper-adsb.service')
++    watchdog = services('rf-watchkeeper-adsb-watchdog.timer')
++    scheduler = services('rf-watchkeeper-scheduler.service')
++    after = {unit: services(unit) for unit in lease.get('before', {})}
++    mismatches = [unit for unit, expected in lease.get('before', {}).items()
++                  if after[unit].get('ActiveState') != expected.get('ActiveState') or
++                  after[unit].get('UnitFileState') != expected.get('UnitFileState')]
++    complete = lease.get('phase') == 'restored'
++    errors = []
++    if complete:
++        status = 'Completed' if not mismatches else 'Completed — restoration alert'
++    elif lease.get('abort') or receiver.get('ActiveState') != 'active':
++        status = 'Decoder/supervisor failure or stopped — restoration pending'
++    elif age is None or age > 35:
++        status = 'Stale receiver health'
++    elif now >= lease['expiry']:
++        status = 'Expired — restoration pending'
++    elif health.get('decoder_stats', {}).get('samples_processed', 0) <= 0:
++        status = 'Waiting for decoder samples'
++    elif state['frames'] == 0:
++        status = 'Healthy receiver — no valid messages yet'
++    else:
++        status = 'Receiving valid aircraft messages'
++    previous = read(private/'live-status.json')
++    stats = health.get('decoder_stats', {})
++    progress = None
++    if previous.get('session') == sid and previous.get('attempt') == health.get('attempt'):
++        progress = stats.get('samples_processed', 0)>previous.get('samples_processed', 0)
++        if not complete and age is not None and age <= 35 and progress is False:
++            status = 'Decoder samples stalled'
++    if not complete and watchdog.get('ActiveState') != 'active':
++        errors.append('Expiry watchdog is not active; operator action required')
++    if complete and mismatches:
++        errors.append('Restoration state differs from saved inventory; inspect private health report')
++    aircraft = sorted(state['aircraft'].values(), key=lambda x:x['last_seen'], reverse=True)
++    public = dict(session=sid, observed_at=now, status=status, alerts=errors,
++                  start=lease['start'], expiry=lease['expiry'], remaining_seconds=max(0, lease['expiry']-now),
++                  health_updated=health.get('utc'), health_age_seconds=age,
++                  receiver=receiver, watchdog=watchdog, scheduler=scheduler,
++                  rf_state=('Restored and verified' if not mismatches else 'Restoration alert') if complete else
++                  ('Conflicting RF activity paused' if scheduler.get('ActiveState')=='inactive' else 'RF pause not confirmed — alert'),
++                  attempt=health.get('attempt'), attempts=lease.get('attempts'),
++                  samples_processed=stats.get('samples_processed'), samples_dropped=stats.get('samples_dropped'),
++                  sample_progress=progress, valid_frames=state['frames'], unique_aircraft=state['unique_aircraft'],
++                  first_valid_message=state['first_frame_utc'], last_valid_message=state['last_frame_utc'],
++                  recent_aircraft=[{k:v for k,v in a.items() if k not in ('first_seen', 'position_decoded')} for a in aircraft[:20]],
++                  aircraft_with_decoded_positions=sum(a['position_decoded'] for a in aircraft),
++                  aggregation_caught_up=state['caught_up'], completed=complete,
++                  stop_reason=lease.get('abort') or ('Scheduled expiry' if complete and now>=lease['expiry'] else 'Early restoration' if complete else None))
++    if complete and state['caught_up']:
++        reportpath = private/(sid+'-health-summary.json')
++        report = read(reportpath)
++        if not report:
++            try:
++                with connect(private/'aircraft.sqlite') as db:
++                    integrity = db.execute('PRAGMA quick_check').fetchone()[0]
++            except sqlite3.Error as error:
++                integrity = 'Unavailable: '+type(error).__name__
++            segments = state['sample_segments']
++            report = dict(public, database_integrity=integrity, restoration_mismatches=mismatches,
++                          saved_restoration=restored, sample_segments=segments,
++                          samples_all_observed_attempts=sum(s['samples'] for s in segments),
++                          drops_all_observed_attempts=sum(s['drops'] for s in segments),
++                          observed_receiver_uptime_seconds=sum(s['samples']/2400000 for s in segments),
++                          uptime_basis='Decoder sample totals / 2.4 MS/s; excludes unobserved pre-snapshot samples',
++                          final_health=health, notification_transport='None configured; local report and dashboard')
++            atomic(reportpath, report)
++        public['report'] = dict(ready=True, database_integrity=report['database_integrity'],
++                              receiver_uptime_seconds=report['observed_receiver_uptime_seconds'],
++                              samples=report['samples_all_observed_attempts'], drops=report['drops_all_observed_attempts'])
++        if report['database_integrity'] != 'ok':
++            public['alerts'].append('Database integrity check failed; inspect private health summary')
++    elif now >= lease['expiry']+90 or lease.get('abort') or lease.get('phase') == 'restoring':
++        # Persist an actionable report even when restoration never succeeds.
++        try:
++            with connect(private/'aircraft.sqlite') as db:
++                integrity = db.execute('PRAGMA quick_check').fetchone()[0]
++        except sqlite3.Error as error:
++            integrity = 'Unavailable: '+type(error).__name__
++        atomic(private/(sid+'-health-alert.json'), dict(public, restoration_mismatches=mismatches,
++              database_integrity=integrity, final_health=health, sample_segments=state['sample_segments']))
++    atomic(private/'live-status.json', public)
++    return public
++
++def main():
++    os.umask(0o077)
++    while True:
++        try:
++            observe()
++        except Exception as error:
++            # Do not keep presenting a cached success if observer processing fails.
++            atomic(PRIVATE/'live-status.json', dict(status='Monitor error', observed_at=time.time(),
++                                                   alerts=['Read-only monitor failed: '+type(error).__name__]))
++        time.sleep(12)
++
++if __name__ == '__main__':
++    main()
+diff --git a/adsb-session/rf-watchkeeper-adsb-monitor.service b/adsb-session/rf-watchkeeper-adsb-monitor.service
+new file mode 100644
+index 0000000..a7729af
+--- /dev/null
++++ b/adsb-session/rf-watchkeeper-adsb-monitor.service
+@@ -0,0 +1,20 @@
++[Unit]
++Description=Read-only ADS-B dashboard observer and private completion report
++After=network.target
++
++[Service]
++Type=simple
++ExecStart=/usr/bin/python3 /root/rf-watchkeeper/adsb-session/monitor.py
++Restart=on-failure
++RestartSec=10
++UMask=0077
++Nice=10
++CPUQuota=20%
++MemoryMax=128M
++NoNewPrivileges=true
++PrivateDevices=true
++ProtectSystem=strict
++ReadWritePaths=/root/rf-watchkeeper/adsb-session/private
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/adsb-session/test_monitor.py b/adsb-session/test_monitor.py
+new file mode 100644
+index 0000000..2872379
+--- /dev/null
++++ b/adsb-session/test_monitor.py
+@@ -0,0 +1,77 @@
++import importlib.util
++import json
++from pathlib import Path
++import sqlite3
++import tempfile
++import time
++import unittest
++
++spec=importlib.util.spec_from_file_location('monitor', Path(__file__).with_name('monitor.py'))
++m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
++
++class MonitorTests(unittest.TestCase):
++    def test_session_scope_completion_and_privacy(self):
++        with tempfile.TemporaryDirectory() as directory:
++            p=Path(directory); sid='20261101T190045Z'; (p/sid).mkdir()
++            lease=dict(session=sid,start=time.time()-100,expiry=time.time()+100,phase='capturing',attempts=1,before={'rf-watchkeeper-scheduler.service':dict(ActiveState='active',UnitFileState='enabled')})
++            m.atomic(p/'lease.json',lease)
++            m.atomic(p/sid/'health.json',dict(utc=m.dt.datetime.now(m.dt.timezone.utc).isoformat(),attempt=1,decoder_stats=dict(samples_processed=24000000,samples_dropped=0)))
++            with sqlite3.connect(p/'aircraft.sqlite') as db:
++                db.executescript('CREATE TABLE frames(session,utc,icao); CREATE TABLE snapshots(session,utc,kind,json);')
++                utc=m.dt.datetime.now(m.dt.timezone.utc).isoformat()
++                db.execute('INSERT INTO frames VALUES(?,?,?)',('other',utc,'ffffff'))
++                db.execute('INSERT INTO frames VALUES(?,?,?)',(sid,utc,'abcdef'))
++                db.execute('INSERT INTO snapshots VALUES(?,?,?,?)',(sid,utc,'aircraft',json.dumps(dict(now=time.time(),aircraft=[dict(hex='abcdef',seen=0,flight='<script>',lat=1,lon=2)]))))
++                db.execute('INSERT INTO snapshots VALUES(?,?,?,?)',(sid,utc,'stats',json.dumps(dict(total=dict(local=dict(samples_processed=24000000,samples_dropped=0))))))
++            def services(u):
++                return dict(ActiveState='inactive' if 'scheduler' in u else 'active',UnitFileState='enabled')
++            s=m.observe(p,services)
++            self.assertEqual(s['unique_aircraft'],1); self.assertEqual(s['valid_frames'],1)
++            self.assertEqual(s['aircraft_with_decoded_positions'],1)
++            self.assertNotIn('lat',s['recent_aircraft'][0]); self.assertEqual(s['status'],'Receiving valid aircraft messages')
++            lease.update(phase='restored',restored_at=utc)
++            m.atomic(p/(sid+'-restored.json'),lease); (p/'lease.json').unlink()
++            s=m.observe(p,lambda u:dict(ActiveState='active',UnitFileState='enabled'))
++            self.assertTrue(s['completed']); self.assertTrue(s['report']['ready'])
++            self.assertEqual(s['report']['database_integrity'],'ok')
++            self.assertTrue((p/(sid+'-health-summary.json')).exists())
++
++    def test_empty_and_stale(self):
++        with tempfile.TemporaryDirectory() as directory:
++            p=Path(directory); sid='20261101T190045Z'; (p/sid).mkdir()
++            m.atomic(p/'lease.json',dict(session=sid,start=time.time()-100,expiry=time.time()+100,phase='capturing'))
++            h=dict(utc=m.dt.datetime.now(m.dt.timezone.utc).isoformat(),attempt=1,decoder_stats=dict(samples_processed=1))
++            m.atomic(p/sid/'health.json',h)
++            with sqlite3.connect(p/'aircraft.sqlite') as db:
++                db.executescript('CREATE TABLE frames(session,utc,icao); CREATE TABLE snapshots(session,utc,kind,json);')
++            fn=lambda u:dict(ActiveState='active')
++            self.assertEqual(m.observe(p,fn)['status'],'Healthy receiver — no valid messages yet')
++            h['utc']='2020-01-01T00:00:00+00:00'; m.atomic(p/sid/'health.json',h)
++            self.assertEqual(m.observe(p,fn)['status'],'Stale receiver health')
++            lease=m.read(p/'lease.json'); lease['abort']='fixture early abort'; m.atomic(p/'lease.json',lease)
++            m.observe(p,fn)
++            alert=m.read(p/(sid+'-health-alert.json'))
++            self.assertEqual(alert['database_integrity'],'ok')
++            self.assertIn('failure',alert['status'])
++            lease['phase']='restored'; m.atomic(p/(sid+'-restored.json'),lease); (p/'lease.json').unlink()
++            result=m.observe(p,fn)
++            self.assertTrue(result['report']['ready']); self.assertEqual(result['unique_aircraft'],0)
++
++    def test_read_only_connection(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path=Path(directory)/'test.sqlite'
++            db=sqlite3.connect(path); db.execute('CREATE TABLE test(value)'); db.commit(); db.close()
++            with m.connect(path) as reader:
++                with self.assertRaises(sqlite3.OperationalError):
++                    reader.execute('INSERT INTO test VALUES(1)')
++
++    def test_missing_session(self):
++        with tempfile.TemporaryDirectory() as directory:
++            self.assertEqual(m.observe(Path(directory))['status'],'No ADS-B session')
++            sid='20261101T190045Z'
++            m.atomic(Path(directory)/(sid+'-restored.json'),dict(session=sid,start=0,expiry=1,phase='restored',abort='startup failure'))
++            result=m.observe(Path(directory),lambda u:dict(ActiveState='inactive'))
++            self.assertTrue(result['report']['ready'])
++            self.assertIn('Unavailable',result['report']['database_integrity'])
++
++if __name__=='__main__': unittest.main()
+diff --git a/dashboard.html b/dashboard.html
+index ff70d51..e3805e0 100644
+--- a/dashboard.html
++++ b/dashboard.html
+@@ -29 +29,2 @@ th{color:var(--muted);font-size:13px;font-weight:650}
+-</style></head><body><main>
++</style></head><body>
++<nav style="padding:12px"><a href="/adsb">ADS-B Live — receiver, aircraft and restoration status</a></nav><main>
+diff --git a/dashboard.py b/dashboard.py
+index a24cc06..dd9e317 100644
+--- a/dashboard.py
++++ b/dashboard.py
+@@ -366,0 +367,11 @@ class Handler(BaseHTTPRequestHandler):
++        if route == "/api/adsb":
++            try:
++                path = ROOT / 'adsb-session/private/live-status.json'
++                if path.stat().st_size > 65536:
++                    raise ValueError('Oversized monitor status')
++                payload = json.loads(path.read_text())
++                return self.respond(payload)
++            except (OSError, ValueError):
++                return self.respond({'error': 'ADS-B monitor unavailable'}, status=503)
++        if route == "/adsb":
++            return self.respond((ROOT / 'adsb-session/adsb.html').read_bytes(), 'text/html; charset=utf-8')
+diff --git a/docs/adsb-session.md b/docs/adsb-session.md
+index f8d49f0..3bb91ed 100644
+--- a/docs/adsb-session.md
++++ b/docs/adsb-session.md
+@@ -148,0 +149,70 @@ trial verification from the ongoing 12-hour run.
++
++## ADS-B Live and automatic health report — 1 November 2026
++
++The existing dashboard links to `/adsb` on the same port 8080 and access scope.
++`/api/adsb` exposes only the observer's limited status projection, with no
++coordinates, trails, database download, raw frames or logs. Aircraft identity,
++callsign, altitude, speed and last seen are available on the existing LAN scope.
++No map or external notification/feeder transport was added. The page refreshes
++every 12 seconds, shows health freshness, sample progress/drops, current-attempt
++and total attempts, session-scoped frame/aircraft counts, last detection,
++absolute Helsinki deadline/countdown, watchdog and explicit RF pause/restoration.
++Empty reception, stale health, stalled decoder, failed supervisor and completed
++session have distinct status. A browser flags monitor data older than 40 seconds.
++
++The independent `rf-watchkeeper-adsb-monitor.service` runs `adsb-session/monitor.py`
++every 12 seconds. It has no capture/watchdog/scheduler dependencies or service
++control actions; private devices, read-only system protection, a 20% CPU quota
++and 128 MiB memory limit bound its impact. Only the private ADS-B directory is
++writable. SQLite connections use `mode=ro`, `query_only`, 100 ms busy timeout,
++two-second execution budget, explicit close and 500-snapshot batches. No schema
++or index changes. Cursor/aggregate state survives observer restart; while it
++catches up the page labels counts provisional. Unique aircraft combines distinct
++direct DF17 addresses with decoded addresses seen in this session's snapshots,
++never the all-sessions registry. Decoder non-ICAO addresses keep their `~` marker.
++Recent values retain decoder semantics and the last actual detection time.
++Position presence is counted privately; coordinates never enter this API.
++
++After the existing restorer archives successful restoration, the monitor saves
++`private/<session>-health-summary.json`: session detections, attempts, sample
++segments/drops, final health, read-only database quick_check, stop reason and
++saved/current service restoration evidence. Observed receiver uptime is the sum
++of per-segment sample totals divided by 2.4 MS/s. It is a lower bound: attempts
++without stats snapshots and samples after the final snapshot are unmeasured;
++attempt count comes from the saved lease. This is receiver sample time, not a
++claim of RF coverage. Abort, restoration-in-progress or expiry overrun also saves
++`private/<session>-health-alert.json`, with actionable state and integrity result.
++On a completed run the dashboard displays report readiness, integrity, uptime,
++samples, drops and restoration state. Reports remain local and private (0700
++directory / 0077 umask). Failed integrity/restoration raises a dashboard alert.
++The existing `<session>-summary.json` and restorer are unchanged. A subsequent
++session is selected from the active lease; otherwise the latest restored session
++is shown. No notification transport is assumed or activated.
++
++Deployment preserved the existing dashboard's private runtime configuration;
++public source continues to use approximate regional coordinates. The dashboard
++was proven isolated (separate cgroup; no BindsTo, PartOf or stop propagation),
++then restarted alone. Capture PID/start ticks, container ID/start time, attempt
++count and exact expiry were equal before/after. Neither capture nor watchdog
++nor RF scheduler was stopped, restarted or reconfigured by this change.
++
++### Rollback and persistence
++
++Private originals and deployment evidence are under
++`private/monitor-deployment-20261101/`. To roll back monitoring only, stop/disable
++`rf-watchkeeper-adsb-monitor.service`, restore that directory's dashboard.py and
++dashboard.html, and restart **only** the independently isolated dashboard.
++Retain private reports and aircraft data. Never invoke capture restore/restart
++or manually start RF services to roll back this UI. The new observer is enabled
++for boot; its restart preserved aggregates in live checks. Full EVK reboot and
++the actual 12-hour completion remain unverified during the active reservation.
++The expiry remains 2 November 2026 07:00:45.977 UTC / 09:00:45 Helsinki.
++
++Validation: seven ADS-B fixture/regression tests and 25 existing dashboard,
++capacity, RF-health, AIS and acquisition-control tests passed. Fixture tests
++cover completed/empty/stale/early-abort paths, session isolation, coordinate
++omission, read-only enforcement and private reports. Live HTTP/browser checks
++showed advancing samples, zero reported drops, two aircraft and decoded position
++presence; no aircraft identities/positions are published in evidence. Four
++private database/state/log paths returned 404. Full unattended completion and
++boot persistence are outstanding observations, not passed tests.
+diff --git a/docs/architecture.md b/docs/architecture.md
+index 98a2140..5a2ad00 100644
+--- a/docs/architecture.md
++++ b/docs/architecture.md
+@@ -67,0 +68,8 @@ storage, failure limits and rollback](adsb-session.md).
++
++## ADS-B Live observer — 1 November 2026
++
++An independent, device-isolated systemd observer reads bounded SQLite snapshots
++and service state, persists private aggregates/reports, and supplies a limited
++status projection to `/api/adsb`; `/adsb` renders it every 12 seconds. Capture,
++watchdog and restoration code are unchanged. No positions or raw records are
++served. See [bounds, lifecycle and rollback](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).
+diff --git a/docs/current-status.md b/docs/current-status.md
+index 5c2ea14..1e50db2 100644
+--- a/docs/current-status.md
++++ b/docs/current-status.md
+@@ -88,0 +89,8 @@ The full 12-hour result, timer restart and reboot remain unverified.
++
++## ADS-B Live monitoring — 1 November 2026
++
++Production read-only `/adsb` on existing port 8080 now shows session-scoped
++receiver/aircraft/deadline/restoration state. Independent observer writes private
++completion reports automatically. Capture identity and 09:00:45 Helsinki expiry
++were preserved; no RF service was changed. Two aircraft and zero drops observed
++at 19:19 UTC. Full expiry/reboot unverified. See [operations](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).
+diff --git a/docs/evidence/adsb-live-20261101/completion.md b/docs/evidence/adsb-live-20261101/completion.md
+new file mode 100644
+index 0000000..d94ca97
+--- /dev/null
++++ b/docs/evidence/adsb-live-20261101/completion.md
+@@ -0,0 +1,43 @@
++# ADS-B Live completion check — 1 November 2026
++
++Implemented/tested/deployed/production-active: yes. Unattended full-session
++completion: pending scheduled expiry. Reboot: intentionally not exercised.
++
++Standing workflow gates:
++1. Live EVK/source/services/data inspected before changes: passed.
++2. Exact changes preserved by Git patch; private originals/deployment identity
++   evidence at adsb-session/private/monitor-deployment-20261101/: passed.
++3. Tests: `python3 -m unittest discover -s adsb-session -v` (7 passed);
++   `python3 -m unittest -v test_dashboard_state_isolation test_audio_catalog_cache
++   test_validation_capacity test_rf_health test_ais_validation
++   test_acquisition_control` (25 passed). Existing tests emitted nonfatal
++   ResourceWarnings. Windows fixture execution failed due temporary-file rename
++   restrictions; target Linux execution passed. Python 3.12 unavailable locally.
++4. Dated project log: appended.
++5. Current status, architecture and ADS-B operations: appended.
++6. Private backup and UI/observer-only rollback: documented.
++7. Production-active distinguished from unattended-verified: yes.
++8. Observer restart and persisted aggregate cursor: verified live; dashboard
++   restarted independently. Capture/watchdog restart and host reboot skipped
++   to preserve reservation; remain unverified by this task.
++9. Live observations at 19:19 UTC: two session aircraft, valid frames, sample
++   progress, zero drops, two aircraft with decoded positions, fresh health,
++   active watchdog, scheduler intentionally inactive. No coverage claim.
++10. No receiver coordinates, aircraft identities, trails, logs or private DB
++    in public evidence. Existing live private HTML differs from public regional
++    defaults; preserved on EVK. API omits coordinates.
++11. Existing retention/RF/ASR decisions: preserved.
++
++Isolation: dashboard has separate cgroup, empty PartOf/BindsTo/ConsistsOf/
++PropagatesStopTo; reverse dependencies are boot targets only. Before/after
++capture PID 214787, start ticks 3073111, attempt 3 and decoder container identity
++were equal. Expiry 1793602845.977125 unchanged. Capture was uninterrupted.
++Observer alone was restarted after a resource cleanup; aggregate state resumed.
++HTTP `/`, `/adsb`, `/api/adsb` returned 200. Private SQLite/lease/log routes
++returned 404. Browser rendered session metrics, aircraft table and Helsinki
++09:00:45 stop time, then updated automatically without reload.
++
++No external notification was installed. Local private reports plus dashboard
++are the unattended reporting path. Real expiry/restoration/report execution
++will occur after this deployment verification; fixture success is not proof
++of the future 12-hour outcome. Current exact patch is in changes.patch.
+diff --git a/docs/evidence/adsb-live-20261101/verification.json b/docs/evidence/adsb-live-20261101/verification.json
+new file mode 100644
+index 0000000..4e9e0bc
+--- /dev/null
++++ b/docs/evidence/adsb-live-20261101/verification.json
+@@ -0,0 +1,17 @@
++{
++  "session": "20261101T190045Z",
++  "observed_at": 1793561000.5908904,
++  "status": "Receiving valid aircraft messages",
++  "valid_frames": 296,
++  "unique_aircraft": 2,
++  "samples_processed": 2256273408,
++  "samples_dropped": 0,
++  "sample_progress": true,
++  "expiry": 1793602845.977125,
++  "rf_state": "Conflicting RF activity paused",
++  "aggregation_caught_up": true,
++  "capture_identity_unchanged": true,
++  "watchdog_active": true,
++  "source_hashes_verified": true,
++  "observer_enabled": "enabled"
++}
+diff --git a/docs/project-log.md b/docs/project-log.md
+index f58be15..ee5cd32 100644
+--- a/docs/project-log.md
++++ b/docs/project-log.md
+@@ -385,0 +386,9 @@ Thomas explicitly approved publishing the dashboard performance fix and reaffirm
++
++### 2026-11-01 19:18–19:21 UTC — ADS-B Live and private completion health report
++
++- Change/reason: add convenient read-only session monitoring and unattended local completion/failed-restoration reporting during the active trial.
++- Files/components: dashboard explicit routes/navigation; adsb-session monitor, HTML, systemd unit and fixture tests. Capture/watchdog/restorer unchanged.
++- Configuration: 12-second refresh; bounded read-only DB reads; private persistent cursor/report; original port/access scope. No notification transport or map.
++- Validation: seven ADS-B tests and 25 existing regressions passed; browser render/refresh, private path 404s, observer restart and unchanged capture/container/deadline verified.
++- Result: implemented, tested, deployed and production-active. Actual unattended expiry/report generation and EVK reboot remain unverified. Private backups, rollback and sanitized evidence linked below.
++- Evidence: [completion check](evidence/adsb-live-20261101/completion.md); [operations and rollback](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).

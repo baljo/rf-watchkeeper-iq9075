@@ -146,3 +146,73 @@ configuration or data was modified. Installation does not remove the image or
 collected records. Frozen [verification](evidence/adsb-session-20261101/verification.json)
 and [completion/limitations](evidence/adsb-session-20261101/completion.md) distinguish
 trial verification from the ongoing 12-hour run.
+
+## ADS-B Live and automatic health report — 1 November 2026
+
+The existing dashboard links to `/adsb` on the same port 8080 and access scope.
+`/api/adsb` exposes only the observer's limited status projection, with no
+coordinates, trails, database download, raw frames or logs. Aircraft identity,
+callsign, altitude, speed and last seen are available on the existing LAN scope.
+No map or external notification/feeder transport was added. The page refreshes
+every 12 seconds, shows health freshness, sample progress/drops, current-attempt
+and total attempts, session-scoped frame/aircraft counts, last detection,
+absolute Helsinki deadline/countdown, watchdog and explicit RF pause/restoration.
+Empty reception, stale health, stalled decoder, failed supervisor and completed
+session have distinct status. A browser flags monitor data older than 40 seconds.
+
+The independent `rf-watchkeeper-adsb-monitor.service` runs `adsb-session/monitor.py`
+every 12 seconds. It has no capture/watchdog/scheduler dependencies or service
+control actions; private devices, read-only system protection, a 20% CPU quota
+and 128 MiB memory limit bound its impact. Only the private ADS-B directory is
+writable. SQLite connections use `mode=ro`, `query_only`, 100 ms busy timeout,
+two-second execution budget, explicit close and 500-snapshot batches. No schema
+or index changes. Cursor/aggregate state survives observer restart; while it
+catches up the page labels counts provisional. Unique aircraft combines distinct
+direct DF17 addresses with decoded addresses seen in this session's snapshots,
+never the all-sessions registry. Decoder non-ICAO addresses keep their `~` marker.
+Recent values retain decoder semantics and the last actual detection time.
+Position presence is counted privately; coordinates never enter this API.
+
+After the existing restorer archives successful restoration, the monitor saves
+`private/<session>-health-summary.json`: session detections, attempts, sample
+segments/drops, final health, read-only database quick_check, stop reason and
+saved/current service restoration evidence. Observed receiver uptime is the sum
+of per-segment sample totals divided by 2.4 MS/s. It is a lower bound: attempts
+without stats snapshots and samples after the final snapshot are unmeasured;
+attempt count comes from the saved lease. This is receiver sample time, not a
+claim of RF coverage. Abort, restoration-in-progress or expiry overrun also saves
+`private/<session>-health-alert.json`, with actionable state and integrity result.
+On a completed run the dashboard displays report readiness, integrity, uptime,
+samples, drops and restoration state. Reports remain local and private (0700
+directory / 0077 umask). Failed integrity/restoration raises a dashboard alert.
+The existing `<session>-summary.json` and restorer are unchanged. A subsequent
+session is selected from the active lease; otherwise the latest restored session
+is shown. No notification transport is assumed or activated.
+
+Deployment preserved the existing dashboard's private runtime configuration;
+public source continues to use approximate regional coordinates. The dashboard
+was proven isolated (separate cgroup; no BindsTo, PartOf or stop propagation),
+then restarted alone. Capture PID/start ticks, container ID/start time, attempt
+count and exact expiry were equal before/after. Neither capture nor watchdog
+nor RF scheduler was stopped, restarted or reconfigured by this change.
+
+### Rollback and persistence
+
+Private originals and deployment evidence are under
+`private/monitor-deployment-20261101/`. To roll back monitoring only, stop/disable
+`rf-watchkeeper-adsb-monitor.service`, restore that directory's dashboard.py and
+dashboard.html, and restart **only** the independently isolated dashboard.
+Retain private reports and aircraft data. Never invoke capture restore/restart
+or manually start RF services to roll back this UI. The new observer is enabled
+for boot; its restart preserved aggregates in live checks. Full EVK reboot and
+the actual 12-hour completion remain unverified during the active reservation.
+The expiry remains 2 November 2026 07:00:45.977 UTC / 09:00:45 Helsinki.
+
+Validation: seven ADS-B fixture/regression tests and 25 existing dashboard,
+capacity, RF-health, AIS and acquisition-control tests passed. Fixture tests
+cover completed/empty/stale/early-abort paths, session isolation, coordinate
+omission, read-only enforcement and private reports. Live HTTP/browser checks
+showed advancing samples, zero reported drops, two aircraft and decoded position
+presence; no aircraft identities/positions are published in evidence. Four
+private database/state/log paths returned 404. Full unattended completion and
+boot persistence are outstanding observations, not passed tests.

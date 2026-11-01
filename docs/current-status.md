@@ -86,3 +86,11 @@ Samples flow without reported drops; initially zero valid aircraft/messages.
 The full 12-hour result, timer restart and reboot remain unverified.
 [Operations, private storage and expiry](adsb-session.md),
 [dated completion evidence](evidence/adsb-session-20261101/completion.md).
+
+## ADS-B Live monitoring — 1 November 2026
+
+Production read-only `/adsb` on existing port 8080 now shows session-scoped
+receiver/aircraft/deadline/restoration state. Independent observer writes private
+completion reports automatically. Capture identity and 09:00:45 Helsinki expiry
+were preserved; no RF service was changed. Two aircraft and zero drops observed
+at 19:19 UTC. Full expiry/reboot unverified. See [operations](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).

@@ -364,6 +364,17 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.request_started = time.monotonic()
         route = urlsplit(self.path).path
+        if route == "/api/adsb":
+            try:
+                path = ROOT / 'adsb-session/private/live-status.json'
+                if path.stat().st_size > 65536:
+                    raise ValueError('Oversized monitor status')
+                payload = json.loads(path.read_text())
+                return self.respond(payload)
+            except (OSError, ValueError):
+                return self.respond({'error': 'ADS-B monitor unavailable'}, status=503)
+        if route == "/adsb":
+            return self.respond((ROOT / 'adsb-session/adsb.html').read_bytes(), 'text/html; charset=utf-8')
         if route == "/api/acquisition":
             return self.respond({"suspended": (ROOT/"data/acquisition-suspended.json").exists(),
                                  "message": "RF Watchkeeper suspended" if (ROOT/"data/acquisition-suspended.json").exists() else "RF Watchkeeper acquisition enabled"})

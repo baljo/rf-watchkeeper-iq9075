@@ -383,3 +383,12 @@ Thomas explicitly approved publishing the dashboard performance fix and reaffirm
   reception and final main restoration, reboot and timer-restart acceptance
   remain unobserved. No hardware filtering/LNA need established. Optional map
   deferred; no private aircraft/observer coordinates published.
+
+### 2026-11-01 19:18–19:21 UTC — ADS-B Live and private completion health report
+
+- Change/reason: add convenient read-only session monitoring and unattended local completion/failed-restoration reporting during the active trial.
+- Files/components: dashboard explicit routes/navigation; adsb-session monitor, HTML, systemd unit and fixture tests. Capture/watchdog/restorer unchanged.
+- Configuration: 12-second refresh; bounded read-only DB reads; private persistent cursor/report; original port/access scope. No notification transport or map.
+- Validation: seven ADS-B tests and 25 existing regressions passed; browser render/refresh, private path 404s, observer restart and unchanged capture/container/deadline verified.
+- Result: implemented, tested, deployed and production-active. Actual unattended expiry/report generation and EVK reboot remain unverified. Private backups, rollback and sanitized evidence linked below.
+- Evidence: [completion check](evidence/adsb-live-20261101/completion.md); [operations and rollback](adsb-session.md#ads-b-live-and-automatic-health-report--1-november-2026).
