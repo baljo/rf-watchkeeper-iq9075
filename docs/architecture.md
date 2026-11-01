@@ -52,3 +52,16 @@ Routine review uses the independent [Tower review policy](tower-anomaly.md): two
 ## Validation request isolation — 15 October 2026
 
 Validation queue selection stops when ten review slots are occupied. Dashboard validation GETs share a serialized ten-second cache with one builder; successful review saves invalidate it. Background discovery and RF scheduling are unchanged. [Evidence](evidence/dashboard-performance-20261015/completion.md).
+
+
+## Temporary ADS-B reception lease — 1 November 2026
+
+The optional `adsb-session/session.py` holds the existing V4 SDR lock and uses
+an isolated ARM64 dump1090/vendor-driver container. Uncorrected Beast frames,
+UTC receipt timestamps, original aircraft/statistics JSON and a cross-session
+ICAO registry are stored privately in bounded SQLite. Capture has a fixed
+12-hour UTC deadline, bounded retries/sample-stall detection, container cleanup
+and a separate persistent expiry/restoration timer. Only conflicting RF units
+receive temporary start guards; unrelated processing and dashboard continue.
+No precise receiver location is supplied or exported. [Runtime, state machine,
+storage, failure limits and rollback](adsb-session.md).

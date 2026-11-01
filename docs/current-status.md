@@ -71,3 +71,18 @@ Routine review uses the independent [Tower review policy](tower-anomaly.md): two
 ## Dashboard validation overload resolved in controlled checks — 15 October 2026
 
 Deployed at 20:09:48 UTC (23:09:48 Helsinki). Full-queue repeated duplicate comparisons and overlapping validation work were removed. Post-restart status responses ~0.30 s; validation 1.86 s cold / 0.009–0.011 s cached; Tower 1.32–1.33 s. Six simultaneous cold requests all returned 200: status 0.435 s, validation 4.89–4.90 s, Tower 5.88 s, METEOR 2.624 s. Review-record digest unchanged; scheduler remained active. Four queue/cache regressions, 16 existing ATIS shadow/Tower policy tests, and frontend guard/syntax checks passed. Service restart verified; reboot, browser-rendered verification and long unattended operation remain unverified. [Completion evidence](evidence/dashboard-performance-20261015/completion.md).
+
+
+## Temporary ADS-B reception lease — 1 November 2026
+
+Session `20261101T190045Z` is active from 19:00:45 UTC until 2 November
+07:00:45 UTC (09:00:45 Helsinki). V4MAIN01 is temporarily dedicated to
+1090 MHz dump1090 reception. Scheduler, RF health recovery, METEOR dispatch
+and legacy capture launchers are guarded/paused with their prior states saved;
+dashboard, processing/planning and retention remain active. Exact prior
+active/enablement states are restored automatically by an independent timer.
+Two short trial restorations and a main capture service restart were verified.
+Samples flow without reported drops; initially zero valid aircraft/messages.
+The full 12-hour result, timer restart and reboot remain unverified.
+[Operations, private storage and expiry](adsb-session.md),
+[dated completion evidence](evidence/adsb-session-20261101/completion.md).

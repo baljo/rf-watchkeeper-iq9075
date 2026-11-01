@@ -347,3 +347,39 @@ See [operator commands and rollback](acquisition-mode.md), [configuration and re
 ### 2026-10-15 — standing repository authorization reaffirmed
 
 Thomas explicitly approved publishing the dashboard performance fix and reaffirmed persistent authorization to keep the canonical repository updated, including source, tests, documentation and sanitized evidence. Recorded in workflow.md; the earlier publication-approval block is resolved. This documentation update does not change deployed runtime behavior.
+
+
+## Temporary ADS-B reception lease — 1 November 2026
+
+### 2026-11-01 19:00 UTC — temporary 12-hour V4 aircraft reception
+
+- Change/reason: temporarily dedicate the user-installed vertical ADS-B antenna
+  and V4MAIN01 to 1090 MHz reception; preserve other Rally services and restore
+  exact prior RF running/enablement states afterward.
+- Files/components: new `adsb-session/` Dockerfile, supervisor/restorer, tests
+  and privacy-safe audit; generated ADS-B systemd service/watchdog units and
+  temporary guards. Existing host drivers, RF source/configuration and records
+  were not modified. Installed source revisions and private change history
+  retained; source and sanitized evidence published to the canonical repository.
+- Configuration/behavior: FlightAware dump1090 plus Blog V4 vendor driver in an
+  isolated ARM64 Debian container; 38.6 dB gain, no CRC correction/bias tee or
+  supplied observer coordinates. Loopback-only Beast port. Private bounded
+  SQLite message/snapshot store and cross-session registry, no IQ recording.
+- Validation/evidence: three unit tests pass; first 45-second trial exposed a
+  listener startup race, corrected; both trial state restorations succeeded.
+  Second 90-second trial and main service restart retained absolute expiry.
+  Decoder identified Blog V4/R828D, sample counters advance with zero drops,
+  database quick_check passed. Initially zero aircraft/messages; rejected RF
+  candidates are not aircraft. Other processing/dashboard/retention stayed
+  active. Scheduler-start and watchdog-restart probes were rejected by automatic
+  approval review; read-only checks used instead. See
+  [verification/completion](evidence/adsb-session-20261101/completion.md).
+- Temporary state: main lease `20261101T190045Z` expires **2026-11-02
+  07:00:45.977 UTC**, 09:00:45 Helsinki. Conflicting SDR launchers paused; other
+  services continue. End timer restores only saved active units; data retained.
+- Rollback: `python3 adsb-session/session.py restore`; preserve lease for any
+  failed restoration retry. [Operations and removal](adsb-session.md).
+- Result/follow-up: implemented/tested/deployed/currently active; full 12-hour
+  reception and final main restoration, reboot and timer-restart acceptance
+  remain unobserved. No hardware filtering/LNA need established. Optional map
+  deferred; no private aircraft/observer coordinates published.

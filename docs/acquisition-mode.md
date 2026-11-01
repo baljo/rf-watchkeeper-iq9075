@@ -20,3 +20,15 @@ Installation on another EVK: place `acquisition_control.py` beside the applicati
 Live checks: two complete cycles, repeated suspend/resume, no active acquisition units or receiver/inference processes while suspended, attempted scheduler/health/dispatch starts rejected by guards after daemon reload, dashboard available, both cleanup timers active, audio timer restart and real cleanup service successful while suspended. Previous enablement and continuous service state restored. **Current acquisition is enabled.** Reboot and a later unattended daily cycle were not tested; no disruptive reboot was needed.
 
 Rollback: resume first while the manager is present. Disable/stop `rf-watchkeeper-audio-retention.timer`, restore backed-up application files/units, remove only generated `90-acquisition-suspend.conf` drop-ins, reload systemd, and restore saved service states. Do not erase the suspension marker before using its saved states. Deleted audio cannot be recovered by rolling back code. Private backups and state evidence are under `backups/retention-suspend-20261014/`. See [completion evidence](evidence/retention-suspend-20261014/completion.md).
+
+
+## Temporary ADS-B reception lease — 1 November 2026
+
+Use the separate [ADS-B lease operations](adsb-session.md) for the temporary
+1090 MHz session. It pauses only SDR conflicts and does not use this broad
+suspend command. Do not run broad suspend/resume or change RF unit states
+during an ADS-B lease: its saved prior state belongs to the lease. For early
+restoration run `python3 adsb-session/session.py restore` from the project root;
+keep its private lease until restoration has succeeded. The main lease expires
+2 November at 07:00:45 UTC. Existing dashboard acquisition text does not show
+this narrower pause; consult the ADS-B lease/health/service status.

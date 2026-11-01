@@ -1,0 +1,967 @@
+{
+  "observed_utc": "2026-11-01T19:08:18.367716+00:00",
+  "session": "20261101T190045Z",
+  "start": 1793559645.977125,
+  "expiry": 1793602845.977125,
+  "phase": "capturing",
+  "attempts": 3,
+  "counts": {
+    "frames": 0,
+    "aircraft_all_sessions": 0,
+    "snapshots": 472,
+    "integrity": "ok"
+  },
+  "health": {
+    "utc": "2026-11-01T19:08:17.807147+00:00",
+    "session": "20261101T190045Z",
+    "expiry": 1793602845.977125,
+    "frames_this_attempt": 0,
+    "last_frame_utc": null,
+    "database_bytes": 3120544,
+    "aircraft_all_sessions": 0,
+    "attempt": 3,
+    "decoder_stats": {
+      "samples_processed": 96206848,
+      "samples_dropped": 0,
+      "modeac": 0,
+      "modes": 791009,
+      "bad": 3229547,
+      "unknown_icao": 328757,
+      "accepted": [
+        0
+      ],
+      "noise": -37.3,
+      "strong_signals": 0,
+      "gain_db": 38.6
+    }
+  },
+  "conflicting_units": {
+    "meteor-auto-capture.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m23-20261002-1111-v4-1024k.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m23-20261002-1111-v4-1024k.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m24-20261002-0419-v4-1024k.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m24-20261002-0419-v4-1024k.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m24-20261002-1413-v4-256k.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m24-20261002-1413-v4-256k.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m24-20261002-1553-v4-1024k.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-m24-20261002-1553-v4-1024k.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-recovery-8b8c54394292ec1f0295a3da.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "meteor-recovery-8b8c54394292ec1f0295a3da.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-ais.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-health.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-health.timer": {
+      "before": {
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "enabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-meteor-dispatch.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-meteor-dispatch.timer": {
+      "before": {
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "enabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-meteor-recover.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "enabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "enabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-scheduler.service": {
+      "before": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "enabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper-sensors.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "rf-watchkeeper.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "satellite-v4-preflight-20261002-0359.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "satellite-v4-preflight-20261002-1051.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "satellite-v4-preflight-20261002-1353.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "satellite-v4-preflight-20261002-1533.timer": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    },
+    "satellite-v4-preflight.service": {
+      "before": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "now": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "guard": "[Unit]\nConditionPathExists=!/root/rf-watchkeeper/adsb-session/private/lease.json\n"
+    }
+  },
+  "unrelated_units": {
+    "rf-watchkeeper-dashboard.service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "rf-watchkeeper-atis-process.service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "rf-watchkeeper-atis-shadow.service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "rf-watchkeeper-interpreter.service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "rf-watchkeeper-meteor-plan.timer": {
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "rf-watchkeeper-meteor-process.timer": {
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "rf-watchkeeper-audio-retention.timer": {
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "rf-watchkeeper-meteor-cleanup.timer": {
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    }
+  },
+  "expiry_timer": {
+    "ActiveState": "active",
+    "SubState": "waiting",
+    "UnitFileState": "enabled"
+  },
+  "decoder_service": {
+    "ActiveState": "active",
+    "SubState": "running",
+    "UnitFileState": "enabled"
+  },
+  "decoder_restarts": "0",
+  "clock": "NTP=yes\nNTPSynchronized=yes",
+  "sources": {
+    "utc": "2026-11-01T19:07:31.702523+00:00",
+    "image": "sha256:c270b6a04eedc957a561173ebe55eedbf97a4dc737fdb64fb6e30be37dbdcc29",
+    "build": "aed0ea19f3a273370a13c9009b96313c75d54c7b\n465e06330372ab0586a6a5063c66b60a8750f2b6\n9573e9a6b3338264c2e773c3a0f35677d7935d5fd63bf0be6339553914c4f037  /usr/local/bin/dump1090\n2004fe8864558f68a0e9647db3bc24abe677c0d357062a9f3908ea253b1af22e  /usr/local/lib/librtlsdr.so.0\n-----------------------------------------------------------------------------\n| dump1090 ModeS Receiver                               dump1090-fa unknown |\n| build options: ENABLE_RTLSDR                                              |\n-----------------------------------------------------------------------------\n--device-type <type>     Select SDR type (default: rtlsdr)\n\n      rtlsdr-specific options (use with --device-type rtlsdr)\n\n--device <index|serial>  select device by index or serial number\n--enable-agc             enable digital AGC (not tuner AGC!)\n--ppm <correction>       set oscillator frequency correction in PPM\n--direct <0|1|2>         set direct sampling mode\n\n      ifile-specific options (use with --ifile)\n\n--ifile <path>           read samples from given file ('-' for stdin)\n--iformat <type>         set sample format (UC8, SC16, SC16Q11)\n--throttle               process samples at the original capture speed\n\n      Output modes\n\n--raw                    Show only messages hex values\n--modeac                 Enable decoding of SSR Modes 3/A & 3/C\n--mlat                   display raw messages in Beast ascii mode\n--onlyaddr               Show only ICAO addresses (testing purposes)\n--metric                 Use metric units (meters, km/h, ...)\n--gnss                   Show altitudes as HAE/GNSS when available\n--quiet                  Disable output to stdout. Use for daemon applications\n--show-only <addr>       Show only messages from the given ICAO on stdout\n--snip <level>           Strip IQ file removing samples < level\n\n      Decoder settings\n\n--gain <db>              Set gain in dB (default: varies by SDR type)\n--freq <hz>              Set frequency (default: 1090 Mhz)\n--fix                    Enable single-bit error correction using CRC\n--fix-2bit               Enable two-bit error correction using CRC\n                          (use with caution!)\n--no-fix                 Disable error correction using CRC\n--no-fix-df              Disable error correction of the DF message field\n                          (reduces CPU requirements)\n--enable-df24            Enable decoding of DF24 Comm-D ELM messages\n--lat <latitude>         Reference/receiver latitude for surface positions\n--lon <longitude>        Reference/receiver longitude for surface positions\n--max-range <distance>   Absolute maximum range for position decoding (in NM)\n\n      Adaptive gain\n\n--adaptive-burst                     Adjust gain for too-loud message bursts\n--adaptive-burst-change-delay <s>     Set delay after changing gain before\n                                       resuming burst control (seconds)\n--adaptive-burst-alpha <a>            Set burst rate smoothing factor\n                                       (0..1, smaller=more smoothing)\n--adaptive-burst-loud-rate <r>        Set burst rate for gain decrease\n--adaptive-burst-loud-runlength <l>   Set burst runlength for gain decrease\n--adaptive-burst-quiet-rate <r>       Set burst rate for gain increase\n--adaptive-burst-quiet-runlength <l>  Set burst runlength for gain increase\n--adaptive-range                     Adjust gain for target dynamic range\n--adaptive-range-target <db>          Set target dynamic range in dB\n--adaptive-range-alpha <a>            Set dynamic range noise smoothing factor\n                                       (0..1, smaller=more smoothing)\n--adaptive-range-percentile <p>       Set dynamic range noise percentile\n--adaptive-range-change-delay <s>     Set delay after changing gain before\n                                       resuming dynamic range control (seconds)\n--adaptive-range-scan-delay <s>       Set scan interval for dynamic range\n                                       gain scanning following a gain decrease\n                                       due to an increase in noise (seconds)\n--adaptive-range-rescan-delay <s>     Set periodic rescan interval for dynamic\n                                       range gain scanning (seconds)\n--adaptive-min-gain <g>              Set gain adjustment range lower limit (dB)\n--adaptive-max-gain <g>              Set gain adjustment range upper limit (dB)\n--adaptive-duty-cycle <p>            Set adaptive gain duty cycle % (1..100)\n\n      Network connections\n\n--net                    Enable networking with default ports unless overridden\n--no-modeac-auto         Don't enable Mode A/C if requested by a net connection\n--net-only               Enable just networking, no RTL device or file used\n--net-bind-address <ip>  IP address to bind to (use 127.0.0.1 for private)\n--net-ri-port <ports>    TCP raw input listen ports  (default: 30001)\n--net-ro-port <ports>    TCP raw output listen ports (default: 30002)\n--net-sbs-port <ports>   TCP BaseStation output listen ports (default: 30003)\n--net-bi-port <ports>    TCP Beast input listen ports  (default: 30004,30104)\n--net-bo-port <ports>    TCP Beast output listen ports (default: 30005)\n--net-stratux-port <ports>  TCP Stratux output listen ports (default: disabled)\n--net-ro-size <size>     TCP output minimum size (default: 0)\n--net-ro-interval <rate> TCP output memory flush rate in seconds (default: 0)\n--net-heartbeat <rate>   TCP heartbeat rate in seconds\n                          (default: 60 sec; 0 to disable)\n--net-buffer <n>         TCP buffer size 64Kb * (2^n) (default: n=0, 64Kb)\n--net-verbatim           Make output connections default to verbatim mode\n                           (forward all messages without correction)\n--forward-mlat           Allow forwarding of received mlat results\n\n      Stats and json output\n\n--stats                  Show stats summary at exit.\n--stats-every <seconds>  Show and reset stats every <seconds> seconds\n--stats-range            Collect/show range histogram\n--write-json <dir>       Periodically write json output to <dir>\n                          (for serving by a separate webserver)\n--write-json-every <t>   Write json aircraft output every t seconds (default 1)\n--json-stats-every <t>   Write json stats output every t seconds (default 60)\n--json-location-accuracy <n>  Accuracy of receiver location in json metadata\n                          (0=no location, 1=approximate, 2=exact)\n\n      Interactive mode\n\n--interactive                       Interactive mode refreshing data on screen.\n                                     Implies --throttle\n--interactive-ttl <sec>             Remove from list if idle for <sec>\n--interactive-show-distance         Show aircraft distance and bearing\n                                     (requires --lat and --lon)\n--interactive-distance-units <u>    Distance units ('km', 'sm', 'nm')\n--interactive-callsign-filter <r>   Filter rows by callsign against regex\n\n      Misc\n\n--wisdom <path>          Read DSP wisdom from given path\n--version                Show version, build and DSP options\n--help                   Show this help",
+    "frequency_hz": 1090000000,
+    "gain_db": 38.6,
+    "bias_tee": false,
+    "receiver": "V4MAIN01"
+  },
+  "bindings": "30005/tcp -> 127.0.0.1:30005",
+  "usb_node": "/dev/bus/usb/001/004",
+  "owners": [
+    {
+      "pid": 214957,
+      "cmd": "/usr/local/bin/dump1090 --device V4MAIN01 --gain 38.6 --no-fix --net-verbatim --net --net-heartbeat 0 --net-bo-port 30005 --net-ro-port 0 --net-sbs-port 0 --net-bi-port 0 --net-ri-port 0 --write-json /output --write-json-every 1 --json-stats-every 10 --json-location-accuracy 0 --quiet "
+    }
+  ],
+  "hashes": {
+    "test_session.py": "05da804b0f7632a9d50f250f68fc1b05317db75480f323e1746768220c26b9bb",
+    "session.py": "2db893e1f6e6dd3dbede1e1f955ea1a06826f0a590ca69f6ec58ba44429ec466",
+    "Dockerfile": "bc581af994a6d96ea328979b9073d6f0ef5f9e5336ceeccd7217e1d113144ffc",
+    "audit.py": "71e11d15ebd60b0fdca6113397f4f07dba27b7289452cf6eb61d5ad042094042"
+  },
+  "trials": [
+    {
+      "session": "20261101T185708Z",
+      "restored_at": "2026-11-01T18:58:02.442130+00:00",
+      "attempts": 4,
+      "states": {
+        "meteor-auto-capture.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1413-v4-256k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1413-v4-256k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-ais.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-health.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-health.timer": {
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-dispatch.service": {
+          "ActiveState": "activating",
+          "SubState": "start",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-meteor-dispatch.timer": {
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-recover.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-scheduler.service": {
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-sensors.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-0359.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1051.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1353.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1533.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        }
+      },
+      "before": {
+        "meteor-auto-capture.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1413-v4-256k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1413-v4-256k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-ais.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-health.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-health.timer": {
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-dispatch.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-meteor-dispatch.timer": {
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-recover.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-scheduler.service": {
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-sensors.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-0359.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1051.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1353.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1533.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        }
+      }
+    },
+    {
+      "session": "20261101T185831Z",
+      "restored_at": "2026-11-01T19:00:32.721336+00:00",
+      "attempts": 2,
+      "states": {
+        "meteor-auto-capture.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1413-v4-256k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1413-v4-256k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-ais.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-health.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-health.timer": {
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-dispatch.service": {
+          "ActiveState": "activating",
+          "SubState": "start",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-meteor-dispatch.timer": {
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-recover.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-scheduler.service": {
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-sensors.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-0359.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1051.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1353.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1533.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        }
+      },
+      "before": {
+        "meteor-auto-capture.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m23-20261002-1111-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-0419-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1413-v4-256k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1413-v4-256k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-m24-20261002-1553-v4-1024k.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "meteor-recovery-8b8c54394292ec1f0295a3da.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-ais.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper-health.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-health.timer": {
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-dispatch.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        },
+        "rf-watchkeeper-meteor-dispatch.timer": {
+          "ActiveState": "active",
+          "SubState": "waiting",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-meteor-recover.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-scheduler.service": {
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "enabled"
+        },
+        "rf-watchkeeper-sensors.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "rf-watchkeeper.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-0359.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1051.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1353.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight-20261002-1533.timer": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "disabled"
+        },
+        "satellite-v4-preflight.service": {
+          "ActiveState": "inactive",
+          "SubState": "dead",
+          "UnitFileState": "static"
+        }
+      }
+    }
+  ],
+  "tests": {
+    "exit_code": 0,
+    "stdout": "{\n  \"before\": {\n    \"scheduler.service\": {\n      \"ActiveState\": \"active\",\n      \"UnitFileState\": \"enabled\"\n    },\n    \"old.service\": {\n      \"ActiveState\": \"inactive\",\n      \"UnitFileState\": \"disabled\"\n    },\n    \"dispatch.timer\": {\n      \"ActiveState\": \"active\",\n      \"UnitFileState\": \"enabled\"\n    }\n  },\n  \"phase\": \"restored\",\n  \"session\": \"test\",\n  \"start\": 0,\n  \"expiry\": 1,\n  \"restored_at\": \"2026-11-01T19:08:18.337914+00:00\",\n  \"after\": {\n    \"scheduler.service\": {\n      \"ActiveState\": \"active\",\n      \"UnitFileState\": \"enabled\"\n    },\n    \"old.service\": {\n      \"ActiveState\": \"inactive\",\n      \"UnitFileState\": \"disabled\"\n    },\n    \"dispatch.timer\": {\n      \"ActiveState\": \"active\",\n      \"UnitFileState\": \"enabled\"\n    }\n  }\n}\n",
+    "stderr": "test_beast_split_and_escape (test_session.SessionTests.test_beast_split_and_escape) ... ok\ntest_expired_watchdog_restores (test_session.SessionTests.test_expired_watchdog_restores) ... ok\ntest_restore_never_starts_inactive_receivers (test_session.SessionTests.test_restore_never_starts_inactive_receivers) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.004s\n\nOK\n"
+  }
+}
